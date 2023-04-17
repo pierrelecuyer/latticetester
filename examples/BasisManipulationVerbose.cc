@@ -65,12 +65,6 @@ int main() {
 	std::cout << "Conversion with `upperTriangularBasis`: \n" << basis3 << "\n\n";
 
 	copy(basis1, basis2);
-	BasisConstruction<Int>::GCDTriangularBasis(basis2, m);
-	std::cout << "Conversion with GCDTriangular: \n" << basis2 << "\n\n";
-	if (basis2[0][0] != 1) 	std::cout << "The latter is WRONG *** \n\n";
-	basis2.SetDims(dim, dim);
-
-	copy(basis1, basis2);
 	// This one is in Util.h, it is the old method from 1996.
 	Triangularization(basis2, basis3, dim, dim, m);
 	std::cout << "Conversion with upperTriangular96: \n" << basis3 << "\n\n";

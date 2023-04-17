@@ -34,7 +34,7 @@ namespace LatticeTester {
 /**
  * An `IntLattice` object is an integral lattice, with its basis and `m`-dual basis
  * (the latter is optional). There are tools to perform simple manipulations on those lattice bases.
- * The value of `m` is always chosen in a way that all coordinates of the basis and
+ * The value of `m` must be chosen in a way that all coordinates of the basis and
  * of its `m`-dual are integers, so they can be represented exactly.
  * The basis or its dual is rescaled by `m`, which is typically the smallest integer with this property.
  *
@@ -47,6 +47,15 @@ namespace LatticeTester {
  * An `IntLattice` object contains several protected variables to store all these quantities.
  * For better efficiency, we should avoid creating too many of these objects, for example when
  * making searches for good lattices.
+ *
+ * Often, we want to assess the quality of projections of the lattice over subsets of coordinates.
+ * The method `buildProjection` computes a basis for the lattice defined as the
+ * projection of the full lattice on a subset  \f$I\f$  of coordinates indices
+ * defined by a `Coordinates` object.  When computing figures of merit, one may want to
+ * recompute a basis for a large number of different projections, which can be specified
+ * by a `CoordinateSets` object.
+ * An `IntLatticeExt` object keeps a current projection of the lattice on a subset
+ * of coordinates, as well as a basis (and perhaps its dual basis) for this current projection.
  *
  * The class `IntLatticeExt` extends this class and contains virtual methods that must
  * be defined in its subclasses.
@@ -64,15 +73,13 @@ public:
 
 	/**
 	 * Constructs a lattice whose basis is the identity, in `dim` dimensions,
-	 * with the specified norm type, and the scaling factor `m` and dual basis undefined.
-	 *
-	 * I think we should give the value of m ???
+	 * with the specified norm type, and the scaling factor `m`.
 	 */
 	IntLattice(const Int m, const int64_t dim, bool withDual = false, NormType norm = L2NORM);
 
 	/**
 	 * Constructs a lattice with the given basis, in `dim` dimensions,
-	 * and with the specified norm type. The dual basis and `m` are not initialized.
+	 * with the specified norm type, and value of `m`. The dual basis is not computed.
 	 * The `basis` matrix must be a `dim` by `dim` square integer matrix.
 	 */
 	IntLattice(const IntMat basis, const Int m, const int64_t dim, bool withDual = false, NormType norm = L2NORM);
@@ -110,7 +117,7 @@ public:
 	 * Previously named `copyLattice`.
 	 * Overwrites the first `n` elements of the basis of the lattice `lat` over the elements
 	 * of the basis of the current object. The latter must have dimension `n` already,
-	 * otherwise an error message is printed and nothing also is done!
+	 * otherwise an error message is printed and nothing else is done!
 	 * The vector norms and the dual basis (if available) are also overwritten.
 	 * The difference with `copyLattice` is that here, no new matrix or vector is constructed;
 	 * the previous ones are re-used.
@@ -201,7 +208,7 @@ public:
 	/**
 	 * Sets the dimension of the basis to `dim`. This does not change any of the
 	 * basis vectors, but only the dimension variable.
-	 * Warning: After calling this method, the size of the basis matrix may no longer agree with the dimension.
+	 * Warning: After calling this method, the size of the basis matrix may no longer agree with the dimension.   ******
 	 */
 	void setDim(const int64_t &dim) {
 		if (dim > 0)
@@ -392,15 +399,9 @@ protected:
 	Int m_modulo;
 
 	/**
-	 * The rows of this matrix are the primal basis vectors.
+	 * The maximal dimension for this lattice.
 	 */
-	IntMat m_basis;
-
-	/**
-	 * The rows of this matrix are the m-dual basis vectors.  May not be initialized.
-	 * When m_withDual = true, it must be initialized.
-	 */
-	IntMat m_dualbasis;
+	int64_t m_maxDim;
 
 	/**
 	 * The dimension of the lattice, which is the number of (independent) vectors
@@ -410,10 +411,15 @@ protected:
 	int64_t m_dim;
 
 	/**
-	 * The maximum Dimension for the basis (for the full lattice).
-	 * The considered projections cannot have more coordinates than this.
+	 * The rows of this matrix are the primal basis vectors.
 	 */
-	int64_t m_maxDim;
+	IntMat m_basis;
+
+	/**
+	 * The rows of this matrix are the m-dual basis vectors.  May not be initialized.
+	 * When m_withDual = true, it must be initialized.
+	 */
+	IntMat m_dualbasis;
 
 	/**
 	 * The NormType used to measure the vector lengths for this lattice.
@@ -439,9 +445,14 @@ protected:
 	bool m_withDual;
 
 	/**
-	 * `true` iff the current basis is triangular.
+	 * `true` iff the current basis is triangular (in case we want to check).
 	 */
 	// bool m_triangularBasis;
+
+	/**
+	 * The dimension of the current projection. It should not exceed m_dim.
+	 */
+	int64_t m_dimProj;
 
 	/**
 	 * The primal basis of the current projection.
@@ -455,7 +466,7 @@ protected:
 
 	/**
 	 * Allocates space to the vectors m_basisProj and m_dualbasisProj used internally to store
-	 * the bases for the current projection, and updates the norms.
+	 * the bases for the current projection.
 	 * This should not be called directly by the user.
 	 * It is called by the constructors and the copy method.
 	 */
@@ -468,8 +479,12 @@ protected:
 //===========================================================================
 
 template<typename Int, typename Real>
-IntLattice<Int, Real>::IntLattice(const Int m, const int64_t dim, bool withDual, NormType norm)
-		: m_modulo(m), m_dim(dim), m_withDual(withDual), m_norm(norm) {
+IntLattice<Int, Real>::IntLattice(const Int m, const int64_t dim, bool withDual, NormType norm) {
+//		: m_modulo(m), m_dim(dim), m_withDual(withDual), m_norm(norm) {
+    this->m_modulo=m;
+    this->m_dim=dim;
+    this->m_withDual=withDual;
+    this->m_norm=norm;
 	this->m_basis.resize(dim, dim);
 	this->m_vecNorm.resize(dim);
 	setNegativeNorm();
@@ -479,9 +494,14 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t dim, bool withDual,
 
 template<typename Int, typename Real>
 IntLattice<Int, Real>::IntLattice (const IntMat basis, const Int m,
-		const int64_t dim, bool withDual, NormType norm)
-		: m_basis(basis), m_modulo(m), m_dim(dim), m_withDual(withDual), m_norm(norm) {
-	this->m_vecNorm.resize(dim);
+		const int64_t dim, bool withDual, NormType norm) {
+//		: m_basis(basis), m_modulo(m), m_dim(dim), m_withDual(withDual), m_norm(norm) {
+    this->m_modulo=m;
+    this->m_dim=dim;
+    this->m_withDual=withDual;
+    this->m_norm=norm;
+    this->m_basis=basis;      // Might not have the righ dimensions?
+    this->m_vecNorm.resize(dim);
 	setNegativeNorm();
 }
 

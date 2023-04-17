@@ -139,7 +139,7 @@ public:
 	 * This function *does not* assume that all vectors `m e_i` belong to the lattice, and
 	 * it may return a basis matrix that has fewer rows than columns!
 	 */
-	static void GCDTriangularBasis(IntMat &gen, Int &m);
+	// static void GCDTriangularBasis(IntMat &gen, Int &m);
 
 	/**
 	 * Takes an upper triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
@@ -173,23 +173,7 @@ public:
 	template<typename Real>
 	static void projectionConstructionLLL(IntLattice<Int, Real> &in,
 			IntLattice<Int, Real> &out, const Coordinates &proj);
-
 	
-	/**
-	 * Based on modulus m, dimension d and vector a, this function creates at first the 
-	 * lattice matrix V of the linear congruential generator. In order to not have V in 
-	 * diagonal form, it applies LLL. The resulting matrix is written to a file in the 
-	 * output folder "/output" with the naming convention "modulus_dimension_no.dat"
-	 *
-	static void CreateExampleMatrixToFile(int64_t &m, int64_t &d, IntVec & a, int64_t & no);
-
-	/**
-	 * Based on modulus m, dimension d and vector a, this function creates at first the 
-	 * lattice matrix V of the linear congruential generator. In order to not have V in 
-	 * diagonal form, it applies LLL. 
-	 *
-	static void CreateExampleMatrix(int64_t &m, int64_t &d, IntVec & a, IntMat & V);
-	*/
 };
 
 //============================================================================
@@ -218,8 +202,6 @@ void BasisConstruction<Int>::LLLConstruction0(IntMat &gen, double delta,
 }
 
 template<>
-//void BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix64 &gen,
-//void BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<std::int64_t> &gen,
 void BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
 		double delta, PrecisionType prec) {
 	long num = gen.NumRows();
@@ -525,143 +507,79 @@ void BasisConstruction<NTL::ZZ>::upperTriangularBasis (NTL::matrix<NTL::ZZ> &gen
 template<typename Int>
 void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
 		Int &m) {
-	IntVec coeff_gcd, coeff_xi, xi;
-	Int gcd, gcd_tower, C, D;
-	long dim1 = gen.NumRows();
-	long dim2 = gen.NumCols();
-	long i, j, k, l;
-
-	//Define dimensions of vectors
-	coeff_gcd.SetLength(dim2);
-	coeff_xi.SetLength(dim2);
-	xi.SetLength(dim2);
-    
-	for (i = dim2-1; i > -1; i--) {
-		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
-		// xi.clear();   // This call causes a segmentation fault in the int64_t case!
-		// coeff_gcd.clear();
-		for (j = dim2-1; j >-1; j--) {
-		    xi[j] = coeff_gcd[j] = 0;
+	IntVec coeff, vl, v2;
+	Int C, D, val, gcd;
+	int64_t pc, pl, k;
+	int64_t dim1 = gen.NumRows();
+	int64_t dim2 = gen.NumCols();
+	pl = dim1 - 1;
+	pc = dim2 - 1;
+	while (pl >= 0 && pc >= 0) {
+		for (int64_t i = 0; i < dim1; i++)
+			Modulo(gen(i, pc), m, gen(i, pc));
+		coeff.SetLength(dim2);
+		k = 0;
+		while (k < dim1 && gen(k, pc) == 0) {
+			coeff[k] = 0;
+			k++;
 		}
-		// Search for the first non-zero element in the row.
-		for (k = dim1-1; (k > -1 && gen[dim1-1-k][i] == 0); k--) {}
-		//			if (gen[k][i] != 0)	break;
-		// Reduce the other generators as they are used often in what follows.
-		for (j = dim1-1; j > dim1-k-1; j--) {
-		    NTL::rem(gen[j][i], gen[j][i], m);
-		}
-		// The `else` case adds m e_i to the basis matrix.
-		if (k > -1) {
-			gcd = m;    // Will be GCD(m, gen[k][i]);
-			coeff_gcd[k] = 1;
-			gcd_tower = gcd;
-
-			// Find the other coefficients by applying the Euclidean algorithm multiple times
-			for (j = dim1-1; j >dim1-k-1; j--) {
-				if (gen[j][i] == 0)
-					coeff_gcd[j] = 0;
-				else {
-					NTL::XGCD(gcd, C, D, gcd_tower, gen[j][i]);
-					coeff_gcd[j] = D;
-					for (l = dim1-j-1-1; l > -1; l--) {
-						NTL::mul(coeff_gcd[dim1-1-l], coeff_gcd[dim1-1-l], C);
-					}
-					gcd_tower = gcd;
+		if (k < dim1) {
+			gcd = gen(k, pc);
+			coeff[k] = 1;
+			val = gcd;
+			for (int64_t i = k + 1; i < dim1; i++) {
+				if (gen(i, pc) == 0) {
+					coeff[i] = 0;
+					continue;
+				}
+				Euclide(val, gen(i, pc), C, D, gcd);
+				coeff[i] = D;
+				for (int64_t j = 0; j < i; j++)
+					coeff[j] *= C;
+				val = gcd;
+			}
+			int64_t coeffN[dim2];
+			int64_t nb = 0;
+			for (int64_t a = 0; a < dim1; a++) {
+				if (coeff[a] != 0) {
+					coeffN[nb] = a;
+					nb++;
 				}
 			}
-			// If gcd = m, then this basis (row) vector will be `m e_i`.
-			if (gcd==m) {
-				for (j = dim2-1; j > -1; j--) {
-				  if (j != i)
-					  basis[i][j] = 0;
-				  else
-					  basis[i][j] = m;
+			vl.SetLength(dim2);
+			int64_t ind = 0;
+			for (int64_t j = 0; j < dim2; j++) {
+				for (int64_t i = 0; i < nb; i++) {
+					ind = coeffN[i];
+					vl[j] = vl[j] + coeff[ind] * gen(ind, j);
 				}
+				Modulo(vl[j], m, vl[j]);
 			}
-			else {
-				// Reduce the coefficients found during the Euclidean algorithm.
-				for (j = 0; j < dim1; j++) {
-				  NTL::rem(coeff_gcd[dim1-1-j], coeff_gcd[dim1-1-j], m);
-				}
-				// We have now found all the coefficients and can compute the vector x_i.
-				for (l = dim1-1; l > -1; l--) {
-					if (coeff_gcd[l] != 0) {
-						for (j = dim2-1; j > dim1-1-i-1; j--) {
-							NTL::MulAddTo(xi[j], gen[l][j], coeff_gcd[l]);
-						}
+			for (int64_t i = 0; i < dim1; i++) {
+				if (gen(i, pc) != 0) {
+					v2 = (gen(i, pc) / gcd) * vl;
+					for (int64_t j = 0; j < dim2; j++)
+						Modulo(v2[j], m, v2[j]);
+					for (int64_t j = 0; j < dim2; j++) {
+						gen(i, j) = gen(i, j) - v2[j];
+						Modulo(gen(i, j), m, gen(i, j));
 					}
 				}
-				// Next we calculate the new vectors v_i.
-				// We first calculate the coefficients with which x_i needs to be multiplied.
-				for (j = dim1-1; j > -1; j--) {
-					NTL::div(coeff_xi[j], gen[j][i], gcd);
-					NTL::rem(coeff_xi[j], coeff_xi[j], m);
-					NTL::rem(xi[j], xi[j], m);
-				}
-				// Update the v_i
-				for (l = dim1-1; l > -1; l--) {
-					if (coeff_xi[l] != 0) {
-						for (j = dim2-1; j > dim1-1-i-1; j--) {
-							NTL::MulSubFrom(gen[l][j], coeff_xi[l], xi[j]);
-						}
-					}
-				}
-				// Set the `i`th base vector.
-				basis[i] = xi;
 			}
+			basis[pl] = vl;
 		} else {
-			for (j = dim2-1; j > -1; j--) {
-				if (j != i)
-					basis[i][j] = 0;
+			for (int64_t j1 = 0; j1 < dim2; j1++) {
+				if (j1 != pl)
+					NTL::clear(basis(pl, j1));
 				else
-					basis[i][j] = m;
+					basis(pl, j1) = m;
 			}
 		}
+		coeff.clear();
+		vl.clear();
+		pl--;
+		pc--;
 	}
-    //std::cout << basis;
-}
-
-//======================================================
-
-template<typename Int>
-void BasisConstruction<Int>::GCDTriangularBasis(IntMat &gen, Int &m) {
-	// On exit, the rows of matrix are the basis vectors.
-	long rows = gen.NumRows();
-	long cols = gen.NumCols();
-	long max_rank = rows < cols ? rows : cols;
-    long i, j, k;
-	Int q, temp;
-	// The basis will have at most max_rank vectors.
-	for (i = 0; i < max_rank; i++) {
-		// We find gcd(gen[i][i], ..., gen[rows-1][i]) using Euclid
-		// algorithm and applying transformations to the rows of gen.
-		for (j = i + 1; j < rows; j++) {
-			while (gen[j][i] != 0) {
-				gen[i].swap(gen[j]);
-				q = gen[j][i] / gen[i][i];
-				// gen[j] -= q * gen[i];
-				for (k = 0; k < cols; k++) {
-					// NTL::MulSubFrom(gen[j][k], q, gen[i][k]);
-					NTL::mul(temp, q, gen[i][k]);
-					gen[j][k] = gen[j][k] - temp;
-				}
-				for (k = 0; k < max_rank; k++) {
-			        NTL::rem(gen[j][k], gen[j][k], m);
-				}
-			}
-		}
-		if (gen[i][i] != 0) {
-			if (gen[i][i] < 0)  // change the sign.
-				for (k = 0; k < cols; k++)
-				    gen[i][k] = -gen[i][k];
-			// std::cout << "GCD UT: i, gen[i][i] = " << i << "  " << gen[i][i] << "\n";
-		}
-		else
-	        gen[i][i] = m;
-	}
-	// We remove zero vectors from the basis.
-	gen.SetDims(max_rank, cols);
-	// std::cout << "GCD UT: (rank, cols) = " << max_rank << "  " << cols << "\n";
 }
 
 //======================================================
@@ -675,8 +593,8 @@ void BasisConstruction<Int>::mDualUpperTriangular96(IntMat &basis,
 		exit(1);  return;
 	}
 	// We must have a triangular basis matrix in the first place.
-	if (!CheckTriangular(basis, basis.NumRows(), Int(0)))
-		GCDTriangularBasis(basis, m);
+	// if (!CheckTriangular(basis, basis.NumRows(), Int(0)))
+	//	  MyExit (1, "mDualUpperTriangular96:  Basis not triangular");
 	long dim = basis.NumRows();
 	if (dim != basis.NumCols()) {
 		std::cout << ":mDualUpperTriangular96: basis matrix must be square.\n";
@@ -720,18 +638,7 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96( NTL::matrix<NTL::ZZ>  &
 	
 	NTL::ZZ gcd, fac;
 	NTL::ZZ mm = m;            // Local copy of m that can be changed.
-	
 	int64_t dim;
-	
-	// We must have a triangular basis matrix in the first place.
-	//if (!CheckTriangular(basis, basis.NumRows(), 0))
-	//	GCDTriangularBasis(basis, m);
-	//long dim = basis.NumRows();
-	//if (dim != basis.NumCols()) {
-	//	std::cout << ":mDualUpperTriangular96: basis matrix must be square.\n";
-	//	return;
-	//}
-	
 	dim = basis.NumRows();
 	
 	basisDual.SetDims(dim, dim);
@@ -761,7 +668,6 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96( NTL::matrix<NTL::ZZ>  &
 			div(basisDual[i][j], basisDual[i][j], basis[j][j]);
 		}
 	}
-	
 	//std::cout << basisDual;
 }
 
@@ -796,8 +702,8 @@ void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 }
 
 template<>
-void BasisConstruction<int64_t>::mDualUpperTriangular(const NTL::matrix<int64_t> &A, NTL::matrix<int64_t> &B,
-		const long &m) {
+void BasisConstruction<int64_t>::mDualUpperTriangular(
+		const NTL::matrix<int64_t> &A, NTL::matrix<int64_t> &B, const long &m) {
 	long dim = A.NumRows();
     long i, j, k;
 	for (i = 0; i < dim; i++) {
@@ -816,8 +722,8 @@ void BasisConstruction<int64_t>::mDualUpperTriangular(const NTL::matrix<int64_t>
 
 
 template<>
-void BasisConstruction<NTL::ZZ>::mDualUpperTriangular(const NTL::matrix<NTL::ZZ> &A, NTL::matrix<NTL::ZZ> &B,
-		const NTL::ZZ &m) {
+void BasisConstruction<NTL::ZZ>::mDualUpperTriangular(
+		const NTL::matrix<NTL::ZZ> &A, NTL::matrix<NTL::ZZ> &B,	const NTL::ZZ &m) {
 	int64_t dim = A.NumRows();
 	
 	for (int64_t i = 0; i < dim; i++) {
@@ -834,6 +740,8 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular(const NTL::matrix<NTL::ZZ>
 	//std::cout << B;
 }
 
+//===================================================
+
 template<typename Int>
 void BasisConstruction<Int>::mDualBasis(IntMat &basis, IntMat &basisDual,
 		Int &m) {
@@ -847,8 +755,7 @@ template<>
 void BasisConstruction<NTL::ZZ>::mDualBasis(
 		NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDual, NTL::ZZ &m) {
 	NTL::ZZ d, fac;
-	NTL::matrix<NTL::ZZ> A;
-	
+		
 	int64_t dim = basis.NumRows();
 	if (dim != basis.NumCols()) {
 		std::cerr << "mDualBasis: the given basis matrix must be square.\n";
@@ -859,13 +766,14 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(
 	// These are values that we might use for RNGs.
 	inv(d, basisDual, basis);
 	NTL::matrix<NTL::ZZ> C = basisDual;
-	div(fac, d, m);
+	div(fac, m, d);
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = 0; j < dim; j++) {
-			div(basisDual[i][j], C[j][i], fac);
+			mul(basisDual[i][j], C[i][j], fac);
 		}
-	}	
+	}
 }
+
 //=================================================================================
 
 // IntLattice::Put buildProjection together with this one!    ****************
@@ -895,78 +803,8 @@ void BasisConstruction<Int>::projectionConstructionLLL(
 	out = IntLattice<Int, Real>(new_basis, size, in.getNormType());
 }
 
-
-/*
-
- template<typename Int>
-void BasisConstruction<Int>::CreateExampleMatrixToFile (int64_t & m, int64_t & d, IntVec & a, int64_t & no)  {
-		int64_t k = a.length();
-		
-		IntMat V;
-		V.SetDims(d,d);
-		 		 
-		for (int64_t i = 0; i < k; i++) {
-			V[i][i] = 1;
-		}
-		 
-		for (int64_t i = 0; i < k; i++) {
-			for (int64_t j = k; j < d; j++) {
-				for (int64_t l = 0; l < k; l++)
-					V[i][j] += V[i][j-l-1] * a[l];
-				V[i][j] = V[i][j] % m;
-			}
-		}
-		 
-		for (int64_t i = k; i < d; i++) {
-			V[i][i] = m;
-		}
-		//Apply LLL to ensure that M is not upper triangular anymore
-		LLLConstruction0 (V, 0.999999, DOUBLE);
-				  		  
-		//Write output file
-		std::ofstream myfile;
-		myfile.open ("output/" + std::to_string(m) + "_" + std::to_string(d) + "_" + std::to_string(no) + ".dat"); 
-		myfile << d;		  
-		for (int64_t k = 0; k < d; k++) {
-			myfile << "\n";
-			for (int64_t l = 0; l < d; l++) {
-				myfile << V[k][l];
-			  	myfile << " ";
-			}
-		}
-	  	myfile.close();		  
-   }
-
-template<typename Int>
-void BasisConstruction<Int>::CreateExampleMatrix (int64_t & m, int64_t & d, IntVec & a, IntMat & V)
-   {	
-		int64_t k = a.length();
-		
-		V.SetDims(d,d);
-		 		 
-		for (int64_t i = 0; i < k; i++) {
-			V[i][i] = 1;
-		}
-		for (int64_t i = 0; i < k; i++) {
-			for (int64_t j = k; j < d; j++) {
-				for (int64_t l = 0; l < k; l++)
-					V[i][j] += V[i][j-l-1] * a[l];
-				V[i][j] = V[i][j] % m;
-			}
-		}
-		for (int64_t i = k; i < d; i++) {
-			V[i][i] = m;
-		}
-     	//Apply LLL to ensure that M is not upper triangular anymore
-		LLLConstruction0 (V, 0.999999, DOUBLE);		 
-   }
-*/
-
-
 template class BasisConstruction<std::int64_t>;
 template class BasisConstruction<NTL::ZZ>;
-// extern template class BasisConstruction<std::int64_t> ;
-// extern template class BasisConstruction<NTL::ZZ> ;
 
 } // end namespace LatticeTester
 

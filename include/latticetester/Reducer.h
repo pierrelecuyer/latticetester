@@ -520,7 +520,7 @@ private:
 
 	// Real m_rs;
 	RealVec m_n2, m_dc2;
-	RealMat m_c0, m_c2, m_cho2, m_gramVD;   // Recall that resizing these matrices is expensive!
+	RealMat m_c0, m_c2, m_cho2, m_gramVD;   // Resizing these matrices is expensive!
 	int64_t *m_IC;     // Indices in Cholesky
 
 	RealVec m_zLR;                       // Vector of values of z_i in floating point.  ?????
