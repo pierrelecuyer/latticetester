@@ -127,6 +127,11 @@ public:
 	 * into the current object, using `copy`.
 	 */
 	Reducer<Int, Real>& operator=(const Reducer<Int, Real> &red);
+ 
+	/**
+	 * Initializes all matrices used in the following
+	 */
+    void init(int64_t maxDim);
 
 	/**
 	 * Copies `red` into the current object.
@@ -291,7 +296,7 @@ public:
 	void setIntLattice(IntLattice<Int, Real> &lat) {
 		m_lat = &lat;
 	}
-
+ 
 	/**
 	 * Returns the IntLattice object that this object is working on.
 	 * */
@@ -316,6 +321,7 @@ public:
 
 private:
 
+
 	/**
 	 * The lattice that this object is working on.
 	 */
@@ -326,6 +332,8 @@ private:
 	 * This is called by `shortestVector`.
 	 */
 	bool redBBShortVec();
+ 
+
 
 	/**
 	 * Recursive procedure that tries to find a shorter vector using BB.
@@ -544,7 +552,24 @@ Reducer<Int, Real>::Reducer(IntLattice<Int, Real> &lat) {
 	// Squared length of vectors must not overflow max(double).
 	m_lat = &lat;
 	const int64_t dim1 = m_lat->getDim();
-    m_dim = m_maxDim = dim1;
+	init(dim1);
+}
+
+//=========================================================================
+
+// Constructor.
+template<typename Int, typename Real>
+Reducer<Int, Real>::Reducer(int64_t maxDim) {
+	m_maxDim = maxDim;
+  init(maxDim);
+	// m_dim = 0;
+	//  TO DO  ....  etc.  Maybe put a method `init` to initialize.
+}
+
+// Constructor.
+template<typename Int, typename Real>
+void Reducer<Int, Real>::init(int64_t maxDim) {
+	int64_t dim1 = maxDim;
 	int64_t dim2 = dim1;
 	if (dim2 <= 2) dim2++;  // Must be at least 3.
 	m_c0.resize(dim1, dim1);
@@ -578,17 +603,9 @@ Reducer<Int, Real>::Reducer(IntLattice<Int, Real> &lat) {
 	m_cpt = 0;
 	PreRedLLLMink = false;
 	maxNodesBB = 1000000000;
+
 }
 
-//=========================================================================
-
-// Constructor.
-template<typename Int, typename Real>
-Reducer<Int, Real>::Reducer(int64_t maxDim) {
-	m_maxDim = maxDim;
-	// m_dim = 0;
-	//  TO DO  ....  etc.  Maybe put a method `init` to initialize.
-}
 
 //=========================================================================
 
@@ -677,11 +694,19 @@ inline void Reducer<Int, Real>::calculGramVD() {
 	// Retourne dans m_gramVD la matrice des produits scalaires m_lat->V[i]*m_lat->V[j].
 	// Note: m_lat->V.vecNorm ne contient que les m_lat->V[i]*m_lat->V[i].
 	const int64_t dim = m_lat->getDim();
+	Int temp; 
 	for (int64_t i = 0; i < dim; i++) {
-		for (int64_t j = i; j < dim; j++) {
-			NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+		NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+		temp = 0;
+		for (int64_t h = 0; h < dim; h++)
+			NTL::MulAddTo(temp, row1[h], row1[h]);
+		NTL::conv(m_gramVD[i][i],temp);
+		for (int64_t j = i + 1; j < dim; j++) {
 			NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
-			ProdScal<Int>(row1, row2, dim, m_gramVD[i][j]);
+			temp = 0;
+			for (int64_t h = 0; h < dim; h++)
+				NTL::MulAddTo(temp, row1[h], row2[h]);
+			NTL::conv(m_gramVD[i][j],temp);
 			m_gramVD[j][i] = m_gramVD[i][j];
 		}
 	}
@@ -772,13 +797,13 @@ bool Reducer<Int, Real>::calculCholesky(RealVec &DC2,
 	// Compute the d first lines of C0 with the primal Basis.
 	for (i = 0; i < d; i++) {
 		m_lat->updateScalL2Norm(i);
+		NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
 		for (j = i; j < dim; j++) {
 			if (j == i)
 				NTL::conv(m_c2[i][i], m_lat->getVecNorm(i));
 			else {
-				NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
 				NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
-				ProdScal<Int>(row1, row2, dim, m_c2[i][j]);
+				ProdScal<Int>(row1, row2, dim, m_c2[i][j]);				
 			}
 			for (k = 0; k < i; k++)
 				m_c2[i][j] -= C0[k][i] * m_c2[k][j];
@@ -851,11 +876,11 @@ void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool xx[]) {
 	bool modifFlag;
 
 	for (int64_t j = d; j < dim; j++) {
+		NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
 		if (i == j)
 			continue;
 		modifFlag = false;
 		{
-			NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
 			NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
 			ProdScal<Int>(row1, row2, dim, m_ns);
 		}
@@ -866,9 +891,9 @@ void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool xx[]) {
 		if (m_ns < 1000 && m_ns > -1000) {
 			m_lat->updateScalL2Norm(j);
 			{
-				NTL::matrix_row<IntMat> row1(m_lat->getBasis(), j);
-				NTL::matrix_row<IntMat> row2(m_lat->getBasis(), i);
-				ModifVect(row1, row2, -m_bs, dim);
+				NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
+				//NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+				ModifVect(row2, row1, -m_bs, dim);
 			}
 
 			// Verify that m_lat->getBasis()[j] is really shorter
@@ -877,17 +902,17 @@ void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool xx[]) {
 				ProdScal<Int>(row1, row1, dim, m_ns);
 			}
 			if (m_ns >= m_lat->getVecNorm(j)) {
-				NTL::matrix_row<IntMat> row1(m_lat->getBasis(), j);
-				NTL::matrix_row<IntMat> row2(m_lat->getBasis(), i);
-				ModifVect(row1, row2, m_bs, dim);
+				NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
+				//NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+				ModifVect(row2, row1, m_bs, dim);
 			} else {
 				modifFlag = true;
 				m_lat->setVecNorm(m_ns, j);
 			}
 		} else {
-			NTL::matrix_row<IntMat> row1(m_lat->getBasis(), j);
-			NTL::matrix_row<IntMat> row2(m_lat->getBasis(), i);
-			ModifVect(row1, row2, -m_bs, dim);
+			NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
+			//NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+			ModifVect(row2, row1, -m_bs, dim);
 			m_lat->setNegativeNorm(j);
 			modifFlag = true;
 		}
@@ -896,7 +921,7 @@ void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool xx[]) {
 			m_countDieter = 0;
 			++m_cpt;
 			if (m_lat->withDual()) {
-				NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), i);
+				//NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), i);
 				NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), j);
 				ModifVect(row1, row2, m_bs, dim);
 				m_lat->setDualNegativeNorm(i);
@@ -922,9 +947,9 @@ void Reducer<Int, Real>::pairwiseRedDual(int64_t i, bool xx[]) {
 	NTL::matrix_row<IntMat> row9(m_lat->getBasis(), i);
 	m_bv = row9;
 	for (j = 0; j < dim; j++) {
+		NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), j);
 		if (i != j) {
 			NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), i);
-			NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), j);
 			ProdScal<Int>(row1, row2, dim, m_ns);
 			// ProdScal<Int> (m_lat->getDualBasis ()[i], m_lat->getDualBasis ()[j],
 			//           dim, m_ns);
@@ -950,9 +975,9 @@ void Reducer<Int, Real>::pairwiseRedDual(int64_t i, bool xx[]) {
 			xx[i] = false;
 		m_lat->setVecNorm(m_ns, i);
 		for (j = 0; j < dim; j++) {
+			NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), j);
 			if (i != j && m_nv[j] != 0) {
 				NTL::conv(m_bs, -m_nv[j]);
-				NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), j);
 				NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), i);
 				ModifVect(row1, row2, m_bs, dim);
 				//  ModifVect (m_lat->getDualBasis ()[j], m_lat->getDualBasis ()[i],
@@ -2087,13 +2112,19 @@ bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
 
 //=========================================================================
 
-// On successful exit, the basis vectors are sorted by lengths and the norms are updated.
-// The square length of the shortest vector can be recovered in m_lMin2.
 template<typename Int, typename Real>
-bool shortestVector(IntLattice<Int, Real> &lat) {
-	NormType norm = lat-> getNorm();
-	if (norm != L2NORM) {
-		lat->setNegativeNorm();
+bool Reducer<Int, Real>::shortestVector() {
+	IntLattice<Int, Real> *lat = this->m_lat;
+  shortestVector(*lat);
+  return false;    // shortestVector (*this->getIntLattice());
+}
+
+template<typename Int, typename Real>
+bool Reducer<Int, Real>::shortestVector(IntLattice<Int, Real> &lat) {
+  m_lat = &lat;
+  NormType norm = m_lat->getNormType();
+ 	if (norm != L2NORM) {
+		m_lat->setNegativeNorm();
 	}
 	/* Find the shortest vector for the selected norm, L1 or L2.  */
 	/* The L2 norm is used for the Cholesky decomposition and BB bounds. */
@@ -2105,16 +2136,10 @@ bool shortestVector(IntLattice<Int, Real> &lat) {
 		std::cerr << "RedLattice::shortestVector: this norm is not supported";
 		exit(3);
 	}
-	lat->updateVecNorm();
-	lat->sortNoDual(0);
+	m_lat->updateVecNorm();
+	m_lat->sortNoDual(0);
 	return ok;
-}
 
-
-template<typename Int, typename Real>
-bool Reducer<Int, Real>::shortestVector() {
-	IntLattice<Int, Real> lat = this->m_lat;
-	return false;    // shortestVector (*this->getIntLattice());
 }
 
 
