@@ -125,12 +125,12 @@ public:
 	 * all vectors of the form m e_i are in the generating set.
 	 * The algorithm is explained in the \lattester{} guide.
 	 */
-	static void lowerTriangularBasis(IntMat &gen, IntMat &basis, Int &m);
+	static void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m);
 
 	/**
 	 * Similar to `lowerTriangularBasis`, except that the returned basis is upper triangular.
 	 */
-	static void upperTriangularBasis(IntMat &gen, IntMat &basis, Int &m);
+	static void upperTriangularBasis(IntMat &gen, IntMat &basis, const Int &m);
 
 	/**
 	 * This is an old implementationSame that uses a form of Gaussian elimination to
@@ -162,7 +162,7 @@ public:
 	 * scaled by the factor `m`, not necessarily triangular, and it returns in `basisDual`
 	 * the m-dual basis.
 	 */
-	static void mDualBasis(IntMat &basis, IntMat &basisDual, Int &m);
+	static void mDualBasis(const IntMat &basis, IntMat &basisDual, Int &m);
 
 	/**
 	 * Constructs a basis for the projection `proj` of the lattice `in`,
@@ -172,7 +172,7 @@ public:
 	 */
 	template<typename Real>
 	static void projectionConstructionLLL(IntLattice<Int, Real> &in,
-			IntLattice<Int, Real> &out, const Coordinates &proj);
+			IntLattice<Int, Real> &out, const Coordinates &proj, int64_t m = 1);
 	
 };
 
@@ -291,7 +291,7 @@ void BasisConstruction<Int>::upperTriangularBasis(IntMat &gen, IntMat &basis,
 
 template<typename Int>
 void BasisConstruction<Int>::upperTriangularBasis
-         (IntMat &gen, IntMat &basis, Int &m) {
+         (IntMat &gen, IntMat &basis, const Int &m) {
 	IntVec coeff_gcd, coeff_xi, xi;
 	Int gcd, gcd_tower, C, D;
 	long dim1 = gen.NumRows();
@@ -506,7 +506,7 @@ void BasisConstruction<NTL::ZZ>::upperTriangularBasis (NTL::matrix<NTL::ZZ> &gen
 
 template<typename Int>
 void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
-		Int &m) {
+		const Int &m) {
 	IntVec coeff, vl, v2;
 	Int C, D, val, gcd;
 	int64_t pc, pl, k;
@@ -743,7 +743,7 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular(
 //===================================================
 
 template<typename Int>
-void BasisConstruction<Int>::mDualBasis(IntMat &basis, IntMat &basisDual,
+void BasisConstruction<Int>::mDualBasis(const IntMat &basis, IntMat &basisDual,
 		Int &m) {
 	std::cerr << "mDualBasis is implemented only for NTL::ZZ integers.\n";
 	std::cerr << "Aborting.\n";
@@ -753,7 +753,7 @@ void BasisConstruction<Int>::mDualBasis(IntMat &basis, IntMat &basisDual,
 // The specialization for the case where `Int = ZZ`.
 template<>
 void BasisConstruction<NTL::ZZ>::mDualBasis(
-		NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDual, NTL::ZZ &m) {
+		const NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDual, NTL::ZZ &m) {
 	NTL::ZZ d, fac;
 		
 	int64_t dim = basis.NumRows();
@@ -782,9 +782,13 @@ template<typename Int>
 template<typename Real>
 void BasisConstruction<Int>::projectionConstructionLLL(
 		IntLattice<Int, Real> &in, IntLattice<Int, Real> &out,
-		const Coordinates &proj) {
+		const Coordinates &proj, int64_t m) {
 	std::size_t size = proj.size();
 	uint64_t lat_dim = in.getDim();
+	int64_t proj_dim;
+	Int n;
+	NTL::conv(n,m);
+	
 	if (size > lat_dim)
 		MyExit(1, "More projection coordinates than the dimension of `in`.");
 	IntMat new_basis, tmp(NTL::transpose(in.getBasis()));
@@ -799,9 +803,15 @@ void BasisConstruction<Int>::projectionConstructionLLL(
 		it++;
 	}
 	new_basis = NTL::transpose(new_basis);
-	LLLConstruction(new_basis);
-	out = IntLattice<Int, Real>(new_basis, size, in.getNormType());
+	
+	LLLConstruction0(new_basis);
+
+	proj_dim = static_cast<int>(size);
+	IntLattice<Int, Real> temp(new_basis, n, proj_dim);
+	out = temp;
 }
+
+
 
 template class BasisConstruction<std::int64_t>;
 template class BasisConstruction<NTL::ZZ>;
