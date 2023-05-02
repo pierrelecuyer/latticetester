@@ -156,7 +156,7 @@ public:
 	bool shortestVector(IntLattice<Int, Real> &lat);
 
 	bool shortestVector();
-
+	
 	/**
 	 * This method performs pairwise reduction sequentially on all vectors
 	 * of the basis whose indices are greater of equal to `dim >=0`.
@@ -236,7 +236,7 @@ public:
 	void redBKZ(double delta = 0.999999, int64_t blocksize = 10,
 			PrecisionType prec = DOUBLE);
 
-	void redBKZ(IntMat &basis, double delta = 0.999999,
+	void redBKZ(NTL::matrix<NTL::ZZ> & basis, double delta = 0.999999,
 			int64_t blocksize = 10, PrecisionType prec = DOUBLE);
 
 	/**
@@ -318,6 +318,7 @@ public:
 	 * exceeded, the method aborts and returns `false`.
 	 */
 	int64_t maxNodesBB = 10000000;
+
 
 private:
 
@@ -542,7 +543,6 @@ private:
 	bool m_foundZero;    // = true -> the zero vector has been handled
 
 };  // End class Reducer
-
 
 //=========================================================================
 
@@ -1227,7 +1227,28 @@ static void redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis, double delta) {
 
 
 //=========================================================================
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
+		std::int64_t blocksize, PrecisionType precision) {
+	//std::cout << "abc";
+	switch (precision) {
+			case DOUBLE:
+				NTL::BKZ_FP(basis, delta, blocksize);
+				break;
+			case QUADRUPLE:
+				NTL::BKZ_QP(basis, delta, blocksize);
+				break;
+			case XDOUBLE:
+				NTL::BKZ_XD(basis, delta, blocksize);
+				break;
+			case RR:
+				NTL::BKZ_RR(basis, delta, blocksize);
+				break;
+			default:
+				MyExit(1, "Undefined precision type for redBKZ");
+			}
 
+}
 
 // This is the general implementation, for anything else than ZZ.
 template<typename Int, typename Real>
@@ -1235,38 +1256,38 @@ void Reducer<Int, Real>::redBKZ(double delta,
 			std::int64_t blocksize, PrecisionType precision) {
     MyExit (1, "redBKZ cannot be used with int64_t integers.");
 }
-
-//=========================================================================
-
-// This is the implementation for Int = ZZ.
-template<typename Real>
-void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta,
-			std::int64_t blocksize, PrecisionType precision) {
-	  redBKZ(red.getIntLattice()->getBasis(), delta, blocksize, precision);
-		// Here we changed only the basis.
-		// The rest is not updated!!!   This should be clarified.    ***********
-	}
+//
+////=========================================================================
+//
+//// This is the implementation for Int = ZZ.
+//template<typename Real>
+//void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta,
+//			std::int64_t blocksize, PrecisionType precision) {
+//	  redBKZ(red.getIntLattice()->getBasis(), delta, blocksize, precision);
+//		// Here we changed only the basis.
+//		// The rest is not updated!!!   This should be clarified.    ***********
+//	}
 
 // The static version for Int = ZZ.
-static void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
-			std::int64_t blocksize, PrecisionType precision) {
-		switch (precision) {
-		case DOUBLE:
-			NTL::BKZ_FP(basis, delta, blocksize);
-			break;
-		case QUADRUPLE:
-			NTL::BKZ_QP(basis, delta, blocksize);
-			break;
-		case XDOUBLE:
-			NTL::BKZ_XD(basis, delta, blocksize);
-			break;
-		case RR:
-			NTL::BKZ_RR(basis, delta, blocksize);
-			break;
-		default:
-			MyExit(1, "Undefined precision type for redBKZ");
-		}
-	}
+//static void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
+//			std::int64_t blocksize, PrecisionType precision) {
+//		switch (precision) {
+//		case DOUBLE:
+//			NTL::BKZ_FP(basis, delta, blocksize);
+//			break;
+//		case QUADRUPLE:
+//			NTL::BKZ_QP(basis, delta, blocksize);
+//			break;
+//		case XDOUBLE:
+//			NTL::BKZ_XD(basis, delta, blocksize);
+//			break;
+//		case RR:
+//			NTL::BKZ_RR(basis, delta, blocksize);
+//			break;
+//		default:
+//			MyExit(1, "Undefined precision type for redBKZ");
+//		}
+//	}
 
 //=========================================================================
 
