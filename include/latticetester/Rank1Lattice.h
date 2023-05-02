@@ -152,8 +152,8 @@ Rank1Lattice<Int, Real>::Rank1Lattice (
     m_a.SetLength(maxDim);
 	Int powa(1);  m_a[0] = powa;
     for (int64_t i=1; i < maxDim; i++) {
-    	powa = (a * powa) % m;
-    	m_a[i] = powa;
+    	//powa = (a * powa) % m;
+    	m_a[i] = a * m_a[i-1] % m;
     }
     this->initProj();    // Does not initialize a basis....
   }
@@ -214,11 +214,19 @@ std::string Rank1Lattice<Int, Real>::toStringCoef ()const {
 
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::incDim () {
-      assert(this->getDim() < this->m_maxDim);
-      buildBasis (1 + this->getDim ());  // Rebuild from scratch ??   Should just Update !!!
-      this->setNegativeNorm ();
-      this->setDualNegativeNorm ();
-    }
+    //assert(this->getDim() < this->m_maxDim);
+	int64_t dim = this->getDim();
+	//this->m_maxDim++;
+	this->m_a.resize(dim + 1);
+	this->m_a[dim] = this->m_a[dim-1] * this->m_a[1] % this->m_modulo; 
+	buildBasis (1 + this->getDim ());
+	this->m_vecNorm.resize(dim+1);
+	this->m_dualvecNorm.resize(dim+1);
+	this->m_vecNorm[dim+1] = -1;
+	this->m_vecNorm[dim+1] = -1;
+    //this->setNegativeNorm ();
+    //this->setDualNegativeNorm ();
+	}
 
   //============================================================================
 
