@@ -165,6 +165,13 @@ public:
 	static void mDualBasis(const IntMat &basis, IntMat &basisDual, Int &m);
 
 	/**
+	 * Yields the matrix which only contains the dimensions given by the coordinate.
+	 * This will overwrite the matrix in 'out' and will changes its dimension. 
+	 */
+	static void projectionMatrix(IntLattice<Int, Real> &in,
+			IntMat & out, const Coordinates &proj);
+	
+	/**
 	 * Constructs a basis for the projection `proj` of the lattice `in`,
 	 * using `LLLConstruction`, and puts it in `out`. The basis is not triangular.
 	 * This will overwrite the basis of the lattice given in `out` and will
@@ -172,7 +179,19 @@ public:
 	 */
 	template<typename Real>
 	static void projectionConstructionLLL(IntLattice<Int, Real> &in,
-			IntLattice<Int, Real> &out, const Coordinates &proj, int64_t m = 1);
+			IntLattice<Int, Real> &out, const Coordinates &proj, double delta = 0.5);	
+	
+	/**
+	 * Constructs a basis for the projection `proj` of the lattice `in`,
+	 * using `upperTriangularBasis`, and puts it in `out`. The basis is upp triangular.
+	 * This will overwrite the basis of the lattice given in `out` and will
+	 * change its dimension. It does not compute the dual.
+	 */
+	template<typename Real>
+	static void projectionConstructionTri(IntLattice<Int, Real> &in,
+			IntLattice<Int, Real> &out, const Coordinates &proj);	
+
+
 	
 };
 
@@ -299,16 +318,17 @@ void BasisConstruction<Int>::upperTriangularBasis
 	long i, j, k, l;
 
 	//Define dimensions of vectors
-	coeff_gcd.SetLength(dim2);
-	coeff_xi.SetLength(dim2);
+	coeff_gcd.SetLength(dim1);
+	coeff_xi.SetLength(dim1);
 	xi.SetLength(dim2);
 	for (i = 0; i < dim2; i++) {
 		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
 		// xi.clear();   // This call causes a segmentation fault in the int64_t case!
 		// coeff_gcd.clear();
-		for (j = 0; j < dim2; j++) {
-		    xi[j] = coeff_gcd[j] = 0;
-		}
+		for (j = 0; j < dim1; j++)
+		    coeff_gcd[j] = 0;
+		for (j = 0; j < dim2; j++) 
+			xi[j] = 0;
 		// Search for the first non-zero element in the row.
 		for (k = 0; (k < dim1 && gen[k][i] == 0); k++) {}
 		//			if (gen[k][i] != 0)	break;
@@ -337,11 +357,11 @@ void BasisConstruction<Int>::upperTriangularBasis
 			}
 			// If gcd = m, then this basis (row) vector will be `m e_i`.
 			if (gcd==m) {
-				for (j = 0; j < dim2; j++) {
+				for (j = 0; j < dim1; j++) {
 				  if (j != i)
-					  basis[i][j] = 0;
+					  basis[j][i] = 0;
 				  else
-				  	basis[i][j] = m;
+					  basis[j][i] = m;
 				}
 			}
 			else {
@@ -350,6 +370,7 @@ void BasisConstruction<Int>::upperTriangularBasis
 				  NTL::rem(coeff_gcd[j], coeff_gcd[j], m);
 				}
 				// We have now found all the coefficients and can compute the vector x_i.
+				// Seems to be correct now
 				for (k = 0; k < dim1; k++) {
 					if (coeff_gcd[k] != 0) {
 						for (j = i; j < dim2; j++) {
@@ -362,8 +383,9 @@ void BasisConstruction<Int>::upperTriangularBasis
 				for (j = 0; j < dim1; j++) {
 					NTL::div(coeff_xi[j], gen[j][i], gcd);
 					NTL::rem(coeff_xi[j], coeff_xi[j], m);
-					NTL::rem(xi[j], xi[j], m);
 				}
+				for (j = 0; j < dim2; j++)
+					NTL::rem(xi[j], xi[j], m);
 				// Update the v_i
 				for (k = 0; k < dim1; k++) {
 					if (coeff_xi[k] != 0) {
@@ -373,18 +395,20 @@ void BasisConstruction<Int>::upperTriangularBasis
 					}
 				}
 				// Set the `i`th base vector.
-				basis[i] = xi;
+				for (j = 0; j < dim2; j++) {
+					basis[i][j] = xi[j];
+				}
 			}
 		} else {
-			for (j = 0; j < dim2; j++) {
+			for (j = 0; j < dim1; j++) {
 				if (j != i)
-					basis[i][j] = 0;
+					basis[j][i] = 0;
 				else
-					basis[i][j] = m;
+					basis[j][i] = m;
 			}
 		}
 	}
-    // std::cout << basis;
+    //std::cout << basis;
 }
 
 
@@ -776,40 +800,79 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(
 
 //=================================================================================
 
-// IntLattice::Put buildProjection together with this one!    ****************
+template<>
+void BasisConstruction<NTL::ZZ>::projectionMatrix(IntLattice<Int, Real> &in,
+		IntMat & out, const Coordinates &proj) {
+	
+		std::size_t size = proj.size();
+		uint64_t lat_dim = in.getDim();
+		
+		if (size > lat_dim)
+			MyExit(1, "More projection coordinates than the dimension of `in`.");
+		IntMat new_basis, tmp;
+		tmp = in.getBasis();
+		int c = in.getBasis().NumCols();
+		new_basis.SetDims(c,size);
+	
+		auto it = proj.cbegin();
+		
+		for (std::size_t i = 0; i < size; i++) {
+			if (*it <= lat_dim) {
+				for (int j = 0; j < c; j++) {
+					new_basis[j][i] = tmp[j][*it];
+				}
+			}
+			else
+				MyExit(1, "A projection coordinate exceeds the dimension of the current basis.");
+			it++;
+		}
+		
+		out = new_basis;
+
+};
+
 
 template<typename Int>
 template<typename Real>
 void BasisConstruction<Int>::projectionConstructionLLL(
 		IntLattice<Int, Real> &in, IntLattice<Int, Real> &out,
-		const Coordinates &proj, int64_t m) {
-	std::size_t size = proj.size();
-	uint64_t lat_dim = in.getDim();
-	int64_t proj_dim;
-	Int n;
-	NTL::conv(n,m);
+		const Coordinates &proj, double delta) {
 	
-	if (size > lat_dim)
-		MyExit(1, "More projection coordinates than the dimension of `in`.");
-	IntMat new_basis, tmp(NTL::transpose(in.getBasis()));
-	new_basis.SetDims(size, tmp.NumRows());
-	tmp = NTL::transpose(tmp);
-	auto it = proj.cbegin();
-	for (std::size_t i = 0; i < size; i++) {
-		if (*it <= lat_dim)
-			new_basis[i] = tmp[*it];
-		else
-			MyExit(1, "A projection coordinate exceeds the dimension of the current basis.");
-		it++;
-	}
-	new_basis = NTL::transpose(new_basis);
+	IntMat new_basis;
+	projectionMatrix(in, new_basis, proj);	
+			
+	LLLConstruction0(new_basis, delta);
 	
-	LLLConstruction0(new_basis);
-
-	proj_dim = static_cast<int>(size);
-	IntLattice<Int, Real> temp(new_basis, n, proj_dim);
+	IntLattice<Int, Real> temp(new_basis, in.getModulo(), static_cast<int>(proj.size()));
 	out = temp;
 }
+
+template<typename Int>
+template<typename Real>
+void BasisConstruction<Int>::projectionConstructionTri(
+		IntLattice<Int, Real> &in, IntLattice<Int, Real> &out,
+		const Coordinates &proj) {
+	
+	IntMat old_basis, upp_basis, new_basis;
+	projectionMatrix(in, old_basis, proj);	
+		
+	upp_basis.SetDims(old_basis.NumRows(),old_basis.NumCols());
+	
+	upperTriangularBasis(old_basis, upp_basis, in.getModulo());	
+	
+	new_basis.SetDims(old_basis.NumCols(),old_basis.NumCols());
+	
+	for (int i = 0; i < old_basis.NumCols(); i++) {
+		for (int j = 0; j < old_basis.NumCols(); j++)
+			new_basis[i][j] = upp_basis[i][j];
+	}
+		
+	//LLLConstruction0(new_basis, delta);
+	
+	IntLattice<Int, Real> temp(new_basis, in.getModulo(), static_cast<int>(proj.size()));
+	out = temp;
+}
+
 
 
 
