@@ -47,48 +47,52 @@ using namespace LatticeTester;
 int main() {
   //! Reading a matrix to use the normalizer class
   int64_t min_dim = 0, max_dim = 10;
-  ParamReader<Int, Real> reader("./44matrixEx.dat");
-  reader.getLines();
-  IntMat matrix(max_dim,max_dim);
-  uint64_t ln = 0;
-  reader.readBMat(matrix, ln, 0, max_dim);
-  Int m;
-  determinant(m, matrix);
-  int64_t n;
-  NTL::conv(n,m);
-  IntLattice<Int, Real> lat(matrix, m, max_dim);   // New IntLattice.
+  Int m(1021);     // Modulus m = 1021
+  Int a; 
+  a = m /5;
+  long dim;
+  dim = max_dim;
+  //Build a Korobov lattice
+  Rank1Lattice<Int, double> *lat; 
+  lat = new Rank1Lattice<Int, Real>(m, a, dim);
+  lat->buildBasis(dim);    
+
+  IntLattice<Int, Real> *proj; // Another IntLattice to store projections
+  
   double merit1 = 1.0, merit2 = 1.0;
 
   // The variables specific to the construction of a figure of merit
    WeightsUniform weights(1.0); // This just puts a weight of 1 to everything
    BasisConstruction<Int> constructor; // Computes projections basis
-   IntLattice<Int, Real> proj(m, max_dim);    // Another IntLattice to store projections
 
   // Creates an iterator over a set of projections.
    CoordinateSets::FromRanges coord(min_dim+1, max_dim, min_dim, max_dim-1);
    
    Reducer<Int, Real> *red = new Reducer<Int,Real>(max_dim);
-   //Reducer<Int, Real> red(max_dim);
    
    
   // Loop over the selected set of projections.
   for(auto it = coord.begin(); it != coord.end(); it++){
     // Computing a basis for the projection, using LLL.     
-    constructor.projectionConstructionLLL(lat, proj, *it, n);
+
+	proj = new IntLattice<Int, Real> (m, max_dim); 
+	  
+	constructor.projectionConstructionLLL(*lat, *proj, *it);
     
     //! Computing the shortest vector in the lattice spanned by matrix
-    proj.updateVecNorm();
-    proj.sort(0);
-    //red.redBKZ(proj->getBasis());
+    proj->updateVecNorm();
+    proj->sort(0);
+    
+    red->redBKZ(proj->getBasis());
   
 //    std::string ch("cholesky");
 //    red.shortestVector(L2NORM,ch);
-    red->shortestVector(proj);
+    red->shortestVector(*proj);
     double shortest = NTL::conv<double>(red->getMinLength());
 
     // Instantiating the normalizers
     // The prefered way of doing this is described in Normalizer documentation
-    double log_density=(double)(-log(abs(NTL::determinant(proj.getBasis()))));
+    double log_density=(double)(-log(abs(NTL::determinant(proj->getBasis()))));
     Normalizer* norma = new NormaBestLat(log_density, max_dim);
 
     // Computing the figure of merit for this projection
