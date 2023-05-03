@@ -807,15 +807,12 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(
 		std::cerr << "mDualBasis: the given basis matrix must be square.\n";
 		exit(1);
 	}
-	// Here I have a concern:  when m and the dimension are large, the determinant d
-	// with be huge!!!  This may cause a problem.  Try for example m near 2^{300} and dim=40.
-	// These are values that we might use for RNGs.
 	inv(d, basisDual, basis);
 	NTL::matrix<NTL::ZZ> C = basisDual;
-	div(fac, m, d);
+	div(fac, d, m);
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = 0; j < dim; j++) {
-			mul(basisDual[i][j], C[i][j], fac);
+			div(basisDual[j][i], C[i][j], fac);
 		}
 	}
 }
