@@ -99,7 +99,6 @@ int main() {
 	// copy(basis3, basis2);
 	BasisConstruction<Int>::mDualBasis(basis3, basisdual, m);
 	std::cout << "m-dual basis by general method: \n" << basisdual << "\n";
-	std::cout << "The latter is WRONG *** \n\n";
 
 	Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
 	red->shortestVector();
