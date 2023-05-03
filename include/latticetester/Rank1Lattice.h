@@ -213,11 +213,11 @@ std::string Rank1Lattice<Int, Real>::toStringCoef ()const {
   //============================================================================
 
 template<typename Int, typename Real>
-void Rank1Lattice<Int, Real>::incDim () {    
-	assert(1 + this->getDim() <= this->m_maxDim);
-    buildBasis (1 + this->getDim ());
-    this->setNegativeNorm ();
-    this->setDualNegativeNorm ();
+void Rank1Lattice<Int, Real>::incDim () {
+    	assert(1 + this->getDim() <= this->m_maxDim);
+    	buildBasis (1 + this->getDim ());
+    	this->setNegativeNorm ();
+    	this->setDualNegativeNorm ();
 	}
 
   //============================================================================
