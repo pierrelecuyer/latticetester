@@ -316,7 +316,7 @@ void BasisConstruction<Int>::upperTriangularBasis
 	long dim1 = gen.NumRows();
 	long dim2 = gen.NumCols();
 	long i, j, k, l;
-
+	
 	//Define dimensions of vectors
 	coeff_gcd.SetLength(dim1);
 	coeff_xi.SetLength(dim1);
@@ -325,10 +325,12 @@ void BasisConstruction<Int>::upperTriangularBasis
 		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
 		// xi.clear();   // This call causes a segmentation fault in the int64_t case!
 		// coeff_gcd.clear();
-		for (j = 0; j < dim1; j++)
+		for (j = 0; j < dim1; j++) {
 		    coeff_gcd[j] = 0;
-		for (j = 0; j < dim2; j++) 
-			xi[j] = 0;
+		}
+		for (j = 0; j < dim2; j++) {
+		    xi[j] = 0;
+		}
 		// Search for the first non-zero element in the row.
 		for (k = 0; (k < dim1 && gen[k][i] == 0); k++) {}
 		//			if (gen[k][i] != 0)	break;
@@ -357,11 +359,11 @@ void BasisConstruction<Int>::upperTriangularBasis
 			}
 			// If gcd = m, then this basis (row) vector will be `m e_i`.
 			if (gcd==m) {
-				for (j = 0; j < dim1; j++) {
+				for (j = 0; j < dim2; j++) {
 				  if (j != i)
-					  basis[j][i] = 0;
+					  basis[i][j] = 0;
 				  else
-					  basis[j][i] = m;
+				  	basis[i][j] = m;
 				}
 			}
 			else {
@@ -370,7 +372,6 @@ void BasisConstruction<Int>::upperTriangularBasis
 				  NTL::rem(coeff_gcd[j], coeff_gcd[j], m);
 				}
 				// We have now found all the coefficients and can compute the vector x_i.
-				// Seems to be correct now
 				for (k = 0; k < dim1; k++) {
 					if (coeff_gcd[k] != 0) {
 						for (j = i; j < dim2; j++) {
@@ -384,7 +385,7 @@ void BasisConstruction<Int>::upperTriangularBasis
 					NTL::div(coeff_xi[j], gen[j][i], gcd);
 					NTL::rem(coeff_xi[j], coeff_xi[j], m);
 				}
-				for (j = 0; j < dim2; j++)
+				for (j = 0; j < dim2; j++) 
 					NTL::rem(xi[j], xi[j], m);
 				// Update the v_i
 				for (k = 0; k < dim1; k++) {
@@ -395,16 +396,14 @@ void BasisConstruction<Int>::upperTriangularBasis
 					}
 				}
 				// Set the `i`th base vector.
-				for (j = 0; j < dim2; j++) {
-					basis[i][j] = xi[j];
-				}
+				basis[i] = xi;
 			}
 		} else {
-			for (j = 0; j < dim1; j++) {
+			for (j = 0; j < dim2; j++) {
 				if (j != i)
-					basis[j][i] = 0;
+					basis[i][j] = 0;
 				else
-					basis[j][i] = m;
+					basis[i][j] = m;
 			}
 		}
 	}
@@ -857,9 +856,9 @@ void BasisConstruction<Int>::projectionConstructionTri(
 	projectionMatrix(in, old_basis, proj);	
 		
 	upp_basis.SetDims(old_basis.NumRows(),old_basis.NumCols());
-	
+		
 	upperTriangularBasis(old_basis, upp_basis, in.getModulo());	
-	
+		
 	new_basis.SetDims(old_basis.NumCols(),old_basis.NumCols());
 	
 	for (int i = 0; i < old_basis.NumCols(); i++) {
