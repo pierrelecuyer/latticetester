@@ -156,7 +156,7 @@ public:
 	bool shortestVector(IntLattice<Int, Real> &lat);
 
 	bool shortestVector();
-
+	
 	/**
 	 * This method performs pairwise reduction sequentially on all vectors
 	 * of the basis whose indices are greater of equal to `dim >=0`.
@@ -210,8 +210,11 @@ public:
 	 */
 	void redLLLNTL(double delta = 0.999999, PrecisionType precision = DOUBLE);
 
-	static void redLLLNTL(IntMat &basis, double delta = 0.999999,
+	void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta = 0.999999,
 			PrecisionType precision = DOUBLE);
+	
+	void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
+			PrecisionType precision);
 
 	/**
 	 * This implements an exact algorithm to perform the original LLL reduction.
@@ -236,8 +239,9 @@ public:
 	void redBKZ(double delta = 0.999999, int64_t blocksize = 10,
 			PrecisionType prec = DOUBLE);
 
-	void redBKZ(IntMat &basis, double delta = 0.999999,
+	void redBKZ(NTL::matrix<NTL::ZZ> & basis, double delta = 0.999999,
 			int64_t blocksize = 10, PrecisionType prec = DOUBLE);
+	
 
 	/**
 	 * Reduces the current basis to a Minkowski-reduced basis with respect
@@ -318,6 +322,7 @@ public:
 	 * exceeded, the method aborts and returns `false`.
 	 */
 	int64_t maxNodesBB = 10000000;
+
 
 private:
 
@@ -542,7 +547,6 @@ private:
 	bool m_foundZero;    // = true -> the zero vector has been handled
 
 };  // End class Reducer
-
 
 //=========================================================================
 
@@ -1116,71 +1120,72 @@ void Reducer<Int, Real>::reductionFaible(int64_t i, int64_t j)
  * Essentially, we just convert the basis matrix int64 -> ZZ -> int64.  *****
  * There may be faster functions in NTL to do that.
  */
-template<typename Int, typename Real>
-void redLLLNTL(Reducer<int64_t, Real> &red, double delta,
-		   PrecisionType precision) {
-    IntLattice<NTL::ZZ, Real> *lattmp = 0;
-    NTL::matrix<int64_t> basis = red.getIntLattice()->getBasis();
-		// We copy the int64 basis into the ZZ basis B, for all the dimensions!
-		NTL::mat_ZZ B;
-		B.SetDims(basis.NumRows(), basis.NumCols());
-		for (int64_t i = 0; i < basis.NumRows(); i++) {
-			for (int64_t j = 0; j < basis.NumCols(); j++) {
-				B[i][j] = basis[i][j];
-			}
-		}
-		// Then we use B to create a new IntLattice in ZZ, in dim dimensions.
-		lattmp = new IntLattice<NTL::ZZ, Real>(B, red.dim,
-			red.getIntLattice()->getNormType());
-		B.kill();
-
-		switch (precision) {
-		case DOUBLE:
-			LLL_FP(lattmp->getBasis(), delta);
-			break;
-		case QUADRUPLE:
-			LLL_QP(lattmp->getBasis(), delta);
-			break;
-		case XDOUBLE:
-			LLL_XD(lattmp->getBasis(), delta);
-			break;
-		case RR:
-			LLL_RR(lattmp->getBasis(), delta);
-			break;
-		default:
-			MyExit(1, "Undefined PrecisionType for LLL");
-		}
-		// After the reduction, we replace the old basis for all the dimensions
-		// by the reduced one, converted to int64_t.    Is this correct?  *****
-		// Maybe not, because row transformations would have been applied only to
-		// the first dim dimensions.                                  **************
-		// Perhaps we should remove this parameter dim from the function.
-		// Also in BKZ.
-		for (int64_t i = 0; i < basis.NumRows(); i++) {
-			for (int64_t j = 0; j < basis.NumCols(); j++) {
-				red.getIntLattice()->getBasis()[i][j] = NTL::trunc_long(
-						lattmp->getBasis()[i][j], 63);
-				red.getIntLattice()->getBasis()[i][j] *= NTL::sign(
-						lattmp->getBasis()[i][j]);
-			}
-		}
-		red.getIntLattice()->updateVecNorm();
-		delete lattmp;
-	}
+//template<typename Int, typename Real>
+//void redLLLNTL(Reducer<int64_t, Real> &red, double delta,
+//		   PrecisionType precision) {
+//    IntLattice<NTL::ZZ, Real> *lattmp = 0;
+//    NTL::matrix<int64_t> basis = red.getIntLattice()->getBasis();
+//		// We copy the int64 basis into the ZZ basis B, for all the dimensions!
+//		NTL::mat_ZZ B;
+//		B.SetDims(basis.NumRows(), basis.NumCols());
+//		for (int64_t i = 0; i < basis.NumRows(); i++) {
+//			for (int64_t j = 0; j < basis.NumCols(); j++) {
+//				B[i][j] = basis[i][j];
+//			}
+//		}
+//		// Then we use B to create a new IntLattice in ZZ, in dim dimensions.
+//		lattmp = new IntLattice<NTL::ZZ, Real>(B, red.dim,
+//			red.getIntLattice()->getNormType());
+//		B.kill();
+//
+//		switch (precision) {
+//		case DOUBLE:
+//			LLL_FP(lattmp->getBasis(), delta);
+//			break;
+//		case QUADRUPLE:
+//			LLL_QP(lattmp->getBasis(), delta);
+//			break;
+//		case XDOUBLE:
+//			LLL_XD(lattmp->getBasis(), delta);
+//			break;
+//		case RR:
+//			LLL_RR(lattmp->getBasis(), delta);
+//			break;
+//		default:
+//			MyExit(1, "Undefined PrecisionType for LLL");
+//		}
+//		// After the reduction, we replace the old basis for all the dimensions
+//		// by the reduced one, converted to int64_t.    Is this correct?  *****
+//		// Maybe not, because row transformations would have been applied only to
+//		// the first dim dimensions.                                  **************
+//		// Perhaps we should remove this parameter dim from the function.
+//		// Also in BKZ.
+//		for (int64_t i = 0; i < basis.NumRows(); i++) {
+//			for (int64_t j = 0; j < basis.NumCols(); j++) {
+//				red.getIntLattice()->getBasis()[i][j] = NTL::trunc_long(
+//						lattmp->getBasis()[i][j], 63);
+//				red.getIntLattice()->getBasis()[i][j] *= NTL::sign(
+//						lattmp->getBasis()[i][j]);
+//			}
+//		}
+//		red.getIntLattice()->updateVecNorm();
+//		delete lattmp;
+//	}
 
 //=========================================================================
 
 // This is the implementation for Int = ZZ.
 // I have removed the parameter dim from these functions!
-template<typename Real>
-void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
 			PrecisionType precision) {
     redLLLNTL (red.getIntLattice()->getBasis(), delta, precision);
     }
 
 
 // This is the static implementation for Int = ZZ.
-static void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
 			  PrecisionType precision) {
 	    switch (precision) {
 			case DOUBLE:
@@ -1227,7 +1232,27 @@ static void redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis, double delta) {
 
 
 //=========================================================================
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
+		std::int64_t blocksize, PrecisionType precision) {
+	switch (precision) {
+			case DOUBLE:
+				NTL::BKZ_FP(basis, delta, blocksize);
+				break;
+			case QUADRUPLE:
+				NTL::BKZ_QP(basis, delta, blocksize);
+				break;
+			case XDOUBLE:
+				NTL::BKZ_XD(basis, delta, blocksize);
+				break;
+			case RR:
+				NTL::BKZ_RR(basis, delta, blocksize);
+				break;
+			default:
+				MyExit(1, "Undefined precision type for redBKZ");
+			}
 
+}
 
 // This is the general implementation, for anything else than ZZ.
 template<typename Int, typename Real>
@@ -1235,38 +1260,38 @@ void Reducer<Int, Real>::redBKZ(double delta,
 			std::int64_t blocksize, PrecisionType precision) {
     MyExit (1, "redBKZ cannot be used with int64_t integers.");
 }
-
-//=========================================================================
-
-// This is the implementation for Int = ZZ.
-template<typename Real>
-void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta,
-			std::int64_t blocksize, PrecisionType precision) {
-	  redBKZ(red.getIntLattice()->getBasis(), delta, blocksize, precision);
-		// Here we changed only the basis.
-		// The rest is not updated!!!   This should be clarified.    ***********
-	}
+//
+////=========================================================================
+//
+//// This is the implementation for Int = ZZ.
+//template<typename Real>
+//void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta,
+//			std::int64_t blocksize, PrecisionType precision) {
+//	  redBKZ(red.getIntLattice()->getBasis(), delta, blocksize, precision);
+//		// Here we changed only the basis.
+//		// The rest is not updated!!!   This should be clarified.    ***********
+//	}
 
 // The static version for Int = ZZ.
-static void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
-			std::int64_t blocksize, PrecisionType precision) {
-		switch (precision) {
-		case DOUBLE:
-			NTL::BKZ_FP(basis, delta, blocksize);
-			break;
-		case QUADRUPLE:
-			NTL::BKZ_QP(basis, delta, blocksize);
-			break;
-		case XDOUBLE:
-			NTL::BKZ_XD(basis, delta, blocksize);
-			break;
-		case RR:
-			NTL::BKZ_RR(basis, delta, blocksize);
-			break;
-		default:
-			MyExit(1, "Undefined precision type for redBKZ");
-		}
-	}
+//static void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
+//			std::int64_t blocksize, PrecisionType precision) {
+//		switch (precision) {
+//		case DOUBLE:
+//			NTL::BKZ_FP(basis, delta, blocksize);
+//			break;
+//		case QUADRUPLE:
+//			NTL::BKZ_QP(basis, delta, blocksize);
+//			break;
+//		case XDOUBLE:
+//			NTL::BKZ_XD(basis, delta, blocksize);
+//			break;
+//		case RR:
+//			NTL::BKZ_RR(basis, delta, blocksize);
+//			break;
+//		default:
+//			MyExit(1, "Undefined precision type for redBKZ");
+//		}
+//	}
 
 //=========================================================================
 
