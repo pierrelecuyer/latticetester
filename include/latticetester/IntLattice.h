@@ -457,7 +457,7 @@ protected:
 	/**
 	 * The primal basis of the current projection.
 	 */
-	IntMat m_basisProj;
+	//IntMat m_basisProj;
 
 	/**
 	 * The m-dual basis of the current projection.
@@ -470,7 +470,7 @@ protected:
 	 * This should not be called directly by the user.
 	 * It is called by the constructors and the copy method.
 	 */
-	void initProj();
+	//void initProj();
 
 };
 
@@ -585,21 +585,21 @@ void IntLattice<Int, Real>::init() {
 
 //===========================================================================
 
-template<typename Int, typename Real>
-void IntLattice<Int, Real>::initProj() {
-	// Reserves space for the projections in up to the dimension dim of the full lattice.
-	int64_t dim = m_dim;
-	this->setNegativeNorm();
-	this->m_basisProj.resize(dim, dim);   // Basis of current projection.
-	if (this->m_withDual) {
-		this->m_dualbasisProj.resize(dim, dim);
-		// double temp;   // Used only for m_lgVolDual2.
-		// NTL::conv (temp, this->m_modulo);
-		// m_lgVolDual2 = new double[dim+1];
-		// m_lgm2 = 2.0 * Lg (temp);
-		// m_lgVolDual2[1] = m_lgm2;
-	}
-}
+//template<typename Int, typename Real>
+//void IntLattice<Int, Real>::initProj() {
+//	// Reserves space for the projections in up to the dimension dim of the full lattice.
+//	int64_t dim = m_dim;
+//	this->setNegativeNorm();
+//	this->m_basisProj.resize(dim, dim);   // Basis of current projection.
+//	if (this->m_withDual) {
+//		this->m_dualbasisProj.resize(dim, dim);
+//		// double temp;   // Used only for m_lgVolDual2.
+//		// NTL::conv (temp, this->m_modulo);
+//		// m_lgVolDual2 = new double[dim+1];
+//		// m_lgm2 = 2.0 * Lg (temp);
+//		// m_lgVolDual2[1] = m_lgm2;
+//	}
+//}
 
 //===========================================================================
 
