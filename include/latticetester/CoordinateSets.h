@@ -605,7 +605,7 @@ namespace LatticeTester {
            * Constructor for an iterator at the beginning of the list of sets
            * that `seq` contains.
            */
-          explicit const_iterator(const AddCoordinate& seq : m_seq(&seq) {
+          explicit const_iterator(const AddCoordinate& seq) : m_seq(&seq) {
               this->underlying = m_seq->base().begin();
               updateValue();
             }
