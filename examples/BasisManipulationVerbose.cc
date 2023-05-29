@@ -112,16 +112,20 @@ int main() {
 	std::cout << " The shortest vector length:\n";
 	std::cout << red->getMinLength() << std::endl;
 
-    Coordinates proj = {0, 2, 4};
+    Coordinates proj;
+    proj.insert(0);
+    proj.insert(2);
+    proj.insert(4);
     std::cout << "Selected projection = " << proj << "\n";
-	projectionConstructionLLL (basis1, basis2, proj);
+    BasisConstruction<Int>::projectionConstructionLLL (basis1, basis2, proj, m);
     std::cout << "Basis for projection with LLL: \n" << basis2 << "\n";
 
-	projectionConstructionUpperTri (basis1, basis2, proj, m, basis3);
+    BasisConstruction<Int>::projectionConstructionUpperTri (basis1, basis2, proj, m, basis3);
     std::cout << "Basis for projection with upper-triangular: \n" << basis2 << "\n";
-
-    IntLattice projLat = IntLattice(basis2, m, 3);
-	red->shortestVector(projLat);
+    
+    IntLattice<Int, Real> *projLat; // Another IntLattice to store projections
+    projLat = new IntLattice<Int,Real>(basis2, m, 3);
+    red->shortestVector(*projLat);
 	std::cout << " The shortest vector length for the projection over coord. {0, 2, 4}:\n";
 	std::cout << red->getMinLength() << std::endl;
 
