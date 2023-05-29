@@ -140,7 +140,7 @@ Rank1Lattice<Int, Real>::Rank1Lattice (
          const Int & m, const IntVec & aa, int64_t maxDim, bool withDual, NormType norm):
          IntLatticeExt<Int, Real> (m, maxDim, withDual, norm) {
     this->m_a = aa;
-    this->initProj();
+    //this->initProj();
   }
 
 //============================================================================
@@ -155,7 +155,7 @@ Rank1Lattice<Int, Real>::Rank1Lattice (
     	//powa = (a * powa) % m;
     	m_a[i] = a * m_a[i-1] % m;
     }
-    this->initProj();    // Does not initialize a basis....
+    //this->initProj();    // Does not initialize a basis....
   }
 
 //============================================================================
@@ -165,6 +165,7 @@ Rank1Lattice<Int, Real>::~Rank1Lattice() {
       this->m_a.kill ();
       // ~(this->m_a);
     }
+
 
   //============================================================================
 
@@ -186,7 +187,7 @@ Rank1Lattice<Int, Real> & Rank1Lattice<Int, Real>::operator= (
       if (this == &lat)
          return *this;
       this->copy (lat);
-      this->initProj();
+      //this->initProj();
       this->m_a = lat.m_a;
       return *this;
     }
@@ -199,7 +200,7 @@ Rank1Lattice<Int, Real>::Rank1Lattice (
       IntLatticeExt<Int, Real> (
           lat.m_modulo, lat.getDim (), lat.m_withDual, lat.getNormType ()) {
     // MyExit (1, "Rank1Lattice:: constructor is incomplete" );
-    this->initProj();
+    //this->initProj();
     this->m_a = lat.m_a;
   }
 
