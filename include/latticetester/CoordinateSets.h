@@ -26,27 +26,31 @@
 namespace LatticeTester {
 
   /**
-   * A namespace containing different implementations of sets of coordinates.
+   * The classes `FromRange`, `SubSets`, and `AddCoordinate` are implemented here.
    *
-   * These can be used to specify a set of projections of lattices or point sets.
+   * `CoordinateSets` (below) is a namespace that contains different implementations
+   * of sets of coordinates.
+   * Such sets can be used to specify a set of projections of lattices or point sets.
    * The classes in this namespace are iterable but are not containers, so they
    * require very little storage. They virtually contain objects of type
    * LatticeTester::Coordinates.
    *
    * \code
    * class CoordinateSets {
+   *
+   *   // An iterator over a set of subsets of coordinates.
    *   class const_iterator: public std::iterator<std::forward_iterator_tag,
    *     const Coordinates> {
    *     public:
    *       struct end_tag {};
    *
-   *       // Constructor that sets the iterator at the beginning
+   *       // Constructor that sets the iterator to the beginning
    *       explicit const_iterator(const CoordinateSets& seq):
    *         m_seq(&seq), m_atEnd(false){
    *           resetToOrder (m_seq->ranges().begin());
    *       }
    *
-   *       // Constructor that sets the iterator at the end
+   *       // Constructor that sets the iterator to the end
    *       const_iterator(const FromRanges& seq, end_tag):
    *         m_seq(&seq), m_atEnd(true) {}
    *
@@ -95,16 +99,16 @@ namespace LatticeTester {
    *       const_iterator operator++(int);
    *
    *     private:
-   *       // Maybe this is not that usefull
+   *       // Maybe this is not that useful
    *       void resetToOrder (const RangeMap::const_iterator& it);
    *
    *       // This is the object this iterator iterates over.
    *       const CoordinateSets* m_seq;
    *
-   *       // Maybe this is not usefull
+   *       // Maybe this is not useful.
    *       bool m_atEnd;
    *
-   *       // The set of values the iterator is at
+   *       // The set of values the iterator is at.
    *       Coordinates m_value;
    *   };
    *
@@ -130,7 +134,7 @@ namespace LatticeTester {
      * The intended usage of this class is to generate subsets of different 
      * orders for a single interval.
      * 
-     * This class keeps a map of intervals indiced with the order that will be
+     * This class keeps a map of intervals indexed with the order that will be
      * used to generate subsets from them. This means that this class only keeps
      * one interval for each order.
      * 
@@ -211,9 +215,9 @@ namespace LatticeTester {
          * object of this class, it is possible to cycle through the element it 
          * contains with the increment (`++`) operator.
          */
-        class const_iterator : public std::iterator<std::forward_iterator_tag,
-        const Coordinates>
-      {
+        class const_iterator :
+        	public std::iterator<std::forward_iterator_tag, const Coordinates> {
+
         public:
           struct end_tag {};
 
@@ -349,6 +353,8 @@ namespace LatticeTester {
 
     }; // End class FromRanges
 
+    //==========================================================================
+
     /**
      * This class implements a `CoordinateSets` object that will build all the subsets
      * of a `Coordinates` object that are of a cardinality in a certain range.
@@ -388,14 +394,15 @@ namespace LatticeTester {
          * */
         Coordinates::size_type maxOrder() const { return m_maxOrder; }
 
+
         /**
-         * An iterator class used internaly by the `Subsets` class. Given an
+         * An iterator class used internally by the `Subsets` class. Given an
          * object of this class, it is possible to cycle through the element it 
          * contains with the increment (`++`) operator.
          * */
-        class const_iterator : public std::iterator<std::forward_iterator_tag,
-        const Coordinates>
-      {
+        class const_iterator :
+        	public std::iterator<std::forward_iterator_tag, const Coordinates> {
+
         public:
           struct end_tag {};
 
@@ -544,7 +551,7 @@ namespace LatticeTester {
     /**
      * This template class wraps any implementation of a CoordinateSets and
      * adds a specific coordinate to each coordinate sets. When iterating
-     * through the subsets of this class, they won't be order by cardinality
+     * through the subsets of this class, they will not be ordered by cardinality
      * because the sets are generated on the fly and the coordinate is added if
      * it is not already contained.
      *
@@ -588,8 +595,8 @@ namespace LatticeTester {
          * `CoordinateSets` implementation the associated to the `AddCoordinate`
          * object used for construction.
          */
-        class const_iterator : public std::iterator<std::forward_iterator_tag,
-        const Coordinates> {
+        class const_iterator :
+        	public std::iterator<std::forward_iterator_tag, const Coordinates> {
 
         public:
           struct end_tag {};
@@ -598,8 +605,7 @@ namespace LatticeTester {
            * Constructor for an iterator at the beginning of the list of sets
            * that `seq` contains.
            */
-          explicit const_iterator(const AddCoordinate& seq):
-            m_seq(&seq) {
+          explicit const_iterator(const AddCoordinate& seq : m_seq(&seq) {
               this->underlying = m_seq->base().begin();
               updateValue();
             }

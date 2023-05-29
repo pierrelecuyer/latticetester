@@ -1,14 +1,20 @@
 /**
- * This example illustrates how to use the functions of the BasisConstruction class,
- * with a small five-dimensional lattice obtained from an LCG of modulus 101.
+ * This example illustrates the use of functions from the `BasisConstruction` class,
+ * with a small five-dimensional lattice obtained from an LCG with a small modulus.
  * The basis is printed between function calls, to show what is going on.
- * An initial upper-triangular basis is constructed by Rank1Lattice in a standard way.
+ * An initial upper-triangular basis is constructed by `Rank1Lattice` in a standard way.
  * We then call LLL with `delta = 0.5` to obtain a basis with shorter vectors,
  * which is not triangular. Calling `upperTriangulatBasis` transforms this basis
  * to an upper triangular basis, which happens to be the same as the initial one.
  * Different triangularization methods are compared.  Then LLL with different
- * values of `delta`. Finally a dual basis is computed in different ways.
+ * values of `delta`. Then a dual basis is computed in different ways.
  *
+ * After that, we look at projections of this lattice over subsets of coordinates.
+ * We show how to construct a basis for such a projection, compute the corresponding
+ * dual basis, and compute a shortest vector in this dual basis.
+ *
+ * This program can be run with the two different types of `Int`, and with various
+ * choices of the modulus `m` and multiplier `a`.
  **/
 
 //#define TYPES_CODE  LD     // int64_t
@@ -28,6 +34,7 @@
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
+#include "latticetester/Coordinates.h"
 
 using namespace LatticeTester;
 
@@ -101,8 +108,21 @@ int main() {
 	std::cout << "m-dual basis by general method: \n" << basisdual << "\n";
 
 	Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
-	red->shortestVector();
+	red->shortestVector();  // To call this method, we need to create a Reducer object.
 	std::cout << " The shortest vector length:\n";
+	std::cout << red->getMinLength() << std::endl;
+
+    Coordinates proj = {0, 2, 4};
+    std::cout << "Selected projection = " << proj << "\n";
+	projectionConstructionLLL (basis1, basis2, proj);
+    std::cout << "Basis for projection with LLL: \n" << basis2 << "\n";
+
+	projectionConstructionUpperTri (basis1, basis2, proj, m, basis3);
+    std::cout << "Basis for projection with upper-triangular: \n" << basis2 << "\n";
+
+    IntLattice projLat = IntLattice(basis2, m, 3);
+	red->shortestVector(projLat);
+	std::cout << " The shortest vector length for the projection over coord. {0, 2, 4}:\n";
 	std::cout << red->getMinLength() << std::endl;
 
 	return 0;

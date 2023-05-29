@@ -53,7 +53,7 @@ int main() {
   long dim;
   dim = max_dim;
   //Build a Korobov lattice
-  Rank1Lattice<Int, double> *lat; 
+  Rank1Lattice<Int, Real> *lat;
   lat = new Rank1Lattice<Int, Real>(m, a, dim);
   lat->buildBasis(dim);    
 
@@ -63,12 +63,11 @@ int main() {
 
   // The variables specific to the construction of a figure of merit
    WeightsUniform weights(1.0); // This just puts a weight of 1 to everything
-   BasisConstruction<Int> constructor; // Computes projections basis
 
   // Creates an iterator over a set of projections.
    CoordinateSets::FromRanges coord(min_dim+1, max_dim, min_dim, max_dim-1);
    
-   Reducer<Int, Real> *red = new Reducer<Int,Real>(max_dim);
+   Reducer<Int, Real> *red = new Reducer<Int, Real>(max_dim);
    
    
   // Loop over the selected set of projections.
@@ -77,7 +76,7 @@ int main() {
 
 	proj = new IntLattice<Int, Real> (m, max_dim); 
 	  
-	constructor.projectionConstructionLLL(*lat, *proj, *it);
+	BasisConstruction<Int>::projectionConstructionLLL(*lat, *proj, *it);
     
     //! Computing the shortest vector in the lattice spanned by matrix
     proj->updateVecNorm();
