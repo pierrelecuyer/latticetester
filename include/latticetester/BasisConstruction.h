@@ -168,7 +168,7 @@ public:
 
 	/**
 	 * Overwrites the matrix 'out' by a matrix formed by the columns of matrix `in` that are
-	 * specified by `proj`, and changes the dimensions of `out` accordingly, if needed.
+	 * specified by `proj`, and resizes the matrix `out` accordingly.
 	 * The matrix `out` will then contain a set of generating vectors for the projection `proj`.
 	 * The matrices `in` and `out` must be different IntMat objects, otherwise the program
 	 * halts with an error message.
@@ -190,6 +190,7 @@ public:
 	 * The matrix `genTemp` will be used to store the generating vectors of the
 	 * projection before making the triangularization. We pass it as a parameter
 	 * to avoid the interval creation of a new matrix each time.
+	 * If `genTemp` is not passed as input, then a temporary matrix will be created internally.
 	 */
 	static void projectionConstructionUpperTri(IntMat &inBasis,
 			IntMat &projBasis, const Coordinates &proj, const Int &m, IntMat &genTemp);
@@ -204,7 +205,7 @@ public:
 template<typename Int>
 void BasisConstruction<Int>::LLLConstruction0(IntMat &gen, double delta,
 		PrecisionType prec) {
-	std::cerr << "LLLConstruction0 can only be done with NTL::ZZ integers.\n";
+	std::cerr << "LLLConstruction0 works only for int64_t or NTL::ZZ integers.\n";
 	std::cerr << "Aborting.\n";
 	exit(1);
 }
@@ -257,14 +258,6 @@ void BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 template<typename Int>
 void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m, double delta,
 		PrecisionType prec) {
-	std::cerr << "LLLBasisConstruction can only be done with NTL::ZZ integers.\n";
-	std::cerr << "Aborting.\n";
-	exit(1);
-}
-
-template<>
-void BasisConstruction<NTL::ZZ>::LLLBasisConstruction(NTL::matrix<NTL::ZZ> &gen,
-		const NTL::ZZ &m, double delta, PrecisionType prec) {
 	LLLConstruction0 (gen, delta, prec);
 	int64_t rank = gen.NumRows();
 	int64_t dim = gen.NumCols();
@@ -675,6 +668,8 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(
 
 //=================================================================================
 
+// The matrix out will always be resized to a number of columns equal to the
+// number of coordinates in `proj`.
 template<>
 void BasisConstruction<NTL::ZZ>::projectMatrix (const IntMat &in,
 		IntMat &out, const Coordinates &proj) {
@@ -682,7 +677,7 @@ void BasisConstruction<NTL::ZZ>::projectMatrix (const IntMat &in,
     int inDim = in.NumCols();
     uint64_t lat_dim = in.NumCols();   
 	std::size_t projSize = proj.size();
-	out.SetDims(in.NumRows(), projSize);
+	out.SetDims(in.NumRows(), projSize);   // here we resize the matrix each time!
 	auto it = proj.cbegin();
 	for (std::size_t i = 0; i < projSize; i++) {
 	    if (*it <= lat_dim) {

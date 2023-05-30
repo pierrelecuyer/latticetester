@@ -1,7 +1,8 @@
 /**
  * This file is taken from NTL, written and maintained by Victor Shoup.
- * It was slightly modified by Pierre L'Ecuyer to make computations with
- * ordinary 64-bit integers.
+ * It was modified by Pierre L'Ecuyer to make computations with
+ * ordinary 64-bit integers.  This can be used to implement int64_t versions
+ * of the NTL wrapper functions in `Reducer`.
  */
 
 #ifndef LATTICETESTER_LLL64__H
