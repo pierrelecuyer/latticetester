@@ -222,7 +222,7 @@ IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, bool withDual, No
 	// this->m_withDual = withDual;
 	// m_order = k;
 	// Reserves space for the lattice and the projections (via initProj()) in up to maxDim dimensions.
-	this->initProj();
+	//this->initProj();
 	this->m_basis.resize(this->m_dim, this->m_dim);
 	this->m_vecNorm.resize(this->m_dim);
 	this->setNegativeNorm();
@@ -240,11 +240,11 @@ IntLatticeExt<Int, Real>::IntLatticeExt(const IntLatticeExt<Int, Real> &lat) :
 		IntLattice<Int, Real>(lat) {
 	this->m_withDual = lat.m_withDual;
 	// m_order = lat.m_order;
-	this->initProj();
-	this->m_basisProj = lat.m_basisProj;
+	//this->initProj();
+	//this->m_basisProj = lat.m_basisProj;
 	if (this->m_withDual) {
 		this->setDualNegativeNorm();
-		this->m_dualbasisProj = lat.m_dualbasisProj;
+		//this->m_dualbasisProj = lat.m_dualbasisProj;
 	}
 }
 
@@ -259,8 +259,8 @@ void IntLatticeExt<Int, Real>::kill() {
 
 template<typename Int, typename Real>
 IntLatticeExt<Int, Real>::~IntLatticeExt() {
-	this->m_basisProj.kill();
-	this->m_dualbasisProj.kill();
+	//this->m_basisProj.kill();
+	//this->m_dualbasisProj.kill();
 	// IntLatticeExt<Int, Real>::~IntLatticeExt();
 }
 
@@ -275,7 +275,7 @@ void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
 	this->m_basis = lat.m_basis;
 	if (lat.m_withDual)
 		this->m_dualbasis = lat.m_dualbasis;
-	this->initProj();  // Resizes the bases to the dimensions of the current object.
+	//this->initProj();  // Resizes the bases to the dimensions of the current object.
 }
 
 //===========================================================================

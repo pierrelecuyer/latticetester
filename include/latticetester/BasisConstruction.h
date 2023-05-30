@@ -181,9 +181,8 @@ public:
 	 * This will overwrite the matrix `projBasis` and will change its dimensions if needed.
 	 * It does not compute the dual.
 	 */
-	template<typename Real>
 	static void projectionConstructionLLL(IntMat &inBasis,
-			IntMat &projBasis, const Coordinates &proj, double delta = 0.9);
+			IntMat &projBasis, const Coordinates &proj, const Int &m, double delta = 0.9);
 	
 	/**
 	 * Same as `projectionConstructionLLL`, but the construction is made using
@@ -192,9 +191,11 @@ public:
 	 * projection before making the triangularization. We pass it as a parameter
 	 * to avoid the interval creation of a new matrix each time.
 	 */
-	template<typename Real>
-	static void projectionConstructionUpperUpperTri(IntMat &inBasis,
+	static void projectionConstructionUpperTri(IntMat &inBasis,
 			IntMat &projBasis, const Coordinates &proj, const Int &m, IntMat &genTemp);
+
+	static void projectionConstructionUpperTri(IntMat &inBasis,
+			IntMat &projBasis, const Coordinates &proj, const Int &m);
 };
 
 //============================================================================
@@ -250,11 +251,11 @@ void BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 	}
 	gen.SetDims(rank, gen.NumCols());
 }
-`
+
 //============================================================================
 
 template<typename Int>
-void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, Int &m, double delta,
+void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m, double delta,
 		PrecisionType prec) {
 	std::cerr << "LLLBasisConstruction can only be done with NTL::ZZ integers.\n";
 	std::cerr << "Aborting.\n";
@@ -263,7 +264,7 @@ void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, Int &m, double de
 
 template<>
 void BasisConstruction<NTL::ZZ>::LLLBasisConstruction(NTL::matrix<NTL::ZZ> &gen,
-		NTL::ZZ &m, double delta, PrecisionType prec) {
+		const NTL::ZZ &m, double delta, PrecisionType prec) {
 	LLLConstruction0 (gen, delta, prec);
 	int64_t rank = gen.NumRows();
 	int64_t dim = gen.NumCols();
@@ -278,7 +279,7 @@ void BasisConstruction<NTL::ZZ>::LLLBasisConstruction(NTL::matrix<NTL::ZZ> &gen,
         }
     }
 	LLLConstruction0 (gen, delta, prec);
-	std::out << "LLLBasisConstruction: we had to add some rows!\n";
+	std::cout << "LLLBasisConstruction: we had to add some rows!\n";
 }
 
 //===================================================================
@@ -590,6 +591,7 @@ template<typename Int>
 void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 		const Int &m) {
 	int64_t dim = A.NumRows();
+	B.SetDims(dim, dim);
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
 			NTL::clear(B(i, j));
@@ -674,15 +676,16 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(
 //=================================================================================
 
 template<>
-void BasisConstruction<NTL::ZZ>::projectMatrix (IntMat &in,
+void BasisConstruction<NTL::ZZ>::projectMatrix (const IntMat &in,
 		IntMat &out, const Coordinates &proj) {
 	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
-    uint64_t inDim = in.NumCols();
+    int inDim = in.NumCols();
+    uint64_t lat_dim = in.NumCols();   
 	std::size_t projSize = proj.size();
-	out.SetDims(in.numRows(), projSize);
+	out.SetDims(in.NumRows(), projSize);
 	auto it = proj.cbegin();
 	for (std::size_t i = 0; i < projSize; i++) {
-	    if (*it <= inDim) {
+	    if (*it <= lat_dim) {
 			for (int j = 0; j < inDim; j++) {
 			   out[j][i] = in[j][*it];
 			}
@@ -693,18 +696,25 @@ void BasisConstruction<NTL::ZZ>::projectMatrix (IntMat &in,
 	}
 };
 
-template<typename Int>
+template<>
 void BasisConstruction<Int>::projectionConstructionLLL(
-		IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, double delta) {
+		IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m, double delta) {
 	projectMatrix(inBasis, projBasis, proj);
-	LLLBasisConstruction(projBasis, delta);
+	LLLBasisConstruction(projBasis, m, delta);
 }
 
-template<typename Int>
+template<>
 void BasisConstruction<Int>::projectionConstructionUpperTri(
 		IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m, IntMat &genTemp) {
-    if (genTemp == NULL)  genTemp = IntMat();
-	projectionMatrix(in, genTemp, proj);
+	projectMatrix(inBasis, genTemp, proj);
+	upperTriangularBasis(genTemp, projBasis, m);
+}
+
+template<>
+void BasisConstruction<Int>::projectionConstructionUpperTri(
+		IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m) {
+	IntMat genTemp;
+	projectMatrix(inBasis, genTemp, proj);
 	upperTriangularBasis(genTemp, projBasis, m);
 }
 

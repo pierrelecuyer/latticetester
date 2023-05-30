@@ -523,9 +523,9 @@ private:
 	RealMat m_c0, m_c2, m_cho2, m_gramVD;   // Resizing these matrices is expensive!
 	int64_t *m_IC;     // Indexes in Cholesky
 
-	RealVec m_zLR;                       // Vector of values of z_i in floating point.  ?????
-	                                     // Should be in ZZ instead !!!
 	std::vector<std::int64_t> m_zLI;     // Vector of values of z_i.
+	RealVec m_zLR;     	// Vector of values of z_i in floating point.
+						// Values in floating point are needed to calculate bounds. 
 	std::vector<std::int64_t> m_zShort;  // Values of z_i for shortest vector.
 	std::int64_t m_countNodes=0;  // Number of visited nodes in the BB tree
 	std::int64_t m_countDieter=0; // Number of attempts since last successful
@@ -1156,15 +1156,6 @@ void Reducer<Int, Real>::reductionFaible(int64_t i, int64_t j) {
 //	}
 
 //=========================================================================
-
-// This is the implementation for Int = ZZ.
-// I have removed the parameter dim from these functions!     ????????
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
-			PrecisionType precision) {
-    redLLLNTL (red.getIntLattice()->getBasis(), delta, precision);
-    }
-
 
 // This is the static implementation for Int = ZZ.
 template<typename Int, typename Real>
