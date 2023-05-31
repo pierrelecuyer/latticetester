@@ -52,6 +52,9 @@ int main() {
   Rank1Lattice<Int, Real> *lat;
   lat = new Rank1Lattice<Int, Real>(m, a, dim);
   lat->buildBasis(dim);   
+  ProjConstructType pctype;
+  //Choose which projection construction is used LLLPROJ or UPPERTRIPROJ
+  pctype = UPPERTRIPROJ;
   
   IntLattice<Int, Real> *proj; // Another IntLattice to store projections
   
@@ -76,11 +79,8 @@ int main() {
       
   // Loop over the selected set of projections.
   for(auto it = allcoord.begin(); it != allcoord.end(); it++){
-    // Computing a basis for the projection, using LLL.   
-		  
-	BasisConstruction<Int>::projectionConstructionLLL(lat->getBasis(), projBasis, *it, m);
-	//BasisConstruction<Int>::projectionConstructionUpperTri(lat->getBasis(), projBasis, *it, m);
-	
+    // Computing a basis for the projection, using chosen projection type 	  
+	BasisConstruction<Int>::projectionConstruction(lat->getBasis(), projBasis, *it, m, pctype);	
 	proj = new IntLattice<Int,Real> (projBasis, m, projBasis.NumCols());
     
     //! Computing the shortest vector in the lattice spanned by matrix
@@ -127,13 +127,9 @@ int main() {
   
   // Loop over the selected set of projections.
   for(auto it = ldcoord.begin(); it != ldcoord.end(); it++){
-    // Computing a basis for the projection, using LLL.   
-		  
-	BasisConstruction<Int>::projectionConstructionLLL(lat->getBasis(), projBasis, *it, m);
-	//BasisConstruction<Int>::projectionConstructionUpperTri(lat->getBasis(), projBasis, *it, m);
-
+    // Computing a basis for the projection, using chosen projection type.
+    BasisConstruction<Int>::projectionConstruction(lat->getBasis(), projBasis, *it, m, pctype);
 	proj = new IntLattice<Int,Real> (projBasis, m, projBasis.NumCols());
-    
     //! Computing the shortest vector in the lattice spanned by matrix
     proj->updateVecNorm();
     proj->sort(0);
