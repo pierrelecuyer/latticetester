@@ -146,6 +146,14 @@ namespace LatticeTester {
    * `TRIANGULAR`: use a lower-triangular basis
    */
   enum DecompType { CHOLESKY, TRIANGULAR };
+  
+  /**
+   * Two possible ways of performing a projection
+   *
+   * `LLL`: uses LLL reduction
+   * `TRIANGULAR`: use a upper-triangular basis
+   */
+  enum ProjConstructType { LLLPROJ, UPPERTRIPROJ };
 
   /**
    * \name toString functions

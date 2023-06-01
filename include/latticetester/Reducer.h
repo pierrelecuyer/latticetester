@@ -563,7 +563,8 @@ template<typename Int, typename Real>
 void Reducer<Int, Real>::init(int64_t maxDim) {
 	m_maxDim = maxDim;
 	int64_t dim1 = maxDim;
-	int64_t dim2 = math.max(dim1, 3);
+	int64_t dim2 = dim1;
+	if (dim2 <= 2) dim2++;  
 	m_c0.resize(dim1, dim1);
 	m_c2.resize(dim1, dim1);
 	m_cho2.resize(dim2, dim2);
@@ -1106,12 +1107,13 @@ void Reducer<Int, Real>::redLLLNTL(double delta, PrecisionType precision) {
 
 // A specialization for the case where Int = ZZ.
 template<typename Real>
-void Reducer<NTL::ZZ, Real>::redLLLNTL(double delta, PrecisionType precision) {
-	redLLLNTL(m_lat->getBasis(), delta, precision);
+void redLLLNTL (Reducer<NTL::ZZ, Real> &red, double delta, PrecisionType precision) {
+    redLLLNTL(red.getLattice().getBasis(), delta, precision);
 }
 
+
 // This is the static implementation for Int = ZZ.
-template<typename Int, typename Real>
+template<>
 void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
 			  PrecisionType precision) {
 	    switch (precision) {
@@ -1142,12 +1144,13 @@ void Reducer<Int, Real>::redLLLNTLExact(double delta) {
 
 // A specialization for the case where Int = ZZ.
 template<typename Real>
-void Reducer<NTL::ZZ, Real>::redLLLNTLExact(double delta) {
-	redLLLNTLExact(m_lat->getBasis(), delta);
+void redLLLNTLExact(Reducer<NTL::ZZ, Real> &red, double delta) {
+	redLLLNTLExact(red.getLattice().getBasis(), delta);
 }
 
 // Static version, for Int = ZZ.
-static void redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis, double delta) {
+template<>
+void Reducer<Int, Real>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis, double delta) {
 		NTL::ZZ det(0);
 		int64_t denum;
 		denum = round(1.0 / (1.0 - delta)); // We want (denum-1)/denum \approx delta.
@@ -1165,13 +1168,13 @@ void Reducer<Int, Real>::redBKZ(double delta,
 
 // A specialization for the case where Int = ZZ.
 template<typename Real>
-void Reducer<NTL::ZZ, Real>::redBKZ(double delta,
+void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta,
 			std::int64_t blocksize, PrecisionType precision) {
-	redBKZ(m_lat->getBasis(), delta, blocksize, precision);
+	redBKZ(red.getLattice().getBasis(), delta, blocksize, precision);
 }
 
 // Static version, for Int = ZZ.
-template<typename Int, typename Real>
+template<>
 void Reducer<Int, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
 		std::int64_t blocksize, PrecisionType precision) {
 	switch (precision) {

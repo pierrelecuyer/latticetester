@@ -182,7 +182,7 @@ public:
 	 * It does not compute the dual.
 	 */
 	static void projectionConstructionLLL(IntMat &inBasis,
-			IntMat &projBasis, const Coordinates &proj, const Int &m, double delta = 0.9);
+			IntMat &projBasis, const Coordinates &proj, const Int &m, const double delta = 0.9);
 	
 	/**
 	 * Same as `projectionConstructionLLL`, but the construction is made using
@@ -196,7 +196,12 @@ public:
 			IntMat &projBasis, const Coordinates &proj, const Int &m, IntMat &genTemp);
 
 	static void projectionConstructionUpperTri(IntMat &inBasis,
-			IntMat &projBasis, const Coordinates &proj, const Int &m);
+			IntMat &projBasis, const Coordinates &proj, const Int &m);	
+
+	static void projectionConstruction(IntMat &inBasis,
+			IntMat &projBasis, const Coordinates &proj, const Int &m, const ProjConstructType t_proj = LLLPROJ, const double delta = 0.9);
+	
+	
 };
 
 //============================================================================
@@ -712,6 +717,18 @@ void BasisConstruction<Int>::projectionConstructionUpperTri(
 	projectMatrix(inBasis, genTemp, proj);
 	upperTriangularBasis(genTemp, projBasis, m);
 }
+
+
+template<>
+void BasisConstruction<Int>::projectionConstruction(IntMat &inBasis,
+			IntMat &projBasis, const Coordinates &proj, const Int &m, const ProjConstructType t_proj, const double delta) {
+	if (t_proj == LLLPROJ)
+		projectionConstructionLLL(inBasis, projBasis, proj, m, delta);
+	if (t_proj == UPPERTRIPROJ)
+		projectionConstructionUpperTri(inBasis, projBasis, proj, m);
+}
+	
+//void BasisConstruction<Int>::projectionConstruction(IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m, double delta)
 
 template class BasisConstruction<std::int64_t>;
 template class BasisConstruction<NTL::ZZ>;
