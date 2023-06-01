@@ -166,6 +166,16 @@ public:
 	bool shortestVector(IntLattice<Int, Real> &lat);
 
 	/**
+	 * Reduces the current basis to a Minkowski-reduced basis with respect
+	 * to the Euclidean norm, assuming that the first \f$d\f$ vectors are
+	 * already reduced and sorted. If `MaxNodesBB` is exceeded during one
+	 * of the branch-and-bound step, the method aborts and returns `false`.
+	 * Otherwise it returns `true`, the basis is reduced and sorted by
+	 * increasing vector lengths. For a full reduction, just omit the `d` parameter.
+	 */
+	bool reductMinkowski(int64_t d = 0);
+
+	/**
 	 * This method performs pairwise reduction sequentially on all vectors
 	 * of the basis whose indices are greater of equal to `dim >=0`.
 	 * The boolean vector `xx[]` is used internally in Minkowski reduction.
@@ -248,16 +258,6 @@ public:
 	 */
 	static void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta = 0.999999,
 			int64_t blocksize = 10, PrecisionType prec = DOUBLE);
-
-	/**
-	 * Reduces the current basis to a Minkowski-reduced basis with respect
-	 * to the Euclidean norm, assuming that the first \f$d\f$ vectors are
-	 * already reduced and sorted. If `MaxNodesBB` is exceeded during one
-	 * of the branch-and-bound step, the method aborts and returns `false`.
-	 * Otherwise it returns `true`, the basis is reduced and sorted by
-	 * increasing vector lengths. For a full reduction, just omit the `d` parameter.
-	 */
-	bool reductMinkowski(int64_t d = 0);
 
 	/**
 	 * Returns the length of the current shortest basis vector in the lattice,
@@ -1111,8 +1111,9 @@ void redLLLNTL (Reducer<NTL::ZZ, Real> &red, double delta, PrecisionType precisi
     redLLLNTL(red.getLattice().getBasis(), delta, precision);
 }
 
-
-// This is the static implementation for Int = ZZ.
+// Static version: a specialization for the case where Int = ZZ.
+// See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
+// about the `PrecisionType` choices.
 template<>
 void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
 			  PrecisionType precision) {
@@ -1140,7 +1141,7 @@ void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
 template<typename Int, typename Real>
 void Reducer<Int, Real>::redLLLNTLExact(double delta) {
     MyExit (1, "redLLLNTLExact cannot be used with std::int64_t");
-	}
+}
 
 // A specialization for the case where Int = ZZ.
 template<typename Real>

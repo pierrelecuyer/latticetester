@@ -124,7 +124,7 @@ int main() {
     std::cout << "Basis for projection with upper-triangular: \n" << basis2 << "\n";
     
     IntLattice<Int, Real> *projLat; // Another IntLattice to store projections
-    projLat = new IntLattice<Int,Real>(basis2, m, 3);
+    projLat = new IntLattice<Int, Real>(basis2, m, 3);
     red->shortestVector(*projLat);
 	std::cout << " The shortest vector length for the projection over coord. {0, 2, 4}:\n";
 	std::cout << red->getMinLength() << std::endl;

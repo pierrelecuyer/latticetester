@@ -67,6 +67,7 @@ namespace LatticeTester {
    * `RR` -- RR (arbitrary precision floating point).
    * The choice `DOUBLE` is usually the fastest,
    * but may be prone to roundoff errors and/or overflow.
+   * See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt`.
    */
  // enum PrecisionType { DOUBLE, QUADRUPLE, EXPONENT, ARBITRARY, EXACT };
   enum PrecisionType { DOUBLE, QUADRUPLE, XDOUBLE, RR};
