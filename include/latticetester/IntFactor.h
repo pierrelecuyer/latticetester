@@ -32,13 +32,21 @@ namespace LatticeTester {
   /**
    * The objects of this class are the "prime" factors in the decomposition of
    * a positive integer.
-   * The class also contains functions to determine whether a number is prime,
+   * The class also contains very simple functions to determine whether a number is prime,
    * probably prime or composite. These methods can be used externally to test
    * the primality of an integer, or to test if this factor is prime.
+   *
+   * Note: We must have better methods somewhere else!!!
    */
-  template<typename Int>
-    class IntFactor {
-      public:
+
+static constexpr uint64_t NB_PRIMES = 6543;
+const std::array<uint64_t, NB_PRIMES> PRIMES_ARRAY = {{
+ #include "../data/primes.dat"
+}};
+
+template<typename Int>
+class IntFactor {
+    public:
 
         /**
          * Constructor for a factor \f$x\f$ of multiplicity `mult` that has a 
@@ -102,10 +110,9 @@ namespace LatticeTester {
          */
         std::string toString () const;
 
-
+    //===========================================================================
   
-
-      private:
+    private:
 
         /**
          * The factor.

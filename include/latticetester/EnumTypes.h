@@ -15,21 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
- * \file latticetester/EnumTypes.h
- *
- * This class contains enumeration types and global constants used in LatticeTester.
- *
- * TO DO: I am not sure if it is a good idea to collect all enumeration types in one file
- * like this. It may be better to define them where they belong.    ***************
- */
-
 #ifndef LATTICETESTER__ENUMTYPES_H
 #define LATTICETESTER__ENUMTYPES_H
 #include <string>
 #include <array>
 
 namespace LatticeTester {
+
+/*
+ * This static class contains enumeration types and global constants used in LatticeTester.
+ *
+ */
 
   /**
    * The available norm types to measure the length of vectors.
@@ -38,9 +34,9 @@ namespace LatticeTester {
    * `L1NORM` corresponds to \f$\Vert X\Vert= |x_1|+\cdots+|x_t|\f$.<br>
    * `L2NORM` corresponds to \f$\Vert X\Vert= (x_1^2+\cdots+x_t^2)^{1/2}\f$.<br>
    * `ZAREMBANORM` corresponds to \f$\Vert X\Vert= \max(1, |x_1|)\cdots\max(1, |x_t|)\f$.
-   * Note: Use the names, not the numbers!   *******
    */
-  enum NormType { SUPNORM = 1, L1NORM = 2, L2NORM = 3, ZAREMBANORM = 4 };
+  // enum NormType { SUPNORM = 1, L1NORM = 2, L2NORM = 3, ZAREMBANORM = 4 };
+  enum NormType { SUPNORM, L1NORM, L2NORM, ZAREMBANORM };
 
   /**
    * Different choices of output formats.
@@ -149,39 +145,202 @@ namespace LatticeTester {
   enum DecompType { CHOLESKY, TRIANGULAR };
   
   /**
-   * Two possible ways of performing a projection
+   * Two possible ways of performing a projection.
    *
-   * `LLL`: uses LLL reduction
-   * `TRIANGULAR`: use a upper-triangular basis
+   * `LLLPROJ`: uses LLL reduction.
+   * `UPPERTRIPROJ`: use an upper-triangular basis construction.
    */
   enum ProjConstructType { LLLPROJ, UPPERTRIPROJ };
 
   /**
-   * \name toString functions
-   *
    * Useful functions for printing the `enum` constants in this module.
-   *
-   * @{
-   *
-   * Returns the value of the `enum` variable given as input as a string.
+   * Each function returns the value of the `enum` variable given as input as a string.
    */
   std::string toStringNorm (NormType);
+  std::string toStringOutput (OutputType);
+  std::string toStringProblem (ProblemType);
+  std::string toStringPrecision (PrecisionType);
   std::string toStringPrime (PrimeType);
   std::string toStringCriterion (CriterionType);
-  std::string toStringProblem (ProblemType);
   std::string toStringNorma (NormaType);
   std::string toStringCalc (CalcType);
-  std::string toStringPreRed (PreReductionType);
-  std::string toStringOutput (OutputType);
-  std::string toStringPrecision (PrecisionType);
+  std::string toStringPreReduction (PreReductionType);
   std::string toStringDecomp(DecompType);
+  std::string toStringProjConstruct(projConstructType);
 
-  /**
-   * @}
-   */
+};
 
-  static constexpr uint64_t NB_PRIMES = 6543;
-  extern const std::array<uint64_t, NB_PRIMES> PRIMES_ARRAY;
+//============================================================================
+// Implementation
+
+string toStringNorm (NormType norm)
+{
+  switch (norm) {
+    case SUPNORM:
+      return "SUPNORM";
+    case L1NORM:
+      return "L1NORM";
+    case L2NORM:
+      return "L2NORM";
+    case ZAREMBANORM:
+      return "ZAREMBANORM";
+    default:
+      return "***** NormType: UNDEFINED CASE ";
+  }
+}
+
+//===========================================================================
+
+string toStringPrime (PrimeType stat)
+{
+  switch (stat) {
+    case PRIME:
+      return "PRIME";
+    case PROB_PRIME:
+      return "PROB_PRIME";
+    case COMPOSITE:
+      return "COMPOSITE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+//===========================================================================
+
+string toStringCriterion (CriterionType criter)
+{
+  switch (criter) {
+    case LENGTH:
+      return "LENGTH";
+    case SPECTRAL:
+      return "SPECTRAL";
+    case BEYER:
+      return "BEYER";
+    case PALPHA:
+      return "PALPHA";
+    default:
+      return "***** CriterionType: UNDEFINED CASE ";
+  }
+}
+
+//===========================================================================
+
+string toStringProblem (ProblemType prob)
+{
+  switch (prob) {
+    case BASIS:
+      return "BASIS";
+    case DUAL:
+      return "DUAL";
+    case REDUCTION:
+      return "REDUCTION";
+    case SHORTEST:
+      return "SHORTEST";
+    case MERIT:
+      return "MERIT";
+    default:
+      return "***** ProblemType: UNDEFINED CASE ";
+  }
+}
+
+
+//===========================================================================
+
+string toStringNorma (NormaType norma)
+{
+  switch (norma) {
+    case BESTLAT:
+      return "BESTLAT";
+    case BESTBOUND:
+      return "BESTBOUND";
+    case LAMINATED:
+      return "LAMINATED";
+    case ROGERS:
+      return "ROGERS";
+    case MINKL1:
+      return "MINKL1";
+    case MINKL2:
+      return "MINKL2";
+    case NONE:
+      return "NONE";
+    default:
+      return "***** NormaType: UNDEFINED CASE ";
+  }
+}
+
+
+//===========================================================================
+
+string toStringCalc (CalcType calc)
+{
+  switch (calc) {
+    case PAL:
+      return "PAL";
+    case NORMPAL:
+      return "NORMPAL";
+    case BAL:
+      return "BAL";
+    case SEEKPAL:
+      return "SEEKPAL";
+    default:
+      return "***** CalcType: UNDEFINED CASE ";
+  }
+}
+
+//===========================================================================
+
+string toStringPreRed (PreReductionType prered)
+{
+  switch (prered) {
+    case FULL:
+      return "FULL";
+    case BKZ:
+      return "BKZ";
+    case DIETER:
+      return "DIETER";
+    case LLL:
+      return "LLL";
+    case NOPRERED:
+      return "NOPRERED";
+    default:
+      return "***** PreReductionType: UNDEFINED CASE ";
+  }
+}
+
+//===========================================================================
+
+string toStringPrecision (PrecisionType precision)
+{
+  switch (precision) {
+    case DOUBLE:
+      return "DOUBLE";
+    case QUADRUPLE:
+      return "QUADRUPLE";
+    case XDOUBLE:
+      return "XDOUBLE";
+    case RR:
+      return "RR";
+    default:
+      return "***** PrecisionType: UNDEFINED CASE ";
+  }
+}
+
+//===========================================================================
+
+string toStringOutput (OutputType sort)
+{
+  switch (sort) {
+    case TERM:
+      return "TERM";
+    case RES:
+      return "RES";
+    case TEX:
+      return "TEX";
+    case GEN:
+      return "GEN";
+    default:
+      return "***** OutputType: UNDEFINED CASE ";
+  }
 
 }
 #endif

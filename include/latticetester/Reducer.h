@@ -49,23 +49,25 @@ namespace LatticeTester {
 
 /**
  * This `Reducer` class provides facilities to reduce the basis of a lattice
- * (an `IntLattice` object) in different ways (pairwise, LLL, BKZ, Minkowski
+ * (an `IntLattice` object) in various ways (pairwise, LLL, BKZ, Minkowski
  * \cite rDIE75a, \cite mLEN82a, \cite mSCH91a),
- * and find a shortest nonzero vector in the lattice using a BB algorithm \cite rFIN85a.
+ * and to find a shortest nonzero vector in the lattice using a BB algorithm \cite rFIN85a.
  * Most of the methods do not use or change the m-dual lattice.
  * To reduce the m-dual basis or find a shortest nonzero vector in it,
- * one should first dualize the lattice; the method `IntLattice::dualize` does that.
+ * one should first dualize the lattice (`IntLattice::dualize` does that)
+ * and then apply the desired methods.
  * Some of the lattice reduction methods are NTL wraps.
  * For those, the `Int` type can only be `ZZ`, because NTL offers no other option.
- * For LLL, we have both our simple implementation in `redLLLOld` and more efficient
+ * For LLL, we have both our (old and slow) implementation in `redLLLOld` and more efficient
  * implementations from NTL in `redLLLNTL` and `redLLLNTLExact`.
  * The method `redBKZ` is also a wrapper for the NTL algorithm for BKZ reduction.
  *
- * These NTL-wrapper methods have static versions, which do not require the creation
- * of a `Reducer` object. If the aim is only to apply LLL or BKZ reductions,
- * there is no need to create a `Reducer`, it is more efficient to use the static methods.
- * The NTL-wrapper methods only use the `IntLattice` object and no other internal variable.
- * They always reduce the full basis contained in the internal (or given) `IntLattice` object
+ * The NTL-wrapper methods for LLL and BKZ reductions have static versions,
+ * which do not require the creation of a `Reducer` object.
+ * Using them whenever possible is the most efficient approach.
+ * These methods also have non-static version which basically apply the static methods
+ * to the internal `IntLattice` object of this `Reducer`, and use no other internal variable.
+ * All these methods always reduce the full basis contained in the `IntLattice` object
  * (they use the dimension of the `IntMat` object that contains the basis).
  *
  * The `shortestVector` and `reductMinkowski` methods do not apply any pre-reduction by themselves
@@ -78,12 +80,11 @@ namespace LatticeTester {
  * and then call the `shortestVector` and `reductMinkowski` methods with the relevant
  * `IntLattice` object as a parameter. The norm type, dimension, basis, vector lengths, etc.
  * will be taken from this `IntLattice` object.  The dimensions of the internal vectors
- * and matrices can be larger than required, this is fine, the methods will use only the
+ * and matrices can be larger than required; the methods will use only the
  * entries that are needed for the given `IntLattice` basis.
  * Creating a new `Reducer` object for each `IntLattice` that we want to handle is very
  * inefficient and should be avoided, especially when we want to examine several
  * projections for several lattices.
- *
  */
 
 template<typename Int, typename Real>

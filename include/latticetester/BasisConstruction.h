@@ -80,7 +80,7 @@ namespace LatticeTester {
  * by using LLL to construct the basis of the projection, while `projectionConstructionUpperTri`
  * constructs an upper-triangular basis for the projection.
  *
- * All functions in this class are static, no there is no reason to create any
+ * All functions in this class are static, so there is no reason to create any
  * `BasisConstruction` object. We also avoid to create new objects (such as vectors and
  * matrices) inside these functions.  These functions can be called thousands or millions
  * of times in a program, and we want the user to be able to re-use the same vectors and
@@ -199,7 +199,8 @@ public:
 			IntMat &projBasis, const Coordinates &proj, const Int &m);	
 
 	static void projectionConstruction(IntMat &inBasis,
-			IntMat &projBasis, const Coordinates &proj, const Int &m, const ProjConstructType t_proj = LLLPROJ, const double delta = 0.9);
+			IntMat &projBasis, const Coordinates &proj, const Int &m,
+			const ProjConstructType t_proj = LLLPROJ, const double delta = 0.9);
 	
 	
 };

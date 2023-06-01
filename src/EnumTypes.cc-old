@@ -21,8 +21,7 @@
 
 using namespace std;
 
-namespace LatticeTester
-{
+namespace LatticeTester {
 
   //===========================================================================
 
@@ -203,12 +202,5 @@ namespace LatticeTester
         return "***** OutputType: UNDEFINED CASE ";
     }
   }
-
-  //===========================================================================
-
-  const std::array<uint64_t, NB_PRIMES> PRIMES_ARRAY = {{
-    #include "../data/primes.dat"
-  }};
-
 
 }

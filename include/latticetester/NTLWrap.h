@@ -34,9 +34,9 @@
  * Most of the methods below only define alias names for some NTL methods.
  * This was done at the time to have the same names for methods that are in both
  * boost and NTL, allowing LatticeTester to work with either the boost or NTL library,
- * depending on pre-processing statements. But these alias could probably be removed
+ * depending on pre-processing statements.  These alias could probably be removed
  * because we no longer use boost in LatticeTester.
- * However, they may still be used in LatNet Builder.                 **************
+ * However, they may still be used in LatNet Builder (?)              **************
  *
  * New functions have also been implemented in this module as a way to overload a
  * few operators and methods of NTL (especially on matrix and vector types) to

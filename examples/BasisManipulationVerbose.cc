@@ -13,8 +13,8 @@
  * We show how to construct a basis for such a projection, compute the corresponding
  * dual basis, and compute a shortest vector in this dual basis.
  *
- * This program can be run with the two different types of `Int`, and with various
- * choices of the modulus `m` and multiplier `a`.
+ * This program can be run with the two different types of `Int` (just change the first
+ * line below), and with various choices of the modulus `m` and multiplier `a`.
  **/
 
 //#define TYPES_CODE  LD     // int64_t

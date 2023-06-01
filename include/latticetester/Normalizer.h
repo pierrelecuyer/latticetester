@@ -62,7 +62,7 @@ namespace LatticeTester {
  * because the latter is sometimes extremely large or extremely small.
  * This constructor works fine when the density \f$ \eta\f$ is the same in all dimensions.
  * Note that the log density of an arbitrary integral lattice with basis `V` can be computed
- * via `-log(abs(det(V)))`.
+ * via `-log(abs(det(V)))`.  In most cases of interest, the density is known a priori.
  *
  * Sometimes, the density may depend on the dimension.
  * This occurs for example for the lattice obtained from an MRG with modulus \f$ m\f$ and order \f$ k\f$,
@@ -73,8 +73,8 @@ namespace LatticeTester {
  * In subclasses, it is important to implement the
  * `getGamma(int) const` and `computeBounds` methods and to call the latter
  * to precompute the bounds.
- * The constructors in this abstract class do not compute any bounds, they basically just reserve
- * the space (an array) for the bounds.
+ * The constructors in the present abstract class do not compute any bounds,
+ * they basically just reserve the space (an array) for the bounds.
  *
  * The prefered usage for this class is to declare a pointer to a Normalizer
  * and to instantiate a subclass with dynamically allocated memory:
@@ -85,8 +85,9 @@ namespace LatticeTester {
  * delete norma;
  * \endcode
  *
- * Important: when making a search and examining millions of lattices, it is important
- * NOT to construct a new Normalizer object and recompute the constants for each lattice.
+ * When making a search and examining millions of lattices, it is important to re-use
+ * the same `Normalizer` object, and *not* construct a new one (and recompute the constants)
+ * for each lattice that is examined.
  */
 
 //template<typename Int>
