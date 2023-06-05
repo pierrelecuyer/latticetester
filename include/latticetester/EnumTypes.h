@@ -19,6 +19,8 @@
 #define LATTICETESTER__ENUMTYPES_H
 #include <string>
 #include <array>
+using namespace std;
+
 
 namespace LatticeTester {
 
@@ -153,194 +155,175 @@ namespace LatticeTester {
   enum ProjConstructType { LLLPROJ, UPPERTRIPROJ };
 
   /**
-   * Useful functions for printing the `enum` constants in this module.
+   * Functions for printing the `enum` constants in this module.
    * Each function returns the value of the `enum` variable given as input as a string.
    */
-  std::string toStringNorm (NormType);
-  std::string toStringOutput (OutputType);
-  std::string toStringProblem (ProblemType);
-  std::string toStringPrecision (PrecisionType);
-  std::string toStringPrime (PrimeType);
-  std::string toStringCriterion (CriterionType);
-  std::string toStringNorma (NormaType);
-  std::string toStringCalc (CalcType);
-  std::string toStringPreReduction (PreReductionType);
-  std::string toStringDecomp(DecompType);
-  std::string toStringProjConstruct(projConstructType);
+  static std::string toStringNorm (NormType norm) {
+    switch (norm) {
+      case SUPNORM:
+        return "SUPNORM";
+      case L1NORM:
+        return "L1NORM";
+      case L2NORM:
+        return "L2NORM";
+      case ZAREMBANORM:
+        return "ZAREMBANORM";
+      default:
+        return "***** NormType: UNDEFINED CASE ";
+    }
+  }
+  
+  static std::string toStringOutput (OutputType out) {
+    switch (out) {
+      case TERM:
+        return "TERM";
+      case RES:
+        return "RES";
+      case TEX:
+        return "TEX";
+      case GEN:
+        return "GEN";
+      default:
+        return "***** OutputType: UNDEFINED CASE ";
+    } 
+  }
+  
+  static std::string toStringProblem (ProblemType prob) {
+	switch (prob) {
+	   case BASIS:
+	     return "BASIS";
+	   case DUAL:
+	     return "DUAL";
+	   case REDUCTION:
+	     return "REDUCTION";
+	   case SHORTEST:
+	     return "SHORTEST";
+	   case MERIT:
+	     return "MERIT";
+	   default:
+	     return "***** ProblemType: UNDEFINED CASE ";
+	}
+  }
+  
+  static std::string toStringPrecision (PrecisionType precision) {
+    switch (precision) {
+      case DOUBLE:
+        return "DOUBLE";
+      case QUADRUPLE:
+        return "QUADRUPLE";
+      case XDOUBLE:
+        return "XDOUBLE";
+      case RR:
+        return "RR";
+      default:
+        return "***** PrecisionType: UNDEFINED CASE ";
+    }
+  }
+  
+  static std::string toStringPrime (PrimeType prim) {
+	switch (prim) {
+	  case PRIME:
+	     return "PRIME";
+	  case PROB_PRIME:
+	     return "PROB_PRIME";
+	  case COMPOSITE:
+	     return "COMPOSITE";
+	  default:
+	    return "UNKNOWN";
+	}
+  }
+  
+  static std::string toStringCriterion (CriterionType criter) {
+    switch (criter) {
+      case LENGTH:
+        return "LENGTH";
+      case SPECTRAL:
+        return "SPECTRAL";
+      case BEYER:
+        return "BEYER";
+      case PALPHA:
+        return "PALPHA";
+      default:
+        return "***** CriterionType: UNDEFINED CASE ";
+    }
+  }
+  
+  static std::string toStringNorma (NormaType norma) {
+    switch (norma) {
+      case BESTLAT:
+        return "BESTLAT";
+      case BESTBOUND:
+        return "BESTBOUND";
+      case LAMINATED:
+        return "LAMINATED";
+      case ROGERS:
+        return "ROGERS";
+      case MINKL1:
+        return "MINKL1";
+      case MINKL2:
+        return "MINKL2";
+      case NONE:
+        return "NONE";
+      default:
+        return "***** NormaType: UNDEFINED CASE ";
+    }
+  }
+  
+  static std::string toStringCalc (CalcType calc) {
+    switch (calc) {
+      case PAL:
+        return "PAL";
+      case NORMPAL:
+        return "NORMPAL";
+      case BAL:
+        return "BAL";
+      case SEEKPAL:
+        return "SEEKPAL";
+      default:
+        return "***** CalcType: UNDEFINED CASE ";
+    }
+  }
+  
+  static std::string toStringPreReduction (PreReductionType prered) {
+    switch (prered) {
+      case FULL:
+        return "FULL";
+      case BKZ:
+        return "BKZ";
+      case DIETER:
+        return "DIETER";
+      case LLL:
+        return "LLL";
+      case NOPRERED:
+        return "NOPRERED";
+      default:
+        return "***** PreReductionType: UNDEFINED CASE ";
+    }
+  }
+  
+  static std::string toStringDecomp(DecompType decomp) {
+    switch (decomp) {
+      case CHOLESKY:
+        return "CHOLESKY";
+      case TRIANGULAR:
+        return "TRIANGULAR";
+      default:
+        return "***** DecompType: UNDEFINED CASE ";
+    }
+  }
+  
+  static std::string toStringProjConstruct(ProjConstructType proj) {
+    switch (proj) {
+      case LLLPROJ:
+        return "LLLPROJ";
+      case UPPERTRIPROJ:
+        return "UPPERTRIPROJ";
+      default:
+        return "***** ProjConstructType: UNDEFINED CASE ";
+    }
+  }
 
 };
 
-//============================================================================
-// Implementation
 
-string toStringNorm (NormType norm)
-{
-  switch (norm) {
-    case SUPNORM:
-      return "SUPNORM";
-    case L1NORM:
-      return "L1NORM";
-    case L2NORM:
-      return "L2NORM";
-    case ZAREMBANORM:
-      return "ZAREMBANORM";
-    default:
-      return "***** NormType: UNDEFINED CASE ";
-  }
-}
-
-//===========================================================================
-
-string toStringPrime (PrimeType stat)
-{
-  switch (stat) {
-    case PRIME:
-      return "PRIME";
-    case PROB_PRIME:
-      return "PROB_PRIME";
-    case COMPOSITE:
-      return "COMPOSITE";
-    default:
-      return "UNKNOWN";
-  }
-}
-
-//===========================================================================
-
-string toStringCriterion (CriterionType criter)
-{
-  switch (criter) {
-    case LENGTH:
-      return "LENGTH";
-    case SPECTRAL:
-      return "SPECTRAL";
-    case BEYER:
-      return "BEYER";
-    case PALPHA:
-      return "PALPHA";
-    default:
-      return "***** CriterionType: UNDEFINED CASE ";
-  }
-}
-
-//===========================================================================
-
-string toStringProblem (ProblemType prob)
-{
-  switch (prob) {
-    case BASIS:
-      return "BASIS";
-    case DUAL:
-      return "DUAL";
-    case REDUCTION:
-      return "REDUCTION";
-    case SHORTEST:
-      return "SHORTEST";
-    case MERIT:
-      return "MERIT";
-    default:
-      return "***** ProblemType: UNDEFINED CASE ";
-  }
-}
-
-
-//===========================================================================
-
-string toStringNorma (NormaType norma)
-{
-  switch (norma) {
-    case BESTLAT:
-      return "BESTLAT";
-    case BESTBOUND:
-      return "BESTBOUND";
-    case LAMINATED:
-      return "LAMINATED";
-    case ROGERS:
-      return "ROGERS";
-    case MINKL1:
-      return "MINKL1";
-    case MINKL2:
-      return "MINKL2";
-    case NONE:
-      return "NONE";
-    default:
-      return "***** NormaType: UNDEFINED CASE ";
-  }
-}
-
-
-//===========================================================================
-
-string toStringCalc (CalcType calc)
-{
-  switch (calc) {
-    case PAL:
-      return "PAL";
-    case NORMPAL:
-      return "NORMPAL";
-    case BAL:
-      return "BAL";
-    case SEEKPAL:
-      return "SEEKPAL";
-    default:
-      return "***** CalcType: UNDEFINED CASE ";
-  }
-}
-
-//===========================================================================
-
-string toStringPreRed (PreReductionType prered)
-{
-  switch (prered) {
-    case FULL:
-      return "FULL";
-    case BKZ:
-      return "BKZ";
-    case DIETER:
-      return "DIETER";
-    case LLL:
-      return "LLL";
-    case NOPRERED:
-      return "NOPRERED";
-    default:
-      return "***** PreReductionType: UNDEFINED CASE ";
-  }
-}
-
-//===========================================================================
-
-string toStringPrecision (PrecisionType precision)
-{
-  switch (precision) {
-    case DOUBLE:
-      return "DOUBLE";
-    case QUADRUPLE:
-      return "QUADRUPLE";
-    case XDOUBLE:
-      return "XDOUBLE";
-    case RR:
-      return "RR";
-    default:
-      return "***** PrecisionType: UNDEFINED CASE ";
-  }
-}
-
-//===========================================================================
-
-string toStringOutput (OutputType sort)
-{
-  switch (sort) {
-    case TERM:
-      return "TERM";
-    case RES:
-      return "RES";
-    case TEX:
-      return "TEX";
-    case GEN:
-      return "GEN";
-    default:
-      return "***** OutputType: UNDEFINED CASE ";
-  }
-
-}
 #endif
