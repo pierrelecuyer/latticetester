@@ -24,6 +24,8 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 namespace LatticeTester {
 
   /**
@@ -74,7 +76,18 @@ namespace LatticeTester {
    * \relates Coordinates
    * Formats the coordinate set `coords` and outputs it to `os`.
    */
-  std::ostream& operator<< (std::ostream& os, const Coordinates& coords);
+  static std::ostream& operator<< (std::ostream& os, const Coordinates& coords)  {
+	os << "{";
+	Coordinates::const_iterator it = coords.begin();
+	if (it != coords.end()) {
+	  os << *it;
+	  while (++it != coords.end())
+	    os << "," << *it;
+	}
+	os << "}";
+	return os;
+  }
+
 
   /**
    * \relates Coordinates
@@ -93,7 +106,40 @@ namespace LatticeTester {
    * - <tt>2 5 1</tt>
    * - <tt>2 1 5 1</tt>
    */
-  std::istream& operator>> (std::istream& is, Coordinates& coords);
+  static std::istream& operator>> (std::istream& is, Coordinates& coords) {
+     coords.clear();
+  
+     string digits = "0123456789";
+     string sep = " \t,";
+  
+     // check if coordinate set is enclosed in braces
+     bool with_braces = false;
+     if (is.peek() == '{') {
+       is.get();
+       with_braces = true;
+     }
+  
+     while (true) {
+       if (with_braces && is.peek() == '}') {
+         is.get();
+         break;
+       }
+       if (digits.find(is.peek()) != string::npos) {
+         // digit found
+         Coordinates::value_type val;
+         is >> val;
+         coords.insert(val);
+         continue;
+       }
+       if (sep.find(is.peek()) != string::npos) {
+         // discard separator character
+         is.get();
+         continue;
+       }
+       break;
+     }
+     return is;
+   }
 
 } //end namespace
 
