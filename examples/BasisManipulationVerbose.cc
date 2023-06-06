@@ -109,25 +109,37 @@ int main() {
 
 	Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
 	red->shortestVector();  // To call this method, we need to create a Reducer object.
-	std::cout << " The shortest vector length:\n";
-	std::cout << red->getMinLength() << std::endl;
+	std::cout << "Shortest vector: " << korlat->getBasis()[0] << "\n";
+	std::cout << "Shortest vector length: " << red->getMinLength() << "\n\n";
 
     Coordinates proj;
     proj.insert(0);
     proj.insert(2);
     proj.insert(4);
-    std::cout << "Selected projection = " << proj << "\n";
+    std::cout << "Now looking at lattice projection over coordinates " << proj << ".\n";
     BasisConstruction<Int>::projectionConstructionLLL (basis1, basis2, proj, m);
-    std::cout << "Basis for projection with LLL: \n" << basis2 << "\n";
+    std::cout << "Basis for this projection, with LLL: \n" << basis2 << "\n";
 
     BasisConstruction<Int>::projectionConstructionUpperTri (basis1, basis2, proj, m, basis3);
-    std::cout << "Basis for projection with upper-triangular: \n" << basis2 << "\n";
+    std::cout << "Basis for this projection, with upper-triangular method: \n" << basis2 << "\n";
     
-    IntLattice<Int, Real> *projLat; // Another IntLattice to store projections
+    IntLattice<Int, Real> *projLat; // Another IntLattice to store the projection, needed for `red`.
     projLat = new IntLattice<Int, Real>(basis2, m, 3);
     red->shortestVector(*projLat);
-	std::cout << " The shortest vector length for the projection over coord. {0, 2, 4}:\n";
-	std::cout << red->getMinLength() << std::endl;
+	std::cout << "Shortest vector in the lattice projection: " << projLat->getBasis()[0] << "\n";
+	std::cout << "Shortest vector length: " << red->getMinLength() << "\n\n";
+
+	BasisConstruction<Int>::mDualUpperTriangular(basis2, basisdual, m);
+    std::cout << "Triangular basis for the m-dual lattice of this projection: \n" << basisdual << "\n";
+
+	BasisConstruction<Int>::LLLConstruction0(basisdual, 0.99999);
+	std::cout << "m-dual basis after applying LLL with delta=0.99999: \n" << basisdual << "\n";
+
+    IntLattice<Int, Real> *projLatDual; // Another IntLattice to store the dual of projection.
+    projLatDual = new IntLattice<Int, Real>(basisdual, m, 3);
+    red->shortestVector(*projLatDual);
+	std::cout << "Shortest vector in the m-dual lattice of projection: " << projLatDual->getBasis()[0] << "\n";
+	std::cout << "Shortest vector length: " << red->getMinLength() << "\n\n";
 
 	return 0;
 }

@@ -48,7 +48,7 @@
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
-#include "latticetester/FlexTypes.h"    // This defines Int = int64_t
+#include "latticetester/FlexTypes.h"    // This defines Int and Real
 #include "latticetester/EnumTypes.h"
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/Util.h"
@@ -82,7 +82,7 @@ int main() {
 	clock_t tmp;
 	IntMat basis1, basis2, basis3, basisdual;
 	Int sqlength;
-	Rank1Lattice<Int, double> *korlat;    // Will be a Korobov lattice.
+	Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
 
 	long d;
 	for (d = 0; d < numSizes; d++) {  // Each matrix size
@@ -95,7 +95,7 @@ int main() {
 			timer[meth][d] = 0;
 		for (int64_t r = 0; r < numRep; r++) {
 			a = m / 5 + 10 * r;   // The multiplier we use for this rep.
-			korlat = new Rank1Lattice<Int, Real>(m, a, dim);
+			korlat = new Rank1Lattice<Int, Real> (m, a, dim);
 			korlat->buildBasis(dim);
 			copy(korlat->getBasis(), basis1); // This initial basis is triangular.
 			// We apply LLL to change basis1.
@@ -142,6 +142,7 @@ int main() {
 			BasisConstruction<Int>::mDualBasis(basis3, basisdual, m);
 			timer[6][d] += clock() - tmp;
 #endif
+			delete korlat;
 			}
 	}
 	std::cout << "Types: " << strFlexTypes << "\n";

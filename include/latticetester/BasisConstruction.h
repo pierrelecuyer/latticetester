@@ -201,8 +201,7 @@ public:
 	static void projectionConstruction(IntMat &inBasis,
 			IntMat &projBasis, const Coordinates &proj, const Int &m,
 			const ProjConstructType t_proj = LLLPROJ, const double delta = 0.9);
-	
-	
+
 };
 
 //============================================================================
@@ -563,7 +562,7 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96( NTL::matrix<NTL::ZZ>  &
 			for (int64_t k = j + 1; k <= i; k++)
 				basisDual[i][j] += basis[j][k] * basisDual[i][k];
 			//if (basisDual(i, j) != 0)
-				negate(basisDual[i][j], basisDual[i][j]);
+				NTL::negate(basisDual[i][j], basisDual[i][j]);
 			if (!NTL::IsZero(basisDual[i][j] % basis[j][j])) {
 				gcd = NTL::GCD(basisDual(i, j), basis[j][j]);
 				div(fac, basis[j][j], gcd); 
@@ -610,6 +609,7 @@ template<>
 void BasisConstruction<int64_t>::mDualUpperTriangular(
 		const NTL::matrix<int64_t> &A, NTL::matrix<int64_t> &B, const long &m) {
 	long dim = A.NumRows();
+	B.SetDims(dim, dim);
     long i, j, k;
 	for (i = 0; i < dim; i++) {
 		for (j = i + 1; j < dim; j++)
@@ -629,6 +629,7 @@ template<>
 void BasisConstruction<NTL::ZZ>::mDualUpperTriangular(
 		const NTL::matrix<NTL::ZZ> &A, NTL::matrix<NTL::ZZ> &B,	const NTL::ZZ &m) {
 	int64_t dim = A.NumRows();
+	B.SetDims(dim, dim);
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
 			NTL::clear(B[i][j]);

@@ -154,10 +154,16 @@ namespace LatticeTester {
    */
   enum ProjConstructType { LLLPROJ, UPPERTRIPROJ };
 
+
+  //============================================================================
+
   /**
-   * Functions for printing the `enum` constants in this module.
+   * The following are functions for printing the `enum` constants in this module.
    * Each function returns the value of the `enum` variable given as input as a string.
    */
+
+
+
   static std::string toStringNorm (NormType norm) {
     switch (norm) {
       case SUPNORM:
@@ -170,7 +176,7 @@ namespace LatticeTester {
         return "ZAREMBANORM";
       default:
         return "***** NormType: UNDEFINED CASE ";
-    }
+     }
   }
   
   static std::string toStringOutput (OutputType out) {
@@ -324,6 +330,5 @@ namespace LatticeTester {
   }
 
 };
-
 
 #endif
