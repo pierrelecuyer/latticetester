@@ -76,9 +76,10 @@ namespace LatticeTester {
  * the basis is upper-triangular.
  *
  * We also have functions to compute the basis of a projection of a given lattice over
- * a specified set of coordinates.  The method `projectionConstructionLLL` does this
+ * a specified set of coordinates.  The function `projectionConstructionLLL` does this
  * by using LLL to construct the basis of the projection, while `projectionConstructionUpperTri`
  * constructs an upper-triangular basis for the projection.
+ * The function `projectionConstruction` takes the construction method as a parameter.
  *
  * All functions in this class are static, so there is no reason to create any
  * `BasisConstruction` object. We also avoid to create new objects (such as vectors and
@@ -126,13 +127,14 @@ public:
 	/**
 	 * Takes a set of generating vectors in the matrix `gen` and iteratively
 	 * transforms it into a lower triangular lattice basis into the matrix `basis`.
-	 * `gen` and `basis` must have the same number of rows and the same number of columns.
-	 * All the entries of `gen` given as input are assumed to be reduced modulo `m`.
-	 * All the computations are done modulo the scaling factor `m`.
+	 * This lattice is assumed to contain all the vectors of the form @f$m e_j@f$,
+	 * so these vectors are added implicitly to the generating set.
+	 * Apart from that, all the entries of `gen` given as input are assumed to be
+	 * reduced modulo the scaling factor `m` and all the computations are done modulo `m`.
+     * The matrix `basis` is resized automatically (internally) to a square matrix with
+     * the appropriate dimensions.
 	 * After the execution, `gen` will contain irrelevant information (garbage)
 	 * and `basis` will contain an upper triangular basis.
-	 * Perhaps with zero rows at the end, in general, unless we assume implicitly that
-	 * all vectors of the form m e_i are in the generating set.
 	 * The algorithm is explained in the lattice tester guide.
 	 * Important: `gen` and `basis` must be different `IntMat` objects.
 	 */
@@ -592,18 +594,18 @@ void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 	B.SetDims(dim, dim);
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
-			NTL::clear(B(i, j));
-		DivideRound(m, A(i, i), B(i, i));
+			NTL::clear(B[i][j]);
+		NTL::div(B[i][i], m, A[i][i]);
 		for (int64_t j = i - 1; j >= 0; j--) {
-			NTL::clear(B(i, j));
+			NTL::clear(B[i][j]);
 			for (int64_t k = j + 1; k <= i; k++)
-				B(i, j) += A(j, k) * B(i, k);
-			if (B(i, j) < 0)
-				B(i, j) = -B(i, j);
-			DivideRound(B(i, j), A(j, j), B(i, j));
+				NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
+			NTL::div(B[i][j], B[i][j], A[j][j]);
 		}
 	}
 }
+
+/**
 
 template<>
 void BasisConstruction<int64_t>::mDualUpperTriangular(
@@ -642,6 +644,7 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular(
 		}
 	}
 }
+**/
 
 //===================================================
 

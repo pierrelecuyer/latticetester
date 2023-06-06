@@ -52,13 +52,14 @@ namespace LatticeTester {
  * (an `IntLattice` object) in various ways (pairwise, LLL, BKZ, Minkowski
  * \cite rDIE75a, \cite mLEN82a, \cite mSCH91a),
  * and to find a shortest nonzero vector in the lattice using a BB algorithm \cite rFIN85a.
- * Most of the methods do not use or change the m-dual lattice.
- * To reduce the m-dual basis or find a shortest nonzero vector in it,
- * one should first dualize the lattice (`IntLattice::dualize` does that)
- * and then apply the desired methods.
- * Some of the lattice reduction methods are NTL wraps.
- * For those, the `Int` type can only be `ZZ`, because NTL offers no other option.
- * For LLL, we have both our (old and slow) implementation in `redLLLOld` and more efficient
+ * Each `Reducer` must have an internal `IntLattice` object which is given upon construction
+ * and can also be changed later via `setIntLattice`.
+ * The reduction methods are applied to this internal object.
+ *
+ * Some of the lattice reduction methods are wrappers of the NTL methods described at
+ * https://libntl.org/doc/LLL.cpp.html .
+ * The methods are actually more efficient when `Int` is the `NTL::ZZ` type than the `int64_t` type.
+ * For LLL, we have both an old and slow implementation in `redLLLOld` and the more efficient
  * implementations from NTL in `redLLLNTL` and `redLLLNTLExact`.
  * The method `redBKZ` is also a wrapper for the NTL algorithm for BKZ reduction.
  *
@@ -85,6 +86,11 @@ namespace LatticeTester {
  * Creating a new `Reducer` object for each `IntLattice` that we want to handle is very
  * inefficient and should be avoided, especially when we want to examine several
  * projections for several lattices.
+ *
+ * Most of the methods do not use or change the m-dual lattice.
+ * To reduce the m-dual basis or find a shortest nonzero vector in it,
+ * one should first dualize the lattice (`IntLattice::dualize` does that)
+ * and then apply the desired methods.
  */
 
 template<typename Int, typename Real>
@@ -140,16 +146,14 @@ public:
 	void copy(const Reducer<Int, Real> &red);
 
 	/**
-	 * Computes a shortest non-zero vector for the `IntLattice` stored
-	 * in this object, with respect to norm type `norm`, using the BB
-	 * algorithm described in \cite rLEC97c.
-	 * The admissible norm types here are `L1NORM` and `L2NORM`.
-	 * The `NormType` attribute of this `IntLattice`
-	 * object will be changed to `norm`. If `MaxNodesBB` is exceeded
+	 * Computes a shortest non-zero vector for the `IntLattice` stored in this `Reducer` object,
+	 * with respect to the norm in this `IntLattice`,
+	 * using the BB algorithm described in \cite rLEC97c and \cite iLEC22l.
+	 * The admissible norm types here are `L1NORM` and `L2NORM` (see `EnumTypes.h`).
+     * If the constant `Reducer::MaxNodesBB` (see below) is exceeded
 	 * during the branch-and-bound, the method aborts and returns
 	 * `false`. Otherwise, it returns `true`. If the reduction was
-	 * successful, the new reduced basis can be accessed via
-	 * `getIntLattice()`.
+	 * successful, the new reduced basis can be accessed via `getIntLattice()`.
 	 *
 	 * It is strongly recommended to use `redBKZ` or `redLLLNTL` to pre-reduce
 	 * the basis before invoking this method; this is not done automatically.
@@ -178,8 +182,11 @@ public:
 
 	/**
 	 * This method performs pairwise reduction sequentially on all vectors
-	 * of the basis whose indices are greater of equal to `dim >=0`.
-	 * The boolean vector `xx[]` is used internally in Minkowski reduction.
+	 * of the basis whose indices are greater of equal to `dim >=0`,
+	 * as proposed in \cite rDIE75a.
+	 * The boolean vector `xx[]` is used internally in Minkowski reduction only:
+	 * when this vector is not `NULL`, `xx[j]=true' means that the j-th vector
+	 * should not be modified.
 	 */
 	void redDieter(int64_t dim, bool xx[] = NULL);
 
@@ -232,7 +239,7 @@ public:
 			PrecisionType precision = DOUBLE);
 	
 	/**
-	 * This implements an exact algorithm to perform the original LLL reduction.
+	 * This implements an exact algorithm from NTL to perform the original LLL reduction.
 	 * This is slower than `redLLLNTL`, but more accurate.
 	 * There is also a static version which takes the basis as input.
 	 */
