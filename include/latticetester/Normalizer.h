@@ -201,15 +201,6 @@ public:
 	virtual double* getBounds() const;
 
 	/**
-	 * Returns the bound for dimension `j` as computed in Normalizer::init().
-	 */
-//<<<<<<< HEAD
-	// double getBound (int64_t j) const;
-//=======
-	// double getPreComputedBound (int64_t j) const;
-
-//>>>>>>> b23681ea0112bce9ba98c1463251528b775075a4
-	/**
 	 * Returns the bound on the length of the shortest nonzero vector in `j` dimensions.
 	 */
 	virtual double getBound(int64_t j) const;
@@ -233,10 +224,11 @@ protected:
 	NormType m_norm;
 
 	/**
-	 * log of the density, ie log of the number of points of the lattice
+	 * log of the density, i.e., log of the number of points of the lattice
 	 * per unit of volume.
 	 */
 	 //double m_logDensity;  // remove ...
+
 	/**
 	 * Maximum dimension. Only elements 1 to <tt>m_maxDim</tt> (inclusive) of m_bounds below
 	 * will be pre-computed.
@@ -246,7 +238,7 @@ protected:
 	/**
 	 * Contains the bounds on the length of the shortest nonzero vector in
 	 * the lattice in each dimension up to `maxDim`. This array is initialized by the
-	 * `computeBounds` methods and its values can be accessed via `getBound(int)`.
+	 * `computeBounds` methods and its values can be accessed via `getBound`.
 	 */
 	double *m_bounds;
 

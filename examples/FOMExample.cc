@@ -81,7 +81,7 @@ int main() {
   for(auto it = allcoord.begin(); it != allcoord.end(); it++){
     // Computing a basis for the projection, using chosen projection type 	  
 	BasisConstruction<Int>::projectionConstruction(lat->getBasis(), projBasis, *it, m, pctype);	
-	proj = new IntLattice<Int,Real> (projBasis, m, projBasis.NumCols());
+	proj = new IntLattice<Int, Real> (projBasis, m, projBasis.NumCols());
     
     //! Computing the shortest vector in the lattice spanned by matrix
     proj->updateVecNorm();
@@ -116,6 +116,8 @@ int main() {
                " weights and projections choices\n";
   std::cout << "\n";
 
+  // ============================================================================
+
   // EXAMPLE 2: LOOK AT TWO- AND THREE-DIMENSIONAL PROJECTIONS ONLY
   
   // Reset figures of merit and basis of projection
@@ -129,7 +131,7 @@ int main() {
   for(auto it = ldcoord.begin(); it != ldcoord.end(); it++){
     // Computing a basis for the projection, using chosen projection type.
     BasisConstruction<Int>::projectionConstruction(lat->getBasis(), projBasis, *it, m, pctype);
-	proj = new IntLattice<Int,Real> (projBasis, m, projBasis.NumCols());
+	proj = new IntLattice<Int, Real> (projBasis, m, projBasis.NumCols());
     //! Computing the shortest vector in the lattice spanned by matrix
     proj->updateVecNorm();
     proj->sort(0);

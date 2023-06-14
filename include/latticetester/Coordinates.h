@@ -29,11 +29,12 @@ using namespace std;
 namespace LatticeTester {
 
   /**
-   * This is basically a `std::set<std::size_t>`.
+   * This is basically a `std::set<std::size_t>`, i.e., a standard C++ set.
    * An object of this class is used to store a set of coordinates that represents
    * a projection, usually with lacunary indices.  These types of objects are created
    * and returned by the classes in the `CoordinateSets` namespace.
    * This class also offers some input and output operators.
+   * Note that the coordinates are assumed to start at 1.
    */
 
   class Coordinates : public std::set<std::size_t> {

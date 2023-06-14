@@ -134,6 +134,7 @@ class IntFactor {
          * \f$y\f$.
          */
         static LatticeTester::PrimeType isProbPrime (const Int & y, std::int64_t k);
+
     };    // class IntFactor
 
   //===========================================================================

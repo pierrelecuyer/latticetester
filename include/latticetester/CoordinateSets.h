@@ -29,7 +29,7 @@ namespace LatticeTester {
    * The classes `FromRange`, `SubSets`, and `AddCoordinate` are implemented here.
    *
    * `CoordinateSets` (below) is a namespace that contains different implementations
-   * of sets of coordinates.
+   * of sets of coordinates.  They resemble Set objects in standard C++.
    * Such sets can be used to specify a set of projections of lattices or point sets.
    * The classes in this namespace are iterable but are not containers, so they
    * require very little storage. They virtually contain objects of type
@@ -155,7 +155,7 @@ namespace LatticeTester {
         // Maps Range objects to a size of subsets.
         typedef std::map<Coordinates::size_type, Range> RangeMap;
 
-        // For every size of subsets, this contains the the range of integer
+        // For every size of subsets, this contains the range of integers
         // from which the subset can be drawn.
         RangeMap m_ranges;
 

@@ -46,14 +46,16 @@ namespace LatticeTester {
    * `TERM`: the results will appear only on the terminal screen.<br>
    * `RES`: the results will be in plain text and sent to a `.res` file.<br>
    * `TEX`: the results will be in a LaTeX file with extension `.tex`.<br>
-   * `GEN`: the results will be sent to a file with extension `.gen`.
+   * `GEN`: a list of retained generators will be sent to a file with extension `.gen`,
+   *        in a specific format so this list can be read again for further analysis.
    */
   enum OutputType { TERM, RES, TEX, GEN };
 
   /**
    * Types of problems that LatticeTester can handle.
+   * Not sure if we still need this.    *******
    */
-  enum ProblemType {BASIS, DUAL, REDUCTION, SHORTEST, MERIT};
+  enum ProblemType { BASIS, DUAL, REDUCTION, SHORTEST, MERIT };
 
   /**
    * Types of precision that the NTL can use for real numbers:
@@ -68,7 +70,7 @@ namespace LatticeTester {
    * See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt`.
    */
  // enum PrecisionType { DOUBLE, QUADRUPLE, EXPONENT, ARBITRARY, EXACT };
-  enum PrecisionType { DOUBLE, QUADRUPLE, XDOUBLE, RR};
+  enum PrecisionType { DOUBLE, QUADRUPLE, XDOUBLE, RR };
 
   /**
    * Indicates whether an integer is prime, probably prime, composite or its
@@ -78,7 +80,7 @@ namespace LatticeTester {
 
   /**
    * Merit criteria to measure the quality of generators or lattices.
-   * TO DO: this list is not very clear.    ****************
+   * TO DO: this list is not very clear. Maybe outdated.  ****************
    *
    * `LENGTH`: Only using the length of the shortest vector as a criterion.
    * `SPECTRAL`: figure of merit \f$S_T\f$ based on the spectral test.<br>
@@ -109,12 +111,13 @@ namespace LatticeTester {
    * lattice using the \f${\mathcal{L}}_2\f$ norm.<br>
    * `NONE`: no normalization will be used.<br>
    */
- // enum NormaType { BESTLAT, BESTBOUND, LAMINATED, ROGERS, MINKOWSKI, MINKL1, MINK,L1,L2, NONE };
+ // enum NormaType { BESTLAT, BESTBOUND, LAMINATED, ROGERS, MINKOWSKI, MINKL1, MINK, L1, L2, NONE };
   enum NormaType { BESTLAT, BESTBOUND, LAMINATED, ROGERS, MINKL1, MINKL2, NONE };
 
   /**
    * Indicates which type of calculation is considered for the
    * \f$P_{\alpha}\f$ test. \anchor REF__Const_CalcType_def
+   * Is this used anywhere?         ************
    *
    * `PAL` is for the \f$P_{\alpha}\f$ test. <br>
    * `BAL` is for the bound on the \f$P_{\alpha}\f$ test. <br>
@@ -132,9 +135,12 @@ namespace LatticeTester {
    * `DIETER`: Pairwise reduction
    * `LLL`: LLL reduction
    * `BKZ`: block Korkine-Zolotarev reduction
-   * `FULL`: shortest vector search.
+   * `BB`: direct shortest vector search with BB.
+   * `LLL_BB`: LLL followed by BB.
+   * `BKZ_BB`: BKZ followed by BB.
    */
-  enum PreReductionType { NOPRERED, DIETER, LLL, BKZ, FULL };
+   // enum PreReductionType { NOPRERED, DIETER, LLL, BKZ, FULL };
+  enum PreReductionType { NOPRERED, DIETER, LLL, BKZ, BB, LLL_BB, BKZ_BB };
 
   /**
    * Two possible ways of obtaining a triangular matrix to compute the bounds
@@ -144,10 +150,10 @@ namespace LatticeTester {
    *             of the matrix of scalar products.
    * `TRIANGULAR`: use a lower-triangular basis
    */
-  enum DecompType { CHOLESKY, TRIANGULAR };
+  enum DecompTypeBB { CHOLESKY, TRIANGULAR };
   
   /**
-   * Two possible ways of performing a projection.
+   * Two possible ways of computing the basis for a projection.
    *
    * `LLLPROJ`: uses LLL reduction.
    * `UPPERTRIPROJ`: use an upper-triangular basis construction.
@@ -161,8 +167,6 @@ namespace LatticeTester {
    * The following are functions for printing the `enum` constants in this module.
    * Each function returns the value of the `enum` variable given as input as a string.
    */
-
-
 
   static std::string toStringNorm (NormType norm) {
     switch (norm) {
@@ -292,22 +296,26 @@ namespace LatticeTester {
   
   static std::string toStringPreReduction (PreReductionType prered) {
     switch (prered) {
-      case FULL:
-        return "FULL";
-      case BKZ:
-        return "BKZ";
+      case NOPRERED:
+        return "NOPRERED";
       case DIETER:
         return "DIETER";
       case LLL:
         return "LLL";
-      case NOPRERED:
-        return "NOPRERED";
+      case BKZ:
+        return "BKZ";
+      case BB:
+        return "BB";
+      case LLL_BB:
+        return "LLL_BB";
+      case BKZ_BB:
+        return "BKZ_BB";
       default:
         return "***** PreReductionType: UNDEFINED CASE ";
     }
   }
   
-  static std::string toStringDecomp(DecompType decomp) {
+  static std::string toStringDecomp(DecompTypeBB decomp) {
     switch (decomp) {
       case CHOLESKY:
         return "CHOLESKY";

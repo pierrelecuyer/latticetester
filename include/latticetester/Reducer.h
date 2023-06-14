@@ -328,7 +328,7 @@ public:
 	 * Sets the decomposition method used by this reduced to compute bounds
 	 * in the BB procedures.
 	 */
-	void setDecompType(DecompType decomp) {
+	void setDecompTypeBB (DecompTypeBB decomp) {
 		m_decomp = decomp;
 	}
 
@@ -508,7 +508,7 @@ private:
       * Decomposition method used for computing bounds in the BB procedures.
       * can be ``CHOLESKY` (the default) or `TRIANGULAR`.
       */
-    DecompType m_decomp = CHOLESKY;
+    DecompTypeBB m_decomp = CHOLESKY;
 
 	 /*
 	 * Local working variables for this class.
