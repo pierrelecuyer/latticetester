@@ -55,7 +55,7 @@ int main() {
   lat = new Rank1Lattice<Int, Real>(m, a, dim);
   lat->buildBasis(dim);   
   
-  FiguresOfMerit<Int> fom(m, max_dim);
+  FiguresOfMerit<Int> fom(*lat, m, max_dim);
   fom.calculNorma(*lat, max_dim);
   //fom.set_ProjConstructType(LLLPROJ);
   fom.set_PreReductionType(LLL);
