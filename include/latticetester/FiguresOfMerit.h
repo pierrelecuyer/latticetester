@@ -90,7 +90,7 @@ public:
 	
     void set_m(Int i) { m = i; };    
 
-	Int get_m() { return m;	};   
+    Int get_m() { return m;	};   
   
     void set_performBB(bool BB) { performBB = BB; };
     
@@ -136,9 +136,9 @@ public:
 	}
 	
     //Function for calculating the normalizer
-	  void calculNorma(IntLattice<Int, Real> & lat, int64_t & dim) {
-     double log_density=(double)(-log(abs(NTL::determinant(lat.getBasis()))));
-     norma  = new NormaBestLat(log_density, dim);
+	void calculNorma(IntLattice<Int, Real> & lat, int64_t & dim) {
+      double log_density=(double)(-log(abs(NTL::determinant(lat.getBasis()))));
+      norma  = new NormaBestLat(log_density, dim);
     }	
 
 	//Function for calculating the Figure of Merit M
