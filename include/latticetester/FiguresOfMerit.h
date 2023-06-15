@@ -127,14 +127,17 @@ public:
     //Further Declarations
     
     //Initialization
-    FiguresOfMerit(Int & i, int64_t max_dim) {
+    FiguresOfMerit(IntLattice<Int, Real> & lat, Int & i, int64_t max_dim) {
 		m = i;   
 	    red = new Reducer<Int, Real>(max_dim);   
 	    weights = new WeightsUniform(1.0); // This just puts a weight of 1 to everything 
+         
+      //This is to initialize proj in order to avoid recreation
+      proj = new IntLattice<Int, Real> (lat.getBasis(), m, lat.getBasis().NumCols()); 
 	}
 	
     //Function for calculating the normalizer
-	void calculNorma(IntLattice<Int, Real> & lat, int64_t & dim) {
+	  void calculNorma(IntLattice<Int, Real> & lat, int64_t & dim) {
      double log_density=(double)(-log(abs(NTL::determinant(lat.getBasis()))));
      norma  = new NormaBestLat(log_density, dim);
     }	
@@ -151,7 +154,8 @@ public:
 	//Further global objects
 	IntLattice<Int, Real> *proj; 
     Normalizer *norma;
-	Reducer<Int, Real> *red;    	
+	Reducer<Int, Real> *red;  
+    CoordinateSets::FromRanges *CoordRange;  	
 
 };
 
@@ -167,8 +171,7 @@ double FiguresOfMerit<Int>::computeMeritM(IntLattice<Int, Real> & lat, const Int
    int64_t max_dim;
    NTL::conv(max_dim, maxDim);
    Coordinates Coord;
-   //This is to initialzie proj in order to avoid recreation
-   proj = new IntLattice<Int, Real> (lat.getBasis(), m, lat.getBasis().NumCols()); 
+   //Do the calculation for the successive coordinates first if succCoordFirst = true
    if (succCoordFirst == true) {
       for (Int i = t[0]; i < maxDim; i++) {
          Coord.clear();
@@ -181,10 +184,12 @@ double FiguresOfMerit<Int>::computeMeritM(IntLattice<Int, Real> & lat, const Int
 		 }
       }
    }   
+   //Do the calculation for the other coordinate sets
    for (int i = 1; i < t.length(); i++) {
       CoordinateSets::FromRanges CoordRange(i, i, 1, 5);  
 	  for(auto it = CoordRange.begin(); it != CoordRange.end(); it++){
          Coord = *it;
+         //According to the notation is the guide, the first coordinate is always included
 		 Coord.insert(0);
 		 merit = computeMeritProj(lat, Coord, max_dim);
 		 if (merit < minmerit) minmerit = merit;
@@ -194,6 +199,7 @@ double FiguresOfMerit<Int>::computeMeritM(IntLattice<Int, Real> & lat, const Int
 		 }
 	   }
     }
+   //Do the calculation for the successive coordinates last if succCoordFirst = false
     if (succCoordFirst == false) {
       for (Int i = t[0]; i < maxDim; i++) {
          Coord.clear();
@@ -234,26 +240,11 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLattice<Int, Real> & lat, const 
 
 }
 
-/* List of TODOS:
- * 3) Upload git 
- * 4) Mail to Pierre 
- * -> Make him aware that I am not sure if normalizer is applied correctly because it was different in the past.
- * -> There is no poss
-
- * 
- */
-
-
-
-//
-//
 //template<typename Int>
 //void FoMQ(const IntLattice<Int, Real> & Lat, const Int & t) {
 //	std::cout << "Calculating Q";
 //}
 	
-//void BasisConstruction<Int>::projectionConstruction(IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m, double delta)
-
 template class FiguresOfMerit<NTL::ZZ>;
 //template class FiguresOfMerit<std::int64_t>;
 
