@@ -130,10 +130,9 @@ public:
     FiguresOfMerit(IntLattice<Int, Real> & lat, Int & i, int64_t max_dim) {
 		m = i;   
 	    red = new Reducer<Int, Real>(max_dim);   
-	    weights = new WeightsUniform(1.0); // This just puts a weight of 1 to everything 
-         
-      //This is to initialize proj in order to avoid recreation
-      proj = new IntLattice<Int, Real> (lat.getBasis(), m, lat.getBasis().NumCols()); 
+	    weights = new WeightsUniform(1.0); // This just puts a weight of 1 to everything          
+        //This is to initialize proj in order to avoid recreation
+        proj = new IntLattice<Int, Real> (lat.getBasis(), m, lat.getBasis().NumCols()); 
 	}
 	
     //Function for calculating the normalizer
