@@ -56,10 +56,12 @@ int main() {
   lat->buildBasis(dim);   
   
   FiguresOfMerit<Int> fom(*lat, m, max_dim);
-  fom.calculNorma(*lat, max_dim);
-  //fom.set_ProjConstructType(LLLPROJ);
+  fom.set_succCoordFirst(true);
   fom.set_PreReductionType(LLL);
+  fom.set_forDual(true);
+  //fom.set_ProjConstructType(LLLPROJ);
   //fom.set_lowerbound(0.5);
+  fom.calculNorma(*lat, max_dim);
 
   t.SetLength(3);
   t[0] = 3;
