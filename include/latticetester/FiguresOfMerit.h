@@ -64,6 +64,7 @@ public:
 	bool succCoordFirst = false; //At first look at successive corrdinates when calculating FigureOfMerit 
 	bool forDual = false; //Figure of merit is calculated for the dual lattice if true
 	PreReductionType prered = BKZ; //Define the prereduction type
+	MeritType TypeMerit = MERITM; //Define the type of the figure of merit
 	double delta = 0.9; //delta-Parameter for LLL or BKZ
 	int64_t blocksize = 10; //blocksize of BKZ algorithm
 	double lowerbound = 0; //If FoM is below this bound, then calculation of FoM is stopped
@@ -95,6 +96,10 @@ public:
     void set_PreReductionType(PreReductionType pr) { prered = pr; };
     
     PreReductionType get_PreReductionType () { return prered; };
+    
+    void set_MeritType(MeritType mer) { TypeMerit = mer; };
+    
+    MeritType get_MeritType () { return TypeMerit; };
   
     void set_delta(double del) { delta = del;};
     
@@ -140,15 +145,15 @@ public:
           norma  = new NormaBestLat(log_density, dim);
        }
     }	
-
-	//Function for calculating the Figure of Merit M
-	double computeMeritM(IntLattice<Int, Real> & lat, const IntVec & t);
+	
+	//Function for calculating the Figure of Merit M or Q based on chosen MeritType
+	double computeMerit(IntLattice<Int, Real> & lat, const IntVec & t);
 	
 	//Function for calculating the Figure of Merit for a single projection
 	double computeMeritProj(IntLattice<Int, Real> & lat, const Coordinates & Coord);
 	
-	//Function for calculating the Figure of Merit Q
-	static void computeMeritQ(const IntLattice<Int, Real> & Lat, const Int & t);	
+	//Function for calculating the Beyer quotient for a single projection
+	double computeBeyerProj(IntLattice<Int, Real> & lat, const Coordinates & Coord);
 	
 	//Further global objects
 	IntLattice<Int, Real> *proj; 
@@ -162,7 +167,7 @@ public:
 // Implementation
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritM(IntLattice<Int, Real> & lat, const IntVec & t) {
+double FiguresOfMerit<Int>::computeMerit(IntLattice<Int, Real> & lat, const IntVec & t) {
    double merit;
    double minmerit = 1.0;
    Int maxDim;
@@ -176,7 +181,10 @@ double FiguresOfMerit<Int>::computeMeritM(IntLattice<Int, Real> & lat, const Int
       for (Int i = t[0]; i < maxDim; i++) {
          Coord.clear();
 	     for (int j = 0; j < i+1; j++) Coord.insert(j+1);
-		 merit = computeMeritProj(lat, Coord);
+	     if (TypeMerit == MERITQ)
+	        merit = computeBeyerProj(lat, Coord);
+	     else
+		    merit = computeMeritProj(lat, Coord);
 		 if (merit < minmerit) minmerit = merit;
 		 if (merit < lowerbound) {
 			 //std::cout << "Figure of merit is smaller than lower bound!!!";
@@ -191,7 +199,10 @@ double FiguresOfMerit<Int>::computeMeritM(IntLattice<Int, Real> & lat, const Int
          Coord = *it;
          //According to the notation is the guide, the first coordinate is always included
 		 Coord.insert(0);
-		 merit = computeMeritProj(lat, Coord);
+		 if (TypeMerit == MERITQ)
+		    merit = computeBeyerProj(lat, Coord);
+		 else
+		    merit = computeMeritProj(lat, Coord);
 		 if (merit < minmerit) minmerit = merit;
 		 if (merit < lowerbound) {
 			 //std::cout << "Figure of merit is smaller than lower bound!!!";
@@ -204,7 +215,10 @@ double FiguresOfMerit<Int>::computeMeritM(IntLattice<Int, Real> & lat, const Int
       for (Int i = t[0]; i < maxDim; i++) {
          Coord.clear();
 	     for (int j = 0; j < i+1; j++) Coord.insert(j+1);
-		 merit = computeMeritProj(lat, Coord);
+		 if (TypeMerit == MERITQ)
+		    merit = computeBeyerProj(lat, Coord);
+		 else
+		    merit = computeMeritProj(lat, Coord);
 		 if (merit < minmerit) minmerit = merit;
 		 if (merit < lowerbound) {
 			 //std::cout << "Figure of merit is smaller than lower bound!!!";
@@ -249,10 +263,36 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLattice<Int, Real> & lat, const 
 
 }
 
-//template<typename Int>
-//void FoMQ(const IntLattice<Int, Real> & Lat, const Int & t) {
-//	std::cout << "Calculating Q";
-//}
+template<typename Int>
+double FiguresOfMerit<Int>::computeBeyerProj(IntLattice<Int, Real> & lat, const Coordinates & Coord) {
+   double merit;
+   merit = 0.1;
+   BasisConstruction<Int>::projectionConstruction(lat.getBasis(), projBasis, Coord, m, pctype);
+   if (forDual == true)
+   { 
+      IntMat projBasisDual;
+ 	  if (pctype == UPPERTRIPROJ) {
+ 	     BasisConstruction<Int>::mDualUpperTriangular(projBasis, projBasisDual, m);
+ 	  } else
+ 	     BasisConstruction<Int>::mDualBasis(projBasis, projBasisDual, m);
+ 	  projBasis = projBasisDual;
+    }
+    *proj = IntLattice<Int, Real> (projBasis, m, projBasis.NumCols());
+    proj->updateVecNorm();
+    proj->sort(0); 
+    if (prered == BKZ) {
+        red->redBKZ(proj->getBasis(), delta, blocksize);  
+    } else {
+       red->redLLLNTL(proj->getBasis(), delta);  
+    } 
+    red = new Reducer<Int, Real> (*proj);
+    red->reductMinkowski(0);
+    merit = NTL::conv<double>(red->getMinLength())
+      /NTL::conv<double>(red->getMaxLength()); 
+   
+   return merit;
+}
+ 
 	
 template class FiguresOfMerit<NTL::ZZ>;
 //template class FiguresOfMerit<std::int64_t>;
