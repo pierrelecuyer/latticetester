@@ -59,6 +59,7 @@ int main() {
   fom.set_succCoordFirst(true);
   fom.set_PreReductionType(LLL);
   fom.set_forDual(true);
+  fom.set_MeritType(MERITM);
   //fom.set_ProjConstructType(LLLPROJ);
   //fom.set_lowerbound(0.5);
   fom.calculNorma(*lat, max_dim);
@@ -68,13 +69,14 @@ int main() {
   t[1] = 5;
   t[2] = 8;
   //Calculate figure for t = [3 5 8];
-  f = fom.computeMeritM(*lat, t);
+  f = fom.computeMerit(*lat, t);
   std::cout << "CASE 1: Look at t = [3,5,8]:" << "\n";
   std::cout << "Figure of merit FoM M is: " << f << "\n";
   std::cout << "\n";
   t.SetLength(2);
   t[0] = 2;
   t[1] = 4;  
+  f = fom.computeMerit(*lat, t);
   std::cout << "CASE 2: Look at t = [2,4]:" << "\n";
   std::cout << "Figure of merit with BestLat: " << f << "\n";
   std::cout << "\n";
