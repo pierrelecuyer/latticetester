@@ -240,7 +240,6 @@ void Rank1Lattice<Int, Real>::incDimNew () {
     	IntMat temp;
     	Int add;
     	temp.SetDims(d, d);
-    	std::cout << this->m_basis; 
     	//Use old basis for first d - 1 dimension
     	for (int i = 0; i < d - 1; i++) {
             for (int j = 0; j < d - 1; j++) {
@@ -259,15 +258,10 @@ void Rank1Lattice<Int, Real>::incDimNew () {
     	for (int j = 0; j < d - 1; j++)
     		temp[d - 1][j] = 0;
     	temp[d - 1][d - 1] = this->m_modulo;
-        //std::cout << temp;
         
         this->setDim (d);
-        this->m_basis.SetDims(d,d);
-        
-        this->m_basis = temp;
-        
-        std::cout << this->m_basis;
-        
+        this->m_basis.SetDims(d,d);        
+        this->m_basis = temp;              
         this->setNegativeNorm ();        
 
         if (!this->m_withDual) return;
