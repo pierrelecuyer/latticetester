@@ -692,7 +692,7 @@ void BasisConstruction<NTL::ZZ>::projectMatrix (const IntMat &in,
 	for (std::size_t i = 0; i < projSize; i++) {
 	    if (*it <= lat_dim) {
 			for (int j = 0; j < inDim; j++) {
-			   out[j][i] = in[j][*it];
+			   out[j][i] = in[j][*it-1];
 			}
 		}
 		else
