@@ -161,6 +161,10 @@ namespace LatticeTester {
 
         // Having a private getter is not that useful.
         const RangeMap& ranges() const {return m_ranges;}
+        
+        //This boolean variable indicates if the first variable should always be included 
+        //in the coordinates sets
+        bool includeFirstVariable;
 
       public:
         /**
@@ -171,9 +175,14 @@ namespace LatticeTester {
          * one may use the declaration <tt>FromRanges range(1, 3, 2, 4)</tt>;
          * this gives the sets
          * <tt>range = {{2}, {3}, {4}, {2, 3}, {2, 4}, {3, 4}, {2, 3, 4}}</tt>.
+         * The variable includeFirst indicates if the first variable shall always
+         * be included. For instance, the above mentioned example would change to
+         * <tt>range = {{1, 2}, {1, 3}, {1, 4}, {1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {1, 2, 3, 4}}</tt>.
+         * if includeFirst was set to true. 
+         * Note: includefirst can only set to true if minorder > 1. Otherwise an error message appears.
          */
         FromRanges (Coordinates::size_type minOrder, Coordinates::size_type maxOrder,
-            Coordinates::value_type minCoord, Coordinates::value_type maxCoord);
+            Coordinates::value_type minCoord, Coordinates::value_type maxCoord, const bool includeFirst = false);
 
         /**
          * Constructs an empty set of coordinate sets. When using this
@@ -329,6 +338,10 @@ namespace LatticeTester {
            * this object contains.
            * */
           Coordinates m_value;
+          
+          //This boolean variable indicates if the first variable should always be included 
+          //in the coordinates sets
+          bool includeFirstVariable = false;                   
 
       }; // end FromRanges::const_iterator class
 
