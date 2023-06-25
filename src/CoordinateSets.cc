@@ -28,8 +28,16 @@ namespace LatticeTester {
 
     FromRanges::FromRanges (
         Coordinates::size_type minOrder, Coordinates::size_type maxOrder,
-        Coordinates::value_type minCoord, Coordinates::value_type maxCoord)
+        Coordinates::value_type minCoord, Coordinates::value_type maxCoord,
+		const bool includeFirst)
     {
+      includeFirstVariable = includeFirst;  
+      if (minCoord < 2 && includeFirst)
+      { 
+         std::cerr << "Error: minCoord needs to be at least 2 if includeFirst is true!\n";
+         std::cerr << "Aborting.\n";
+         exit(1);
+      }
       for (Coordinates::size_type order = minOrder; order <= maxOrder; order++)
         includeOrder(order, minCoord, maxCoord);
     }
@@ -69,6 +77,9 @@ namespace LatticeTester {
       // empty coordinate set
       m_value.clear ();
 
+      //Set includeFirstVariable inside the iterator
+      includeFirstVariable = m_seq->includeFirstVariable;      
+
       // stop if all orders exhausted
       if (itRange == m_seq->ranges().end ()) {
         m_atEnd = true;
@@ -91,6 +102,10 @@ namespace LatticeTester {
       Coordinates::value_type i = minCoord;
       while (m_value.size () < order && i <= maxCoord)
         m_value.insert(i++);
+      
+      if (includeFirstVariable == true) {
+         m_value.insert(1);
+      }
     }
 
     //==========================================================================
@@ -99,7 +114,12 @@ namespace LatticeTester {
     {
       if (m_atEnd)
         return *this;
-
+      
+      //Delete 1 from m_value if includeFirstVariable is activated
+      if (includeFirstVariable == true) {
+    	  m_value.erase(1);
+      }
+      
       // current order
       const Coordinates::size_type order = m_value.size();
 
@@ -108,6 +128,7 @@ namespace LatticeTester {
 
       if (itRange == m_seq->ranges().end ()) {
         // current order has been removed during iteration
+    	std::cout << "end2";
         m_atEnd = true;
         return *this;
       }
@@ -149,7 +170,13 @@ namespace LatticeTester {
 
       // insert new values
       while (m_value.size () < order)
-        m_value.insert(++high);
+        m_value.insert(++high);      
+      
+      // include first variable if set
+      if (includeFirstVariable == true) {
+    	m_value.insert(1);
+      }
+      
 
       return *this;
     }

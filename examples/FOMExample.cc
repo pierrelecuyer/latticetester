@@ -50,31 +50,41 @@ int main() {
   a = 57;
   long dim;
   dim = max_dim;
+  bool with_dual = true;
   //Build a Korobov lattice
   Rank1Lattice<Int, Real> *lat;
-  lat = new Rank1Lattice<Int, Real>(m, a, dim);
-  lat->buildBasis(dim);   
-  
+  lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
+  lat->buildBasis(3);
+  lat->incDimNew();
+  //lat->incDim();
+  lat->buildBasis(dim);
+
   FiguresOfMerit<Int> fom(*lat, m, max_dim);
-  fom.calculNorma(*lat, max_dim);
-  //fom.set_ProjConstructType(LLLPROJ);
+  fom.set_succCoordFirst(true);
   fom.set_PreReductionType(LLL);
+  fom.set_forDual(false);
+  fom.set_MeritType(MERITM);
+  //fom.set_ProjConstructType(LLLPROJ);
   //fom.set_lowerbound(0.5);
+  fom.calculNorma(*lat, max_dim);
 
   t.SetLength(3);
   t[0] = 3;
   t[1] = 5;
   t[2] = 8;
   //Calculate figure for t = [3 5 8];
-  f = fom.computeMeritM(*lat, t);
+  f = fom.computeMerit(*lat, t);
   std::cout << "CASE 1: Look at t = [3,5,8]:" << "\n";
-  std::cout << "Figure of merit FoM M is: " << f << "\n";
+  std::cout << "Figure of merit M is: " << f << "\n";
   std::cout << "\n";
+
   t.SetLength(2);
   t[0] = 2;
-  t[1] = 4;  
+  t[1] = 4;
+  f = fom.computeMerit(*lat, t);
+
   std::cout << "CASE 2: Look at t = [2,4]:" << "\n";
-  std::cout << "Figure of merit with BestLat: " << f << "\n";
+  std::cout << "Figure of merit M is: " << f << "\n";
   std::cout << "\n";
   //std::cout << "Figure of merit with BestBound: " << merit2 << std::endl;
   std::cout << "Figures of merit are different for different normalizers,"

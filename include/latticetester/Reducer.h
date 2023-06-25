@@ -179,6 +179,17 @@ public:
 	 * increasing vector lengths. For a full reduction, just omit the `d` parameter.
 	 */
 	bool reductMinkowski(int64_t d = 0);
+	
+	/**
+	 * In this version, the lattice is passed as a parameter.
+	 * It will become the new `IntLattice` of this `Reducer` object.
+	 * This method calls `setIntLattice(lat)`, so if the max dimension for the
+	 * reducer is not large enough for `lat`, all the internal variables of this
+	 * reducer will be reset and the vectors and matrices will be automatically enlarged.
+	 * In particular, the bounds set by `setBoundL2` will have to be reset.
+	 */
+	
+	bool reductMinkowski(IntLattice<Int, Real> &lat, int64_t d = 0);	
 
 	/**
 	 * This method performs pairwise reduction sequentially on all vectors
@@ -2033,6 +2044,11 @@ bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
 	}
 	m_lMin2 = m_lat->getVecNorm(0);
 	return true;
+}
+template<typename Int, typename Real>
+bool Reducer<Int, Real>::reductMinkowski(IntLattice<Int, Real> &lat, int64_t d) {
+	setIntLattice (lat);
+	return Reducer<Int, Real>::reductMinkowski(d);
 }
 
 //=========================================================================

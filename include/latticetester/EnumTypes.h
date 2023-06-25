@@ -159,6 +159,14 @@ namespace LatticeTester {
    * `UPPERTRIPROJ`: use an upper-triangular basis construction.
    */
   enum ProjConstructType { LLLPROJ, UPPERTRIPROJ };
+  
+  /**
+   * Two different types of figures of merit
+   *
+   * `MERITM`: based on shortest vector.
+   * `MERITQ`: based on Beyer quotien.
+   */
+  enum MeritType { MERITM, MERITQ };
 
 
   //============================================================================
@@ -334,6 +342,17 @@ namespace LatticeTester {
         return "UPPERTRIPROJ";
       default:
         return "***** ProjConstructType: UNDEFINED CASE ";
+    }
+  }
+  
+  static std::string toStringMeritType(MeritType merit) {
+    switch (merit) {
+      case MERITM:
+        return "MERITM";
+      case MERITQ:
+        return "MERITQ";
+      default:
+        return "***** MeritType: UNDEFINED CASE ";
     }
   }
 
