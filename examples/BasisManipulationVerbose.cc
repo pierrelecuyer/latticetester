@@ -17,7 +17,7 @@
  * line below), and with various choices of the modulus `m` and multiplier `a`.
  **/
 
-//#define TYPES_CODE  LD     // int64_t
+// #define TYPES_CODE  LD     // int64_t
 #define TYPES_CODE  ZD     // ZZ
 
 #include <iostream>
@@ -51,6 +51,8 @@ int main() {
 	basis3.SetDims(dim, dim);
 	basisdual.SetDims(dim, dim);
     Int sqlength;
+
+	std::cout << "Types: " << strFlexTypes << "\n";
 
 	// We construct a Korobov lattice.
 	Rank1Lattice<Int, double> *korlat;
@@ -98,14 +100,14 @@ int main() {
 	std::cout << "m-dual upperTriangular: \n" << basisdual << "\n\n";
 
 	copy(basis3, basis2);
-	//  std::cout << "value of m = " << m << "\n";
-	// This one was changing the value of m !!!!!
 	BasisConstruction<Int>::mDualUpperTriangular96(basis2, basisdual, m);
 	std::cout << "m-dual upperTriangular96: \n" << basisdual << "\n\n";
 
-	// copy(basis3, basis2);
+	// This mDualBasis works only for Int == ZZ.
+    #if TYPES_CODE  ==  ZD
 	BasisConstruction<Int>::mDualBasis(basis3, basisdual, m);
 	std::cout << "m-dual basis by general method: \n" << basisdual << "\n";
+    #endif
 
 	Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
 	red->shortestVector();  // To call this method, we need to create a Reducer object.

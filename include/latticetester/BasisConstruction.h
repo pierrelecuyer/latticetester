@@ -88,7 +88,7 @@ namespace LatticeTester {
  * matrices over and over again instead of creating new ones.
  *
  * The programs `BasisManipulationVerbose` and `BasisManipulation` in the examples
- * illustrate how to use these functions and make some speed comparisons.
+ * illustrate how to use these functions and make speed comparisons.
  *
  */
 
@@ -164,7 +164,7 @@ public:
 	/**
 	 * This function assumes that `basis` contains a basis of the primal lattice
 	 * scaled by the factor `m`, not necessarily triangular, and it returns in `basisDual`
-	 * the m-dual basis.
+	 * the m-dual basis.  It is currently implemented only for `Int = ZZ`.
 	 */
 	static void mDualBasis(const IntMat &basis, IntMat &basisDual, Int &m);
 
@@ -191,7 +191,7 @@ public:
 	 * `upperTriangularBasis`, so the returned basis is upper triangular.
 	 * The matrix `genTemp` will be used to store the generating vectors of the
 	 * projection before making the triangularization. We pass it as a parameter
-	 * to avoid the interval creation of a new matrix each time.
+	 * to avoid the internal creation of a new matrix each time.
 	 * If `genTemp` is not passed as input, then a temporary matrix will be created internally.
 	 */
 	static void projectionConstructionUpperTri(IntMat &inBasis,
@@ -200,6 +200,10 @@ public:
 	static void projectionConstructionUpperTri(IntMat &inBasis,
 			IntMat &projBasis, const Coordinates &proj, const Int &m);	
 
+	/**
+	 * In this one, the construction method is passed as a parameter. The default is LLL.
+	 * In the triangular case, a temporary matrix is created internally.
+	 */
 	static void projectionConstruction(IntMat &inBasis,
 			IntMat &projBasis, const Coordinates &proj, const Int &m,
 			const ProjConstructType t_proj = LLLPROJ, const double delta = 0.9);
@@ -604,47 +608,6 @@ void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 		}
 	}
 }
-
-/**
-
-template<>
-void BasisConstruction<int64_t>::mDualUpperTriangular(
-		const NTL::matrix<int64_t> &A, NTL::matrix<int64_t> &B, const long &m) {
-	long dim = A.NumRows();
-	B.SetDims(dim, dim);
-    long i, j, k;
-	for (i = 0; i < dim; i++) {
-		for (j = i + 1; j < dim; j++)
-			NTL::clear(B[i][j]);
-		NTL::div(B[i][i], m, A[i][i]);
-		for (j = i - 1; j >= 0; j--) {
-			NTL::clear(B[i][j]);
-			for (k = j + 1; k <= i; k++)
-				NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
-			NTL::div(B[i][j], B[i][j], A[j][j]);
-		}
-	}
-}
-
-
-template<>
-void BasisConstruction<NTL::ZZ>::mDualUpperTriangular(
-		const NTL::matrix<NTL::ZZ> &A, NTL::matrix<NTL::ZZ> &B,	const NTL::ZZ &m) {
-	int64_t dim = A.NumRows();
-	B.SetDims(dim, dim);
-	for (int64_t i = 0; i < dim; i++) {
-		for (int64_t j = i + 1; j < dim; j++)
-			NTL::clear(B[i][j]);
-		div(B[i][i], m, A[i][i]); 
-		for (int64_t j = i - 1; j >= 0; j--) {
-			NTL::clear(B[i][j]);
-			for (int64_t k = j + 1; k <= i; k++)
-				MulSubFrom(B[i][j], A[j][k], B[i][k]);
-			div(B[i][j], B[i][j], A[j][j]);		
-		}
-	}
-}
-**/
 
 //===================================================
 

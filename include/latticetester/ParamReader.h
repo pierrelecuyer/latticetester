@@ -986,8 +986,8 @@ namespace LatticeTester {
         field = LLL;
       else if (0 == strcasecmp(val.c_str(), "NOPRERED"))
         field = NOPRERED;
-      else if (0 == strcasecmp(val.c_str(), "FULL"))
-        field = FULL;
+      else if (0 == strcasecmp(val.c_str(), "BKZ_BB"))
+        field = BKZ_BB;
       else
         MyExit(1, "readPreRed:   NO SUCH CASE");
     }

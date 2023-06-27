@@ -1,6 +1,9 @@
 /**
- * This example showcases the usage of the BasisConstruction module. This reads
- * matrices from files and builds a basis and a dual for an `IntLattice`
+ * This example illustrates the usage of the BasisConstruction module.
+ *
+ * TO REWRITE:   *****
+ *
+ * This reads matrices from files and builds a basis and a dual for an `IntLattice`
  * object. The files this is set to use are in the `bench.zip` archive. To
  * execute the program, the archive should be unziped and the `bench` folder
  * should be put in the same directory from which the executable is called.
@@ -29,15 +32,28 @@
  * We can also compare the speed of 'BasisConstruction::upperTriangularBasis'
  * and the speed of 'BasisConstruction::LLLConstruction'
  *
- * RESULTS with m = 1021:
+ * Example of results with m = 1048573 (prime modulus near 2^{20}):
  *
- *  dim:        10      20       30       40
+Types: Int = NTL::ZZ, Real = double
+Timings for different methods, in basic clock units
+ dim:          10       20       30       40       50
+
+UppTri         859      857     1439     2064     2776
+Tri96         1508     3404     4988     7003     9006
+LLL5            62      201      424      653     1001
+LLL8           212     1489     2977     4671     5342
+LLL9           115     1291     3088     4388     8208
+mDualUT        212     1022     2971     6173    10785
+mDualUT96      350     1554     4338     8112    14986
+mDual         1813     3444     8105    18546    29830
+
+Total time: 0.212573 seconds
 
 
- **/
+**/
 
-//#define TYPES_CODE  LD     // int64_t
-#define TYPES_CODE  ZD     // ZZ
+//#define TYPES_CODE  LD     // Int == int64_t
+#define TYPES_CODE  ZD     // Int == ZZ
 
 #include <iostream>
 #include <cstdint>
@@ -73,7 +89,7 @@ const long dimensions[numSizes] = { 10, 20, 30, 40, 50 };
 const long numRep = 10;  // Number of replications for each case.
 const long numMeth = 8;    // Number of methods, and their names.
 std::string names[numMeth] = { "UppTri   ", "Tri96    ", "LLL5     ",
-		"LLL8     ", "LLL9     ", "mDualUT  ", "mDualUT96", "mDual    " };
+		"LLL8     ", "LLL99999 ", "mDualUT  ", "mDualUT96", "mDual    " };
 
 int main() {
 	// We use ctime for the timings, for implementation simplicity
@@ -81,7 +97,7 @@ int main() {
 	clock_t timer[numMeth][numSizes];
 	clock_t tmp;
 	IntMat basis1, basis2, basis3, basisdual;
-	Int sqlength;
+	// Int sqlength;
 	Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
 
 	long d;
@@ -137,14 +153,15 @@ int main() {
 			timer[6][d] += clock() - tmp;
 
 #if TYPES_CODE  ==  ZD
-			// copy(basis3, basis2);
+			// mDualBasis is currently implemented only for Int = ZZ.
 			tmp = clock();
 			BasisConstruction<Int>::mDualBasis(basis3, basisdual, m);
-			timer[6][d] += clock() - tmp;
+			timer[7][d] += clock() - tmp;
 #endif
 			delete korlat;
 			}
 	}
+	std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
 	std::cout << "Types: " << strFlexTypes << "\n";
 	std::cout << "Timings for different methods, in basic clock units \n";
 	std::cout << " dim:    ";
