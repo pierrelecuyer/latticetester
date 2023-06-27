@@ -164,7 +164,7 @@ namespace LatticeTester {
    * Two different types of figures of merit
    *
    * `MERITM`: based on shortest vector.
-   * `MERITQ`: based on Beyer quotien.
+   * `MERITQ`: based on Beyer quotient.
    */
   enum MeritType { MERITM, MERITQ };
 
