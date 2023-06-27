@@ -59,6 +59,7 @@ Total time: 272.465 seconds
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
+#include "latticetester/FiguresOfMerit.h"
 
 using namespace LatticeTester;
 
@@ -72,45 +73,60 @@ const long numMeth = 6;
 const long numSizes = 4;    // Number of matrix sizes (choices of dimension).
 const long numPrimes = 2;    // Number of matrix sizes (choices of dimension).
 const long dimensions[numSizes] = { 10, 20, 30, 40 };
-const long colwidth[numMeth] = { 25, 12, 11, 10, 11 };
+const long colwidth[numMeth] = { 25, 12, 11, 10, 11, 11 };
 const long primes[numPrimes] = { 1048573, 1073741827 };
+const DecompTypeBB decomp = CHOLESKY; //Decomposition type inside BB algorithm
+const bool dual = false; //Set if the primal (false) or dual (true) lattice is used
 
 IntMat basis1;
 Rank1Lattice<Int, double> *korlat;  // The original Korobov lattice.
 IntLattice<Int, double> *lat;       // A copy of the lattice whose basis can be modified.
 Reducer<Int, Real> *red;            // The Reducer object that we use.
 
+long dim; //Saves the current dimension
+
 clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
 clock_t timer[numMeth][numSizes];
 clock_t total_times[numSizes];
 
-std::string names[numMeth] = { "  None  ", "pairwise   ", "LLL5    ", "LLL8    ",
-		"LLL99999    ", "BKZ        " };
+std::string names[numMeth] = { "    None ", "pairwise    ", "LLL5        ", "LLL8    ",
+		"LLL99999  ", "BKZ   " };
 
 
 int main() {
-  // lat = new IntLattice<Int, Real>(m, 40);
+  lat = new IntLattice<Int, Real>(m, dimensions[numSizes]);
   red = new Reducer<Int, Real>(*lat);
+  red->setDecompTypeBB(decomp);
   for (int p = 0; p < numPrimes; p++) {
 	  totalTime = clock();
+	  //Go through the list of prime numbers and set a accordingly
 	  m = primes[p];
   	  a = m/7;
   	  for (int d = 0; d < numSizes; d++) {
   
-  		  long dim = dimensions[d];
+  		  dim = dimensions[d];
   
-  		  korlat = new Rank1Lattice<Int, Real>(m, a, dim);
+  		  //Build the Rank1Lattice in dimension dim 
+  		  korlat = new Rank1Lattice<Int, Real>(m, a, dim, dual);
   		  korlat->buildBasis(dim);
   		  basis1.SetDims(dim, dim);
-  		  copy(korlat->getBasis(), basis1);
-
+  		  //Choose whether to use primal or dual basis
+  		  if (!dual)
+  		     copy(korlat->getBasis(), basis1);
+  		  else
+  		     copy(korlat->getDualBasis(), basis1);
+  		  
+          /* 
+           * The additional lattice is needed in order to reset it
+           * after the shortest vector has been found for one method 
+           */
   		  lat = new IntLattice<Int, Real>(basis1, m, dim);
   		  red->setIntLattice(*lat);
-  		  // red = new Reducer<Int, Real>(*lat);
   		  lat->updateVecNorm(); 
 
   	      tmp = clock();
+  	      //Finding shortest vector without pre-reduction takes too much in big dimensions
   	      if (dim < 30)
   			  if (!red->shortestVector(*lat))
   				  std::cout << " shortestVector failed with no pre-reduction, dim  = " << dim << "\n";
@@ -121,14 +137,16 @@ int main() {
      
   		  tmp = clock();
   		  red->redDieter(0);
+  	      //Finding shortest vector with pairwise pre-reduction takes too much in big dimensions
   	      if (dim < 30)
   		     if (!red->shortestVector(*lat))
-  			    std::cout << " shortestVector failed for pairwise pre-red with dim  = " << dim << "\n";
+  			    std::cout << " shortestVector failed for pairwise pre-reduction with dim  = " << dim << "\n";
 		  timer[1][d] = clock() - tmp;
   		  //	  std::cout << " The shortest vector length wih Cholesky decomposition\n";
   		  //	  std::cout << red->getMinLength() << std::endl;
   		  //	  std::cout << "The time to compute shortest with LLL 0.5 reduction vector = " <<(double)(tmp)/(CLOCKS_PER_SEC)<<"second"<<std::endl;
 
+		  //Finding shortest vector with LLL reduction and different values of delta (0.5, 0.8, 0.99999)
   		  tmp = clock();
   		  red->redLLLNTL(lat->getBasis(), 0.5);
   		  if (!red->shortestVector(*lat))
@@ -140,7 +158,6 @@ int main() {
    
   		  lat = new IntLattice<Int, Real>(basis1, m, dim);
   		  red->setIntLattice(*lat);
-  		  // red = new Reducer<Int, Real>(*lat);
   		  lat->updateVecNorm();  	  
   		  tmp = clock();
   		  red->redLLLNTL(lat->getBasis(), 0.8);
@@ -153,7 +170,6 @@ int main() {
 	   
   		  lat = new IntLattice<Int, Real>(basis1, m, dim);
   		  red->setIntLattice(*lat);
-  		  // red = new Reducer<Int, Real>(*lat);
   		  lat->updateVecNorm();  	 	  
   		  tmp = clock();
   		  red->redLLLNTL(lat->getBasis(), 0.99999);
@@ -164,9 +180,9 @@ int main() {
   		  //	  std::cout << red->getMinLength() << std::endl;
   		  //	  std::cout << "The time to compute shortest with LLL 0.9 reduction vector = " <<(double)(tmp)/(CLOCKS_PER_SEC)<<"second"<<std::endl;
 	  
+  		  //Finding shortest vector using BKZ pre-reduction
   		  lat = new IntLattice<Int, Real>(basis1, m, dim);
   		  red->setIntLattice(*lat);
-  		  // red = new Reducer<Int, Real>(*lat);
   		  lat->updateVecNorm();	    	  
   		  tmp = clock();
   		  red->redBKZ(lat->getBasis());
@@ -178,6 +194,7 @@ int main() {
   		  //	  std::cout << "The time to compute shortest with BKZ reduction vector = " <<(double)(tmp)/(CLOCKS_PER_SEC)<<"second"<<std::endl;
   	  }
   
+      //Create output string
   	  std::cout << "Flexible types: " << strFlexTypes << "\n";
   	  std::cout << "m = " << m << "\n";
   	  std::cout << "Timings for finding shortest vector with BB, with various pre-reduction methods.\n";
