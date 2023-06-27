@@ -11,29 +11,31 @@
  * The timings are in terms of total number of clock ticks used by each method.
  *
  * Example of results:
- *
-Types: Int = NTL::ZZ, Real = double
-Prime: 1048573
-Timings for finding shortest vector with different reduction methods, in basic clock units 
- dim \ meth:  w/o Reduction  LLL 0.5     LLL 0.8     LLL 0.9     BKZ         
 
-10                    80367          168         173        190         363 
-20                   564200         1469        1451       1349        2739 
-30                  3264998       102590       54008      42885       23799 
-40                        0       687940       95834      95443       49089 
-Total time: 5.07194 seconds
-Types: Int = NTL::ZZ, Real = double
-Prime: 1073741827
-Timings for finding shortest vector with different reduction methods, in basic clock units 
- dim \ meth:  w/o Reduction  LLL 0.5     LLL 0.8     LLL 0.9     BKZ         
+Flexible types: Int = NTL::ZZ, Real = double
 
-10                  2615400          206         246        255         509 
-20                  6593212         2631        1666       1713        3706 
-30                 34397831       757446      100025      34368       20861 
-40                        0    248498019    17401999   12248034     3865791 
-Total time: 326.547 seconds
-**
-*/
+Timings for finding shortest vector with BB, with various pre-reduction methods.
+The times are in basic clock units.
+
+m = 1048573
+dim \ pre-reduct:    None       pairwise        LLL5       LLL8    LLL99999     BKZ
+
+10                    68550         2613         163        219         162     306
+20                   532359       206594        1903       1163        1764    2259
+30                     --            --       220817      48455       22932   22194
+40                     --            --      1333125      83891       59178   43498
+Total time: 2.66798 seconds
+
+m = 1073741827
+dim \ pre-reduct:    None       pairwise        LLL5     LLL8     LLL99999      BKZ
+
+10                  2279295       103743         260        238         518     401
+20                  5937701      1934427        2523       1331        1595    3100
+30                        0                   584351      90625       16362   18358
+40                        0                239600527   15685520     2797533 3390653
+Total time: 272.465 seconds
+
+**/
 
 //#define TYPES_CODE  LD     // Int == int64_t
 #define TYPES_CODE  ZD     // Int == ZZ
@@ -88,14 +90,12 @@ std::string names[numMeth] = { "  None  ", "pairwise   ", "LLL5    ", "LLL8    "
 
 
 int main() {
+  // lat = new IntLattice<Int, Real>(m, 40);
+  red = new Reducer<Int, Real>(*lat);
   for (int p = 0; p < numPrimes; p++) {
 	  totalTime = clock();
-			  
 	  m = primes[p];
-  
   	  a = m/7;
-  
-  	
   	  for (int d = 0; d < numSizes; d++) {
   
   		  long dim = dimensions[d];
@@ -106,7 +106,8 @@ int main() {
   		  copy(korlat->getBasis(), basis1);
 
   		  lat = new IntLattice<Int, Real>(basis1, m, dim);
-  		  red = new Reducer<Int, Real>(*lat);
+  		  red->setIntLattice(*lat);
+  		  // red = new Reducer<Int, Real>(*lat);
   		  lat->updateVecNorm(); 
 
   	      tmp = clock();
@@ -138,7 +139,8 @@ int main() {
   		  //	  std::cout << "The time to compute shortest with LLL 0.5 reduction vector = " <<(double)(tmp)/(CLOCKS_PER_SEC)<<"second"<<std::endl;
    
   		  lat = new IntLattice<Int, Real>(basis1, m, dim);
-  		  red = new Reducer<Int, Real>(*lat);
+  		  red->setIntLattice(*lat);
+  		  // red = new Reducer<Int, Real>(*lat);
   		  lat->updateVecNorm();  	  
   		  tmp = clock();
   		  red->redLLLNTL(lat->getBasis(), 0.8);
@@ -150,7 +152,8 @@ int main() {
   		  //	  std::cout << "The time to compute shortest with LLL 0.8 reduction vector = " <<(double)(tmp)/(CLOCKS_PER_SEC)<<"second"<<std::endl;
 	   
   		  lat = new IntLattice<Int, Real>(basis1, m, dim);
-  		  red = new Reducer<Int, Real>(*lat);
+  		  red->setIntLattice(*lat);
+  		  // red = new Reducer<Int, Real>(*lat);
   		  lat->updateVecNorm();  	 	  
   		  tmp = clock();
   		  red->redLLLNTL(lat->getBasis(), 0.99999);
@@ -162,7 +165,8 @@ int main() {
   		  //	  std::cout << "The time to compute shortest with LLL 0.9 reduction vector = " <<(double)(tmp)/(CLOCKS_PER_SEC)<<"second"<<std::endl;
 	  
   		  lat = new IntLattice<Int, Real>(basis1, m, dim);
-  		  red = new Reducer<Int, Real>(*lat);
+  		  red->setIntLattice(*lat);
+  		  // red = new Reducer<Int, Real>(*lat);
   		  lat->updateVecNorm();	    	  
   		  tmp = clock();
   		  red->redBKZ(lat->getBasis());
