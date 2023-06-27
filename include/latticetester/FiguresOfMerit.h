@@ -124,7 +124,9 @@ public:
     
     //Further Declarations
     
-    //Initialization
+    /*
+     * Initialization of a FiguresOfMerit object
+     */
     FiguresOfMerit(IntLatticeExt<Int, Real> & lat, Int & i, int64_t max_dim) {
 		m = i;   
 	    red = new Reducer<Int, Real>(max_dim);   
@@ -133,7 +135,10 @@ public:
         proj = new IntLattice<Int, Real> (lat.getBasis(), m, lat.getBasis().NumCols()); 
 	}
 	
-    //Function for calculating the normalizer
+    /*
+     * This function calculates the normalizer based on whether
+     * FiguresOfMerit object is used for primal or dual lattice
+     */
 	void calculNorma(IntLatticeExt<Int, Real> & lat, int64_t & dim) {
        if (forDual == true) {
     		IntMat BasisDual;
@@ -147,14 +152,23 @@ public:
        }
     }	
 	
-	//Function for calculating the Figure of Merit M or Q based of chosen MeritType
+	/*
+	 * This function calculates the Figure of Merit M or Q based 
+	 * on the chosen MeritType of a given lattice 'lat'. The vector 't'
+	 * which defes the set of dimensions for which the figure of merit
+	 * is calculated needs to be passed as second input variable.  
+	 */
 	double computeMerit(IntLatticeExt<Int, Real> & lat, const IntVec & t);
 		
-	//Function for calculating the Figure of Merit for a single projection
+	/*
+	 * This function calculates the Figure of Merit for a single projection
+	 * of a given lattice 'lat'. The variable 'Coord' sets the coordinates
+	 * of the projection to use
+	 */
 	double computeMeritProj(IntLatticeExt<Int, Real> & lat, const Coordinates & Coord);
 
 	IntMat projBasis; //Matrix for basis of projection
-	//Further global objects
+	//Further globally used objects
 	IntLattice<Int, Real> *proj; 
     Normalizer *norma;
 	Reducer<Int, Real> *red;  
