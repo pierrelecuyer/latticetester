@@ -644,7 +644,7 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(
 // The matrix out will always be resized to a number of columns equal to the
 // number of coordinates in `proj`.
 template<>
-void BasisConstruction<NTL::ZZ>::projectMatrix (const IntMat &in,
+void BasisConstruction<Int>::projectMatrix (const IntMat &in,
 		IntMat &out, const Coordinates &proj) {
 	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
     int inDim = in.NumCols();
