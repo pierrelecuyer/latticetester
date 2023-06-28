@@ -61,69 +61,66 @@ private:
 	typedef NTL::matrix<Int> IntMat;
 public:
 	
-	//Globally stored parameters of the FoM
-	bool performBB = true; //Perform BB algorithm
-	bool succCoordFirst = false; //At first look at successive corrdinates when calculating FigureOfMerit 
-	bool forDual = false; //Figure of merit is calculated for the dual lattice if true
-	PreReductionType prered = BKZ; //Define the prereduction type
-	MeritType TypeMerit = MERITM; //Define the type of the figure of merit
-	double delta = 0.9; //delta-Parameter for LLL or BKZ
-	int64_t blocksize = 10; //blocksize of BKZ algorithm
-	double lowerbound = 0; //If FoM is below this bound, then calculation of FoM is stopped
-	ProjConstructType pctype = UPPERTRIPROJ; //Type of projection construction
-	NTL::ZZ m; //m of the RNG
-	WeightsUniform *weights; //Weights for FoM 	
+	/*
+	 * Variable decides BB algorithm is performed
+	 */
+	bool performBB = true; 
 	
-	//Set and get functions for global variables
+	/*
+	 * If set to true successive corrdinates a considered first when calculating FigureOfMerit
+	 */
+	bool succCoordFirst = false;
 	
-    void set_m(Int i) { m = i; };    
-
-    Int get_m() { return m;	};   
-  
-    void set_performBB(bool BB) { performBB = BB; };
-    
-    bool get_performBB() { return performBB; };    
-
-    void set_forDual(bool D) { 
-    	forDual = D; 
-    };
-    
-    bool get_forDual() { return forDual; };
-  
-    void set_succCoordFirst(bool first) { succCoordFirst = first; };
-    
-    bool get_succCoordFirst() { return succCoordFirst; };
-  
-    void set_PreReductionType(PreReductionType pr) { prered = pr; };
-    
-    PreReductionType get_PreReductionType () { return prered; };
-    
-    void set_MeritType(MeritType mer) { TypeMerit = mer; };
-    
-    MeritType get_MeritType () { return TypeMerit; };
-  
-    void set_delta(double del) { delta = del;};
-    
-    double get_delta() { return delta; };
-  
-    void set_blocksize(int64_t bl) { blocksize = bl; };
-    
-    int64_t get_blocksize() { return blocksize; };
-  
-    void set_lowerbound(double lb) { lowerbound = lb; };
-    
-    double get_lowerbound() { return lowerbound; };
-  
-    void set_ProjConstructType (ProjConstructType pt) { pctype = pt; };     
-    
-    ProjConstructType get_ProjConstructType() { return pctype; };
-    
-    void set_Weights(double weight) { weights = new WeightsUniform(weight); };
-    
-    WeightsUniform get_Weights() { return *weights; };
-    
-    //Further Declarations
-    
+	/*
+	 * Figure of merit is calculated for the dual lattice if forDual is true
+	 */
+	bool forDual = false; 
+	
+	/*
+	 * Sets if first variable shall always be included for the non-successive coordinates
+	 */
+	bool projectStationary = true;
+	
+	/* 
+	 * Defines the prereduction type
+	 */
+	PreReductionType prered = BKZ; 
+	
+	/* 
+	 * Defines the type of the figure of merit
+	 */	
+	MeritType TypeMerit = MERITM; 
+	
+	/*
+	 * delta-Parameter for LLL or BKZ reduction
+	 */
+	double delta = 0.9; 
+	
+	/*
+	 * blocksize of BKZ algorithm
+	 */
+	int64_t blocksize = 10; 
+	
+	/*
+	 * If FoM is below this bound, then calculation of FoM is stopped
+	 */	
+	double lowerbound = 0; // 
+	
+	/*
+	 * Type of projection construction
+	 */	
+	ProjConstructType pctype = UPPERTRIPROJ;
+	
+	/*
+	 * Variable used to store the m of the RNG
+	 */
+	NTL::ZZ m; 
+	
+	/*
+	 * Variable containing the Weights for the FoM 
+	 */
+	WeightsUniform *weights; 
+	        
     /*
      * Initialization of a FiguresOfMerit object
      */
@@ -167,11 +164,42 @@ public:
 	 */
 	double computeMeritProj(IntLatticeExt<Int, Real> & lat, const Coordinates & Coord);
 
-	IntMat projBasis; //Matrix for basis of projection
-	//Further globally used objects
+	/*
+	 * This functions calculates the Figure of Merit for all projections 
+	 * consisting of successive coordinates of the forms 
+	 * {1, 2, ..., low} to {1, 2, ..., upp}
+	 * Note that upp > low must hold 
+	 */
+	double computeMeritSucc(IntLatticeExt<Int, Real> & lat, const int64_t & low, const Int & upp);
+	
+	/*
+	 * This functions calculates the Figure of Merit for all projections 
+	 * consisting of non-successive coordinates.
+	 */
+	double computeMeritVec(IntLatticeExt<Int, Real> & lat, const IntVec & t);
+	/*
+	 * Stores the matrix of the projection basis
+	 */
+	IntMat projBasis; 
+	
+	/*
+	 * IntLattice object to store the projection matrix
+	 */
 	IntLattice<Int, Real> *proj; 
+	
+	/*
+	 * A normalizer object used to normalize figure of merit
+	 */
     Normalizer *norma;
+    
+    /*
+     * A reducer object used to perform reductions
+     */
 	Reducer<Int, Real> *red;  
+	
+	/*
+	 * CoordinateSets object is used to store sets of coordinates
+	 */
     CoordinateSets::FromRanges *CoordRange;  	
 
 };
@@ -185,68 +213,33 @@ double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, const I
    double minmerit = 1.0;
    Int maxDim;
    maxDim = lat.getDim();
-   int64_t max_dim;
+   int64_t max_dim, min_dim, low_dim;
    NTL::conv(max_dim, maxDim);
    Coordinates Coord;
    
+   // Do the calculation for the successive coordinates first if succCoordFirst = true
    if (succCoordFirst == true) { 
-      Coord.clear();
-      for (int j = 0; j < t.length() + 1; j++) Coord.insert(j+1);
-      lat.buildBasis(t.length()+1);
-      merit = computeMeritProj(lat, Coord);
-      for (int j = t.length()+1; j < maxDim;j++)
-      {
-         Coord.insert(j+1);
-	     lat.incDim();
-	     merit = computeMeritProj(lat, Coord);
-         if (merit < minmerit) minmerit = merit;
-         if (merit < lowerbound) {
-            //std::cout << "Figure of merit is smaller than lower bound!!!";
-            return minmerit;
-         }
-      }
+	   low_dim = t.length();
+	   minmerit = computeMeritSucc(lat, low_dim, t[0]);
+	   if (minmerit < lowerbound) return minmerit;
    }   
    
-
-   
    //Do the calculation for the other coordinate sets
-   for (int i = 1; i < t.length(); i++) {
-      //The true at the end ensures that the first variable is always included 
-	  CoordinateSets::FromRanges CoordRange(i, i, 2, max_dim-1, true);  
-      for(auto it = CoordRange.begin(); it != CoordRange.end(); it++){
-         Coord = *it;
-         merit = computeMeritProj(lat, Coord);
-         //std::cout << merit;
-         if (merit < minmerit) minmerit = merit;
-         if (merit < lowerbound) {
-            //std::cout << "Figure of merit is smaller than lower bound!!!";
-            return minmerit;
-         }
-	  }
-   }
-   //Do the calculation for the successive coordinates last if succCoordFirst = false
-    if (succCoordFirst == false) {
-         Coord.clear();
-      for (int j = 0; j < t.length() + 1; j++) Coord.insert(j+1);
-      lat.buildBasis(t.length()+1);
-      merit = computeMeritProj(lat, Coord);
-      for (int j = t.length()+1; j < maxDim;j++)
-      {
-         Coord.insert(j+1);
-	       lat.incDim();
-	       merit = computeMeritProj(lat, Coord);
-         if (merit < minmerit) minmerit = merit;
-         if (merit < lowerbound) {
-            //std::cout << "Figure of merit is smaller than lower bound!!!";
-            return minmerit;
-         }
-      }
-   
+   merit = computeMeritVec(lat, t);
+   if (merit < minmerit) minmerit = merit;
+   if (minmerit < lowerbound) return minmerit;
+
+   // Do the calculation for the successive coordinates last if succCoordFirst = false
+   if (succCoordFirst == false) {
+	   low_dim = t.length();
+	   minmerit = computeMeritSucc(lat, low_dim, t[0]);
+	   if (minmerit < lowerbound) return minmerit;
    }
  
    return minmerit; 
 
 }
+
 
 template<typename Int>
 double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, const Coordinates & Coord) {
@@ -280,11 +273,64 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, con
       } else {
       red->shortestVector(*proj);
       shortest = NTL::conv<double>(red->getMinLength());
+      // std::cout << norma->getBound((Coord).size()) << "\n";
       merit = weights->getWeight(Coord) * shortest/norma->getBound((Coord).size());
       }
    } else { merit = 0.0;};
    return merit;
 
+}
+
+template<typename Int>
+double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, const int64_t & low, const Int & upp) {
+   Coordinates Coord;	
+   double merit = 0;
+   double minmerit = 1.0;
+   Coord.clear();
+   for (int j = 0; j < low + 1; j++) Coord.insert(j+1);
+   lat.buildBasis(low+1);
+   merit = computeMeritProj(lat, Coord);
+   for (int j = low +1; j < upp; j++)
+   {
+       Coord.insert(j+1);
+	   lat.incDim();
+	   merit = computeMeritProj(lat, Coord);
+       if (merit < minmerit) minmerit = merit;
+       if (merit < lowerbound) {
+          //std::cout << "Figure of merit is smaller than lower bound!!!";
+          return minmerit;
+       }
+   }   
+   return minmerit;
+}
+
+template<typename Int>
+double FiguresOfMerit<Int>::computeMeritVec(IntLatticeExt<Int, Real> & lat, const IntVec & t) {
+	Coordinates Coord;	
+	double merit = 0;
+	double minmerit = 1.0;
+    Int maxDim;
+	maxDim = lat.getDim();
+	int64_t max_dim, min_dim;
+	NTL::conv(max_dim, maxDim);   
+	if (projectStationary) {
+       min_dim = 2;
+	} else min_dim = 1;
+
+	for (int i = 1; i < t.length(); i++) {
+       NTL::conv(max_dim, t[i]);
+	   CoordinateSets::FromRanges CoordRange(i, i, min_dim, max_dim, projectStationary);  
+       for (auto it = CoordRange.begin(); it != CoordRange.end(); it++){
+          Coord = *it;
+          merit = computeMeritProj(lat, Coord);
+          if (merit < minmerit) minmerit = merit;
+	      if (merit < lowerbound) {
+             //std::cout << "Figure of merit is smaller than lower bound!!!";
+             return minmerit;
+          }
+       }
+    }
+	return minmerit;  
 }
 	
 template class FiguresOfMerit<NTL::ZZ>;
