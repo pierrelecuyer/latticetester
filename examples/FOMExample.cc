@@ -51,9 +51,11 @@ int main() {
   long dim;
   dim = max_dim;
   bool with_dual = true;
-  //Build a Korobov lattice
+  Normalizer *norma;
+  // Build a Korobov lattice
   Rank1Lattice<Int, Real> *lat;
   lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
+  // The next four lines are just for test purposes
   lat->buildBasis(3);
   lat->incDimNew();
   //lat->incDim();
@@ -64,7 +66,17 @@ int main() {
   fom.prered = LLL; //Set pre-reduction to LLL
   fom.forDual = true; // Do calculations for dual
   fom.TypeMerit = MERITM; // Choose type of figure of merit
-  fom.calculNorma(*lat, max_dim);
+  
+  if (fom.forDual == true) {
+		IntMat BasisDual;
+		BasisConstruction<Int>::mDualBasis(lat->getBasis(), BasisDual, m);
+	    double log_density=(double)(-log(abs(NTL::determinant(BasisDual))));
+	    norma  = new NormaBestLat(log_density, dim);
+  }
+  else {
+     double log_density=(double)(-log(abs(NTL::determinant(lat->getBasis()))));
+     norma  = new NormaBestLat(log_density, dim);
+  }
 
   t.SetLength(1);
   t[0] = 28;
@@ -73,7 +85,7 @@ int main() {
   clock_t tmp;
   clock_t timer;
   tmp = clock();
-  f = fom.computeMerit(*lat, t);
+  f = fom.computeMerit(*lat, *norma, t);
   timer = clock() - tmp;
   std::cout << "CASE 1: Look at t = " << t << ":\n";
   std::cout << "Figure of merit M is: " << f << "\n";
@@ -82,7 +94,7 @@ int main() {
   t.SetLength(2);
   t[0] = 10;
   t[1] = 8;
-  f = fom.computeMerit(*lat, t);
+  f = fom.computeMerit(*lat, *norma, t);
 
   std::cout << "CASE 2: Look at t = " << t << ":\n";
   std::cout << "Figure of merit M is: " << f << "\n";
