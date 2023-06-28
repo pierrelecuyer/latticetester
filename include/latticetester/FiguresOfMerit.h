@@ -132,37 +132,20 @@ public:
         proj = new IntLattice<Int, Real> (lat.getBasis(), m, lat.getBasis().NumCols()); 
 	}
 	
-    /*
-     * This function calculates the normalizer based on whether
-     * FiguresOfMerit object is used for primal or dual lattice
-     */
-	void calculNorma(IntLatticeExt<Int, Real> & lat, int64_t & dim) {
-       if (forDual == true) {
-    		IntMat BasisDual;
-    		BasisConstruction<Int>::mDualBasis(lat.getBasis(), BasisDual, m);
-    	    double log_density=(double)(-log(abs(NTL::determinant(BasisDual))));
-    	    norma  = new NormaBestLat(log_density, dim);
-       }
-       else {
-          double log_density=(double)(-log(abs(NTL::determinant(lat.getBasis()))));
-          norma  = new NormaBestLat(log_density, dim);
-       }
-    }	
-	
 	/*
 	 * This function calculates the Figure of Merit M or Q based 
 	 * on the chosen MeritType of a given lattice 'lat'. The vector 't'
 	 * which defes the set of dimensions for which the figure of merit
 	 * is calculated needs to be passed as second input variable.  
 	 */
-	double computeMerit(IntLatticeExt<Int, Real> & lat, const IntVec & t);
+	double computeMerit(IntLatticeExt<Int, Real> & lat, Normalizer & norm, const IntVec & t);
 		
 	/*
 	 * This function calculates the Figure of Merit for a single projection
 	 * of a given lattice 'lat'. The variable 'Coord' sets the coordinates
 	 * of the projection to use
 	 */
-	double computeMeritProj(IntLatticeExt<Int, Real> & lat, const Coordinates & Coord);
+	double computeMeritProj(IntLatticeExt<Int, Real> & lat, Normalizer & norm, const Coordinates & Coord);
 
 	/*
 	 * This functions calculates the Figure of Merit for all projections 
@@ -170,13 +153,13 @@ public:
 	 * {1, 2, ..., low} to {1, 2, ..., upp}
 	 * Note that upp > low must hold 
 	 */
-	double computeMeritSucc(IntLatticeExt<Int, Real> & lat, const int64_t & low, const Int & upp);
+	double computeMeritSucc(IntLatticeExt<Int, Real> & lat, Normalizer & norm, const int64_t & low, const Int & upp);
 	
 	/*
 	 * This functions calculates the Figure of Merit for all projections 
 	 * consisting of non-successive coordinates.
 	 */
-	double computeMeritVec(IntLatticeExt<Int, Real> & lat, const IntVec & t);
+	double computeMeritVec(IntLatticeExt<Int, Real> & lat, Normalizer & norm, const IntVec & t);
 	/*
 	 * Stores the matrix of the projection basis
 	 */
@@ -186,11 +169,6 @@ public:
 	 * IntLattice object to store the projection matrix
 	 */
 	IntLattice<Int, Real> *proj; 
-	
-	/*
-	 * A normalizer object used to normalize figure of merit
-	 */
-    Normalizer *norma;
     
     /*
      * A reducer object used to perform reductions
@@ -208,31 +186,31 @@ public:
 // Implementation
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, const IntVec & t) {
+double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, Normalizer & norm, const IntVec & t) {
    double merit = 0;
    double minmerit = 1.0;
    Int maxDim;
    maxDim = lat.getDim();
-   int64_t max_dim, min_dim, low_dim;
+   int64_t max_dim, low_dim;
    NTL::conv(max_dim, maxDim);
    Coordinates Coord;
    
    // Do the calculation for the successive coordinates first if succCoordFirst = true
    if (succCoordFirst == true) { 
 	   low_dim = t.length();
-	   minmerit = computeMeritSucc(lat, low_dim, t[0]);
+	   minmerit = computeMeritSucc(lat, norm, low_dim, t[0]);
 	   if (minmerit < lowerbound) return minmerit;
    }   
    
    //Do the calculation for the other coordinate sets
-   merit = computeMeritVec(lat, t);
+   merit = computeMeritVec(lat, norm, t);
    if (merit < minmerit) minmerit = merit;
    if (minmerit < lowerbound) return minmerit;
 
    // Do the calculation for the successive coordinates last if succCoordFirst = false
    if (succCoordFirst == false) {
 	   low_dim = t.length();
-	   minmerit = computeMeritSucc(lat, low_dim, t[0]);
+	   minmerit = computeMeritSucc(lat, norm, low_dim, t[0]);
 	   if (minmerit < lowerbound) return minmerit;
    }
  
@@ -242,7 +220,7 @@ double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, const I
 
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, const Coordinates & Coord) {
+double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, Normalizer & norm, const Coordinates & Coord) {
    double shortest, merit;
    merit = 0.0;
    
@@ -274,7 +252,7 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, con
       red->shortestVector(*proj);
       shortest = NTL::conv<double>(red->getMinLength());
       // std::cout << norma->getBound((Coord).size()) << "\n";
-      merit = weights->getWeight(Coord) * shortest/norma->getBound((Coord).size());
+      merit = weights->getWeight(Coord) * shortest/norm.getBound((Coord).size());
       }
    } else { merit = 0.0;};
    return merit;
@@ -282,19 +260,19 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, con
 }
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, const int64_t & low, const Int & upp) {
+double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, Normalizer & norm, const int64_t & low, const Int & upp) {
    Coordinates Coord;	
    double merit = 0;
    double minmerit = 1.0;
    Coord.clear();
    for (int j = 0; j < low + 1; j++) Coord.insert(j+1);
    lat.buildBasis(low+1);
-   merit = computeMeritProj(lat, Coord);
+   merit = computeMeritProj(lat, norm, Coord);
    for (int j = low +1; j < upp; j++)
    {
        Coord.insert(j+1);
 	   lat.incDim();
-	   merit = computeMeritProj(lat, Coord);
+	   merit = computeMeritProj(lat, norm, Coord);
        if (merit < minmerit) minmerit = merit;
        if (merit < lowerbound) {
           //std::cout << "Figure of merit is smaller than lower bound!!!";
@@ -305,7 +283,7 @@ double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, con
 }
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritVec(IntLatticeExt<Int, Real> & lat, const IntVec & t) {
+double FiguresOfMerit<Int>::computeMeritVec(IntLatticeExt<Int, Real> & lat, Normalizer & norm, const IntVec & t) {
 	Coordinates Coord;	
 	double merit = 0;
 	double minmerit = 1.0;
@@ -322,7 +300,7 @@ double FiguresOfMerit<Int>::computeMeritVec(IntLatticeExt<Int, Real> & lat, cons
 	   CoordinateSets::FromRanges CoordRange(i, i, min_dim, max_dim, projectStationary);  
        for (auto it = CoordRange.begin(); it != CoordRange.end(); it++){
           Coord = *it;
-          merit = computeMeritProj(lat, Coord);
+          merit = computeMeritProj(lat, norm, Coord);
           if (merit < minmerit) minmerit = merit;
 	      if (merit < lowerbound) {
              //std::cout << "Figure of merit is smaller than lower bound!!!";
