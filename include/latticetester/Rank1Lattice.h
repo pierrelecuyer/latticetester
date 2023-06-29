@@ -115,12 +115,6 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
          * The dimension must be smaller than `maxDim` when calling this function.
          */
         void incDim ();
-        
-        /**
-        * Increases the current dimension by 1 and updates the basis.
-        * The dimension must be smaller than `maxDim` when calling this function.
-        */
-        void incDimNew ();
 
       protected:
 
@@ -225,16 +219,17 @@ std::string Rank1Lattice<Int, Real>::toStringCoef ()const {
 
   //============================================================================
 
-template<typename Int, typename Real>
-void Rank1Lattice<Int, Real>::incDim () {
-    	assert(1 + this->getDim() <= this->m_maxDim);
-    	buildBasis (1 + this->getDim ());
-    	this->setNegativeNorm ();
-    	//this->setDualNegativeNorm ();
-	}
+//template<typename Int, typename Real>
+//void Rank1Lattice<Int, Real>::incDim () {
+//    	assert(1 + this->getDim() <= this->m_maxDim);
+//    	buildBasis (1 + this->getDim ());
+//    	this->setNegativeNorm ();
+//    	this->setDualNegativeNorm ();
+//
+//	}
 
 template<typename Int, typename Real>
-void Rank1Lattice<Int, Real>::incDimNew () {
+void Rank1Lattice<Int, Real>::incDim () {
 		int64_t d = 1 + this->getDim();
     	assert(d <= this->m_maxDim);
     	IntMat temp;
