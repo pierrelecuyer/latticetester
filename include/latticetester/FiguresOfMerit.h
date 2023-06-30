@@ -154,9 +154,10 @@ public:
 	NTL::ZZ m; 
 	
 	/*
-	 * Decides if dual lattice from IntLattice is read out directly for successive coordinates
+	 * Decides if the primal lattice shall be read out directly because 
+	 * it is not necessary to apply a projection construction
 	 */
-	bool ReadOutDual = true;
+	bool ReadOutPrimal = false;
 	
 	/*
 	 * Variable containing the Weights for the FoM 
@@ -203,8 +204,8 @@ public:
 	 * This function calculates the Figure of Merit for a single projection
 	 * of a given lattice 'lat'. The variable 'Coord' sets the coordinates
 	 * of the projection to use. The variable 'useLatBasis' indicates if the
-	 * basis can be directly used because it is already upper triangular (which is 
-	 * the case for Korobov lattices).
+	 * primal / dual basis stored in the Intlattice 'lat' can be directly used 
+	 * because it is already upper triangular.
 	 */
 	double computeMeritProj(IntLatticeExt<Int, Real> & lat, Normalizer & norm, 
             Reducer<Int, Real> & red, IntLattice<Int, Real> & proj, const Coordinates & Coord, bool useLatBasis);
@@ -302,34 +303,36 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, Nor
    merit = 0.0;
    m = lat.getModulo();
 
-   if (!useLatBasis) {
-      BasisConstruction<Int>::projectionConstruction(lat.getBasis(), projBasis, Coord, m, pctype, delta);
-      if (dual == true) { 
-         IntMat projBasisDual;
-	     if (pctype == UPPERTRIPROJ) {
-	        BasisConstruction<Int>::mDualUpperTriangular(projBasis, projBasisDual, m);
-	     } else
-	        BasisConstruction<Int>::mDualBasis(projBasis, projBasisDual, m);
-	     projBasis = projBasisDual;
-      }
-   }
-   else {
-	   if (dual == true) {
-	      if (!ReadOutDual) {
-	         IntMat projBasisDual;
-           	if (pctype == UPPERTRIPROJ) {
-	            BasisConstruction<Int>::mDualUpperTriangular(lat.getBasis(), projBasisDual, m);
-	         } else {                   
-	            BasisConstruction<Int>::mDualBasis(lat.getBasis(), projBasisDual, m);
-          	}                         
-	         projBasis = projBasisDual;
-	      } else {
-             projBasis = lat.getDualBasis();
-	      }
+   if (dual == false) {
+	   if (useLatBasis) {
+           projBasis = lat.getBasis();
 	   } else {
-          projBasis = lat.getBasis();
-	   }		   
-   }
+           BasisConstruction<Int>::projectionConstruction(lat.getBasis(), projBasis, Coord, m, pctype, delta); 
+           IntMat projBasisDual;
+           if (pctype == UPPERTRIPROJ) {
+              BasisConstruction<Int>::mDualUpperTriangular(projBasis, projBasisDual, m);
+           } else {                   
+              BasisConstruction<Int>::mDualBasis(projBasis, projBasisDual, m);
+           }      
+	   }
+   } else {
+	   if (useLatBasis) {
+           projBasis = lat.getDualBasis(); 
+	   } else {
+           IntMat projBasisDual;
+		   if (ReadOutPrimal == true) {
+			   projBasis = lat.getBasis();
+		   } else {
+			   BasisConstruction<Int>::projectionConstruction(lat.getBasis(), projBasis, Coord, m, pctype, delta); 
+		   }
+           if (pctype == UPPERTRIPROJ) {
+              BasisConstruction<Int>::mDualUpperTriangular(projBasis, projBasisDual, m);
+           } else {                   
+              BasisConstruction<Int>::mDualBasis(projBasis, projBasisDual, m);
+           }                         
+           projBasis = projBasisDual;
+		}
+	 }		   
    proj = IntLattice<Int, Real> (projBasis, m, projBasis.NumCols());
    //double log_density=(double)(-log(abs(NTL::determinant(proj->getBasis())))); 
    //Normalizer* norma = new NormaBestLat(log_density, max_dim);
