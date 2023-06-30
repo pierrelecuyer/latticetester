@@ -317,7 +317,11 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, Nor
 	   if (dual == true) {
 	      if (!ReadOutDual) {
 	         IntMat projBasisDual;
-	         BasisConstruction<Int>::mDualUpperTriangular(lat.getBasis(), projBasisDual, m);
+           	if (pctype == UPPERTRIPROJ) {
+	            BasisConstruction<Int>::mDualUpperTriangular(lat.getBasis(), projBasisDual, m);
+	         } else {                   
+	            BasisConstruction<Int>::mDualBasis(lat.getBasis(), projBasisDual, m);
+          	}                         
 	         projBasis = projBasisDual;
 	      } else {
              projBasis = lat.getDualBasis();
