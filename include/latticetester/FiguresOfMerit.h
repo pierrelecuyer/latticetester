@@ -1,6 +1,6 @@
 // This file is part of LatticeTester.
 //
-// Copyright (C) 2012-2022  The LatticeTester authors, under the supervision
+// Copyright (C) 2012-2023  The LatticeTester authors, under the supervision
 // of Pierre L'Ecuyer at Universit� de Montr�al.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,231 +61,420 @@ private:
 	typedef NTL::matrix<Int> IntMat;
 public:
 	
-	//Globally stored parameters of the FoM
-	bool performBB = true; //Perform BB algorithm
-	bool succCoordFirst = false; //At first look at successive corrdinates when calculating FigureOfMerit 
-	bool forDual = false; //Figure of merit is calculated for the dual lattice if true
-	PreReductionType prered = BKZ; //Define the prereduction type
-	MeritType TypeMerit = MERITM; //Define the type of the figure of merit
-	double delta = 0.9; //delta-Parameter for LLL or BKZ
-	int64_t blocksize = 10; //blocksize of BKZ algorithm
-	double lowerbound = 0; //If FoM is below this bound, then calculation of FoM is stopped
-	ProjConstructType pctype = UPPERTRIPROJ; //Type of projection construction
-	NTL::ZZ m; //m of the RNG
-	WeightsUniform *weights; //Weights for FoM 	
+	/* 
+	 * Defines the type of the figure of merit
+	 */	
+	MeritType m_fom = MERITM; 
 	
-	//Set and get functions for global variables
+	/*
+	 * If FoM is above this bound, then calculation of FoM is stopped
+	 */	
+	double m_highbound = 1; 
 	
-    void set_m(Int i) { m = i; };    
-
-    Int get_m() { return m;	};   
-  
-    void set_performBB(bool BB) { performBB = BB; };
-    
-    bool get_performBB() { return performBB; };    
-
-    void set_forDual(bool D) { 
-    	forDual = D; 
-    };
-    
-    bool get_forDual() { return forDual; };
-  
-    void set_succCoordFirst(bool first) { succCoordFirst = first; };
-    
-    bool get_succCoordFirst() { return succCoordFirst; };
-  
-    void set_PreReductionType(PreReductionType pr) { prered = pr; };
-    
-    PreReductionType get_PreReductionType () { return prered; };
-    
-    void set_MeritType(MeritType mer) { TypeMerit = mer; };
-    
-    MeritType get_MeritType () { return TypeMerit; };
-  
-    void set_delta(double del) { delta = del;};
-    
-    double get_delta() { return delta; };
-  
-    void set_blocksize(int64_t bl) { blocksize = bl; };
-    
-    int64_t get_blocksize() { return blocksize; };
-  
-    void set_lowerbound(double lb) { lowerbound = lb; };
-    
-    double get_lowerbound() { return lowerbound; };
-  
-    void set_ProjConstructType (ProjConstructType pt) { pctype = pt; };     
-    
-    ProjConstructType get_ProjConstructType() { return pctype; };
-    
-    void set_Weights(double weight) { weights = new WeightsUniform(weight); };
-    
-    WeightsUniform get_Weights() { return *weights; };
-    
-    //Further Declarations
-    
-    /*
-     * Initialization of a FiguresOfMerit object
+	/*
+	 * If FoM is below this bound, then calculation of FoM is stopped
+	 */	
+	double m_lowbound = 0; 
+	
+	/*
+	 * Figure of merit is calculated for the dual lattice if dual is true
+	 */
+	bool m_dual = false; 
+	
+	/* 
+	 * Defines the pre-reduction type. Indicates how the shortest vectors are computed 
+	 * or estimated.
+	 */
+	PreReductionType m_reductionMethod = BKZ; 
+	
+	/*
+	 * delta-Parameter for LLL or BKZ reduction
+	 */
+	double m_delta = 0.9; 
+	
+	/*
+	 * Blocksize of BKZ algorithm
+	 */
+	int64_t m_blocksize = 10; 
+	
+	/* An integer giving the maximum number of nodes to be examined in any given 
+	 * BB procedure. When that value is exceeded, the BB is stopped and the generator 
+	 * is discarded. The number of discarded generators is given in the results. A small 
+	 * value of this maxnodesBB parameter can make the program run faster (sometimes much 
+	 * faster), permitting to examine more generators, but will increase the chances of 
+	 * rejecting good generators. The default value is 10^8 .
+	 * 
+	 */
+	int64_t m_maxNodesBB = 10000000;
+	
+	/*
+    * A function which allows to set maxNodesBB and passes the value to the reducer
      */
-    FiguresOfMerit(IntLatticeExt<Int, Real> & lat, Int & i, int64_t max_dim) {
-		m = i;   
-	    red = new Reducer<Int, Real>(max_dim);   
-	    weights = new WeightsUniform(1.0); // This just puts a weight of 1 to everything          
-        //This is to initialize proj in order to avoid recreation
-        proj = new IntLattice<Int, Real> (lat.getBasis(), m, lat.getBasis().NumCols()); 
+	void setWeights (int64_t & nodes) { m_maxNodesBB = nodes; m_red->maxNodesBB = nodes; }
+	
+	/*
+	 * Variable decides BB algorithm is performed
+	 */
+	bool m_performBB = true; 
+	
+	/*
+	 * If set to true successive corrdinates a considered first when calculating FigureOfMerit
+	 */
+	bool m_succCoordFirst = false;
+	
+	/*
+	 * Sets if first variable shall always be included for the non-successive coordinates
+	 */
+	bool m_projectStationary = true;
+	
+	/*
+	 * incDualOnly decides if only the dual basis shall be updated 
+	 * when increasing the dimension (but not the primal basis) 
+	 */
+	bool m_incDualOnly = false;
+		
+	/*
+	 * Type of projection construction
+	 */	
+	ProjConstructType m_pctype = UPPERTRIPROJ;
+	
+	/*
+	 * Variable used to store the m of the RNG
+	 */
+	NTL::ZZ m_m; 
+	
+	/*
+	 * Decides if the primal lattice shall be read out directly because 
+	 * it is not necessary to apply a projection construction
+	 */
+	bool m_ReadOutPrimal = false;
+	
+	/*
+	 * Variable containing the Weights for the FoM 
+	 */
+	Weights *m_weights; 
+	        
+    /*
+     * Initizalization of a FiguresOfMerit object. Puts a weight of 1 to everything. 
+     * This way, the user is not forced to define weights himself or to pass
+     * a corresponding object. Moreover, the parameter 'maxDim' determines the 
+     * maximal dimension of the reducer object which is created (once) upon
+     * initizalization.
+     */
+    FiguresOfMerit(Weights & w, Reducer<Int, Real> & red) {
+    	m_weights = &w; 
+    	m_red = &red;
 	}
-	
-    /*
-     * This function calculates the normalizer based on whether
-     * FiguresOfMerit object is used for primal or dual lattice
-     */
-	void calculNorma(IntLatticeExt<Int, Real> & lat, int64_t & dim) {
-       if (forDual == true) {
-    		IntMat BasisDual;
-    		BasisConstruction<Int>::mDualBasis(lat.getBasis(), BasisDual, m);
-    	    double log_density=(double)(-log(abs(NTL::determinant(BasisDual))));
-    	    norma  = new NormaBestLat(log_density, dim);
-       }
-       else {
-          double log_density=(double)(-log(abs(NTL::determinant(lat.getBasis()))));
-          norma  = new NormaBestLat(log_density, dim);
-       }
-    }	
+    
 	
 	/*
 	 * This function calculates the Figure of Merit M or Q based 
 	 * on the chosen MeritType of a given lattice 'lat'. The vector 't'
-	 * which defes the set of dimensions for which the figure of merit
+	 * defines the set of dimensions for which the figure of merit
 	 * is calculated needs to be passed as second input variable.  
+	 * The reducer object needs to be passed to avoid
+	 * creating these objects inside the FiguresOfMerit class.
+	 * The IntLattice object 'proj' is needed for saving projections.
+	 * The value 0 is returned if an error occurs while calculating 
+	 * the shortest vector.
 	 */
-	double computeMerit(IntLatticeExt<Int, Real> & lat, const IntVec & t);
-		
+	double computeMerit(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
+	
+	/*
+	 * This function calculates the Figure of Merit M and should be
+	 * called by the user. The parameters have the same meaning as for
+	 * computeMerit. The value 0 is returned if an error occurs
+	 * while calculating the shortest vector.
+	 */
+	double computeMeritM(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
+	
+	/*
+	 * This function calculates the Figure of Merit Q and should be
+	 * called by the user. The parameters have the same meaning as for
+	 * computeMerit. The value 0 is returned if an error occurs
+	 * while calculating the shortest vector.
+	 */
+	double computeMeritQ(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);	
+	
 	/*
 	 * This function calculates the Figure of Merit for a single projection
 	 * of a given lattice 'lat'. The variable 'Coord' sets the coordinates
-	 * of the projection to use
+	 * of the projection to use. The variable 'useLatBasis' indicates if the
+	 * primal / dual basis stored in the Intlattice 'lat' can be directly used 
+	 * because it is already upper triangular. The value 0 is returned if 
+	 * an error occurs while calculating the shortest vector.
 	 */
-	double computeMeritProj(IntLatticeExt<Int, Real> & lat, const Coordinates & Coord);
+	double computeMeritProj(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+			const Coordinates & Coord, bool useLatBasis);
+	
+	/*
+	 * TODO
+	 */
+	double computeMeritProjDual(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+			const Coordinates & Coord, bool useLatBasis);
 
-	IntMat projBasis; //Matrix for basis of projection
-	//Further globally used objects
-	IntLattice<Int, Real> *proj; 
-    Normalizer *norma;
-	Reducer<Int, Real> *red;  
-    CoordinateSets::FromRanges *CoordRange;  	
 
+	/*
+	 * This functions calculates the Figure of Merit for all projections 
+	 * consisting of successive coordinates of the forms 
+	 * {1, 2, ..., low} to {1, 2, ..., upp}
+	 * Note that upp > low must hold. The value 0 is returned if 
+	 * an error occurs while calculating the shortest vector.
+	 */
+	double computeMeritSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+			const int64_t & low, const Int & upp);
+	
+	/*
+	 * This functions calculates the Figure of Merit for all projections 
+	 * consisting of non-successive coordinates. The value 0 is returned if 
+	 * an error occurs while calculating the shortest vector.
+	 */
+	double computeMeritVec(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
+	/*
+	 * Stores the matrix of the projection basis
+	 */
+	IntMat m_projBasis; 
+	
+	/*
+	 * CoordinateSets object is used to store sets of coordinates
+	 */
+    CoordinateSets::FromRanges *m_CoordRange;  
+    
+    /*
+     * Normalizer for storing normalizing values in FiguresOfMerit class
+     */
+    Normalizer *m_norma;
+
+    /*
+     * A function which allows to set set the normalizer to user-specified value.
+    */
+    void setNormalizer (Normalizer & norm) { m_norma  = &norm; }
+    
+    /*
+     * Reducer object used for finding the shortest vector of a projection
+    */
+    Reducer<Int, Real> *m_red;            
 };
 
 //============================================================================
 // Implementation
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, const IntVec & t) {
+double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+		const IntVec & t) {
    double merit = 0;
    double minmerit = 1.0;
-   Int maxDim;
-   maxDim = lat.getDim();
-   int64_t max_dim;
-   NTL::conv(max_dim, maxDim);
-   Coordinates Coord;
+   int64_t low_dim;
    
-   if (succCoordFirst == true) { 
-      Coord.clear();
-      for (int j = 0; j < t.length() + 1; j++) Coord.insert(j+1);
-      lat.buildBasis(t.length()+1);
-      merit = computeMeritProj(lat, Coord);
-      for (int j = t.length()+1; j < maxDim;j++)
-      {
-         Coord.insert(j+1);
-	     lat.incDim();
-	     merit = computeMeritProj(lat, Coord);
-         if (merit < minmerit) minmerit = merit;
-         if (merit < lowerbound) {
-            //std::cout << "Figure of merit is smaller than lower bound!!!";
-            return minmerit;
-         }
-      }
+   if (m_succCoordFirst == true) { 
+	   low_dim = t.length();
+	   minmerit = computeMeritSucc(lat, proj, low_dim, t[0]);
+	   if (minmerit == 0) return minmerit;
+	   if (minmerit < m_lowbound) return minmerit;
+	   if (minmerit > m_highbound) return minmerit;
    }   
    
+   merit = computeMeritVec(lat, proj, t);
+   if (merit < minmerit) minmerit = merit;
+   if (merit == 0) return merit;
+   if (minmerit < m_lowbound) return minmerit;
+   if (minmerit > m_highbound) return minmerit;
 
-   
-   //Do the calculation for the other coordinate sets
-   for (int i = 1; i < t.length(); i++) {
-      //The true at the end ensures that the first variable is always included 
-	  CoordinateSets::FromRanges CoordRange(i, i, 2, max_dim-1, true);  
-      for(auto it = CoordRange.begin(); it != CoordRange.end(); it++){
-         Coord = *it;
-         merit = computeMeritProj(lat, Coord);
-         //std::cout << merit;
-         if (merit < minmerit) minmerit = merit;
-         if (merit < lowerbound) {
-            //std::cout << "Figure of merit is smaller than lower bound!!!";
-            return minmerit;
-         }
-	  }
-   }
-   //Do the calculation for the successive coordinates last if succCoordFirst = false
-    if (succCoordFirst == false) {
-         Coord.clear();
-      for (int j = 0; j < t.length() + 1; j++) Coord.insert(j+1);
-      lat.buildBasis(t.length()+1);
-      merit = computeMeritProj(lat, Coord);
-      for (int j = t.length()+1; j < maxDim;j++)
-      {
-         Coord.insert(j+1);
-	       lat.incDim();
-	       merit = computeMeritProj(lat, Coord);
-         if (merit < minmerit) minmerit = merit;
-         if (merit < lowerbound) {
-            //std::cout << "Figure of merit is smaller than lower bound!!!";
-            return minmerit;
-         }
-      }
-   
-   }
- 
+   if (m_succCoordFirst == false) {
+	   low_dim = t.length();
+	   merit = computeMeritSucc(lat, proj, low_dim, t[0]);
+	   if (merit < minmerit) minmerit = merit;
+	   if (merit == 0) return merit;
+	   if (minmerit < m_lowbound) return minmerit;
+	   if (minmerit > m_highbound) return minmerit;
+   } 
    return minmerit; 
-
 }
+
+//=========================================================================
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, const Coordinates & Coord) {
+double FiguresOfMerit<Int>::computeMeritM(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+		const IntVec & t) {
+   double out;
+   m_fom = MERITM;
+   out = computeMerit(lat, proj, t);
+   m_m = lat.getModulo();
+   return out;
+}
+
+//=========================================================================
+
+template<typename Int>
+double FiguresOfMerit<Int>::computeMeritQ(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+		const IntVec & t) {
+   double out;
+   m_fom = MERITQ;
+   out = computeMerit(lat, proj, t);
+   m_m = lat.getModulo();
+   return out;
+}
+
+//=========================================================================
+
+template<typename Int>
+double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+		const Coordinates & Coord, bool useLatBasis) {
    double shortest, merit;
    merit = 0.0;
-   
-   BasisConstruction<Int>::projectionConstruction(lat.getBasis(), projBasis, Coord, m, pctype);
-   if (forDual == true)
-   { 
-      IntMat projBasisDual;
-	  if (pctype == UPPERTRIPROJ) {
-	     BasisConstruction<Int>::mDualUpperTriangular(projBasis, projBasisDual, m);
-	  } else
-	     BasisConstruction<Int>::mDualBasis(projBasis, projBasisDual, m);
-	  projBasis = projBasisDual;
+   m_m = lat.getModulo();
+
+   if (useLatBasis) {
+       m_projBasis = lat.getBasis();
+   } else {
+       BasisConstruction<Int>::projectionConstruction(lat.getBasis(), m_projBasis, Coord, m_m, m_pctype, m_delta); 
+       IntMat projBasisDual;
+       if (m_pctype == UPPERTRIPROJ) {
+          BasisConstruction<Int>::mDualUpperTriangular(m_projBasis, projBasisDual, m_m);
+       } else {                   
+          BasisConstruction<Int>::mDualBasis(m_projBasis, projBasisDual, m_m);
+       }      
    }
-   *proj = IntLattice<Int, Real> (projBasis, m, projBasis.NumCols());
+   proj = IntLattice<Int, Real> (m_projBasis, m_m, m_projBasis.NumCols());
    //double log_density=(double)(-log(abs(NTL::determinant(proj->getBasis())))); 
    //Normalizer* norma = new NormaBestLat(log_density, max_dim);
-   proj->updateVecNorm();
-   proj->sort(0); 
-   if (prered == BKZ) {
-       red->redBKZ(proj->getBasis(), delta, blocksize);  
+   proj.updateVecNorm();
+   proj.sort(0); 
+   if (m_reductionMethod == BKZ) {
+      m_red->redBKZ(proj.getBasis(), m_delta, m_blocksize);  
    } else {
-      red->redLLLNTL(proj->getBasis(), delta);  
+      m_red->redLLLNTL(proj.getBasis(), m_delta);  
    } 
-   if (performBB == true) {
-	  if (TypeMerit == MERITQ) {
-         red->reductMinkowski(*proj, 0);
-         merit = NTL::conv<double>(red->getMinLength()) / NTL::conv<double>(red->getMaxLength());
-      } else {
-      red->shortestVector(*proj);
-      shortest = NTL::conv<double>(red->getMinLength());
-      merit = weights->getWeight(Coord) * shortest/norma->getBound((Coord).size());
-      }
-   } else { merit = 0.0;};
+   if (m_fom == MERITQ) {
+	   if (m_performBB == true) {if (!m_red->reductMinkowski(proj, 0)) return 0;}
+         merit = NTL::conv<double>(m_red->getMinLength()) / NTL::conv<double>(m_red->getMaxLength());
+   } else {
+	  if (m_performBB == true) {
+          if (!m_red->shortestVector(proj)) return 0;
+	  }
+      shortest = NTL::conv<double>(m_red->getMinLength());
+      // std::cout << norma->getBound((Coord).size()) << "\n";
+      merit = m_weights->getWeight(Coord) * shortest/m_norma->getBound((Coord).size());
+   }
    return merit;
-
 }
+
+//=========================================================================
+
+template<typename Int>
+double FiguresOfMerit<Int>::computeMeritProjDual(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+		const Coordinates & Coord, bool useLatBasis) {
+   double shortest, merit;
+   merit = 0.0;
+   m_m = lat.getModulo();
+
+   if (useLatBasis) {
+       m_projBasis = lat.getDualBasis(); 
+   } else {
+       IntMat projBasisDual;
+       if (m_ReadOutPrimal == true) {
+	      m_projBasis = lat.getBasis();
+       } else {
+		  BasisConstruction<Int>::projectionConstruction(lat.getBasis(), m_projBasis, Coord, m_m, m_pctype, m_delta); 
+       }
+       if (m_pctype == UPPERTRIPROJ) {
+          BasisConstruction<Int>::mDualUpperTriangular(m_projBasis, projBasisDual, m_m);
+       } else {                   
+           BasisConstruction<Int>::mDualBasis(m_projBasis, projBasisDual, m_m);
+       }                         
+       m_projBasis = projBasisDual;
+   }		   
+   proj = IntLattice<Int, Real> (m_projBasis, m_m, m_projBasis.NumCols());
+   //double log_density=(double)(-log(abs(NTL::determinant(proj->getBasis())))); 
+   //Normalizer* norma = new NormaBestLat(log_density, max_dim);
+   proj.updateVecNorm();
+   proj.sort(0); 
+   if (m_reductionMethod == BKZ) {
+      m_red->redBKZ(proj.getBasis(), m_delta, m_blocksize);  
+   } else {
+      m_red->redLLLNTL(proj.getBasis(), m_delta);  
+   } 
+   if (m_fom == MERITQ) {
+	   if (m_performBB == true) {if (!m_red->reductMinkowski(proj, 0)) return 0;}
+         merit = NTL::conv<double>(m_red->getMinLength()) / NTL::conv<double>(m_red->getMaxLength());
+   } else {
+	  if (m_performBB == true) {
+          if (!m_red->shortestVector(proj)) return 0;
+	  }
+      shortest = NTL::conv<double>(m_red->getMinLength());
+      // std::cout << norma->getBound((Coord).size()) << "\n";
+      merit = m_weights->getWeight(Coord) * shortest/m_norma->getBound((Coord).size());
+   }
+   return merit;
+}
+
+//=========================================================================
+
+template<typename Int>
+double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+		const int64_t & low, const Int & upp) {
+   Coordinates Coord;	
+   double merit = 0;
+   double minmerit = 1.0;
+   double dim = lat.getBasis().NumCols();
+   Coord.clear();
+   for (int j = 0; j < low + 1; j++) Coord.insert(j+1);
+   lat.buildBasis(low+1);
+   if (m_dual) { merit = computeMeritProjDual(lat, proj, Coord, true);
+   } else merit = computeMeritProj(lat, proj, Coord, true);
+   if (merit == 0) return merit;
+   for (int j = low +1; j < upp; j++)
+   {
+       Coord.insert(j+1);
+       if (m_incDualOnly == true) {
+    	   lat.incDimDual();
+       } else {
+    	   lat.incDim();
+       }
+     //lat.buildBasis(j+1);
+       if (m_dual) { merit = computeMeritProjDual(lat, proj, Coord, true);
+       } else merit = computeMeritProj(lat, proj, Coord, true);
+       if (merit < minmerit) minmerit = merit;
+	   if (merit == 0) return merit;
+       if (merit < m_lowbound) return minmerit;
+       if (merit > m_highbound) return minmerit;
+   }   
+   if (upp < dim)
+      lat.buildBasis(dim);
+   return minmerit;
+}
+
+//=========================================================================
+
+template<typename Int>
+double FiguresOfMerit<Int>::computeMeritVec(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+		const IntVec & t) {
+	Coordinates Coord;	
+	double merit = 0;
+	double minmerit = 1.0;
+	int64_t max_dim, min_dim;
+	max_dim = lat.getDim();  
+	if (m_projectStationary) {
+       min_dim = 2;
+	} else min_dim = 1;
+
+	for (int i = 1; i < t.length(); i++) {
+       NTL::conv(max_dim, t[i]);
+	   CoordinateSets::FromRanges m_CoordRange(i, i, min_dim, max_dim, m_projectStationary);  
+       for (auto it = m_CoordRange.begin(); it != m_CoordRange.end(); it++){
+          Coord = *it;
+          if (m_dual) { merit = computeMeritProjDual(lat, proj, Coord, false);
+          } else merit = computeMeritProj(lat, proj, Coord, false);
+          if (merit < minmerit) minmerit = merit;
+   	      if (merit == 0) return merit;
+	      if (merit < m_lowbound) return minmerit;
+	      if (merit > m_highbound) return minmerit;
+       }
+    }
+	return minmerit;  
+}
+
+//=========================================================================
 	
 template class FiguresOfMerit<NTL::ZZ>;
 //template class FiguresOfMerit<std::int64_t>;

@@ -126,6 +126,14 @@ public:
 	 * class is meant to be overriden by subclasses.
 	 */
 	virtual void incDim();
+	
+	/**
+	 * Increments the dimension of only the dual basis vectors by one.  
+	 * This implementation works as incDim and is meant to be overridden 
+	 * by subclasses as well.
+	 * 
+	 */
+	virtual void incDimDual();
 
 	/**
 	 * Computes and stores the logarithm of the normalization factors
@@ -159,6 +167,14 @@ public:
 	 * This `dim` must not exceed `maxDim`.
 	 */
 	virtual void buildBasis(int64_t dim);
+	
+	/**
+	 * This virtual method builds only the dual basis for the lattice in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`. buildDualBasis(d) does nothing, it must be 
+	 * implemented in subclasses.
+	 */
+	virtual void buildDualBasis(int64_t dim);
+
 
 	/**
 	 * REMOVE: This depends on the lattice only via the density.
@@ -308,6 +324,26 @@ void IntLatticeExt<Int, Real>::incDim() {
 }
 
 //===========================================================================
+
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::incDimDual() {
+	IntLatticeExt<Int, Real> lattmp(*this);
+	int64_t dim = this->getDim();
+	this->m_dualbasis.resize(dim + 1, dim + 1);
+	this->m_dualvecNorm.resize(dim + 1);
+
+	for (int64_t i = 0; i < dim; i++) {
+		for (int64_t j = 0; j < dim; j++) {
+				this->m_dualbasis(i, j) = lattmp.m_dualbasis(i, j);
+		}
+		this->m_dualvecNorm(i) = lattmp.m_dualvecNorm(i);
+	}
+	this->setDualNegativeNorm(dim);
+	this->setDim(dim + 1);
+	return;
+}
+
+//===========================================================================
 /**
  template<typename Int, typename Real>
  void IntLatticeExt<Int, Real>::calcLgVolDual2 (double lgm2)
@@ -349,6 +385,13 @@ template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::buildBasis(int64_t d) {
 	// To be re-implemented in subclasses.
 	MyExit(1, " buildBasis(d) does nothing, it must be implemented in subclass");
+	d++;  // eliminates compiler warning
+}
+
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d) {
+	// To be re-implemented in subclasses.
+	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
 	d++;  // eliminates compiler warning
 }
 

@@ -38,59 +38,90 @@
 #include "latticetester/WeightsUniform.h"
 #include "latticetester/BasisConstruction.h"
 
+const long numMult = 10;    // Number of multipliers
+const long multipliers[numMult] = { 1597, 19021, 49109, 71904, 90941, 1090942, 809519, 371915, 1824915, 577841};
+int numRep = 1; // Number of repetitions of the code
+
+
 using namespace LatticeTester;
 
 int main() {
-  // Reading a matrix to use the normalizer class
-  int64_t max_dim = 10;
-  Int m(1021);     // Modulus m = 1021
+  // Set all necessary variables
+  int64_t max_dim = 32;
+  Int m(1048573);     
   Int a; 
-  IntVec t;
-  double f;
-  a = 57;
-  long dim;
-  dim = max_dim;
-  bool with_dual = true;
-  //Build a Korobov lattice
-  Rank1Lattice<Int, Real> *lat;
-  lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
-  lat->buildBasis(3);
-  lat->incDimNew();
-  //lat->incDim();
-  lat->buildBasis(dim);
+  double f; // Variable for figure of merit
+  IntVec t; // t-Vector of the FOM
+  long dim; 
+  bool with_dual = true; // Decide whether calculation is used or not
+  dim = max_dim; 
+  Rank1Lattice<Int, Real> *lat; // Initialize variable for lattice 
+  clock_t tmp, timer; //variables for measuring time elapsed
+  Normalizer *norma;
+  Weights *weights; 
+  weights = new WeightsUniform(1.0); 
+  Reducer<Int, Real> *red;
+  red = new Reducer<Int, Real>(max_dim);
+  
+  // Set all necessary objects
+  IntLattice<Int, Real> *proj; // The IntLattice used to store projections  
+  
+  FiguresOfMerit<Int> fom(*weights, *red); 
+  
+  fom.m_succCoordFirst = true; // successive coordinates shall be calculated first 
+  fom.m_reductionMethod = BKZ; //Set pre-reduction to BKZ
+  fom.m_dual = true; // Calculate FoM for the dual
+  fom.m_incDualOnly = true; //Only the dual basis shall be calculated when increasing the dimension but not the primal
+  fom.m_pctype = LLLPROJ; // Define the projecton type
+  fom.m_delta = 0.8; // Set delta-value for BKZ or LLL    
+  
+  // Create all objects which need to be passed to the FiguresOfMerit object 
+  if (fom.m_dual == true) {
+    double log_density=(double)(-log(abs(m)));
+    norma = new NormaBestLat(log_density, dim);
+    fom.setNormalizer(*norma);
+  }
+  else {
+    Int det;
+    det = 1;
+    for (int i = 0; i < dim - 1; i ++) det = det * m;
+    double log_density=(double)(-log(abs(det)));
+    norma = new NormaBestLat(log_density, dim);
+    fom.setNormalizer(*norma);
+  }  
+  
 
-  FiguresOfMerit<Int> fom(*lat, m, max_dim);
-  fom.set_succCoordFirst(true);
-  fom.set_PreReductionType(LLL);
-  fom.set_forDual(false);
-  fom.set_MeritType(MERITM);
-  //fom.set_ProjConstructType(LLLPROJ);
-  //fom.set_lowerbound(0.5);
-  fom.calculNorma(*lat, max_dim);
-
-  t.SetLength(3);
-  t[0] = 3;
-  t[1] = 5;
-  t[2] = 8;
-  //Calculate figure for t = [3 5 8];
-  f = fom.computeMerit(*lat, t);
-  std::cout << "CASE 1: Look at t = [3,5,8]:" << "\n";
-  std::cout << "Figure of merit M is: " << f << "\n";
-  std::cout << "\n";
-
-  t.SetLength(2);
-  t[0] = 2;
-  t[1] = 4;
-  f = fom.computeMerit(*lat, t);
-
-  std::cout << "CASE 2: Look at t = [2,4]:" << "\n";
-  std::cout << "Figure of merit M is: " << f << "\n";
-  std::cout << "\n";
-  //std::cout << "Figure of merit with BestBound: " << merit2 << std::endl;
-  std::cout << "Figures of merit are different for different normalizers,"
-               " weights and projections choices\n";
-  std::cout << "\n";
-
-
+  // Start clock
+  tmp = clock();
+  for (int j = 0; j < numRep; j++) {
+     for (int i = 0; i < numMult; i++) {
+        a = multipliers[i]; 
+        lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
+        lat->buildBasis(dim); 
+        proj = new IntLattice<Int, Real> (lat->getBasis(), m, lat->getBasis().NumCols()); // initialize object for projection
+  
+        //FOM M_{32}
+        t.SetLength(1); 
+        t[0] = 32;
+        f = fom.computeMeritM(*lat, *proj, t);
+        std::cout << "CASE 1: Look at t = " << t << ":" << "\n";
+        std::cout << "Figure of merit M is: " << f << "\n";
+        std::cout << "\n";
+        
+        //FOM M_{5,32,16,12,8}
+        t.SetLength(5);
+        t[0] = 5;
+        t[1] = 32;
+        t[2] = 16;
+        t[3] = 12;
+        t[4] = 8;
+        f = fom.computeMerit(*lat, *proj, t);
+        std::cout << "CASE 2: Look at t = " << t << ":" << "\n";
+        std::cout << "Figure of merit M is: " << f << "\n";
+        std::cout << "\n";     
+     }
+  }
+  timer = clock() - tmp;
+  std::cout << "Time elapsed: " << (double) timer / (CLOCKS_PER_SEC) << " seconds\n";
   return 0;
 }
