@@ -26,7 +26,7 @@
 #include "latticetester/EnumTypes.h"
 #include "latticetester/FiguresOfMerit.h"
 #include "latticetester/Util.h"
-#include "latticetester/ParamReader.h"
+// #include "latticetester/ParamReader.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
@@ -70,13 +70,13 @@ int main() {
   
   fom.m_succCoordFirst = true; // successive coordinates shall be calculated first 
   fom.m_reductionMethod = BKZ; //Set pre-reduction to BKZ
-  fom.m_dual = true; // Calculate FoM for the dual
+  fom.m_fomInDual = true; // Calculate FoM for the dual
   fom.m_incDualOnly = true; //Only the dual basis shall be calculated when increasing the dimension but not the primal
   fom.m_pctype = LLLPROJ; // Define the projecton type
   fom.m_delta = 0.8; // Set delta-value for BKZ or LLL    
   
   // Create all objects which need to be passed to the FiguresOfMerit object 
-  if (fom.m_dual == true) {
+  if (fom.m_fomInDual == true) {
     double log_density=(double)(-log(abs(m)));
     norma = new NormaBestLat(log_density, dim);
     fom.setNormalizer(*norma);
@@ -85,7 +85,7 @@ int main() {
     Int det;
     det = 1;
     for (int i = 0; i < dim - 1; i ++) det = det * m;
-    double log_density=(double)(-log(abs(det)));
+    double log_density=(double)(-log(abs(det)));   // We should not compute a determinant!   *****
     norma = new NormaBestLat(log_density, dim);
     fom.setNormalizer(*norma);
   }  

@@ -253,10 +253,10 @@ namespace LatticeTester {
             uint64_t pos);
 
         /**
-         * Reads a type of PreReduction from the <tt>pos</tt>-th token of the
+         * Reads a type of ReductionType from the <tt>pos</tt>-the token of the
          * <tt>ln</tt>-th line into `field`.
          */
-        void readPreRed (PreReductionType & field, uint64_t ln,
+        void readReduct (ReductionType & field, uint64_t ln,
             uint64_t pos);
 
 
@@ -477,7 +477,7 @@ namespace LatticeTester {
         Config<Int, IntMat> & config, uint64_t & ln)
     {
       config.config.reduct = {};
-      readPreRed(config.config.reduct.method, ++ln, 0);
+      readReduct(config.config.reduct.method, ++ln, 0);
       readOutputType(config.outputType, ++ln, 0);
       readInt (config.NumRows, ++ln, 0);
       config.NumCols = config.NumRows;
@@ -494,7 +494,7 @@ namespace LatticeTester {
       config.config.shortest = {};
       bool reduction;
       readBool(reduction, ++ln, 0);
-      if (reduction) readPreRed(config.config.shortest.method, ln, 1);
+      if (reduction) readReduct(config.config.shortest.method, ln, 1);
       readOutputType(config.outputType, ++ln, 0);
       readInt (config.NumRows, ++ln, 0);
       config.NumCols = config.NumRows;
@@ -511,7 +511,7 @@ namespace LatticeTester {
       readCriterionType(config.config.merit.figure, ++ln, 0);
       readNormaType(config.config.merit.norma, ++ln, 0);
       readBool(config.config.merit.reduction, ++ln, 0);
-      if (config.config.merit.reduction) readPreRed(config.config.merit.method, ln, 1);
+      if (config.config.merit.reduction) readReduct(config.config.merit.method, ln, 1);
       readOutputType(config.outputType, ++ln, 0);
       readInt (config.NumRows, ++ln, 0);
       config.NumCols = config.NumRows;
@@ -972,24 +972,26 @@ namespace LatticeTester {
   //===========================================================================
 
   template<typename Int, typename Real>
-    void ParamReader<Int, Real>::readPreRed(
-        PreReductionType& field, uint64_t ln, uint64_t pos)
+    void ParamReader<Int, Real>::readReduct (
+        ReductionType& field, uint64_t ln, uint64_t pos)
     {
       std::string val;
       getToken(val, ln, pos);
 
-      if (0 == strcasecmp(val.c_str(), "BKZ"))
-        field = BKZ;
-      else if (0 == strcasecmp(val.c_str(), "DIETER"))
-        field = DIETER;
+      if (0 == strcasecmp(val.c_str(), "PAIR"))
+        field = PAIR;
       else if (0 == strcasecmp(val.c_str(), "LLL"))
         field = LLL;
-      else if (0 == strcasecmp(val.c_str(), "NOPRERED"))
-        field = NOPRERED;
-      else if (0 == strcasecmp(val.c_str(), "BKZ_BB"))
-        field = BKZ_BB;
+      else if (0 == strcasecmp(val.c_str(), "BKZ"))
+        field = BKZ;
+      else if (0 == strcasecmp(val.c_str(), "PAIRBB"))
+        field = PAIRBB;
+      else if (0 == strcasecmp(val.c_str(), "LLLBB"))
+        field = LLLBB;
+      else if (0 == strcasecmp(val.c_str(), "BKZBB"))
+        field = BKZBB;
       else
-        MyExit(1, "readPreRed:   NO SUCH CASE");
+        MyExit(1, "readReduct:   NO SUCH CASE");
     }
 
   //===========================================================================

@@ -53,13 +53,13 @@ namespace LatticeTester {
 
         class ReductionConfig {
           public:
-            PreReductionType method;
+            ReductionType method;
         };
 
         class ShortestConfig {
           public:
             bool reduction;
-            PreReductionType method;
+            ReductionType method;
         };
 
         class MeritConfig {
@@ -67,7 +67,7 @@ namespace LatticeTester {
             CriterionType figure;
             NormaType norma;
             bool reduction;
-            PreReductionType method;
+            ReductionType method;
         };
 
         /**

@@ -131,16 +131,16 @@ namespace LatticeTester {
   /**
    * A list of all the possible lattice reductions implemented in `LatticeTester`.
    *
-   * `NORPRERED`: no reduction
-   * `DIETER`: Pairwise reduction
-   * `LLL`: LLL reduction
-   * `BKZ`: block Korkine-Zolotarev reduction
-   * `BB`: direct shortest vector search with BB.
-   * `LLL_BB`: LLL followed by BB.
-   * `BKZ_BB`: BKZ followed by BB.
+   * `PAIR`: Pairwise reductions only.
+   * `LLL`: LLL reduction only.
+   * `BKZ`: block Korkine-Zolotarev reduction only.
+   * `BB`: direct shortest vector search with BB (no pre-red.).
+   * `PAIRBB`: Pairwise reduction followed by BB.
+   * `LLLBB`: LLL followed by BB.
+   * `BKZBB`: BKZ followed by BB.
    */
    // enum PreReductionType { NOPRERED, DIETER, LLL, BKZ, FULL };
-  enum PreReductionType { NOPRERED, DIETER, LLL, BKZ, BB, LLL_BB, BKZ_BB };
+  enum ReductionType { PAIR, LLL, BKZ, BB, PAIRBB, LLLBB, BKZBB };
 
   /**
    * Two possible ways of obtaining a triangular matrix to compute the bounds
@@ -301,25 +301,25 @@ namespace LatticeTester {
         return "***** CalcType: UNDEFINED CASE ";
     }
   }
-  
-  static std::string toStringPreReduction (PreReductionType prered) {
-    switch (prered) {
-      case NOPRERED:
-        return "NOPRERED";
-      case DIETER:
-        return "DIETER";
+
+  static std::string toStringReduction (ReductionType reduct) {
+    switch (reduct) {
+      case PAIR:
+        return "PAIR";
       case LLL:
         return "LLL";
       case BKZ:
         return "BKZ";
       case BB:
         return "BB";
-      case LLL_BB:
-        return "LLL_BB";
-      case BKZ_BB:
-        return "BKZ_BB";
+      case PAIRBB:
+        return "PAIRBB";
+      case LLLBB:
+        return "LLLBB";
+      case BKZBB:
+        return "BKZBB";
       default:
-        return "***** PreReductionType: UNDEFINED CASE ";
+        return "***** ReductionType: UNDEFINED CASE ";
     }
   }
   

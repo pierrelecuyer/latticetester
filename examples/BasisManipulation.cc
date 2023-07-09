@@ -68,7 +68,7 @@ Total time: 0.212573 seconds
 #include "latticetester/EnumTypes.h"
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/Util.h"
-#include "latticetester/ParamReader.h"
+// #include "latticetester/ParamReader.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 
