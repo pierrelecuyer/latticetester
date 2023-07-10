@@ -159,25 +159,13 @@ public:
     	m_weights = &w;     // Should it be optional?     **********
     	m_red = &red;
 	}
-    
 	
 	/*
-	 * This function calculates the Figure of Merit M or Q based 
-	 * on the chosen MeritType of a given lattice 'lat'. The vector 't'
-	 * defines the set of dimensions for which the figure of merit
-	 * is calculated needs to be passed as second input variable.  
-	 * The reducer object needs to be passed to avoid
-	 * creating these objects inside the FiguresOfMerit class.
+	 * This function calculates the Figure of Merit M of a given lattice 'lat'
+	 * and should be called by the user. The vector 't' defines the set of 
+	 * dimensions for which the figure of merit is calculated.
 	 * The IntLattice object 'proj' is needed for saving projections.
-	 * The value 0 is returned if an error occurs while calculating 
-	 * the shortest vector.
-	 */
-	double computeMerit(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
-	
-	/*
-	 * This function calculates the Figure of Merit M and should be
-	 * called by the user. The parameters have the same meaning as for
-	 * computeMerit. The value 0 is returned if an error occurs
+	 *  The value 0 is returned if an error occurs
 	 * while calculating the shortest vector.
 	 */
 	double computeMeritM(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
@@ -187,6 +175,7 @@ public:
 	 * called by the user. The parameters have the same meaning as for
 	 * computeMerit. The value 0 is returned if an error occurs
 	 * while calculating the shortest vector.
+	 * DOES CURRENTLY NOT WORK
 	 */
 	double computeMeritQ(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);	
 	
@@ -302,9 +291,48 @@ public:
 //============================================================================
 // Implementation
 
+//template<typename Int>
+//double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+//		const IntVec & t) {
+//   double merit = 0;
+//   double minmerit = 1.0;
+//   int64_t low_dim;
+//   
+//   if (m_succCoordFirst == true) { 
+//	   low_dim = t.length();
+//	   minmerit = computeMeritSucc(lat, proj, low_dim, t[0]);
+//	   if (minmerit == 0) return minmerit;
+//	   if (minmerit < m_lowbound) return minmerit;
+//	   if (minmerit > m_highbound) return minmerit;
+//   }   
+//   
+//   merit = computeMeritNonSucc(lat, proj, t);
+//   if (merit < minmerit) minmerit = merit;
+//   if (merit == 0) return merit;
+//   if (minmerit < m_lowbound) return minmerit;
+//   if (minmerit > m_highbound) return minmerit;
+//
+//   if (m_succCoordFirst == false) {
+//	   low_dim = t.length();
+//	   merit = computeMeritSucc(lat, proj, low_dim, t[0]);
+//	   if (merit < minmerit) minmerit = merit;
+//	   if (merit == 0) return merit;
+//	   if (minmerit < m_lowbound) return minmerit;
+//	   if (minmerit > m_highbound) return minmerit;
+//   } 
+//   return minmerit; 
+//}
+
+//=========================================================================
+
 template<typename Int>
-double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+double FiguresOfMerit<Int>::computeMeritM(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 		const IntVec & t) {
+   double out;
+   m_fom = MERITM;
+   m_m = lat.getModulo();
+   //out = computeMerit(lat, proj, t);
+   //return out;
    double merit = 0;
    double minmerit = 1.0;
    int64_t low_dim;
@@ -337,25 +365,14 @@ double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, IntLatt
 //=========================================================================
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritM(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
-		const IntVec & t) {
-   double out;
-   m_fom = MERITM;
-   m_m = lat.getModulo();
-   out = computeMerit(lat, proj, t);
-   return out;
-}
-
-//=========================================================================
-
-template<typename Int>
 double FiguresOfMerit<Int>::computeMeritQ(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 		const IntVec & t) {
    double out;
    m_fom = MERITQ;
    m_m = lat.getModulo();
-   out = computeMerit(lat, proj, t);
-   return out;
+   //out = computeMerit(lat, proj, t);
+   //return out;
+   return 0;
 }
 
 //=========================================================================
@@ -414,18 +431,13 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLattice<Int, Real> & proj, const
       m_red->redLLLNTL(proj.getBasis(), m_delta);  
    } 
    //std::cout << proj.getBasis();
-   if (m_fom == MERITQ) {
-	   if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {if (!m_red->reductMinkowski(proj, 0)) return 0;}
-         merit = NTL::conv<double>(m_red->getMinLength()) / NTL::conv<double>(m_red->getMaxLength());
-   } else {
-	  if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {
-          if (!m_red->shortestVector(proj)) return 0;
-	  }
-      shortest = NTL::conv<double>(m_red->getMinLength());
-      //std::cout << shortest << "\n";
-      // std::cout << norma->getBound((Coord).size()) << "\n";
-      merit = m_weights->getWeight(Coord) * shortest/m_norma->getBound((Coord).size());
+   if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {
+       if (!m_red->shortestVector(proj)) return 0;
    }
+   shortest = NTL::conv<double>(m_red->getMinLength());
+   //std::cout << shortest << "\n";
+   // std::cout << norma->getBound((Coord).size()) << "\n";
+   merit = m_weights->getWeight(Coord) * shortest/m_norma->getBound((Coord).size());
    return merit;
 }
 
@@ -446,19 +458,14 @@ double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
       m_red->redLLLNTL(lat.getBasis(), m_delta);  
    } 
    //std::cout << lat.getBasis();
-   if (m_fom == MERITQ) {
-	   if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {if (!m_red->reductMinkowski(lat, 0)) return 0;}
-         merit = NTL::conv<double>(m_red->getMinLength()) / NTL::conv<double>(m_red->getMaxLength());
-   } else {
-	  if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {
+   if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {
           if (!m_red->shortestVector(lat)) return 0;
-	  }
-      shortest = NTL::conv<double>(m_red->getMinLength());
-      //std::cout << shortest << "\n";
-      // std::cout << norma->getBound((Coord).size()) << "\n";
-      for (int j = 0; j < lat.getBasis().NumCols(); j++) Coord.insert(j+1);
-      merit = m_weights->getWeight(Coord) * shortest/m_norma->getBound((Coord).size());
    }
+   shortest = NTL::conv<double>(m_red->getMinLength());
+   //std::cout << shortest << "\n";
+   // std::cout << norma->getBound((Coord).size()) << "\n";
+   for (int j = 0; j < lat.getBasis().NumCols(); j++) Coord.insert(j+1);
+   merit = m_weights->getWeight(Coord) * shortest/m_norma->getBound((Coord).size());
    return merit;
 }
 
