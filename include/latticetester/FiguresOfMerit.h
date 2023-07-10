@@ -77,20 +77,19 @@ public:
 	double m_lowbound = 0; 
 	
 	/*
-	 * Figure of merit is calculated for the dual lattice if dual is true
+	 * If true, the FOM is calculated for the dual lattice.
 	 */
-	bool m_dual = false; 
+	bool m_fomInDual = false;
 	
 	/* 
-	 * Defines the pre-reduction type. Indicates how the shortest vectors are computed 
-	 * or estimated.
+	 * The reduction type used to compute (or estimate) the FOM.
 	 */
-	PreReductionType m_reductionMethod = BKZ; 
+	ReductionType m_reductionMethod = BKZBB;
 	
 	/*
-	 * delta-Parameter for LLL or BKZ reduction
+	 * The delta Parameter for LLL or BKZ reduction
 	 */
-	double m_delta = 0.9; 
+	double m_delta = 0.99999;
 	
 	/*
 	 * Blocksize of BKZ algorithm
@@ -113,12 +112,12 @@ public:
 	void setWeights (int64_t & nodes) { m_maxNodesBB = nodes; m_red->maxNodesBB = nodes; }
 	
 	/*
-	 * Variable decides BB algorithm is performed
+	 * Variable decides BB algorithm is performed.    *****  NO LONGER NEEDED with the new Reduction types.  ******
 	 */
 	bool m_performBB = true; 
 	
 	/*
-	 * If set to true successive corrdinates a considered first when calculating FigureOfMerit
+	 * If set to true successive coordinates a considered first when calculating FigureOfMerit
 	 */
 	bool m_succCoordFirst = false;
 	
@@ -139,30 +138,31 @@ public:
 	ProjConstructType m_pctype = UPPERTRIPROJ;
 	
 	/*
-	 * Variable used to store the m of the RNG
+	 * Variable used to store the modulo m of the RNG.
 	 */
-	NTL::ZZ m_m; 
+	Int m_m;
 	
 	/*
 	 * Decides if the primal lattice shall be read out directly because 
 	 * it is not necessary to apply a projection construction
+	 *                  READ OUT FROM WHERE ???   ********
 	 */
 	bool m_ReadOutPrimal = false;
 	
 	/*
-	 * Variable containing the Weights for the FoM 
+	 * The Weights for the FoM
 	 */
 	Weights *m_weights; 
 	        
     /*
-     * Initizalization of a FiguresOfMerit object. Puts a weight of 1 to everything. 
+     * Constructor of a FiguresOfMerit object. Puts a weight of 1 to everything.
      * This way, the user is not forced to define weights himself or to pass
      * a corresponding object. Moreover, the parameter 'maxDim' determines the 
      * maximal dimension of the reducer object which is created (once) upon
-     * initizalization.
+     * initialization.
      */
     FiguresOfMerit(Weights & w, Reducer<Int, Real> & red) {
-    	m_weights = &w; 
+    	m_weights = &w;     // Should it be optional?     **********
     	m_red = &red;
 	}
     
@@ -177,6 +177,7 @@ public:
 	 * The IntLattice object 'proj' is needed for saving projections.
 	 * The value 0 is returned if an error occurs while calculating 
 	 * the shortest vector.
+	 *                         IS THIS FUNCTION NEEDED ?  ******
 	 */
 	double computeMerit(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
 	
@@ -229,7 +230,7 @@ public:
 	 * consisting of non-successive coordinates. The value 0 is returned if 
 	 * an error occurs while calculating the shortest vector.
 	 */
-	double computeMeritVec(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
+	double computeMeritNonSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
 	/*
 	 * Stores the matrix of the projection basis
 	 */
@@ -264,7 +265,7 @@ double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, IntLatt
 		const IntVec & t) {
    double merit = 0;
    double minmerit = 1.0;
-   int64_t low_dim;
+   int64_t low_dim;    // This variable is not needed, I think.   ******
    
    if (m_succCoordFirst == true) { 
 	   low_dim = t.length();
@@ -272,15 +273,18 @@ double FiguresOfMerit<Int>::computeMerit(IntLatticeExt<Int, Real> & lat, IntLatt
 	   if (minmerit == 0) return minmerit;
 	   if (minmerit < m_lowbound) return minmerit;
 	   if (minmerit > m_highbound) return minmerit;
+	   //  IMPORTANT:  This must be tested for each projection,
+	   //  so we can exit early.  Otherwise, this test is useless!    ********
    }   
    
-   merit = computeMeritVec(lat, proj, t);
+   merit = computeMeritNonSucc(lat, proj, t);
    if (merit < minmerit) minmerit = merit;
    if (merit == 0) return merit;
    if (minmerit < m_lowbound) return minmerit;
    if (minmerit > m_highbound) return minmerit;
 
    if (m_succCoordFirst == false) {
+	   //                The same piece of code is repeated twice!!!   ******
 	   low_dim = t.length();
 	   merit = computeMeritSucc(lat, proj, low_dim, t[0]);
 	   if (merit < minmerit) minmerit = merit;
@@ -345,7 +349,7 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLatticeExt<Int, Real> & lat, Int
    } else {
       m_red->redLLLNTL(proj.getBasis(), m_delta);  
    } 
-   if (m_fom == MERITQ) {
+   if (m_fom == MERITQ) {    // Why not separate M and Q completely?   **********
 	   if (m_performBB == true) {if (!m_red->reductMinkowski(proj, 0)) return 0;}
          merit = NTL::conv<double>(m_red->getMinLength()) / NTL::conv<double>(m_red->getMaxLength());
    } else {
@@ -420,7 +424,7 @@ double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, Int
    Coord.clear();
    for (int j = 0; j < low + 1; j++) Coord.insert(j+1);
    lat.buildBasis(low+1);
-   if (m_dual) { merit = computeMeritProjDual(lat, proj, Coord, true);
+   if (m_fomInDual) { merit = computeMeritProjDual(lat, proj, Coord, true);
    } else merit = computeMeritProj(lat, proj, Coord, true);
    if (merit == 0) return merit;
    for (int j = low +1; j < upp; j++)
@@ -432,7 +436,7 @@ double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, Int
     	   lat.incDim();
        }
      //lat.buildBasis(j+1);
-       if (m_dual) { merit = computeMeritProjDual(lat, proj, Coord, true);
+       if (m_fomInDual) { merit = computeMeritProjDual(lat, proj, Coord, true);
        } else merit = computeMeritProj(lat, proj, Coord, true);
        if (merit < minmerit) minmerit = merit;
 	   if (merit == 0) return merit;
@@ -447,7 +451,7 @@ double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, Int
 //=========================================================================
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritVec(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+double FiguresOfMerit<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj,
 		const IntVec & t) {
 	Coordinates Coord;	
 	double merit = 0;
@@ -463,7 +467,7 @@ double FiguresOfMerit<Int>::computeMeritVec(IntLatticeExt<Int, Real> & lat, IntL
 	   CoordinateSets::FromRanges m_CoordRange(i, i, min_dim, max_dim, m_projectStationary);  
        for (auto it = m_CoordRange.begin(); it != m_CoordRange.end(); it++){
           Coord = *it;
-          if (m_dual) { merit = computeMeritProjDual(lat, proj, Coord, false);
+          if (m_fomInDual) { merit = computeMeritProjDual(lat, proj, Coord, false);
           } else merit = computeMeritProj(lat, proj, Coord, false);
           if (merit < minmerit) minmerit = merit;
    	      if (merit == 0) return merit;
