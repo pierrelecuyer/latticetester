@@ -125,7 +125,7 @@ public:
 	 * resets the norm vectors to -1. The implementation in this
 	 * class is meant to be overriden by subclasses.
 	 */
-	virtual void incDim();
+	virtual void incDimBasis();
 	
 	/**
 	 * Increments the dimension of only the dual basis vectors by one.  
@@ -133,7 +133,7 @@ public:
 	 * by subclasses as well.
 	 * 
 	 */
-	virtual void incDimDual();
+	virtual void incDimDualBasis();
 
 	/**
 	 * Computes and stores the logarithm of the normalization factors
@@ -297,7 +297,7 @@ void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
 //===========================================================================
 
 template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::incDim() {
+void IntLatticeExt<Int, Real>::incDimBasis() {
 	IntLatticeExt<Int, Real> lattmp(*this);
 	int64_t dim = this->getDim();
 	this->m_basis.resize(dim + 1, dim + 1);
@@ -326,7 +326,7 @@ void IntLatticeExt<Int, Real>::incDim() {
 //===========================================================================
 
 template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::incDimDual() {
+void IntLatticeExt<Int, Real>::incDimDualBasis() {
 	IntLatticeExt<Int, Real> lattmp(*this);
 	int64_t dim = this->getDim();
 	this->m_dualbasis.resize(dim + 1, dim + 1);
