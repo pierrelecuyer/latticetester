@@ -12,28 +12,37 @@
  *
  * Example of results:
 
+Results of ReducerComparison.cc with m = 1048573
 Flexible types: Int = NTL::ZZ, Real = double
-
 Timings for finding shortest vector with BB, with various pre-reduction methods.
-The times are in basic clock units.
+The times are in basic clock units. 
+ dim:            10         20         30         40 
 
-m = 1048573
-dim \ pre-reduct:    None       pairwise        LLL5       LLL8    LLL99999     BKZ
+None           71331     572928          1          1 
+pairwise        3010     237591       7650      17777 
+LLL5             182       2003     246096     701089 
+LLL8             164       1408      55743      97849 
+LLL99999         176       1522      26298      67121 
+BKZ              318       2566      23969      48528 
 
-10                    68550         2613         163        219         162     306
-20                   532359       206594        1903       1163        1764    2259
-30                     --            --       220817      48455       22932   22194
-40                     --            --      1333125      83891       59178   43498
-Total time: 2.66798 seconds
+Total time: 2.18838 seconds
 
-m = 1073741827
-dim \ pre-reduct:    None       pairwise        LLL5     LLL8     LLL99999      BKZ
+Results of ReducerComparison.cc with m = 1073741827
+Flexible types: Int = NTL::ZZ, Real = double
+Timings for finding shortest vector with BB, with various pre-reduction methods.
+The times are in basic clock units. 
+ dim:            10         20         30         40 
 
-10                  2279295       103743         260        238         518     401
-20                  5937701      1934427        2523       1331        1595    3100
-30                        0                   584351      90625       16362   18358
-40                        0                239600527   15685520     2797533 3390653
-Total time: 272.465 seconds
+None         2649188    6738802          1          1 
+pairwise      112822    2262319       8251      18788 
+LLL5             219       9158     545774  250225757 
+LLL8             239       1893     104425   17262999 
+LLL99999         263       2383      19737    3125776 
+BKZ              458       3894      23967    3872037 
+
+Total time: 286.992 seconds
+
+
 
 **/
 
@@ -161,48 +170,49 @@ int main() {
   red = new Reducer<Int, Real>(*lat);
   red->setDecompTypeBB(decomp);
   for (int p = 0; p < numPrimes; p++) {
-	totalTime = clock();
-	//Go through the list of prime numbers and set a accordingly
-	m = primes[p];
-  	a = m/7;
-  	for (int d = 0; d < numSizes; d++) {
+	  totalTime = clock();
+	  //Go through the list of prime numbers and set a accordingly
+	  m = primes[p];
+  	  a = m/7;
+  	  for (int d = 0; d < numSizes; d++) {
   
-  	  	dim = dimensions[d];
-          	korlat = new Rank1Lattice<Int, Real>(m, a, dim, choiceDual);
-          	korlat->buildBasis(dim);
-        	basis1.SetDims(dim, dim);
-        	copyLattice(choiceDual);        
-       
-  		tmp = clock();
-  		shortestNone(*lat);
-        	timer[0][d] = clock() - tmp;
+        dim = dimensions[d];
+        korlat = new Rank1Lattice<Int, Real>(m, a, dim, choiceDual);
+        korlat->buildBasis(dim);
+        basis1.SetDims(dim, dim);
+        
+        copyLattice(choiceDual);   
+        tmp = clock();
+        shortestNone(*lat);
+        timer[0][d] = clock() - tmp;
      
-  		tmp = clock();
-  		red->redDieter(0);
-  		shortestDieter(*lat);
-        	timer[1][d] = clock() - tmp;
+        copyLattice(choiceDual);
+        tmp = clock();
+        red->redDieter(0);
+        shortestDieter(*lat);
+        timer[1][d] = clock() - tmp;
   		  
-        	copyLattice(choiceDual);
-        	tmp = clock();
-  		shortestLLL(*lat, 0.5);
-        	timer[2][d] = clock() - tmp;
+        copyLattice(choiceDual);
+        tmp = clock();
+        shortestLLL(*lat, 0.5);
+        timer[2][d] = clock() - tmp;
    
-  		copyLattice(choiceDual);
-        	tmp = clock();
-  		shortestLLL(*lat, 0.8);
-        	timer[3][d] = clock() - tmp;
+        copyLattice(choiceDual);
+        tmp = clock();
+        shortestLLL(*lat, 0.8);
+        timer[3][d] = clock() - tmp;
 	   
-  		copyLattice(choiceDual);
-        	tmp = clock();
-  		shortestLLL(*lat, 0.9999);
-        	timer[4][d] = clock() - tmp;
+        copyLattice(choiceDual);
+        tmp = clock();
+        shortestLLL(*lat, 0.9999);
+        timer[4][d] = clock() - tmp;
 	  
-  		copyLattice(choiceDual);
-        	tmp = clock();
-  		shortestBKZ(*lat);
-      		timer[5][d] = clock() - tmp;
-   	}
-   	printOutput(); 
-	}
-return 0;
+        copyLattice(choiceDual);
+        tmp = clock();
+        shortestBKZ(*lat);
+        timer[5][d] = clock() - tmp;
+  	  }       
+     printOutput(); 
+  }
+  return 0;
 }
