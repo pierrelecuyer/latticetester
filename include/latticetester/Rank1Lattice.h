@@ -51,7 +51,7 @@ namespace LatticeTester {
    * ***  CHANGES: added parameter withDual to the constructor.
    *   Removed  init();
    *   I changed buildBasis for the dual to use the direct construction.
-   *   incDim needs to be made more efficient, by just updating the basis!
+   *   incDimBasis needs to be made more efficient, by just updating the basis!
    *   It seems that setLac could be in IntLattice already.
    *
    */
@@ -120,13 +120,13 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
          * Increases the current dimension by 1 and updates the basis.
          * The dimension must be smaller than `maxDim` when calling this function.
          */
-        void incDim ();
+        void incDimBasis ();
         
         /**
          * Increases the current dimension of only the dual lattice by 1 and updates only the dual basis.
          * The dimension must be smaller than `maxDim` when calling this function.
          */
-        void incDimDual ();
+        void incDimDualBasis ();
 
       protected:
 
@@ -145,7 +145,7 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
         
         /**
          * This number stores the length of the input vector aa. This is necessary to make
-         * an efficient implementation of 'incDim'
+         * an efficient implementation of 'incDimBasis'
          */
         int m_k = 1;
     };
@@ -232,7 +232,7 @@ std::string Rank1Lattice<Int, Real>::toStringCoef ()const {
   //============================================================================
 
 //template<typename Int, typename Real>
-//void Rank1Lattice<Int, Real>::incDim () {
+//void Rank1Lattice<Int, Real>::incDimBasis () {
 //    	assert(1 + this->getDim() <= this->m_maxDim);
 //    	buildBasis (1 + this->getDim ());
 //    	this->setNegativeNorm ();
@@ -240,8 +240,85 @@ std::string Rank1Lattice<Int, Real>::toStringCoef ()const {
 //
 //	}
 
+//template<typename Int, typename Real>
+//void Rank1Lattice<Int, Real>::incDimBasis () {
+//		int64_t d = 1 + this->getDim();
+//    	assert(d <= this->m_maxDim);
+//    	IntMat temp;
+//    	temp.SetDims(d, d);
+//    	//Use old basis for first d - 1 dimension
+//    	for (int i = 0; i < d-1; i++) {
+//            for (int j = 0; j < d-1; j++) {
+//               temp[i][j] = this->m_basis[i][j];	
+//            }
+//        }
+//    	// Code for general k
+////        //Add d-th component for the first d - 1 vectors 
+////        //Recall that indices start with 0!
+////    	for (int i = 0; i < d-1; i++) {
+////    		temp[i][d-1] = 0;
+////    		for (int k = 1; k < this->m_k + 1; k++) {
+////    	       temp[i][d-1] = temp[i][d-1] + m_a[k] * temp[i][d-1-k];
+////            }
+//// 	       temp[i][d-1] = temp[i][d-1] % this->m_modulo;
+////    	}
+////    	//Set last vector equal m times unit vector
+////    	for (int j = 0; j < d-1; j++)
+////    		temp[d-1][j] = 0;
+////    	temp[d-1][d-1] = this->m_modulo;
+//    	
+//    	//Fill in the new component
+//    	for (int j = 0; j < d-1; j++)
+//    		temp[d-1][j] = 0;
+//        for (int i = 0; i < d; i++) 
+//        	temp[i][d-1] = 0;     
+//        temp[0][d-1] = m_a[d-1];
+//    	temp[d-1][d-1] = this->m_modulo;
+//        
+//        this->setDim (d);
+//        this->m_basis.SetDims(d, d);        
+//        this->m_basis = temp;              
+//        this->setNegativeNorm ();        
+//
+//        if (!this->m_withDual) return;
+//
+//    	              
+//        //Use old basis for first d - 1 dimension
+//        for (int i = 0; i < d-1; i++) {
+//           for (int j = 0; j < d-1; j++) {
+//              temp[i][j] = this->m_dualbasis[i][j];	
+//           }
+//        }
+//        //Add extra coordinate to each vector
+//       	for (int j = 0; j < d-1; j++)
+//        	temp[d-1][j] = 0;
+//        for (int i = 0; i < d; i++) 
+//           	temp[i][d-1] = 0;      
+//        temp[d-1][0] = m_a[d-1];
+//        temp[d-1][d-1] = 1;      
+////        //Code for general k
+////        Int add;  
+////        //Calculate the new basis vector
+////        //Proceed columwise
+////        for (int j = 0; j < d; j++) {
+////           if (d-1 != j) temp[d-1][j] = 0;
+////           else temp[d-1][j] = 1;
+////           //Sum over the rows
+////           for (int i = 0; i < d-1; i++) {
+////              add = this->m_basis[i][d-1] * temp[i][j];
+////              add = add / this->m_modulo;
+////              temp[d-1][j] = temp[d-1][j] - add; 
+////           }
+////           if (temp[d-1][j] != 0)
+////              temp[d-1][j] = temp[d-1][j] % this->m_modulo;
+////        }
+////        this->m_dualbasis.SetDims(d, d);
+//        this->m_dualbasis = temp;
+//        this->setDualNegativeNorm ();
+//    }
+
 template<typename Int, typename Real>
-void Rank1Lattice<Int, Real>::incDim () {
+void Rank1Lattice<Int, Real>::incDimBasis () {
 		int64_t d = 1 + this->getDim();
     	assert(d <= this->m_maxDim);
     	IntMat temp;
@@ -252,19 +329,14 @@ void Rank1Lattice<Int, Real>::incDim () {
                temp[i][j] = this->m_basis[i][j];	
             }
         }
-        //Add d-th component for the first d - 1 vectors 
-        //Recall that indices start with 0!
-    	for (int i = 0; i < d-1; i++) {
-    		temp[i][d-1] = 0;
-    		for (int k = 1; k < this->m_k + 1; k++) {
-    	       temp[i][d-1] = temp[i][d-1] + m_a[k] * temp[i][d-1-k];
-            }
- 	       temp[i][d-1] = temp[i][d-1] % this->m_modulo;
-    	}
-    	//Set last vector equal m times unit vector
+     	//Fill in the new component
     	for (int j = 0; j < d-1; j++)
     		temp[d-1][j] = 0;
-    	temp[d-1][d-1] = this->m_modulo;
+    	temp[d-1][d-1] = this->m_modulo; 
+        for (int i = 0; i < d-1; i++) {
+        	temp[i][d-1] = this->m_a[d-1] * this->m_basis[i][0];
+        	temp[i][d-1] = temp[i][d-1] % this->m_modulo;
+        }
         
         this->setDim (d);
         this->m_basis.SetDims(d, d);        
@@ -272,8 +344,9 @@ void Rank1Lattice<Int, Real>::incDim () {
         this->setNegativeNorm ();        
 
         if (!this->m_withDual) return;
-
-    	Int add;                
+        
+        Int add;
+    	              
         //Use old basis for first d - 1 dimension
         for (int i = 0; i < d-1; i++) {
            for (int j = 0; j < d-1; j++) {
@@ -282,31 +355,28 @@ void Rank1Lattice<Int, Real>::incDim () {
         }
         //Add extra coordinate to each vector
         for (int i = 0; i < d; i++) {
-        	temp[i][d-1] = 0;
-        }                 
-        //Calculate the new basis vector
-        //Proceed columwise
-        for (int j = 0; j < d; j++) {
-           if (d-1 != j) temp[d-1][j] = 0;
-           else temp[d-1][j] = 1;
-           //Sum over the rows
-           for (int i = 0; i < d-1; i++) {
-              add = this->m_basis[i][d-1] * temp[i][j];
-              add = add / this->m_modulo;
-              temp[d-1][j] = temp[d-1][j] - add; 
-           }
-           if (temp[d-1][j] != 0)
-              temp[d-1][j] = temp[d-1][j] % this->m_modulo;
+           	temp[i][d-1] = 0;
+           	temp[d-1][i] = 0;
         }
-        this->m_dualbasis.SetDims(d, d);
+        temp[d-1][d-1] = 1;
+        
+       	for (int j = 0; j < d-1; j++) {
+       		add = 0;
+       		for (int i = 0; i < d-1; i++) {
+       			add = add - this->m_basis[i][d-1] * this->m_dualbasis[i][j];
+       		}
+   			add = add / this->m_modulo;
+   			temp[d-1][j] = temp[d-1][j] + add;
+       	}
         this->m_dualbasis = temp;
         this->setDualNegativeNorm ();
     }
 
+
 //============================================================================
 
 template<typename Int, typename Real>
-void Rank1Lattice<Int, Real>::incDimDual () {
+void Rank1Lattice<Int, Real>::incDimDualBasis () {
 	int64_t d = 1 + this->getDim();
 	assert(d <= this->m_maxDim);
     this->setDim (d);
@@ -323,8 +393,8 @@ void Rank1Lattice<Int, Real>::incDimDual () {
     for (int i = 0; i < d; i++) {
     	temp[i][d-1] = 0;
     }         
-    temp[d-1][0] = temp[d-2][0] * m_a[1];
-    temp[d-1][0] = temp[d-1][0] % this->m_modulo;
+    temp[d-1][0] = -m_a[d-1];
+    //temp[d-1][0] = temp[d-1][0] % this->m_modulo;
     temp[d-1][d-1] = 1;
     this->m_dualbasis.SetDims(d, d);
     this->m_dualbasis = temp;
@@ -360,38 +430,36 @@ void Rank1Lattice<Int, Real>::buildBasis (int64_t d) {
       if (!this->m_withDual) return;
       // If `withDual`, we construct the dual basis also in a direct way.
       
-      //CW: This is the old code, which seems to be wrong to me. 
-      //There was a confusion of this->m_dualbasis and this->m_basis
-//      this->m_dualbasis[0][0] = this->m_modulo;
-//      for (j = 1; j < d; j++)
-//         this->m_basis[0][j] = 0;
-//      for (i = 1; i < d; i++) {
-//         this->m_dualbasis[i][0] = -this->m_basis[0][i];
-//         for (j = 0; j < d; j++) {
-//            if (i == j) this->m_basis[i][i] = 1;
-//            else this->m_basis[i][j] = 0;
-//         }
-//      }
-//      this->setDualNegativeNorm ();
-      
-      //New implementation according to L'Ecuyer and Couture (1997) 
-      for (int i = 0; i < this->m_k; i++) {
-         for (int j = 0; j < d; j++) {
-        	 if (i==j) this->m_dualbasis[i][j] = this->m_modulo; 
-        	 else this->m_dualbasis[i][j] = 0;
+      this->m_dualbasis[0][0] = this->m_modulo;
+      for (j = 1; j < d; j++)
+         this->m_dualbasis[0][j] = 0;
+      for (i = 1; i < d; i++) {
+         this->m_dualbasis[i][0] = -this->m_basis[0][i];
+         for (j = 1; j < d; j++) {
+            if (i == j) this->m_dualbasis[i][i] = 1;
+            else this->m_dualbasis[i][j] = 0;
          }
       }
-      for (int i = this->m_k; i < d; i++) {
-    	  for (int j = 0; j < d; j++) {
-              if (i==j) this->m_dualbasis[i][j] = 1;
-              else this->m_dualbasis[i][j] = 0;
-              if (j < this->m_k) {
-                  for (int k = 0; k < this->m_k; k++) {
-        	    	 this->m_dualbasis[i][j] = this->m_dualbasis[i][j] - m_a[k] * this->m_basis[j][i - k];
-                  }
-              }
-          }
-      }
+      this->setDualNegativeNorm ();
+      
+//      //New implementation for general k according to L'Ecuyer and Couture (1997) 
+//      for (int i = 0; i < this->m_k; i++) {
+//         for (int j = 0; j < d; j++) {
+//        	 if (i==j) this->m_dualbasis[i][j] = this->m_modulo; 
+//        	 else this->m_dualbasis[i][j] = 0;
+//         }
+//      }
+//      for (int i = this->m_k; i < d; i++) {
+//    	  for (int j = 0; j < d; j++) {
+//              if (i==j) this->m_dualbasis[i][j] = 1;
+//              else this->m_dualbasis[i][j] = 0;
+//              if (j < this->m_k) {
+//                  for (int k = 0; k < this->m_k; k++) {
+//        	    	 this->m_dualbasis[i][j] = this->m_dualbasis[i][j] - m_a[k] * this->m_basis[j][i - k];
+//                  }
+//              }
+//          }
+//      }
     }
 
 //============================================================================
@@ -402,23 +470,37 @@ void Rank1Lattice<Int, Real>::buildDualBasis (int64_t d) {
     this->setDim (d);
     this->m_basis.SetDims(d,d);
     this->m_dualbasis.SetDims(d,d);
-    for (int i = 0; i < this->m_k; i++) {
-       for (int j = 0; j < d; j++) {
-      	 if (i==j) this->m_dualbasis[i][j] = this->m_modulo; 
-      	 else this->m_dualbasis[i][j] = 0;
-       }
+    for (int i = 0; i < d; i++)
+    	this->m_dualbasis[i][0] = -m_a[i];
+    for (int i = 0; i < d; i++) {
+    	if (i<1) this->m_dualbasis[i][i] = this->m_modulo;
+    	else this->m_dualbasis[i][i] = 1;
     }
-    for (int i = this->m_k; i < d; i++) {
-  	  for (int j = 0; j < d; j++) {
-            if (i==j) this->m_dualbasis[i][j] = 1;
-            else this->m_dualbasis[i][j] = 0;
-            if (j < this->m_k) {
-                for (int k = 0; k < this->m_k; k++) {
-      	    	 this->m_dualbasis[i][j] = this->m_dualbasis[i][j] - m_a[k] * this->m_basis[j][i - k];
-                }
-            }
-        }
-    }
+   
+//    for (int i = 0; i < this->m_k; i++) {
+//       for (int j = 0; j < d; j++) {
+//      	 if (i==j) this->m_dualbasis[i][j] = 1; 
+//      	 else this->m_dualbasis[i][j] = 0;
+//       }
+//    }
+//    for (int i = this->m_k; i < d; i++) {
+//  	  for (int j = 1; j < d+1; j++) {
+//  		  if(d-j >= this->m_k) {
+//  			  if(i==d-j) this->m_dualbasis[i][d-j] = 1;
+//  			  else this->m_dualbasis[i][d-j] = 0;
+//  		  } else {
+//  			  for (int k = 0; k < this->m_k; k++) {
+//  				  this->m_dualbasis[i][d-j] = this->m_dualbasis[i][d-j] + m_a[k+1] * this->m_dualbasis[i-(k+1)][d-j]; 
+//  			  }
+//  			  this->m_dualbasis[i][d-j] = this->m_dualbasis[i][d-j] % this->m_modulo;
+//  		  }
+//      }
+//   }
+//   for (int i = this->m_k; i < d; i++)
+//	   for (int j = 0; j < this->m_k; j++)
+//		   this->m_dualbasis[i][j] = -this->m_dualbasis[i][j]; 
+//   for (int i = 0; i < this->m_k; i++) 
+//	   this->m_dualbasis[i][i] = this->m_modulo;
 }
 
 //============================================================================
