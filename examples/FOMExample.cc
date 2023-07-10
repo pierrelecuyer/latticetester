@@ -69,7 +69,7 @@ int main() {
   FiguresOfMerit<Int> fom(*weights, *red); 
   
   fom.m_succCoordFirst = true; // successive coordinates shall be calculated first 
-  fom.m_reductionMethod = BKZ; //Set pre-reduction to BKZ
+  fom.m_reductionMethod = BKZBB; //Set pre-reduction to BKZ
   fom.m_fomInDual = true; // Calculate FoM for the dual
   fom.m_incDualOnly = true; //Only the dual basis shall be calculated when increasing the dimension but not the primal
   fom.m_pctype = LLLPROJ; // Define the projecton type
@@ -103,7 +103,7 @@ int main() {
         //FOM M_{32}
         t.SetLength(1); 
         t[0] = 32;
-        f = fom.computeMeritM(*lat, *proj, t);
+        f = fom.computeMeritMSucc_MethodE(*lat, *proj, t);
         std::cout << "CASE 1: Look at t = " << t << ":" << "\n";
         std::cout << "Figure of merit M is: " << f << "\n";
         std::cout << "\n";
@@ -115,7 +115,7 @@ int main() {
         t[2] = 16;
         t[3] = 12;
         t[4] = 8;
-        f = fom.computeMerit(*lat, *proj, t);
+        f = fom.computeMeritM(*lat, *proj, t);
         std::cout << "CASE 2: Look at t = " << t << ":" << "\n";
         std::cout << "Figure of merit M is: " << f << "\n";
         std::cout << "\n";     
