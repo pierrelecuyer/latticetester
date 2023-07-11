@@ -481,7 +481,7 @@ double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
    merit = 0.0;
    m_m = lat.getModulo();
    //Coordinates Coord;
-   m_Coord.clear();
+   //m_Coord.clear();
    
    lat.updateVecNorm();
    lat.sort(0); 
@@ -502,7 +502,7 @@ double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
    }
    //std::cout << shortest << "\n";
    // std::cout << norma->getBound((Coord).size()) << "\n";
-   for (int j = 0; j < lat.getBasis().NumCols(); j++) m_Coord.insert(j+1);
+   //for (int j = 0; j < lat.getBasis().NumCols(); j++) m_Coord.insert(j+1);
    //merit = m_weights->getWeight(m_Coord) * shortest/m_norma->getBound((m_Coord).size());
    merit = shortest / m_norma->getBound(lat.getDim());
    return merit;
