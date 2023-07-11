@@ -236,7 +236,7 @@ public:
 	 * This function yields the length of the shortest vector
 	 * in the current basis of 'lat'.
 	 */
-	double getShortestLengthBase(IntLattice<Int, Real> & lat);
+	double getShortestLengthBasis(IntLattice<Int, Real> & lat);
 	
 	/*
 	 * CoordinateSets object is used to store sets of coordinates
@@ -429,7 +429,7 @@ void FiguresOfMerit<Int>::getProjBasisDual(IntLatticeExt<Int, Real> & lat, const
 
 template<typename Int>
 
-double FiguresOfMerit<Int>::getShortestLengthBase(IntLattice<Int, Real> & lat) {
+double FiguresOfMerit<Int>::getShortestLengthBasis(IntLattice<Int, Real> & lat) {
    double out;
    Int temp;
    //if (m_fomInDual) lat.dualize();
@@ -465,7 +465,7 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLattice<Int, Real> & proj, const
        if (!m_red->shortestVector(proj)) return 0;
        shortest = NTL::conv<double>(m_red->getMinLength());
    } else {
-       shortest = getShortestLengthBase(proj);
+       shortest = getShortestLengthBasis(proj);
    }
    //std::cout << shortest << "\n";
    // merit = m_weights->getWeight(Coord) * shortest/m_norma->getBound((Coord).size());
@@ -497,7 +497,7 @@ double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
    } else
    {
 	   //std::cout << lat.getBasis();
-	   shortest = getShortestLengthBase(lat);
+	   shortest = getShortestLengthBasis(lat);
 	   //std::cout << shortest;
    }
    //std::cout << shortest << "\n";
