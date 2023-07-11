@@ -147,7 +147,7 @@ int main() {
            lat->buildBasis(dim); 
            proj = new IntLattice<Int, Real> (lat->getBasis(), m, lat->getBasis().NumCols()); // initialize object for projection
            fom.m_delta = deltas[k];
-           fom.m_reductionMethod = LLL; //Set pre-reduction to BKZ
+           fom.m_reductionMethod = LLL; //Set pre-reduction to LLL
 
            //FOM M_{32}
            t.SetLength(1); 

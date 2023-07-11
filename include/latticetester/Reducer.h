@@ -2041,6 +2041,7 @@ bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
 	m_lMin2 = m_lat->getVecNorm(0);
 	return true;
 }
+
 template<typename Int, typename Real>
 bool Reducer<Int, Real>::reductMinkowski(IntLattice<Int, Real> &lat, int64_t d) {
 	setIntLattice (lat);
