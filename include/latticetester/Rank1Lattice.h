@@ -198,7 +198,6 @@ void Rank1Lattice<Int, Real>::initProj() {
 
   //============================================================================
 
-// Essenti
 template<typename Int, typename Real>
 Rank1Lattice<Int, Real> & Rank1Lattice<Int, Real>::operator= (
          const Rank1Lattice<Int, Real> & lat) {
@@ -323,13 +322,13 @@ void Rank1Lattice<Int, Real>::incDimBasis () {
     	assert(d <= this->m_maxDim);
     	IntMat temp;
     	temp.SetDims(d, d);
-    	//Use old basis for first d - 1 dimension
+    	// Use old basis for first d - 1 dimension
     	for (int i = 0; i < d-1; i++) {
             for (int j = 0; j < d-1; j++) {
                temp[i][j] = this->m_basis[i][j];	
             }
         }
-     	//Fill in the new component
+     	// Fill in the new component
     	for (int j = 0; j < d-1; j++)
     		temp[d-1][j] = 0;
     	temp[d-1][d-1] = this->m_modulo; 
@@ -347,13 +346,13 @@ void Rank1Lattice<Int, Real>::incDimBasis () {
         
         Int add;
     	              
-        //Use old basis for first d - 1 dimension
+        // Use old basis for first d - 1 dimension
         for (int i = 0; i < d-1; i++) {
            for (int j = 0; j < d-1; j++) {
               temp[i][j] = this->m_dualbasis[i][j];	
            }
         }
-        //Add extra coordinate to each vector
+        // Add extra coordinate to each vector
         for (int i = 0; i < d; i++) {
            	temp[i][d-1] = 0;
            	temp[d-1][i] = 0;
@@ -380,27 +379,27 @@ void Rank1Lattice<Int, Real>::incDimDualBasis () {
 	int64_t d = 1 + this->getDim();
 	assert(d <= this->m_maxDim);
     this->setDim (d);
-	IntMat temp;
+	IntMat temp;     // New matrix object.
 	temp.SetDims(d, d);
 	
-    //Use old basis for first d - 1 dimension
+    // Use old basis for first d - 1 dimension
     for (int i = 0; i < d-1; i++) {
        for (int j = 0; j < d-1; j++) {
           temp[i][j] = this->m_dualbasis[i][j];	
        }
     }
-    //Add extra coordinate to each vector
+    // Add extra coordinate to each vector
     for (int i = 0; i < d; i++) {
     	temp[i][d-1] = 0;
     }         
     temp[d-1][0] = -m_a[d-1];
-    //temp[d-1][0] = temp[d-1][0] % this->m_modulo;
+    // temp[d-1][0] = temp[d-1][0] % this->m_modulo;
     temp[d-1][d-1] = 1;
     this->m_dualbasis.SetDims(d, d);
     this->m_dualbasis = temp;
     this->setDualNegativeNorm ();	
     
-    //The dimension of the primal lattice has to be increased, as well
+    // The dimension of the primal lattice has to be increased, as well
     this->m_basis.SetDims(d, d);      
 }
 

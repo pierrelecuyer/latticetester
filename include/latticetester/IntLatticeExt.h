@@ -118,12 +118,13 @@ public:
 	 * This returns the rank (order) of the lattice.
 	 */
 	// int64_t getOrder() const { return m_order; }
+
 	/**
 	 * Increments the dimension of the basis and dual basis vectors by one.
 	 * This implementation initializes the added components to `0` and does not
 	 * compute the value taken by the added components and vector. It also
 	 * resets the norm vectors to -1. The implementation in this
-	 * class is meant to be overriden by subclasses.
+	 * class is meant to be overridden by subclasses.
 	 */
 	virtual void incDimBasis();
 	
@@ -174,7 +175,6 @@ public:
 	 * implemented in subclasses.
 	 */
 	virtual void buildDualBasis(int64_t dim);
-
 
 	/**
 	 * REMOVE: This depends on the lattice only via the density.
