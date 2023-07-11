@@ -148,6 +148,12 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
          * an efficient implementation of 'incDimBasis'
          */
         int m_k = 1;
+        
+        /**
+         * This variable is used to store values needed for increasing the dimension. 
+         * It is variable in order to avoid recreating the variable.  
+         */
+        Int m_add;
     };
 
 
@@ -331,7 +337,7 @@ void Rank1Lattice<Int, Real>::incDimBasis () {
      	// Fill in the new component
     	for (int j = 0; j < d-1; j++)
     		temp[d-1][j] = 0;
-    	temp[d-1][d-1] = this->m_modulo; 
+    	  temp[d-1][d-1] = this->m_modulo; 
         for (int i = 0; i < d-1; i++) {
         	temp[i][d-1] = this->m_a[d-1] * this->m_basis[i][0];
         	temp[i][d-1] = temp[i][d-1] % this->m_modulo;
@@ -342,33 +348,33 @@ void Rank1Lattice<Int, Real>::incDimBasis () {
         this->m_basis = temp;              
         this->setNegativeNorm ();        
 
-        if (!this->m_withDual) return;
-        
-        Int add;
-    	              
-        // Use old basis for first d - 1 dimension
-        for (int i = 0; i < d-1; i++) {
-           for (int j = 0; j < d-1; j++) {
-              temp[i][j] = this->m_dualbasis[i][j];	
+        if (this->m_withDual) {
+    	     // Use old basis for first d - 1 dimension
+           for (int i = 0; i < d-1; i++) {
+              for (int j = 0; j < d-1; j++) {
+                 temp[i][j] = this->m_dualbasis[i][j];	
+              }
            }
-        }
-        // Add extra coordinate to each vector
-        for (int i = 0; i < d; i++) {
-           	temp[i][d-1] = 0;
-           	temp[d-1][i] = 0;
-        }
-        temp[d-1][d-1] = 1;
+           //  Add extra coordinate to each vector
+           for (int i = 0; i < d; i++) {
+           	  temp[i][d-1] = 0;
+           	  temp[d-1][i] = 0;
+           }
+           temp[d-1][d-1] = 1;
         
-       	for (int j = 0; j < d-1; j++) {
-       		add = 0;
-       		for (int i = 0; i < d-1; i++) {
-       			add = add - this->m_basis[i][d-1] * this->m_dualbasis[i][j];
-       		}
-   			add = add / this->m_modulo;
-   			temp[d-1][j] = temp[d-1][j] + add;
-       	}
-        this->m_dualbasis = temp;
-        this->setDualNegativeNorm ();
+       	   for (int j = 0; j < d-1; j++) {
+       		    m_add = 0;
+       		    for (int i = 0; i < d-1; i++) {
+       			      m_add = m_add - this->m_basis[i][d-1] * this->m_dualbasis[i][j];
+       		    }
+   			      m_add = m_add / this->m_modulo;
+   			      temp[d-1][j] = temp[d-1][j] + m_add;
+       	   }
+           this->m_dualbasis = temp;
+           this->setDualNegativeNorm ();
+           temp.kill();
+       }
+       else temp.kill();
     }
 
 

@@ -39,8 +39,8 @@
 #include "latticetester/WeightsUniform.h"
 #include "latticetester/BasisConstruction.h"
 
-const long numMult = 1;    // Number of multipliers
-const long multipliers[numMult] = { 1597};//, 19021, 49109, 71904, 90941, 1090942, 809519, 371915, 1824915, 577841};
+const long numMult = 10;    // Number of multipliers
+const long multipliers[numMult] = { 1597, 19021, 49109, 71904, 90941, 1090942, 809519, 371915, 1824915, 577841};
 const long numDelta = 3; // Number of different deltas
 const double deltas[numDelta] = { 0.8, 0.9, 0.99999};
 const long numMeth = 5;
@@ -129,15 +129,25 @@ int main() {
 
   // Start clock
   totalTime = clock();
-  for (int j = 0; j < numRep; j++) {
+  for (int k = 0; k < numDelta; k++) {
+	  timer[0][k] = 0;
+	  timer[1][k] = 0;
+	  timer[2][k] = 0;
+	  timer[3][k] = 0;
+	  timer[4][k] = 0;
+	  timer[0][k+numDelta] = 0;
+	  timer[1][k+numDelta] = 0;
+	  timer[2][k+numDelta] = 0;
+	  timer[3][k+numDelta] = 0;
+	  timer[4][k+numDelta] = 0;
      for (int i = 0; i < numMult; i++) {
-    	 for (int k = 0; k < numDelta; k++) {
+    	  for (int j = 0; j < numRep; j++) {
            a = multipliers[i]; 
            lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
            lat->buildBasis(dim); 
            proj = new IntLattice<Int, Real> (lat->getBasis(), m, lat->getBasis().NumCols()); // initialize object for projection
            fom.m_delta = deltas[k];
-           fom.m_reductionMethod = LLLBB; //Set pre-reduction to LLL
+           fom.m_reductionMethod = LLL; //Set pre-reduction to LLL
 
            //FOM M_{32}
            t.SetLength(1); 
@@ -145,45 +155,45 @@ int main() {
            
            tmp = clock();
            f = fom.computeMeritMSucc_MethodA(*lat, *proj, t);
-           timer[0][k] = clock() - tmp;
+           timer[0][k] = clock() - tmp + timer[0][k];
            
            tmp = clock();
            f = fom.computeMeritMSucc_MethodB(*lat, *proj, t);
-           timer[1][k] = clock() - tmp;
+           timer[1][k] = clock() - tmp + timer[1][k];
 
            tmp = clock();
            f = fom.computeMeritMSucc_MethodC(*lat, *proj, t);
-           timer[2][k] = clock() - tmp;
+           timer[2][k] = clock() - tmp + timer[2][k];
            
            tmp = clock();
            f = fom.computeMeritMSucc_MethodD(*lat, *proj, t);
-           timer[3][k] = clock() - tmp;           
+           timer[3][k] = clock() - tmp + timer[3][k];           
 
            tmp = clock();
            f = fom.computeMeritMSucc_MethodE(*lat, *proj, t);
-           timer[4][k] = clock() - tmp;
+           timer[4][k] = clock() - tmp + timer[4][k];
            
-           fom.m_reductionMethod = BKZBB; //Set pre-reduction to BKZ
+           fom.m_reductionMethod = BKZ; //Set pre-reduction to BKZ
            
            tmp = clock();
            f = fom.computeMeritMSucc_MethodA(*lat, *proj, t);
-           timer[0][k+numDelta] = clock() - tmp;
+           timer[0][k+numDelta] = clock() - tmp + timer[0][k+numDelta];
            
            tmp = clock();
            f = fom.computeMeritMSucc_MethodB(*lat, *proj, t);
-           timer[1][k+numDelta] = clock() - tmp;
+           timer[1][k+numDelta] = clock() - tmp + timer[1][k+numDelta];
 
            tmp = clock();
            f = fom.computeMeritMSucc_MethodC(*lat, *proj, t);
-           timer[2][k+numDelta] = clock() - tmp;
+           timer[2][k+numDelta] = clock() - tmp + timer[2][k+numDelta];
            
            tmp = clock();
            f = fom.computeMeritMSucc_MethodD(*lat, *proj, t);
-           timer[3][k+numDelta] = clock() - tmp;           
+           timer[3][k+numDelta] = clock() - tmp + timer[3][k+numDelta];           
 
            tmp = clock();
            f = fom.computeMeritMSucc_MethodE(*lat, *proj, t);
-           timer[4][k+numDelta] = clock() - tmp;
+           timer[4][k+numDelta] = clock() - tmp + timer[4][k+numDelta];
 
            
            //std::cout << "CASE 1: Look at t = " << t << ":" << "\n";
