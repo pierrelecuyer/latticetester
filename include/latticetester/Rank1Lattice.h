@@ -123,7 +123,8 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
         void incDimBasis ();
         
         /**
-         * Increases the current dimension of only the dual lattice by 1 and updates only the dual basis.
+         * Increases the current dimension of only the m-dual lattice basis by 1.
+         * The basis for the primal lattice is not updated.
          * The dimension must be smaller than `maxDim` when calling this function.
          */
         void incDimDualBasis ();
@@ -326,23 +327,22 @@ template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::incDimBasis () {
 		int64_t d = 1 + this->getDim();
     	assert(d <= this->m_maxDim);
-    	IntMat temp;
+    	IntMat temp;     // New temporary IntMat object for the new basis.
     	temp.SetDims(d, d);
-    	// Use old basis for first d - 1 dimension
+    	// Use old basis for first d - 1 dimensions
     	for (int i = 0; i < d-1; i++) {
             for (int j = 0; j < d-1; j++) {
                temp[i][j] = this->m_basis[i][j];	
             }
         }
-     	// Fill in the new component
+     	// Fill in the new components
     	for (int j = 0; j < d-1; j++)
     		temp[d-1][j] = 0;
-    	  temp[d-1][d-1] = this->m_modulo; 
+    	temp[d-1][d-1] = this->m_modulo;
         for (int i = 0; i < d-1; i++) {
         	temp[i][d-1] = this->m_a[d-1] * this->m_basis[i][0];
         	temp[i][d-1] = temp[i][d-1] % this->m_modulo;
         }
-        
         this->setDim (d);
         this->m_basis.SetDims(d, d);        
         this->m_basis = temp;              
@@ -385,7 +385,7 @@ void Rank1Lattice<Int, Real>::incDimDualBasis () {
 	int64_t d = 1 + this->getDim();
 	assert(d <= this->m_maxDim);
     this->setDim (d);
-	IntMat temp;     // New matrix object.
+	IntMat temp;     // New IntMat object.
 	temp.SetDims(d, d);
 	
     // Use old basis for first d - 1 dimension
@@ -405,8 +405,8 @@ void Rank1Lattice<Int, Real>::incDimDualBasis () {
     this->m_dualbasis = temp;
     this->setDualNegativeNorm ();	
     
-    // The dimension of the primal lattice has to be increased, as well
-    this->m_basis.SetDims(d, d);      
+    // The dimension of the primal lattice has to be increased, as well.   ????
+    this->m_basis.SetDims(d, d);    // NO, the primal basis is not maintained in this case.   ******
 }
 
 //============================================================================

@@ -125,6 +125,10 @@ public:
 	 * compute the value taken by the added components and vector. It also
 	 * resets the norm vectors to -1. The implementation in this
 	 * class is meant to be overridden by subclasses.
+	 *
+	 * I THINK THIS SHOULD HAVE NO IMPLEMENTATION AT ALL!
+	 * The current implementation does not increase the dimension at all.
+	 * It is really used somewhere?
 	 */
 	virtual void incDimBasis();
 	
@@ -132,7 +136,6 @@ public:
 	 * Increments the dimension of only the dual basis vectors by one.  
 	 * This implementation works as incDim and is meant to be overridden 
 	 * by subclasses as well.
-	 * 
 	 */
 	virtual void incDimDualBasis();
 
@@ -296,8 +299,14 @@ void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
 
 //===========================================================================
 
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::incDimBasis() {
+/*
+ *
+ * I THINK THIS SHOULD HAVE NO IMPLEMENTATION AT ALL!
+ * The current implementation does not increase the dimension at all.
+ * It is really used somewhere?
+ */
+template<typename Int, typename Real> void
+IntLatticeExt<Int, Real>::incDimBasis() {
 	IntLatticeExt<Int, Real> lattmp(*this);
 	int64_t dim = this->getDim();
 	this->m_basis.resize(dim + 1, dim + 1);
