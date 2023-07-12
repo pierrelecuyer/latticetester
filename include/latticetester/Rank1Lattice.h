@@ -338,24 +338,24 @@ void Rank1Lattice<Int, Real>::incDimBasis () {
      	// Fill in the new components
     	for (int j = 0; j < d-1; j++)
     		temp[d-1][j] = 0;
-    	temp[d-1][d-1] = this->m_modulo;
+    	  temp[d-1][d-1] = this->m_modulo; 
         for (int i = 0; i < d-1; i++) {
         	temp[i][d-1] = this->m_a[d-1] * this->m_basis[i][0];
         	temp[i][d-1] = temp[i][d-1] % this->m_modulo;
-        }
+        }        
         this->setDim (d);
         this->m_basis.SetDims(d, d);        
         this->m_basis = temp;              
         this->setNegativeNorm ();        
 
-        if (this->m_withDual) {
-    	     // Use old basis for first d - 1 dimension
+        if (this->m_withDual) {         
+           // Use old basis for first d - 1 dimensions
            for (int i = 0; i < d-1; i++) {
               for (int j = 0; j < d-1; j++) {
                  temp[i][j] = this->m_dualbasis[i][j];	
               }
            }
-           //  Add extra coordinate to each vector
+           // Add extra coordinate to each vector
            for (int i = 0; i < d; i++) {
            	  temp[i][d-1] = 0;
            	  temp[d-1][i] = 0;
@@ -385,7 +385,7 @@ void Rank1Lattice<Int, Real>::incDimDualBasis () {
 	int64_t d = 1 + this->getDim();
 	assert(d <= this->m_maxDim);
     this->setDim (d);
-	IntMat temp;     // New IntMat object.
+	IntMat temp;     // New temporary IntMat object.
 	temp.SetDims(d, d);
 	
     // Use old basis for first d - 1 dimension
@@ -399,14 +399,17 @@ void Rank1Lattice<Int, Real>::incDimDualBasis () {
     	temp[i][d-1] = 0;
     }         
     temp[d-1][0] = -m_a[d-1];
-    // temp[d-1][0] = temp[d-1][0] % this->m_modulo;
+    //temp[d-1][0] = temp[d-1][0] % this->m_modulo;
     temp[d-1][d-1] = 1;
     this->m_dualbasis.SetDims(d, d);
     this->m_dualbasis = temp;
     this->setDualNegativeNorm ();	
     
-    // The dimension of the primal lattice has to be increased, as well.   ????
-    this->m_basis.SetDims(d, d);    // NO, the primal basis is not maintained in this case.   ******
+    // The dimension of the primal lattice has to be increased as well,
+    // because primal and dual lattice currently need to have the same
+    // dimension for technical reasons.
+    this->m_basis.SetDims(d, d);   
+    temp.kill();
 }
 
 //============================================================================
