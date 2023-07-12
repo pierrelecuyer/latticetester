@@ -55,7 +55,7 @@ namespace LatticeTester {
  * recompute a basis for a large number of different projections, which can be specified
  * by a `CoordinateSets` object.
  * An `IntLatticeExt` object keeps a current projection of the lattice on a subset
- * of coordinates, as well as a basis (and perhaps its dual basis) for this current projection.
+ * of coordinates, as well as a basis (and perhaps its dual basis) for this current projection.  ???  ******
  *
  * The class `IntLatticeExt` extends this class and contains virtual methods that must
  * be defined in its subclasses.
@@ -74,19 +74,22 @@ public:
 	/**
 	 * Constructs a lattice whose basis is the identity, in `dim` dimensions,
 	 * with the specified norm type, and the scaling factor `m`.
+	 * The parameter `withDual` indicates if the m-dual basis is maintained (or not)
+	 * and updated when changes are made to the primal basis.
 	 */
 	IntLattice(const Int m, const int64_t dim, bool withDual = false, NormType norm = L2NORM);
 
 	/**
 	 * Constructs a lattice with the given basis, in `dim` dimensions,
-	 * with the specified norm type, and value of `m`. The dual basis is not computed.
+	 * with the specified norm type, and value of `m`. By default, the m-dual basis is not computed.
 	 * The `basis` matrix must be a `dim` by `dim` square integer matrix.
 	 */
 	IntLattice(const IntMat basis, const Int m, const int64_t dim, bool withDual = false, NormType norm = L2NORM);
 
 	/**
 	 * Constructs a lattice with the given basis and given m-dual basis for the given `m`,
-	 * in `dim` dimensions, and with the specified norm type.
+	 * in `dim` dimensions, and with the specified norm type. In this case, by default,
+	 * the m-dual basis will be maintained.
 	 */
 	IntLattice(const IntMat primalbasis, const IntMat dualbasis,
 			   const Int m, const int64_t dim, NormType norm = L2NORM);
@@ -127,7 +130,7 @@ public:
 	/**
 	 * Builds an upper triangular basis for the projection `proj` for this lattice
 	 * and replaces the current `lattice` object by this projection.
-	 * If the latter maintains a dual basis, then this (triangular) dual basis is also updated.
+	 * If the latter maintains a dual basis, then the (triangular) m-dual basis is also updated.
 	 * Note that the same `lattice` objects can be used when calling this method several
 	 * times to examine different projections.
 	 */
@@ -186,6 +189,7 @@ public:
 
 	/**
 	 * Returns the norm (squared in case of the L^2 norm) of the i-th vector of the m-dual basis.
+	 * The index i starts at 0.
 	 */
 	Real getDualVecNorm(const int64_t &i) {
 		return m_dualvecNorm[i];
@@ -333,7 +337,7 @@ public:
 	/**
 	 * Exchanges vectors `i` and `j` in the basis. This also changes the
 	 * m-dual basis vectors and the arrays containing secondary information
-	 * about the two basis (like the norms) accordingly.
+	 * about the two bases (like the norms) accordingly.
 	 */
 	void permute(int64_t i, int64_t j);
 
@@ -344,15 +348,15 @@ public:
 	void permuteNoDual(int64_t i, int64_t j);
 
     /**
-     * Exchange the primal and m-dual bases.
-     * If the dual is not defined, exits with an error message.
+     * Exchanges the primal and m-dual bases and vector norms, and the indicator variables
+     * `withPrimal` and `withDual`.
      */
     void dualize ();
 
     /**
 	 * Returns `true` iff the m-dual basis contained in the object really is
-	 * the m-dual of the basis.  This also returns false
-	 * if no dual has been specified.
+	 * the m-dual of the current primal basis. Otherwise, or if either the primal or
+	 * m-dual basis is not maintained, it returns false.
 	 */
 	bool checkDuality();
 
@@ -440,6 +444,15 @@ protected:
 	RealVec m_dualvecNorm;
 
 	/**
+	 * This variable is `true` iff a primal basis is available.
+	 *
+	 * NOTE: We thought about adding this variable for the case where we DO NOT
+	 * maintain the primal, but only the dual. We decided to leave it out for now,
+	 * to avoid adding more parameters to the functions.
+	 */
+	// bool m_withPrimal;
+
+	/**
 	 * This variable is `true` iff an m-dual basis is available.
 	 */
 	bool m_withDual;
@@ -460,7 +473,7 @@ protected:
 	//IntMat m_basisProj;
 
 	/**
-	 * The m-dual basis of the current projection.
+	 * The m-dual basis of the current projection.   NEEDED ?   **********
 	 */
 	IntMat m_dualbasisProj;
 
@@ -613,7 +626,7 @@ void IntLattice<Int, Real>::buildProjection(
 	const int64_t dim = this->getDim();
 	int64_t i = 0;
 	// We create two new matrices each time we build a projection!!!
-	// We do not use the matrices initialized by `initProj`  ???
+	// We do not use the matrices initialized by `initProj`  ???   **********
 	IntMat temp, temp2;
 	temp.SetDims(dim, dim);  // dim of current lattice.
 	temp2.SetDims(dim, dim);
@@ -644,16 +657,6 @@ void IntLattice<Int, Real>::buildProjection(
 	}
 }
 
-/*=========================================================================*/
-
-/*
-template<typename Int, typename Real>
-void IntLattice<Int, Real>::initVecNorm() {
-	for (int64_t i = 0; i < this->m_dim; i++) {
-		this->m_vecNorm[i] = -1;
-	}
-}
-*/
 /*=========================================================================*/
 
 template<typename Int, typename Real>
@@ -707,6 +710,7 @@ void IntLattice<Int, Real>::updateDualVecNorm() {
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d) {
 	assert(d >= 0);
+	assert(this->m_withDual);
 	for (int64_t i = d; i < this->m_dim; i++) {
 		NTL::matrix_row<IntMat> row(this->m_dualbasis, i);
 		if (this->m_norm == L2NORM) {
@@ -788,14 +792,9 @@ void IntLattice<Int, Real>::permuteNoDual(int64_t i, int64_t j) {
 
 template<typename Int, typename Real>
     void IntLattice<Int, Real>::dualize () {
-    if(!(this->m_withDual)) {
-	    std::cout << "\n***** ERROR: calling dualize while dual basis is not defined."
-          << std::endl;
-	    return;
-		}
-    std::swap(this->m_basis, this->m_dualbasis);
-    this->setNegativeNorm ();        // Maybe we should swap them instead ????
-    this->setDualNegativeNorm ();
+    std::swap (this->m_basis, this->m_dualbasis);
+    std::swap (this->m_vecNorm, this->m_dualvecNorm);
+    // std::swap (this->m_withPrimal, this->m_withDual);
   }
 
 /*=========================================================================*/
@@ -809,7 +808,6 @@ bool IntLattice<Int, Real>::checkDuality() {
 	}
 	Int S;
 	int64_t dim = getDim();
-
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = 0; j < dim; j++) {
 			NTL::matrix_row<const IntMat> row1(this->m_basis, i);
@@ -849,7 +847,6 @@ void IntLattice<Int, Real>::sort(int64_t d)
 					<< ",  dim = " << dim << std::endl;
 		}
 	}
-
 	for (int64_t i = d; i < dim; i++) {
 		int64_t k = i;
 		for (int64_t j = i + 1; j < dim; j++) {
@@ -970,7 +967,6 @@ std::string IntLattice<Int, Real>::toStringBasis() const {
 			os << " " << std::setprecision(15) << this->m_basis(i, j);
 		os << " ]\n";
 	}
-
 	os << "  Norms:\n";
 	os << "    [";
 	for (int64_t i = 0; i < this->m_dim; i++) {
@@ -997,7 +993,6 @@ std::string IntLattice<Int, Real>::toStringDualBasis() const {
 			os << " " << std::setprecision(15) << this->m_dualbasis(i, j);
 		os << " ]\n";
 	}
-
 	os << "  Norms:\n";
 	os << "    [";
 	for (int64_t i = 0; i < this->m_dim; i++) {
