@@ -431,19 +431,16 @@ template<typename Int>
 
 double FiguresOfMerit<Int>::getShortestLengthBasis(IntLattice<Int, Real> & lat) {
    double out;
-   Int temp;
-   //if (m_fomInDual) lat.dualize();
+   Real temp;
    lat.updateVecNorm(0);
    temp = lat.getVecNorm(0);
    for (int i = 1; i < lat.getBasis().NumRows(); i++) {
 	  lat.updateVecNorm(i);
       if (lat.getVecNorm(i) < temp) temp = lat.getVecNorm(i);
    }
-   //if (m_fomInDual) lat.dualize();
    NTL::conv(out,temp);
    if (lat.getNormType()==L2NORM) out = sqrt(out);
    //out = out / m_norma->getBound(lat.getDim());
-   //std::cout << out;
    return out;
 }
 
@@ -482,7 +479,7 @@ double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
    m_m = lat.getModulo();
    //Coordinates Coord;
    //m_Coord.clear();
-   
+   if (m_fomInDual) lat.dualize();
    lat.updateVecNorm();
    lat.sort(0); 
    if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
@@ -505,6 +502,7 @@ double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
    //for (int j = 0; j < lat.getBasis().NumCols(); j++) m_Coord.insert(j+1);
    //merit = m_weights->getWeight(m_Coord) * shortest/m_norma->getBound((m_Coord).size());
    merit = shortest / m_norma->getBound(lat.getDim());
+   if (m_fomInDual) lat.dualize();
    return merit;
 }
 
@@ -523,10 +521,8 @@ double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, Int
 //   if (m_fomInDual) { getProjBasisDual(lat, Coord, true); 
 //   } else getProjBasis(lat, Coord, true); 
 //   merit = computeMeritProj(proj, Coord);
-   if (m_fomInDual) lat.dualize();
    merit = computeMeritLat(lat);
    BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
-   if (m_fomInDual) lat.dualize();
    if (merit == 0) return merit;
    for (int j = low +1; j < upp; j++)
    {
@@ -541,10 +537,8 @@ double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, Int
 //       if (m_fomInDual) { getProjBasisDual(lat, Coord, true); 
 //       } else getProjBasis(lat, Coord, true); 
 //       merit = computeMeritProj(proj, Coord);
-       if (m_fomInDual) lat.dualize();
        merit = computeMeritLat(lat);
        BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
-       if (m_fomInDual) lat.dualize();
        if (merit < minmerit) minmerit = merit;
 	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
@@ -623,31 +617,31 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodA(IntLatticeExt<Int, Real> &
    //m_Coord.clear();
    double merit = 0;
    double minmerit = 1.0;
-   int64_t low;
-   m_m = lat.getModulo();   // Twice ???
    
-   low = t.length();        //  ?????
    //for (int j = 0; j < low + 1; j++) Coord.insert(j+1);
-   lat.buildBasis(low+1);
+   lat.buildBasis(t.length()+1);
 //   if (m_fomInDual) { getProjBasisDual(lat, Coord, false); 
 //   } else getProjBasis(lat, Coord, false); 
 //   merit = computeMeritProj(proj, Coord);
-   if (m_fomInDual) lat.dualize();
    merit = computeMeritLat(lat);
-   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);   // Why this ????
-   if (m_fomInDual) lat.dualize();
+   if (!m_fomInDual) {
+      BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
+   } else {
+	   BasisConstruction<Int>::mDualBasis(lat.getDualBasis(), lat.getBasis(), m_m); 
+   }	   
    if (merit == 0) return merit;
-   for (int j = low +1; j < t[0]; j++)
+   for (int j = t.length() +1; j < t[0]; j++)
    {
-       //Coord.insert(j+1);
-       lat.incDimBasis(); // Increase the dimension of the lattice basis and of its dual.
+       lat.incDimBasis(); // Increase the dimension of the lattice and of its dual 
 //       if (m_fomInDual) { getProjBasisDual(lat, Coord, false); 
 //       } else getProjBasis(lat, Coord, false); 
 //       merit = computeMeritProj(proj, Coord);
-       if (m_fomInDual) lat.dualize();
        merit = computeMeritLat(lat);
-       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);   //  ??????????
-       if (m_fomInDual) lat.dualize();
+       if (!m_fomInDual) {
+          BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
+       } else {
+    	   BasisConstruction<Int>::mDualBasis(lat.getDualBasis(), lat.getBasis(), m_m); 
+       }	   
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
@@ -669,33 +663,26 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodB(IntLatticeExt<Int, Real> &
    //Coord.clear();
    double merit = 0;
    double minmerit = 1.0;
-   int64_t low;
-   m_m = lat.getModulo();
    
-   low = t.length();
    double dim = lat.getBasis().NumCols();
    //for (int j = 0; j < low + 1; j++) Coord.insert(j+1);
-   lat.buildBasis(low+1);
+   lat.buildBasis(t.length()+1);
+   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
    m_pctype = UPPERTRIPROJ; // Use upper triangular algorithm to calculate the dual
 //   if (m_fomInDual) { getProjBasisDual(lat, Coord, false); 
 //   } else getProjBasis(lat, Coord, false); 
 //   merit = computeMeritProj(proj, Coord);
-   if (m_fomInDual) lat.dualize();
    merit = computeMeritLat(lat);
-   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
-   if (m_fomInDual) lat.dualize();
    if (merit == 0) return merit;
-   for (int j = low +1; j < t[0]; j++)
+   for (int j = t.length()+1; j < t[0]; j++)
    {
        //Coord.insert(j+1);
-       lat.incDimBasis(); // Increase the dimension of the lattice (and potentially the dual) 
+       lat.incDimBasis(); // Increase the dimension of the lattice and of its dual 
+       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
 //       if (m_fomInDual) { getProjBasisDual(lat, Coord, false); 
 //       } else getProjBasis(lat, Coord, false); 
 //       merit = computeMeritProj(proj, Coord);
-       if (m_fomInDual) lat.dualize();
        merit = computeMeritLat(lat);
-       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
-       if (m_fomInDual) lat.dualize();
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
@@ -717,33 +704,26 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodC(IntLatticeExt<Int, Real> &
    //Coord.clear();
    double merit = 0;
    double minmerit = 1.0;
-   int64_t low;
-   m_m = lat.getModulo();
    
-   low = t.length();
    double dim = lat.getBasis().NumCols();
    //for (int j = 0; j < low + 1; j++) Coord.insert(j+1);
-   lat.buildBasis(low+1);
+   lat.buildBasis(t.length()+1);
+   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
    m_pctype = LLLPROJ; // Use the general method to calculate the dual
 //   if (m_fomInDual) { getProjBasisDual(lat, Coord, false); 
 //   } else getProjBasis(lat, Coord, false); 
 //   merit = computeMeritProj(proj, Coord);
-   if (m_fomInDual) lat.dualize();
    merit = computeMeritLat(lat);
-   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
-   if (m_fomInDual) lat.dualize();
    if (merit == 0) return merit;
-   for (int j = low +1; j < t[0]; j++)
+   for (int j = t.length()+1; j < t[0]; j++)
    {
        //Coord.insert(j+1);
-       lat.incDimBasis(); // Increase the dimension of the lattice (and potentially the dual) 
+       lat.incDimBasis(); // Increase the dimension of the lattice and of its dual
+       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
 //       if (m_fomInDual) { getProjBasisDual(lat, Coord, false); 
 //       } else getProjBasis(lat, Coord, false); 
 //       merit = computeMeritProj(proj, Coord);
-       if (m_fomInDual) lat.dualize();
        merit = computeMeritLat(lat);
-       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
-       if (m_fomInDual) lat.dualize();
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
@@ -765,30 +745,23 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodD(IntLatticeExt<Int, Real> &
    //Coord.clear();
    double merit = 0;
    double minmerit = 1.0;
-   int64_t low;
-   m_m = lat.getModulo();
    
-   low = t.length();
    double dim = lat.getBasis().NumCols();
    //for (int j = 0; j < low + 1; j++) Coord.insert(j+1);
-   lat.buildDualBasis(low+1);
+   lat.buildDualBasis(t.length()+1);
 //   if (m_fomInDual) { getProjBasisDual(lat, Coord, true); 
 //   } else getProjBasis(lat, Coord, true); 
 //   merit = computeMeritProj(proj, Coord);
-   if (m_fomInDual) lat.dualize();
    merit = computeMeritLat(lat);
-   if (m_fomInDual) lat.dualize();
    if (merit == 0) return merit;
-   for (int j = low +1; j < t[0]; j++)
+   for (int j = t.length()+1; j < t[0]; j++)
    {
        //Coord.insert(j+1);
        lat.buildDualBasis(j+1); // Build (only) the dual basis from scratch 
 //       if (m_fomInDual) { getProjBasisDual(lat, Coord, true); 
 //       } else getProjBasis(lat, Coord, true); 
 //       merit = computeMeritProj(proj, Coord);
-       if (m_fomInDual) lat.dualize();
        merit = computeMeritLat(lat);
-       if (m_fomInDual) lat.dualize();
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
@@ -810,30 +783,23 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodE(IntLatticeExt<Int, Real> &
    //Coord.clear();
    double merit = 0;
    double minmerit = 1.0;
-   int64_t low;
-   m_m = lat.getModulo();
    
-   low = t.length();
    double dim = lat.getBasis().NumCols();
    //for (int j = 0; j < low + 1; j++) Coord.insert(j+1);
-   lat.buildDualBasis(low+1);
+   lat.buildDualBasis(t.length()+1);
 //   if (m_fomInDual) { getProjBasisDual(lat, Coord, true); 
 //   } else getProjBasis(lat, Coord, true); 
 //   merit = computeMeritProj(proj, Coord);
-   if (m_fomInDual) lat.dualize();
    merit = computeMeritLat(lat);
-   if (m_fomInDual) lat.dualize();
    if (merit == 0) return merit;
-   for (int j = low +1; j < t[0]; j++)
+   for (int j = t.length()+1; j < t[0]; j++)
    {
        //Coord.insert(j+1);
        lat.incDimDualBasis(); // Build (only) the dual basis from scratch 
 //       if (m_fomInDual) { getProjBasisDual(lat, Coord, true); 
 //       } else getProjBasis(lat, Coord, true); 
 //       merit = computeMeritProj(proj, Coord);
-       if (m_fomInDual) lat.dualize();
        merit = computeMeritLat(lat);
-       if (m_fomInDual) lat.dualize();
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
