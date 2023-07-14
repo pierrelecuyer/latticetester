@@ -149,6 +149,19 @@ public:
 	IntMat& getBasis() {
 		return m_basis;
 	}
+	
+	/**
+	 * Update the basis and sets it to 'IntMat'
+	 */
+	void setBasis(const IntMat basis, const Int m, const int64_t dim, bool withDual = false, NormType norm = L2NORM) {
+    this->m_modulo=m;
+    this->m_dim=dim;
+    this->m_withDual=withDual;
+    this->m_norm=norm;
+	  this->m_basis.resize(dim, dim);
+	  this->m_vecNorm.resize(dim);
+	  setNegativeNorm();
+	}
 
 	/**
 	 * Returns the m-dual basis represented in a matrix.
@@ -156,6 +169,25 @@ public:
 	IntMat& getDualBasis() {
 		return m_dualbasis;
 	}
+	
+	/* 
+	 * This function calculates a projection 'projBasis' of the basis.
+	 * The coordinates of the projection are given by 'coord'.
+	*/
+
+	void getProjBasis (const Coordinates & coord, IntMat projBasis);
+	
+	/* 
+	 * This function calculates a projection 'projBasisDual' of the dual basis.
+	 * The coordinates of the projection are given by 'coord'.
+	*/
+	void getProjBasisDual (const Coordinates & coord, IntMat projBasisDual);
+	
+	/*
+	 * This function yields the length of the shortest vector
+	 * in the current basis.
+	 */
+	double getShortestLengthBasis();
 
 	/**
 	 * Returns the dimension of the lattice, which is the dimension of the basis vectors,
@@ -657,6 +689,37 @@ void IntLattice<Int, Real>::buildProjection(
 	}
 }
 
+//=========================================================================
+
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::getProjBasis (const Coordinates & coord, IntMat projBasis) {	
+	   BasisConstruction<Int>::projectMatrix(this->getBasis(), projBasis, coord);
+}
+
+//=========================================================================
+
+template<typename Int, typename Real> // ToDo: getProjBasisPrimalDual
+void IntLattice<Int, Real>::getProjBasisDual (const Coordinates & coord, IntMat projDualBasis) {	
+	BasisConstruction<Int>::projectMatrix(this->getDualBasis(), projDualBasis, coord);
+}
+
+//=========================================================================
+
+template<typename Int, typename Real> 
+double IntLattice<Int, Real>::getShortestLengthBasis() {
+   double out;
+   Real temp;
+   this->updateVecNorm(0);
+   temp = this->getVecNorm(0);
+   for (int i = 1; i < this->getBasis().NumRows(); i++) {
+	  this->updateVecNorm(i);
+      if (this->getVecNorm(i) < temp) temp = this->getVecNorm(i);
+   }
+   NTL::conv(out,temp);
+   if (this->getNormType()==L2NORM) out = sqrt(out);
+   return out;
+}
+
 /*=========================================================================*/
 
 template<typename Int, typename Real>
@@ -829,6 +892,8 @@ bool IntLattice<Int, Real>::checkDuality() {
 	return true;
 
 }
+
+
 
 /*=========================================================================*/
 
