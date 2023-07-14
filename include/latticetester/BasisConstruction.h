@@ -166,7 +166,7 @@ public:
 	 * scaled by the factor `m`, not necessarily triangular, and it returns in `basisDual`
 	 * the m-dual basis.  It is currently implemented only for `Int = ZZ`.
 	 */
-	static void mDualBasis(const IntMat &basis, IntMat &basisDual, Int &m);
+	static void mDualBasis(const IntMat &basis, IntMat &basisDual, const Int &m);
 
 	/**
 	 * Overwrites the matrix 'out' by a matrix formed by the columns of matrix `in` that are
@@ -613,7 +613,7 @@ void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 
 template<typename Int>
 void BasisConstruction<Int>::mDualBasis(const IntMat &basis, IntMat &basisDual,
-		Int &m) {
+		const Int &m) {
 	std::cerr << "mDualBasis is implemented only for NTL::ZZ integers.\n";
 	std::cerr << "Aborting.\n";
 	exit(1);
@@ -622,7 +622,7 @@ void BasisConstruction<Int>::mDualBasis(const IntMat &basis, IntMat &basisDual,
 // The specialization for the case where `Int = ZZ`.
 template<>
 void BasisConstruction<NTL::ZZ>::mDualBasis(
-		const NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDual, NTL::ZZ &m) {
+		const NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDual, const NTL::ZZ &m) {
 	NTL::ZZ d, fac;
 	int64_t dim = basis.NumRows();
 	if (dim != basis.NumCols()) {
@@ -669,7 +669,22 @@ void BasisConstruction<Int>::projectMatrix (const IntMat &in,
 template<typename Int>
 void BasisConstruction<Int>::projectMatrix (const IntMat &in,
 		IntMat &out, const Coordinates &proj) {
-	projectMatrix(in, out, proj);
+	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
+    int inDim = in.NumCols();
+    uint64_t lat_dim = in.NumCols();   
+	std::size_t projSize = proj.size();
+	out.SetDims(in.NumRows(), projSize);   // here we resize the matrix each time!
+	auto it = proj.cbegin();
+	for (std::size_t i = 0; i < projSize; i++) {
+	    if (*it <= lat_dim) {
+			for (int j = 0; j < inDim; j++) {
+			   out[j][i] = in[j][*it-1];
+			}
+		}
+		else
+			MyExit(1, "A projection coordinate exceeds the dimension of the current basis.");
+		it++;
+	}
 };
 
 //===================================================
