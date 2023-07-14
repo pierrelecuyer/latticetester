@@ -115,9 +115,9 @@ int main() {
 	std::cout << "Shortest vector length: " << red->getMinLength() << "\n\n";
 
     Coordinates proj;
-    proj.insert(0);
-    proj.insert(2);
-    proj.insert(4);
+    proj.insert(1);
+    proj.insert(3);
+    proj.insert(5);
     std::cout << "Now looking at lattice projection over coordinates " << proj << ".\n";
     BasisConstruction<Int>::projectionConstructionLLL (basis1, basis2, proj, m);
     std::cout << "Basis for this projection, with LLL: \n" << basis2 << "\n";
