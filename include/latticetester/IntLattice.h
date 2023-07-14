@@ -153,11 +153,14 @@ public:
 	/**
 	 * Update the basis and sets it to 'IntMat'
 	 */
-	void setBasis(const IntMat basis, const int64_t dim) {
-	    this->m_dim=dim;
-	    this->m_basis=basis;      // Might not have the righ dimensions?
-	    this->m_vecNorm.resize(dim);
-		setNegativeNorm();
+	void setBasis(const IntMat basis, const Int m, const int64_t dim, bool withDual = false, NormType norm = L2NORM) {
+    this->m_modulo=m;
+    this->m_dim=dim;
+    this->m_withDual=withDual;
+    this->m_norm=norm;
+	  this->m_basis.resize(dim, dim);
+	  this->m_vecNorm.resize(dim);
+	  setNegativeNorm();
 	}
 
 	/**
