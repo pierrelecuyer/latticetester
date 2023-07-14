@@ -333,7 +333,7 @@ double FiguresOfMerit<Int>::computeMeritMProj(IntLattice<Int, Real> & proj, cons
    double shortest, merit;
    merit = 0.0;
    
-   proj = IntLattice<Int, Real> (m_projBasis, m, m_projBasis.NumCols());
+   proj.setBasis(m_projBasis, m_projBasis.NumCols());
    if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
       m_red->redBKZ(proj.getBasis(), m_delta, m_blocksize);  
    } else if (m_reductionMethod == LLLBB || m_reductionMethod == LLL) {
