@@ -82,27 +82,18 @@ public:
 	 * while calculating the shortest vector.
 	 */
 	double computeMeritM(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
-	
-	/*
-	 * This function calculates the Figure of Merit Q and should be
-	 * called by the user. The parameters have the same meaning as for
-	 * computeMerit. The value 0 is returned if an error occurs
-	 * while calculating the shortest vector.
-	 * DOES CURRENTLY NOT WORK
-	 */
-	double computeMeritQ(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);	
-	
+
 	/*
 	 * This function calculates the Figure of Merit for a single projection 'proj'. 
 	 * The variable 'Coord' sets the coordinates of the projection to use. 
 	 * The value 0 is returned if an error occurs during the calculation of the shortest vector.
 	 */
-	double computeMeritProj(IntLattice<Int, Real> & proj, const Coordinates & coord);
+	double computeMeritMProj(IntLattice<Int, Real> & lat, const Coordinates & coord, const Int & m);
 	
 	/*
 	 * This function calculates the Figure of Merit for a given lattice 'lat'. 
 	 */
-	double computeMeritLat(IntLatticeExt<Int, Real> & lat);
+	double computeMeritMLat(IntLatticeExt<Int, Real> & lat);
 	
 	/*
 	 * This functions calculates the Figure of Merit for all projections 
@@ -111,7 +102,7 @@ public:
 	 * Note that upp > low must hold. The value 0 is returned if 
 	 * an error occurs while calculating the shortest vector.
 	 */
-	double computeMeritSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+	double computeMeritMSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 			const int64_t & low, const Int & upp);
 	
 	/*
@@ -119,18 +110,14 @@ public:
 	 * consisting of non-successive coordinates. The value 0 is returned if 
 	 * an error occurs while calculating the shortest vector.
 	 */
-	double computeMeritNonSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
-		
-	/*
-	 * This function yields the length of the shortest vector
-	 * in the current basis of 'lat'.
-	 */
-	double getShortestLengthBasis(IntLattice<Int, Real> & lat);
+	double computeMeritMNonSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, const IntVec & t);
 
     /*
      * A function which allows to set set the normalizer to user-specified value.
     */
     void setNormalizer (Normalizer & norm) { m_norma  = &norm; }
+    
+    // ToDo: Move A, B, C, D to subclass
     
     /*
      * This function calculates the Figure of Merit M using method A: 
@@ -194,7 +181,7 @@ public:
 	/* 
 	 * The reduction type used to compute (or estimate) the FOM.
 	 */
-        ReductionType m_reductionMethod = BKZBB; 
+     ReductionType m_reductionMethod = BKZBB; 
 	
 	/*
 	 * The delta parameter for LLL or BKZ reduction
@@ -205,6 +192,16 @@ public:
 	 * Blocksize of BKZ algorithm
 	 */
 	int64_t m_blocksize = 10; 
+	
+	/* An integer giving the maximum number of nodes to be examined in any given 
+	 * BB procedure. When that value is exceeded, the BB is stopped and the generator 
+	 * is discarded. The number of discarded generators is given in the results. A small 
+	 * value of this maxnodesBB parameter can make the program run faster (sometimes much 
+	 * faster), permitting to examine more generators, but will increase the chances of 
+	 * rejecting good generators. The default value is 10^8 .
+	 * 
+	 */
+	int64_t m_maxNodesBB = 10000000;
 	
 	/*
 	 * If set to true successive coordinates a considered first when calculating FigureOfMerit
@@ -226,11 +223,6 @@ public:
 	 * Type of projection construction
 	 */	
 	ProjConstructType m_pctype = UPPERTRIPROJ;
-	
-	/*
-	 * Variable used to store the modulo m of the RNG.
-	 */
-	Int m_m; 
 	
 	/*
 	 * Variable containing the Weights for the FoM 
@@ -276,13 +268,13 @@ public:
 //   
 //   if (m_succCoordFirst == true) { 
 //	   low_dim = t.length();
-//	   minmerit = computeMeritSucc(lat, proj, low_dim, t[0]);
+//	   minmerit = computeMeritMSucc(lat, proj, low_dim, t[0]);
 //	   if (minmerit == 0) return minmerit;
 //	   if (minmerit < m_lowbound) return minmerit;
 //	   if (minmerit > m_highbound) return minmerit;
 //   }   
 //   
-//   merit = computeMeritNonSucc(lat, proj, t);
+//   merit = computeMeritMNonSucc(lat, proj, t);
 //   if (merit < minmerit) minmerit = merit;
 //   if (merit == 0) return merit;
 //   if (minmerit < m_lowbound) return minmerit;
@@ -290,7 +282,7 @@ public:
 //
 //   if (m_succCoordFirst == false) {
 //	   low_dim = t.length();
-//	   merit = computeMeritSucc(lat, proj, low_dim, t[0]);
+//	   merit = computeMeritMSucc(lat, proj, low_dim, t[0]);
 //	   if (merit < minmerit) minmerit = merit;
 //	   if (merit == 0) return merit;
 //	   if (minmerit < m_lowbound) return minmerit;
@@ -306,7 +298,6 @@ double FiguresOfMerit<Int>::computeMeritM(IntLatticeExt<Int, Real> & lat, IntLat
 		const IntVec & t) {
    //double out;
    m_fom = MERITM;
-   m_m = lat.getModulo();
    //out = computeMerit(lat, proj, t);
    //return out;
    double merit = 0;
@@ -315,80 +306,47 @@ double FiguresOfMerit<Int>::computeMeritM(IntLatticeExt<Int, Real> & lat, IntLat
    
    if (m_succCoordFirst == true) { 
 	   low_dim = t.length();
-	   minmerit = computeMeritSucc(lat, proj, low_dim, t[0]);
-	   if (minmerit == 0) return minmerit;
-	   if (minmerit < m_lowbound) return minmerit;
-	   if (minmerit > m_highbound) return minmerit;
+	   minmerit = computeMeritMSucc(lat, proj, low_dim, t[0]);
+	   // In any of these cases the calcuation is stopped
+	   if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound) return minmerit;
    }   
    
-   merit = computeMeritNonSucc(lat, proj, t);
+   merit = computeMeritMNonSucc(lat, proj, t);
    if (merit < minmerit) minmerit = merit;
-   if (merit == 0) return merit;
-   if (minmerit < m_lowbound) return minmerit;
-   if (minmerit > m_highbound) return minmerit;
+   // In any of these cases the calcuation is stopped
+   if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound) return minmerit;
 
    if (m_succCoordFirst == false) {
 	   low_dim = t.length();
-	   merit = computeMeritSucc(lat, proj, low_dim, t[0]);
+	   merit = computeMeritMSucc(lat, proj, low_dim, t[0]);
 	   if (merit < minmerit) minmerit = merit;
-	   if (merit == 0) return merit;
-	   if (minmerit < m_lowbound) return minmerit;
-	   if (minmerit > m_highbound) return minmerit;
+	   // In any of these cases the calcuation is stopped
+	   if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound) return minmerit;
    } 
    return minmerit; 
 }
 
 //=========================================================================
 
-template<typename Int>
-double FiguresOfMerit<Int>::computeMeritQ(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
-		const IntVec & t) {
-   double out;
-   m_fom = MERITQ;
-   m_m = lat.getModulo();
-   //out = computeMerit(lat, proj, t);
-   //return out;
-   return 0;
-}
-
-//=========================================================================
-
-template<typename Int>
-
-double FiguresOfMerit<Int>::getShortestLengthBasis(IntLattice<Int, Real> & lat) {
-   double out;
-   Real temp;
-   lat.updateVecNorm(0);
-   temp = lat.getVecNorm(0);
-   for (int i = 1; i < lat.getBasis().NumRows(); i++) {
-	  lat.updateVecNorm(i);
-      if (lat.getVecNorm(i) < temp) temp = lat.getVecNorm(i);
-   }
-   NTL::conv(out,temp);
-   if (lat.getNormType()==L2NORM) out = sqrt(out);
-   //out = out / m_norma->getBound(lat.getDim());
-   return out;
-}
-
-template<typename Int>
-double FiguresOfMerit<Int>::computeMeritProj(IntLattice<Int, Real> & proj, const Coordinates & coord) {
+template<typename Int> // ToDo: Use existing object for projections?
+double FiguresOfMerit<Int>::computeMeritMProj(IntLattice<Int, Real> & proj, const Coordinates & coord, const Int & m) {
    double shortest, merit;
    merit = 0.0;
    
-   proj = IntLattice<Int, Real> (m_projBasis, m_m, m_projBasis.NumCols());
-   proj.updateVecNorm();
-   proj.sort(0); 
+   proj = IntLattice<Int, Real> (m_projBasis, m, m_projBasis.NumCols());
    if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
       m_red->redBKZ(proj.getBasis(), m_delta, m_blocksize);  
-   } else {
+   } else if (m_reductionMethod == LLLBB || m_reductionMethod == LLL) {
       m_red->redLLLNTL(proj.getBasis(), m_delta);  
-   } 
+   } else if (m_reductionMethod == PAIRBB) {
+	  m_red->redDieter(0);
+   }
    //std::cout << proj.getBasis();
    if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {
        if (!m_red->shortestVector(proj)) return 0;
        shortest = NTL::conv<double>(m_red->getMinLength());
    } else {
-       shortest = getShortestLengthBasis(proj);
+       shortest = proj.getShortestLengthBasis();
    }
    //std::cout << shortest << "\n";
    // merit = m_weights->getWeight(coord) * shortest/m_norma->getBound((coord).size());
@@ -399,10 +357,9 @@ double FiguresOfMerit<Int>::computeMeritProj(IntLattice<Int, Real> & proj, const
 //=========================================================================
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
+double FiguresOfMerit<Int>::computeMeritMLat(IntLatticeExt<Int, Real> & lat) {
    double shortest, merit;
    merit = 0.0;
-   m_m = lat.getModulo();
    //Coordinates coord;
    //m_coord.clear();
    if (m_fomInDual) lat.dualize();
@@ -410,9 +367,11 @@ double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
    lat.sort(0); 
    if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
       m_red->redBKZ(lat.getBasis(), m_delta, m_blocksize);  
-   } else {
+   } else if (m_reductionMethod == LLLBB || m_reductionMethod == LLL) {
       m_red->redLLLNTL(lat.getBasis(), m_delta);  
-   } 
+   } else if (m_reductionMethod == PAIRBB) {
+		  m_red->redDieter(0);
+   }
    //std::cout << lat.getBasis();
    if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {
           if (!m_red->shortestVector(lat)) return 0;
@@ -420,7 +379,7 @@ double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
    } else
    {
 	   //std::cout << lat.getBasis();
-	   shortest = getShortestLengthBasis(lat);
+	   shortest = lat.getShortestLengthBasis();
 	   //std::cout << shortest;
    }
    //std::cout << shortest << "\n";
@@ -435,7 +394,7 @@ double FiguresOfMerit<Int>::computeMeritLat(IntLatticeExt<Int, Real> & lat) {
 //=========================================================================
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+double FiguresOfMerit<Int>::computeMeritMSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 		const int64_t & low, const Int & upp) {
    //Coordinates coord;	
    //m_coord.clear();
@@ -444,11 +403,11 @@ double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, Int
    double dim = lat.getBasis().NumCols();
    //for (int j = 0; j < low + 1; j++) m_coord.insert(j+1);
    lat.buildBasis(low+1);
-//   if (m_fomInDual) { getProjBasisDual(lat, coord, true); 
-//   } else getProjBasis(lat, coord, true); 
-//   merit = computeMeritProj(proj, coord);
-   merit = computeMeritLat(lat);
-   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
+//   if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//   } else getProjBasis(lat, coord); 
+//   merit = computeMeritMProj(proj, coord, lat.getModulo());
+   merit = computeMeritMLat(lat);
+   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
    if (merit == 0) return merit;
    for (int j = low +1; j < upp; j++)
    {
@@ -460,15 +419,14 @@ double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, Int
     	   lat.incDimBasis();
        }
      //lat.buildBasis(j+1);
-//       if (m_fomInDual) { getProjBasisDual(lat, coord, true); 
-//       } else getProjBasis(lat, coord, true); 
-//       merit = computeMeritProj(proj, coord);
-       merit = computeMeritLat(lat);
-       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
+//       if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//       } else getProjBasis(lat, coord); 
+//       merit = computeMeritMProj(proj, coord, lat.getModulo());
+       merit = computeMeritMLat(lat);
+       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
        if (merit < minmerit) minmerit = merit;
-	   if (merit == 0) return merit;
-       if (merit < m_lowbound) return minmerit;
-       if (merit > m_highbound) return minmerit;
+       // In any of these cases the calcuation is stopped
+	   if (merit == 0 || merit < m_lowbound || merit > m_highbound) return merit;
    }   
    if (upp < dim)
       lat.buildBasis(dim);
@@ -478,7 +436,7 @@ double FiguresOfMerit<Int>::computeMeritSucc(IntLatticeExt<Int, Real> & lat, Int
 //=========================================================================
 
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
+double FiguresOfMerit<Int>::computeMeritMNonSucc(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 		const IntVec & t) {
 	//Coordinates coord;
 	m_coord.clear();
@@ -495,13 +453,11 @@ double FiguresOfMerit<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> & lat, 
 	   CoordinateSets::FromRanges m_coordRange(i, i, min_dim, max_dim, m_projectStationary);  
        for (auto it = m_coordRange.begin(); it != m_coordRange.end(); it++){
           m_coord = *it;
-          if (m_fomInDual) lat.getProjBasisDual(m_coord, false, false, m_pctype, m_delta, m_projBasis);
-          else lat.getProjBasis(m_coord, false, m_pctype, m_delta, m_projBasis);
-          merit = computeMeritProj(proj, m_coord);
+          if (m_fomInDual) lat.getProjBasisDual(m_coord, m_projBasis);
+          else lat.getProjBasis(m_coord, m_projBasis);
+          merit = computeMeritMProj(proj, m_coord, lat.getModulo());
           if (merit < minmerit) minmerit = merit;
-   	      if (merit == 0) return merit;
-	      if (merit < m_lowbound) return minmerit;
-	      if (merit > m_highbound) return minmerit;
+   	      if (merit == 0 || merit < m_lowbound || merit > m_highbound) return merit;
        }
     }
 	return minmerit;  
@@ -524,10 +480,10 @@ double FiguresOfMerit<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> & lat, 
 //   double dim = lat.getBasis().NumCols();
 //   for (int j = 0; j < low + 1; j++) coord.insert(j+1);
 //   lat.buildBasis(low+1);
-//   if (m_fomInDual) { getProjBasisDual(lat, coord, true); // Reads out dual basis directly from lattice
-//   } else getProjBasis(lat, coord, true); // Reads out basis directly from lattice
-//   //merit = computeMeritLat(lat, coord);
-//   merit = computeMeritProj(lat, proj, coord);
+//   if (m_fomInDual) { getProjBasisDual(lat, coord); // Reads out dual basis directly from lattice
+//   } else getProjBasis(lat, coord); // Reads out basis directly from lattice
+//   //merit = computeMeritMLat(lat, coord);
+//   merit = computeMeritMProj(proj, coord, lat.getModulo());
 //
 //   if (t[0] < dim)
 //      lat.buildBasis(dim);	     
@@ -538,7 +494,6 @@ double FiguresOfMerit<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> & lat, 
 template<typename Int>
 double FiguresOfMerit<Int>::computeMeritMSucc_MethodA(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 		const IntVec & t) {
-   m_m = lat.getModulo();
    //Coordinates coord;	
    //m_coord.clear();
    double merit = 0;
@@ -546,27 +501,27 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodA(IntLatticeExt<Int, Real> &
    
    //for (int j = 0; j < low + 1; j++) coord.insert(j+1);
    lat.buildBasis(t.length()+1);
-//   if (m_fomInDual) { getProjBasisDual(lat, coord, false); 
-//   } else getProjBasis(lat, coord, false); 
-//   merit = computeMeritProj(proj, coord);
-   merit = computeMeritLat(lat);
+//   if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//   } else getProjBasis(lat, coord); 
+//   merit = computeMeritMProj(proj, coord, lat.getModulo());
+   merit = computeMeritMLat(lat);
    if (!m_fomInDual) {
-      BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
+      BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
    } else {
-	   BasisConstruction<Int>::mDualBasis(lat.getDualBasis(), lat.getBasis(), m_m); 
+	   BasisConstruction<Int>::mDualBasis(lat.getDualBasis(), lat.getBasis(), lat.getModulo()); 
    }	   
    if (merit == 0) return merit;
    for (int j = t.length() +1; j < t[0]; j++)
    {
        lat.incDimBasis(); // Increase the dimension of the lattice and of its dual 
-//       if (m_fomInDual) { getProjBasisDual(lat, coord, false); 
-//       } else getProjBasis(lat, coord, false); 
-//       merit = computeMeritProj(proj, coord);
-       merit = computeMeritLat(lat);
+//       if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//       } else getProjBasis(lat, coord); 
+//       merit = computeMeritMProj(proj, coord, lat.getModulo());
+       merit = computeMeritMLat(lat);
        if (!m_fomInDual) {
-          BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
+          BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
        } else {
-    	   BasisConstruction<Int>::mDualBasis(lat.getDualBasis(), lat.getBasis(), m_m); 
+    	   BasisConstruction<Int>::mDualBasis(lat.getDualBasis(), lat.getBasis(), lat.getModulo()); 
        }	   
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
@@ -584,7 +539,6 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodA(IntLatticeExt<Int, Real> &
 template<typename Int>
 double FiguresOfMerit<Int>::computeMeritMSucc_MethodB(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 		const IntVec & t) {
-   m_m = lat.getModulo();
    //Coordinates coord;	
    //coord.clear();
    double merit = 0;
@@ -593,22 +547,22 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodB(IntLatticeExt<Int, Real> &
    double dim = lat.getBasis().NumCols();
    //for (int j = 0; j < low + 1; j++) coord.insert(j+1);
    lat.buildBasis(t.length()+1);
-   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
+   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
    m_pctype = UPPERTRIPROJ; // Use upper triangular algorithm to calculate the dual
-//   if (m_fomInDual) { getProjBasisDual(lat, coord, false); 
-//   } else getProjBasis(lat, coord, false); 
-//   merit = computeMeritProj(proj, coord);
-   merit = computeMeritLat(lat);
+//   if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//   } else getProjBasis(lat, coord); 
+//   merit = computeMeritMProj(proj, coord, lat.getModulo());
+   merit = computeMeritMLat(lat);
    if (merit == 0) return merit;
    for (int j = t.length()+1; j < t[0]; j++)
    {
        //coord.insert(j+1);
        lat.incDimBasis(); // Increase the dimension of the lattice and of its dual 
-       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
-//       if (m_fomInDual) { getProjBasisDual(lat, coord, false); 
-//       } else getProjBasis(lat, coord, false); 
-//       merit = computeMeritProj(proj, coord);
-       merit = computeMeritLat(lat);
+       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
+//       if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//       } else getProjBasis(lat, coord); 
+//       merit = computeMeritMProj(proj, coord, lat.getModulo());
+       merit = computeMeritMLat(lat);
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
@@ -625,7 +579,6 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodB(IntLatticeExt<Int, Real> &
 template<typename Int>
 double FiguresOfMerit<Int>::computeMeritMSucc_MethodC(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 		const IntVec & t) {
-   m_m = lat.getModulo();
    //Coordinates coord;	
    //coord.clear();
    double merit = 0;
@@ -634,22 +587,22 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodC(IntLatticeExt<Int, Real> &
    double dim = lat.getBasis().NumCols();
    //for (int j = 0; j < low + 1; j++) coord.insert(j+1);
    lat.buildBasis(t.length()+1);
-   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
+   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
    m_pctype = LLLPROJ; // Use the general method to calculate the dual
-//   if (m_fomInDual) { getProjBasisDual(lat, coord, false); 
-//   } else getProjBasis(lat, coord, false); 
-//   merit = computeMeritProj(proj, coord);
-   merit = computeMeritLat(lat);
+//   if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//   } else getProjBasis(lat, coord); 
+//   merit = computeMeritMProj(proj, coord, lat.getModulo());
+   merit = computeMeritMLat(lat);
    if (merit == 0) return merit;
    for (int j = t.length()+1; j < t[0]; j++)
    {
        //coord.insert(j+1);
        lat.incDimBasis(); // Increase the dimension of the lattice and of its dual
-       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), m_m);
-//       if (m_fomInDual) { getProjBasisDual(lat, coord, false); 
-//       } else getProjBasis(lat, coord, false); 
-//       merit = computeMeritProj(proj, coord);
-       merit = computeMeritLat(lat);
+       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
+//       if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//       } else getProjBasis(lat, coord); 
+//       merit = computeMeritMProj(proj, coord, lat.getModulo());
+       merit = computeMeritMLat(lat);
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
@@ -666,7 +619,6 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodC(IntLatticeExt<Int, Real> &
 template<typename Int>
 double FiguresOfMerit<Int>::computeMeritMSucc_MethodD(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 		const IntVec & t) {
-   m_m = lat.getModulo();
    //Coordinates coord;	
    //coord.clear();
    double merit = 0;
@@ -675,19 +627,19 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodD(IntLatticeExt<Int, Real> &
    double dim = lat.getBasis().NumCols();
    //for (int j = 0; j < low + 1; j++) coord.insert(j+1);
    lat.buildDualBasis(t.length()+1);
-//   if (m_fomInDual) { getProjBasisDual(lat, coord, true); 
-//   } else getProjBasis(lat, coord, true); 
-//   merit = computeMeritProj(proj, coord);
-   merit = computeMeritLat(lat);
+//   if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//   } else getProjBasis(lat, coord); 
+//   merit = computeMeritMProj(proj, coord, lat.getModulo());
+   merit = computeMeritMLat(lat);
    if (merit == 0) return merit;
    for (int j = t.length()+1; j < t[0]; j++)
    {
        //coord.insert(j+1);
        lat.buildDualBasis(j+1); // Build (only) the dual basis from scratch 
-//       if (m_fomInDual) { getProjBasisDual(lat, coord, true); 
-//       } else getProjBasis(lat, coord, true); 
-//       merit = computeMeritProj(proj, coord);
-       merit = computeMeritLat(lat);
+//       if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//       } else getProjBasis(lat, coord); 
+//       merit = computeMeritMProj(proj, coord, lat.getModulo());
+       merit = computeMeritMLat(lat);
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
@@ -704,7 +656,6 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodD(IntLatticeExt<Int, Real> &
 template<typename Int>
 double FiguresOfMerit<Int>::computeMeritMSucc_MethodE(IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, 
 		const IntVec & t) {
-   m_m = lat.getModulo();
    //Coordinates coord;	
    //coord.clear();
    double merit = 0;
@@ -713,19 +664,19 @@ double FiguresOfMerit<Int>::computeMeritMSucc_MethodE(IntLatticeExt<Int, Real> &
    double dim = lat.getBasis().NumCols();
    //for (int j = 0; j < low + 1; j++) coord.insert(j+1);
    lat.buildDualBasis(t.length()+1);
-//   if (m_fomInDual) { getProjBasisDual(lat, coord, true); 
-//   } else getProjBasis(lat, coord, true); 
-//   merit = computeMeritProj(proj, coord);
-   merit = computeMeritLat(lat);
+//   if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//   } else getProjBasis(lat, coord); 
+//   merit = computeMeritMProj(proj, coord, lat.getModulo());
+   merit = computeMeritMLat(lat);
    if (merit == 0) return merit;
    for (int j = t.length()+1; j < t[0]; j++)
    {
        //coord.insert(j+1);
        lat.incDimDualBasis(); // Build (only) the dual basis from scratch 
-//       if (m_fomInDual) { getProjBasisDual(lat, coord, true); 
-//       } else getProjBasis(lat, coord, true); 
-//       merit = computeMeritProj(proj, coord);
-       merit = computeMeritLat(lat);
+//       if (m_fomInDual) { getProjBasisDual(lat, coord); 
+//       } else getProjBasis(lat, coord); 
+//       merit = computeMeritMProj(proj, coord, lat.getModulo());
+       merit = computeMeritMLat(lat);
        if (merit < minmerit) minmerit = merit;
  	   if (merit == 0) return merit;
        if (merit < m_lowbound) return minmerit;
