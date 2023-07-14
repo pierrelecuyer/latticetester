@@ -156,6 +156,27 @@ public:
 	IntMat& getDualBasis() {
 		return m_dualbasis;
 	}
+	
+	/* 
+	 * This function calculates a projected basis 'projBasis' based on the 
+	 * desired method to derive it. The coordinates of the projection are given by
+	 * 'coord'. The parameter 'useLatBasis' indicates whether projBasis shall
+	 * be read out directly from the IntLattice 'lat'. If 'useLatBasis' is false
+	 * then pctype determines the type of projection construction which shall be applied.
+	 * For the LLL-projection the variable 'delta' is used.
+	*/
+
+	void getProjBasis (const Coordinates & coord, bool useLatBasis, 
+			ProjConstructType pctype, double delta, IntMat projBasis);
+	
+	/*
+	 * Equivalent as for getProjBasis but for the dual. If 'useDualBasis' is set to false
+	 * then the user can decide whether the primal basis shall be read out correctly
+	 * by setting readOutPrima.
+	 */
+	void getProjBasisDual (const Coordinates & coord, bool useDualBasis, 
+			bool readOutPrimal, const ProjConstructType pcype, const double delta, IntMat projBasis);
+	
 
 	/**
 	 * Returns the dimension of the lattice, which is the dimension of the basis vectors,
@@ -657,6 +678,56 @@ void IntLattice<Int, Real>::buildProjection(
 	}
 }
 
+//=========================================================================
+
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::getProjBasis (const Coordinates & coord, bool useLatBasis, 
+		ProjConstructType pctype, double delta, IntMat projBasis) {	
+	if (useLatBasis) {
+	   projBasis = this->getBasis();
+	} else {
+	   if (pctype == UPPERTRIPROJ) {
+	      IntMat genTemp;
+	      BasisConstruction<Int>::projectMatrix(this->getBasis(), genTemp, coord);
+	      BasisConstruction<Int>::upperTriangularBasis(genTemp, projBasis, this->m_modulo);
+	   } else {  
+          BasisConstruction<Int>::projectMatrix(this->getBasis(), projBasis, coord);
+		  BasisConstruction<Int>::LLLBasisConstruction(projBasis, this->m_modulo, delta);
+	   }
+	}
+}
+
+//=========================================================================
+
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::getProjBasisDual (const Coordinates & coord, bool useDualBasis, 
+		bool readOutPrimal, const ProjConstructType pctype, const double delta, IntMat projBasis) {	   
+//	IntMat m_projBasis;   
+	if (useDualBasis) {
+	       projBasis = this->getDualBasis(); 
+	} else {
+	    IntMat projBasisDual;
+	    if (readOutPrimal == true) {
+	       projBasis = this->getBasis();
+	    } else {	      
+	      if (pctype == UPPERTRIPROJ) {
+	    	 IntMat genTemp;
+	    	 BasisConstruction<Int>::projectMatrix(this->getBasis(), genTemp, coord);
+	    	 BasisConstruction<Int>::upperTriangularBasis(genTemp, projBasis, this->m_modulo);
+	      } else {  
+	    	 BasisConstruction<Int>::projectMatrix(this->getBasis(), projBasis, coord);
+	         BasisConstruction<Int>::LLLBasisConstruction(projBasis, this->m_modulo, delta);
+	      }
+	    }
+	    if (pctype == UPPERTRIPROJ) {
+	       BasisConstruction<Int>::mDualUpperTriangular(projBasis, projBasisDual, this->m_modulo);
+	    } else {                   
+	       BasisConstruction<Int>::mDualBasis(projBasis, projBasisDual, this->m_modulo);
+	    }                         
+	    projBasis = projBasisDual;
+	}	
+}
+
 /*=========================================================================*/
 
 template<typename Int, typename Real>
@@ -829,6 +900,8 @@ bool IntLattice<Int, Real>::checkDuality() {
 	return true;
 
 }
+
+
 
 /*=========================================================================*/
 
