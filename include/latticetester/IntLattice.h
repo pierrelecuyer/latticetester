@@ -149,6 +149,16 @@ public:
 	IntMat& getBasis() {
 		return m_basis;
 	}
+	
+	/**
+	 * Update the basis and sets it to 'IntMat'
+	 */
+	void setBasis(const IntMat basis, const int64_t dim) {
+	    this->m_dim=dim;
+	    this->m_basis=basis;      // Might not have the righ dimensions?
+	    this->m_vecNorm.resize(dim);
+		setNegativeNorm();
+	}
 
 	/**
 	 * Returns the m-dual basis represented in a matrix.
