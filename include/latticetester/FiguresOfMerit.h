@@ -194,7 +194,7 @@ public:
 	/* 
 	 * The reduction type used to compute (or estimate) the FOM.
 	 */
-     ReductionType m_reductionMethod = BKZBB; 
+        ReductionType m_reductionMethod = BKZBB; 
 	
 	/*
 	 * The delta parameter for LLL or BKZ reduction
@@ -205,16 +205,6 @@ public:
 	 * Blocksize of BKZ algorithm
 	 */
 	int64_t m_blocksize = 10; 
-	
-	/* An integer giving the maximum number of nodes to be examined in any given 
-	 * BB procedure. When that value is exceeded, the BB is stopped and the generator 
-	 * is discarded. The number of discarded generators is given in the results. A small 
-	 * value of this maxnodesBB parameter can make the program run faster (sometimes much 
-	 * faster), permitting to examine more generators, but will increase the chances of 
-	 * rejecting good generators. The default value is 10^8 .
-	 * 
-	 */
-	int64_t m_maxNodesBB = 10000000;
 	
 	/*
 	 * If set to true successive coordinates a considered first when calculating FigureOfMerit
