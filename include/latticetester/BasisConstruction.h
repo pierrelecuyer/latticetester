@@ -664,6 +664,16 @@ void BasisConstruction<Int>::projectMatrix (const IntMat &in,
 	}
 };
 
+//===================================================
+
+template<typename Int>
+void BasisConstruction<Int>::projectMatrix (const IntMat &in,
+		IntMat &out, const Coordinates &proj) {
+	projectMatrix(in, out, proj);
+};
+
+//===================================================
+
 template<>
 void BasisConstruction<Int>::projectionConstructionLLL(
 		IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m, double delta) {
@@ -671,12 +681,16 @@ void BasisConstruction<Int>::projectionConstructionLLL(
 	LLLBasisConstruction(projBasis, m, delta);
 }
 
+//===================================================
+
 template<>
 void BasisConstruction<Int>::projectionConstructionUpperTri(
 		IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m, IntMat &genTemp) {
 	projectMatrix(inBasis, genTemp, proj);
 	upperTriangularBasis(genTemp, projBasis, m);
 }
+
+//===================================================
 
 template<>
 void BasisConstruction<Int>::projectionConstructionUpperTri(
@@ -687,6 +701,8 @@ void BasisConstruction<Int>::projectionConstructionUpperTri(
 }
 
 
+//===================================================
+
 template<>
 void BasisConstruction<Int>::projectionConstruction(IntMat &inBasis,
 			IntMat &projBasis, const Coordinates &proj, const Int &m, const ProjConstructType t_proj, const double delta) {
@@ -695,7 +711,7 @@ void BasisConstruction<Int>::projectionConstruction(IntMat &inBasis,
 	if (t_proj == UPPERTRIPROJ)
 		projectionConstructionUpperTri(inBasis, projBasis, proj, m);
 }
-	
+
 //void BasisConstruction<Int>::projectionConstruction(IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m, double delta)
 
 template class BasisConstruction<std::int64_t>;
