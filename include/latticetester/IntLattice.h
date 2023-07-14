@@ -170,6 +170,11 @@ public:
 	*/
 	void getProjBasisDual (const Coordinates & coord, IntMat projBasisDual);
 	
+	/*
+	 * This function yields the length of the shortest vector
+	 * in the current basis.
+	 */
+	double getShortestLengthBasis();
 
 	/**
 	 * Returns the dimension of the lattice, which is the dimension of the basis vectors,
@@ -683,6 +688,23 @@ void IntLattice<Int, Real>::getProjBasis (const Coordinates & coord, IntMat proj
 template<typename Int, typename Real> // ToDo: getProjBasisPrimalDual
 void IntLattice<Int, Real>::getProjBasisDual (const Coordinates & coord, IntMat projDualBasis) {	
 	BasisConstruction<Int>::projectMatrix(this->getDualBasis(), projDualBasis, coord);
+}
+
+//=========================================================================
+
+template<typename Int, typename Real> 
+double IntLattice<Int, Real>::getShortestLengthBasis() {
+   double out;
+   Real temp;
+   this->updateVecNorm(0);
+   temp = this->getVecNorm(0);
+   for (int i = 1; i < this->getBasis().NumRows(); i++) {
+	  this->updateVecNorm(i);
+      if (this->getVecNorm(i) < temp) temp = this->getVecNorm(i);
+   }
+   NTL::conv(out,temp);
+   if (this->getNormType()==L2NORM) out = sqrt(out);
+   return out;
 }
 
 /*=========================================================================*/
