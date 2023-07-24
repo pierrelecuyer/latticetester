@@ -154,13 +154,13 @@ public:
 	 * Update the basis and sets it to 'IntMat'
 	 */
 	void setBasis(const IntMat basis, const Int m, const int64_t dim, bool withDual = false, NormType norm = L2NORM) {
-    this->m_modulo=m;
-    this->m_dim=dim;
-    this->m_withDual=withDual;
-    this->m_norm=norm;
-	  this->m_basis.resize(dim, dim);
-	  this->m_vecNorm.resize(dim);
-	  setNegativeNorm();
+	   this->m_modulo=m;
+	   this->m_dim=dim;
+	   this->m_withDual=withDual;
+	   this->m_norm=norm;
+	   this->m_basis=basis;    
+	   this->m_vecNorm.resize(dim);
+	   setNegativeNorm();
 	}
 
 	/**
@@ -699,8 +699,9 @@ void IntLattice<Int, Real>::getProjBasis (const Coordinates & coord, IntMat proj
 //=========================================================================
 
 template<typename Int, typename Real> // ToDo: getProjBasisPrimalDual
-void IntLattice<Int, Real>::getProjBasisDual (const Coordinates & coord, IntMat projDualBasis) {	
+void IntLattice<Int, Real>::getProjBasisDual (const Coordinates & coord, IntMat projDualBasis) {
 	BasisConstruction<Int>::projectMatrix(this->getDualBasis(), projDualBasis, coord);
+	std::cout << projDualBasis;
 }
 
 //=========================================================================
