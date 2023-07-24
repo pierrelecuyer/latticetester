@@ -234,6 +234,11 @@ public:
 	 */
 	IntMat m_projBasis; 
 	
+    /*
+     * Matrix necessary for intermediate steps of calculation
+     */
+	IntMat temp;
+	
 	/*
 	 * Stores the coordinates of the current projection
 	 */
@@ -310,7 +315,7 @@ double FiguresOfMerit<Int>::computeMeritM(IntLatticeExt<Int, Real> & lat, IntLat
 	   // In any of these cases the calcuation is stopped
 	   if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound) return minmerit;
    }   
-   
+      
    merit = computeMeritMNonSucc(lat, proj, t);
    if (merit < minmerit) minmerit = merit;
    // In any of these cases the calcuation is stopped
@@ -332,7 +337,14 @@ template<typename Int> // ToDo: Use existing object for projections?
 double FiguresOfMerit<Int>::computeMeritMProj(IntLattice<Int, Real> & proj, const Coordinates & coord, const Int & m) {
    double shortest, merit;
    merit = 0.0;
-   
+   if (m_fomInDual) {
+      if (m_pctype == UPPERTRIPROJ) {
+        BasisConstruction<Int>::mDualUpperTriangular(m_projBasis, temp, m);
+     } else {                   
+        BasisConstruction<Int>::mDualBasis(m_projBasis, temp, m);
+     }
+     m_projBasis = temp;
+   }
    proj.setBasis(m_projBasis, m, m_projBasis.NumCols());
    if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
       m_red->redBKZ(proj.getBasis(), m_delta, m_blocksize);  
@@ -447,14 +459,12 @@ double FiguresOfMerit<Int>::computeMeritMNonSucc(IntLatticeExt<Int, Real> & lat,
 	if (m_projectStationary) {
        min_dim = 2;
 	} else min_dim = 1;
-
 	for (int i = 1; i < t.length(); i++) {
        NTL::conv(max_dim, t[i]);
 	   CoordinateSets::FromRanges m_coordRange(i, i, min_dim, max_dim, m_projectStationary);  
        for (auto it = m_coordRange.begin(); it != m_coordRange.end(); it++){
           m_coord = *it;
-          if (m_fomInDual) lat.getProjBasisDual(m_coord, m_projBasis);
-          else lat.getProjBasis(m_coord, m_projBasis);
+          BasisConstruction<Int>::projectionConstruction(lat.getBasis(), m_projBasis, m_coord, lat.getModulo(), m_pctype, m_delta); 
           merit = computeMeritMProj(proj, m_coord, lat.getModulo());
           if (merit < minmerit) minmerit = merit;
    	      if (merit == 0 || merit < m_lowbound || merit > m_highbound) return merit;
