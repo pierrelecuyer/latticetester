@@ -103,27 +103,26 @@ public:
     double computeMeritMNoProj (IntLatticeExt<Int, Real> & lat);
     
     /*
-     * This functions calculates the Figure of Merit for all projections 
+     * This function calculates the Figure of Merit for all projections 
      * consisting of successive coordinates of the forms 
      * {1, 2, ..., m_t.size()} to {1, 2, ..., m_t[0]}
      * The value 0 is returned if an error occurs while calculating the shortest vector.
      */
     double computeMeritMSucc (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
-	
-    /*
-     * This functions calculates the Figure of Merit for all projections 
-     * consisting of non-successive coordinates. The value 0 is returned if 
-     * an error occurs while calculating the shortest vector.
-     */
-//    double computeMeritMNonSucc (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
     
     /*
-     * ToDo: For the primal lattice
+     * This functions calculates the figure of merit of the primal lattice 
+     * for all projections consisting of non-successive coordinates. 
+     * The value 0 is returned if an error occurs while calculating the 
+     * shortest vector.
      */
     double computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
 
     /*
-     * ToDo: For the dual lattice
+     * This functions calculates the figure of merit of the dual lattice 
+     * for all projections consisting of non-successive coordinates. 
+     * The value 0 is returned if an error occurs while calculating the 
+     * shortest vector.
      */
     double computeMeritMNonSuccDual (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
 
@@ -302,9 +301,11 @@ template<typename Int>
 double FiguresOfMerit<Int>::computeMeritMNoProj (IntLatticeExt<Int, Real> & lat) {
    double shortest, merit;
    merit = 0.0;
+   // Switches primal and dual lattice if calculations shall be done for the dual
    if (m_fomInDual) lat.dualize();
    lat.updateVecNorm();
    lat.sort(0); 
+   // Apply pre-reduction
    if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
       m_red->redBKZ(lat.getBasis(), m_delta, m_blocksize);  
    } else if (m_reductionMethod == LLLBB || m_reductionMethod == LLL) {
@@ -312,6 +313,7 @@ double FiguresOfMerit<Int>::computeMeritMNoProj (IntLatticeExt<Int, Real> & lat)
    } else if (m_reductionMethod == PAIRBB) {
       m_red->redDieter(0);
    }
+   // Caclculate the shortest vector or get it
    if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {
           if (!m_red->shortestVector(lat)) return 0;
           shortest = NTL::conv<double>(m_red->getMinLength());
@@ -325,14 +327,14 @@ double FiguresOfMerit<Int>::computeMeritMNoProj (IntLatticeExt<Int, Real> & lat)
 }
 
 //=========================================================================
-
+// !!! Old version - needs to be replaced as soon as we have decided which of the methods we want to have !!!
 template<typename Int>
 double FiguresOfMerit<Int>::computeMeritMSucc (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
    double merit = 0;
    double minmerit = 1.0;
    double dim = lat.getBasis().NumCols();
    int64_t low = static_cast<int64_t>(m_t.size());
-   
+   // Build basis
    lat.buildBasis(low+1);
    merit = computeMeritMNoProj(lat);
    BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
@@ -362,7 +364,7 @@ double FiguresOfMerit<Int>::computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real>
     double minmerit = 1.0;
     double shortest = 0.0;
     for (auto it = m_coordRange.begin(); it != m_coordRange.end(); it++){
-    	//calculat LLL projection
+    	//calculate LLL projection
        BasisConstruction<Int>::projectionConstructionLLL(lat.getBasis(), m_projBasis, *it, lat.getModulo(), m_delta); 
        // Define IntLattice based on projected basis
        proj.setBasis(m_projBasis, lat.getModulo(), m_projBasis.NumCols());
