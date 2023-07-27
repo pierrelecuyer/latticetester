@@ -26,6 +26,7 @@
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
 #include "latticetester/FiguresOfMerit.h"
+#include "latticetester/FoMCalc.h"
 #include "latticetester/Util.h"
 // #include "latticetester/ParamReader.h"
 #include "latticetester/IntLattice.h"
@@ -88,22 +89,25 @@ int main() {
   // Set all necessary variables
   int64_t max_dim = 32;
   Int a; 
-  double f; // Variable for figure of merit
-  IntVec t; // t-Vector of the FOM
+  double f; // Variable for figure of merit  
+  vector<int64_t> t(5); // t-Vector of the FOM
   long dim; 
   bool with_dual = true; // Decide whether calculation is used or not
   dim = max_dim; 
   Rank1Lattice<Int, Real> *lat; // Initialize variable for lattice 
   Normalizer *norma;
-  Weights *weights; 
-  weights = new WeightsUniform(1.0); 
   Reducer<Int, Real> *red;
   red = new Reducer<Int, Real>(max_dim);
   
   // Set all necessary objects
   IntLattice<Int, Real> *proj; // The IntLattice used to store projections  
   
-  FiguresOfMerit<Int> fom(*weights, *red); 
+  //FOM M_{32}
+  t.resize(1); 
+  t[0] = 32;
+  
+  FoMCalc<Int> fom(*red, t); 
+  //FoMCalc<Int> test(*red); 
   
   fom.m_succCoordFirst = true; // successive coordinates shall be calculated first 
   fom.m_reductionMethod = BKZBB; //Set pre-reduction to BKZ
@@ -150,49 +154,42 @@ int main() {
            fom.m_reductionMethod = LLL; //Set pre-reduction to LLL
 
            //FOM M_{32}
-           t.SetLength(1); 
+           t.resize(1); 
            t[0] = 32;
+           fom.setTVector(t);
            
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodA(*lat, *proj, t);
-           timer[0][k] = clock() - tmp + timer[0][k];
-           
+           f = fom.computeMeritMSucc_MethodA(*lat);
+           timer[0][k] = clock() - tmp + timer[0][k];           
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodB(*lat, *proj, t);
+           f = fom.computeMeritMSucc_MethodB(*lat);
            timer[1][k] = clock() - tmp + timer[1][k];
-
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodC(*lat, *proj, t);
-           timer[2][k] = clock() - tmp + timer[2][k];
-           
+           f = fom.computeMeritMSucc_MethodC(*lat);
+           timer[2][k] = clock() - tmp + timer[2][k];           
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodD(*lat, *proj, t);
-           timer[3][k] = clock() - tmp + timer[3][k];           
-
+           f = fom.computeMeritMSucc_MethodD(*lat);
+           timer[3][k] = clock() - tmp + timer[3][k];  
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodE(*lat, *proj, t);
+           f = fom.computeMeritMSucc_MethodE(*lat);
            timer[4][k] = clock() - tmp + timer[4][k];
            
            fom.m_reductionMethod = BKZ; //Set pre-reduction to BKZ
            
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodA(*lat, *proj, t);
-           timer[0][k+numDelta] = clock() - tmp + timer[0][k+numDelta];
-           
+           f = fom.computeMeritMSucc_MethodA(*lat);
+           timer[0][k+numDelta] = clock() - tmp + timer[0][k+numDelta];           
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodB(*lat, *proj, t);
+           f = fom.computeMeritMSucc_MethodB(*lat);
            timer[1][k+numDelta] = clock() - tmp + timer[1][k+numDelta];
-
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodC(*lat, *proj, t);
-           timer[2][k+numDelta] = clock() - tmp + timer[2][k+numDelta];
-           
+           f = fom.computeMeritMSucc_MethodC(*lat);
+           timer[2][k+numDelta] = clock() - tmp + timer[2][k+numDelta];           
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodD(*lat, *proj, t);
-           timer[3][k+numDelta] = clock() - tmp + timer[3][k+numDelta];           
-
+           f = fom.computeMeritMSucc_MethodD(*lat);
+           timer[3][k+numDelta] = clock() - tmp + timer[3][k+numDelta];     
            tmp = clock();
-           f = fom.computeMeritMSucc_MethodE(*lat, *proj, t);
+           f = fom.computeMeritMSucc_MethodE(*lat);
            timer[4][k+numDelta] = clock() - tmp + timer[4][k+numDelta];
 
            
@@ -201,16 +198,17 @@ int main() {
            //std::cout << "\n";
         
            //FOM M_{5,32,16,12,8}
-           t.SetLength(5);
+           t.resize(5);
            t[0] = 5;
            t[1] = 32;
            t[2] = 16;
            t[3] = 12;
            t[4] = 8;
-           //f = fom.computeMeritM(*lat, *proj, t);
-           //std::cout << "CASE 2: Look at t = " << t << ":" << "\n";
-           //std::cout << "Figure of merit M is: " << f << "\n";
-           //std::cout << "\n";     
+           fom.setTVector(t);
+           f = fom.computeMeritM(*lat, *proj);
+           std::cout << "CASE 2: Look at t = " << t << ":" << "\n";
+           std::cout << "Figure of merit M is: " << f << "\n";
+           std::cout << "\n";     
          }
      }
   }
