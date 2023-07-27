@@ -208,7 +208,7 @@ namespace LatticeTester {
          */
         void includeOrder (Coordinates::size_type order,
             Coordinates::value_type minCoord,
-            Coordinates::value_type maxCoord);
+            Coordinates::value_type maxCoord, const bool includeFirst = false);
 
         /**
          * Removes the element associated with `order` from the list of 
