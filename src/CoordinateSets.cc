@@ -39,7 +39,7 @@ namespace LatticeTester {
          exit(1);
       }
       for (Coordinates::size_type order = minOrder; order <= maxOrder; order++)
-        includeOrder(order, minCoord, maxCoord);
+        includeOrder(order, minCoord, maxCoord, includeFirst);
     }
 
     //==========================================================================
@@ -51,8 +51,9 @@ namespace LatticeTester {
 
     void FromRanges::includeOrder (Coordinates::size_type order,
         Coordinates::value_type minCoord,
-        Coordinates::value_type maxCoord)
+        Coordinates::value_type maxCoord, const bool includeFirst)
     {
+      includeFirstVariable = includeFirst;  
       if (order > 0 && maxCoord < minCoord + order - 1)
         throw std::invalid_argument
           ("CoordinateSets::FromRanges::includeOrder(): maxCoord < minCoord + order - 1");
