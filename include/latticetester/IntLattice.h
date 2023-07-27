@@ -183,6 +183,12 @@ public:
 	*/
 	void getProjBasisDual (const Coordinates & coord, IntMat projBasisDual);
 	
+	/* 
+	 * This function calculates a projection 'projBasis' of the basis and of the dual basis.
+	 * The coordinates of the projection are given by 'coord'.
+	*/
+	void getProjBasisPrimalDual (const Coordinates & coord, IntMat projBasis, IntMat projDualBasis);
+	
 	/*
 	 * This function yields the length of the shortest vector
 	 * in the current basis.
@@ -379,13 +385,13 @@ public:
 	 */
 	void permuteNoDual(int64_t i, int64_t j);
 
-    /**
-     * Exchanges the primal and m-dual bases and vector norms, and the indicator variables
-     * `withPrimal` and `withDual`.
-     */
-    void dualize ();
+	/**
+	 * Exchanges the primal and m-dual bases and vector norms, and the indicator variables
+	 * `withPrimal` and `withDual`.
+	 */
+	 void dualize ();
 
-    /**
+	/**
 	 * Returns `true` iff the m-dual basis contained in the object really is
 	 * the m-dual of the current primal basis. Otherwise, or if either the primal or
 	 * m-dual basis is not maintained, it returns false.
@@ -701,8 +707,17 @@ void IntLattice<Int, Real>::getProjBasis (const Coordinates & coord, IntMat proj
 template<typename Int, typename Real> // ToDo: getProjBasisPrimalDual
 void IntLattice<Int, Real>::getProjBasisDual (const Coordinates & coord, IntMat projDualBasis) {
 	BasisConstruction<Int>::projectMatrix(this->getDualBasis(), projDualBasis, coord);
-	std::cout << projDualBasis;
 }
+
+//=========================================================================
+
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::getProjBasisPrimalDual (const Coordinates & coord, IntMat projBasis, 
+		IntMat projDualBasis) {
+	BasisConstruction<Int>::projectMatrix(this->getBasis(), projBasis, coord);
+	BasisConstruction<Int>::projectMatrix(this->getDualBasis(), projDualBasis, coord);
+}
+
 
 //=========================================================================
 
