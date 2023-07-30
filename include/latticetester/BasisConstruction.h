@@ -43,7 +43,7 @@
 #include "latticetester/Util.h"
 #include "latticetester/Coordinates.h"
 #include "latticetester/LLL64.h"
-#include "latticetester/LLL_FPZZtest.h"
+#include "latticetester/LLL_FPZZflex.h"
 
 namespace LatticeTester {
 
@@ -273,9 +273,10 @@ void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m, dou
 	int64_t rank = gen.NumRows();
 	int64_t dim = gen.NumCols();
 	if (rank == dim)
-		return;
-    gen.SetDims(rank + dim, dim);
-    // We now add the m e_i vectors, and we redo the LLL.
+		return;  // We are done!
+
+	gen.SetDims(rank + dim, dim);
+    // We now add the m e_i row vectors, and we redo the LLL.
     int64_t i, j;
     for (i=rank; i < rank+dim; i++) {
         for (j=0; j < dim; j++) {

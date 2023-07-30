@@ -79,7 +79,7 @@ namespace LatticeTester {
    * timer.write (Chrono::HMS); // Prints: 00:05:30.00 </tt>
    */
 
-  class Chrono {
+class Chrono {
     public:
 
       /**
@@ -133,13 +133,13 @@ namespace LatticeTester {
        */
       bool timeOver (double limit);
 
-    private:
+//    private:
 
       /// Microseconds
-      unsigned long microsec;
+      uint64_t microsec;
 
       /// Seconds
-      unsigned long second;
+      uint64_t second;
 
       /** Function returning the CPU time used by the program since it was
        * started. This function depends on the operation system and is not
@@ -153,12 +153,12 @@ namespace LatticeTester {
    */
   std::string toString (Chrono& timer);
 
-};
+// };
 
 //============================================================================
 // Implementation
 
-namespace {
+// namespace {
 
 #ifdef HAVE_WINDOWS_H
 #include <windows.h>
@@ -166,11 +166,10 @@ namespace {
   HLANDLE currentProcess = NULL;
 
   /*
-   * A helper function for converting FILETIME to a LONGLONG [safe from memory
+   * A helper function for converting FILETIME to a uint64_t [safe from memory
    * alignment point of view].
    */
-  ULONGLONG fileTimeToInt64 (const FILETIME * time)
-  {
+  uint64_t fileTimeToInt64 (const FILETIME * time) {
     ULARGE_INTEGER _time;
     _time.LowPart = time->dwLowDateTime;
     _time.HighPart = time->dwHighDateTime;
@@ -178,7 +177,7 @@ namespace {
   }
 #endif
    
-}
+// }
 
 //===========================================================================
 //Alternative implementation of tick for different operating systems
@@ -351,3 +350,4 @@ std::string Chrono::toString () {
 }
 
 #endif
+};

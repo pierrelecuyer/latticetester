@@ -35,7 +35,7 @@
  * Example of results with m = 1048573 (prime modulus near 2^{20}):
  *
 Types: Int = NTL::ZZ, Real = double
-Timings for different methods, in basic clock units
+Timings for different methods, in microseconds:
  dim:          10       20       30       40       50
 
 UppTri         859      857     1439     2064     2776
@@ -68,9 +68,13 @@ Total time: 0.212573 seconds
 #include "latticetester/EnumTypes.h"
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/Util.h"
+#include "latticetester/Chrono.h"
 // #include "latticetester/ParamReader.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
+//
+#include "latticetester/LLL_FPZZflex.h"
+
 
 using namespace LatticeTester;
 
@@ -96,6 +100,8 @@ int main() {
 	clock_t totalTime = clock();  // Global timer for total time.
 	clock_t timer[numMeth][numSizes];
 	clock_t tmp;
+	// Chrono totTime;
+	// totTime.init();
 	IntMat basis1, basis2, basis3, basisdual;
 	// Int sqlength;
 	Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
@@ -178,6 +184,9 @@ int main() {
 	std::cout << "Total time: "
 			<< (double) (clock() - totalTime) / (CLOCKS_PER_SEC)
 			<< " seconds\n";
+	// double time = totTime.val (Chrono::SEC);
+	// std::cout << "Total time Chrono: " << time << " seconds\n";
+	// totTime.write(Chrono::SEC);
 	return 0;
 }
 

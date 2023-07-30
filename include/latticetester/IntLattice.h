@@ -928,6 +928,7 @@ void IntLattice<Int, Real>::sort(int64_t d)
 					<< ",  dim = " << dim << std::endl;
 		}
 	}
+	// This is a rather inefficient sort, in O(d^2) operations!
 	for (int64_t i = d; i < dim; i++) {
 		int64_t k = i;
 		for (int64_t j = i + 1; j < dim; j++) {
@@ -956,6 +957,7 @@ void IntLattice<Int, Real>::sortNoDual(int64_t d)
 					<< ",  dim = " << dim << std::endl;
 		}
 	}
+	// This sort takes O(d^2) operations!
 	for (int64_t i = d; i < dim; i++) {
 		int64_t k = i;
 		for (int64_t j = i + 1; j < dim; j++) {
