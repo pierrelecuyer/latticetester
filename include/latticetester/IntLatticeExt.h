@@ -138,6 +138,14 @@ public:
 	 * by subclasses as well.
 	 */
 	virtual void incDimDualBasis();
+	
+    /**
+     * Increases the current dimension of only the dual lattice basis by 1
+     * while fixing the number of columns to 'c'. Note that dim + 1 <= c <= maxDim
+     * must hold. This implementation is meant to be overridden 
+	 * by subclasses as well.
+     */
+    virtual void incDimDualBasis (int64_t c);
 
 	/**
 	 * Computes and stores the logarithm of the normalization factors
@@ -178,7 +186,13 @@ public:
 	 * implemented in subclasses.
 	 */
 	virtual void buildDualBasis(int64_t dim);
-
+	
+    /**
+     * This virtual method builds only the dual basis in 'dim' dimensions while setting
+     * the number of columns to fixed a value 'c'. It must be implemented in subclasses.
+     */
+    virtual void buildDualBasis (int64_t d, int64_t c);
+    
 	/**
 	 * REMOVE: This depends on the lattice only via the density.
 	 * This method is used nowhere else inside lattice tester.
@@ -353,6 +367,14 @@ void IntLatticeExt<Int, Real>::incDimDualBasis() {
 }
 
 //===========================================================================
+
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::incDimDualBasis(int64_t c) {
+	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
+	c++;  // eliminates compiler warning
+}
+
+//===========================================================================
 /**
  template<typename Int, typename Real>
  void IntLatticeExt<Int, Real>::calcLgVolDual2 (double lgm2)
@@ -397,8 +419,19 @@ void IntLatticeExt<Int, Real>::buildBasis(int64_t d) {
 	d++;  // eliminates compiler warning
 }
 
+//===========================================================================
+
 template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d) {
+	// To be re-implemented in subclasses.
+	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
+	d++;  // eliminates compiler warning
+}
+
+//===========================================================================
+
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d, int64_t) {
 	// To be re-implemented in subclasses.
 	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
 	d++;  // eliminates compiler warning
