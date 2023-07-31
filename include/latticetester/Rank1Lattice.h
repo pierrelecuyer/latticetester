@@ -115,6 +115,14 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
          * This dual basis will be lower triangular.
          */
         void buildDualBasis (int64_t d);
+        
+        /**
+         * Builds only the basis in `d` dimensions for the given number of columns 'c'.
+         * Columns which are larger than 'd' are filled with zeros.
+         * Neither 'd` nor 'c' must exceed `this->maxDim()` and 'd' can be at most 'c'.
+         * This dual basis will be lower triangular.
+         */
+        void buildDualBasis (int64_t d, int64_t c);
 
         /**
          * Increases the current dimension by 1 and updates the basis.
@@ -128,6 +136,13 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
          * The dimension must be smaller than `maxDim` when calling this function.
          */
         void incDimDualBasis ();
+        
+        /**
+         * Increases the current dimension of only the m-dual lattice basis by 1
+         * while fixing the number of columns to 'c'. Note that dim + 1 <= c <= maxDim
+         * must hold. 
+         */
+        void incDimDualBasis (int64_t c);
 
       protected:
 
@@ -412,6 +427,17 @@ void Rank1Lattice<Int, Real>::incDimDualBasis () {
     temp.kill();
 }
 
+template<typename Int, typename Real>
+void Rank1Lattice<Int, Real>::incDimDualBasis (int64_t c) {
+	int64_t d = 1 + this->getDim();
+	this->setDim (d);
+	this->m_basis.SetDims(d, c);
+	this->m_dualbasis.SetDims(d, c);
+	this->m_dualbasis[d-1][d-1] = 1;
+	this->m_dualbasis[d-1][0] = -m_a[d-1];
+}
+
+
 //============================================================================
 
 // The basis is built directly, as explained in the guide of LatMRG.
@@ -510,6 +536,26 @@ void Rank1Lattice<Int, Real>::buildDualBasis (int64_t d) {
 //   for (int i = 0; i < this->m_k; i++) 
 //	   this->m_dualbasis[i][i] = this->m_modulo;
 }
+
+//============================================================================
+
+template<typename Int, typename Real>
+void Rank1Lattice<Int, Real>::buildDualBasis (int64_t d, int64_t c) {
+    assert(d <= this->m_maxDim);
+    assert(d <= c);
+    this->setDim (d);
+    this->m_basis.SetDims(d,c);
+    this->m_dualbasis.SetDims(d, c);
+    for (int i = 0; i < d; i++)
+    	this->m_dualbasis[i][0] = -m_a[i];
+    for (int i = d; i < c; i++)
+    	this->m_dualbasis[i][0] = 0;
+    for (int i = 0; i < d; i++) {
+    	if (i<1) this->m_dualbasis[i][i] = this->m_modulo;
+    	else this->m_dualbasis[i][i] = 1;
+    }  
+}
+
 
 //============================================================================
 
