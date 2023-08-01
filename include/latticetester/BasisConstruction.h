@@ -242,8 +242,10 @@ void BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 	long rank;
 	switch (prec) {
 	case DOUBLE:
-		rank = NTL::LLL_FP(gen, delta);
+		// rank = NTL::LLL_FP(gen, delta);
 	    // rank = LLL_FPZZtest(gen, delta);
+		double b[64];   // This is temporary!!!!
+	    rank = LLL_FPZZflex(gen, gen.NumRows(), gen.NumCols(), b, delta);
 		break;
 	case QUADRUPLE:
 		rank = NTL::LLL_QP(gen, delta);
@@ -275,8 +277,8 @@ void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m, dou
 	if (rank == dim)
 		return;  // We are done!
 
-	gen.SetDims(rank + dim, dim);
     // We now add the m e_i row vectors, and we redo the LLL.
+	gen.SetDims(rank + dim, dim);
     int64_t i, j;
     for (i=rank; i < rank+dim; i++) {
         for (j=0; j < dim; j++) {

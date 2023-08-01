@@ -663,7 +663,8 @@ static int64_t LLL64_FP (matrix64& B, double delta) {
    // int64_t T1;
    // RR_GS_time = 0;
    NumSwaps64 = 0;
-   if (delta < 0.50 || delta >= 1) LogicError("LLL64: bad delta");
+   if (delta < 0.50 || delta > 1) LogicError("LLL64: bad delta");
+   // cout << "LLL64_FP\n";
 
    init_red_fudge64();
 

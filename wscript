@@ -22,14 +22,15 @@ def options(ctx):
     ctx.add_option('--ntl', action='store', help='prefix under which NTL is installed')
     ctx.add_option('--gmp', action='store', help='prefix under which GMP is installed')
 
-
 def configure(ctx):
     build_platform = Utils.unversioned_sys_platform()
     ctx.msg("Build platform", build_platform)
 
+    cxxflags     = ['-O3']
+
     ctx.load('compiler_c compiler_cxx gnu_dirs waf_unit_test')
     ctx.check(features='cxx', cxxflags='-std=c++14')
-    ctx.env.append_unique('CXXFLAGS', ['-std=c++14', '-Wall'])
+    ctx.env.append_unique('CXXFLAGS', ['-std=c++14', '-O3', '-Wall'])
     ctx.check(features='c', cflags='-std=c99')
     ctx.env.append_unique('CFLAGS', ['-std=c99', '-Wall'])
     ctx.env.INCLUDES_TEST      = ['examples'] #/usr/include

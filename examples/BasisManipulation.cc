@@ -35,24 +35,46 @@
  * Example of results with m = 1048573 (prime modulus near 2^{20}):
  *
 Types: Int = NTL::ZZ, Real = double
-Timings for different methods, in microseconds:
+Timings for different methods, in basic clock units
  dim:          10       20       30       40       50
 
-UppTri         859      857     1439     2064     2776
-Tri96         1508     3404     4988     7003     9006
-LLL5            62      201      424      653     1001
-LLL8           212     1489     2977     4671     5342
-LLL9           115     1291     3088     4388     8208
-mDualUT        212     1022     2971     6173    10785
-mDualUT96      350     1554     4338     8112    14986
-mDual         1813     3444     8105    18546    29830
+LLL5          3053     6595    12300    20728    29432
+LLL8          3562    13129    23420    38350    55714
+LLL99999      4175    22895    47833    74681   108213
+UppTri         829     2585     3682     4819     6492
+Tri96         2016     7068    11316    15016    17853
+mDualUT        258     1074     3368     7607    13729
+mDualUT96      424     1342     3301     6734    11970
+mDual         7081    33344    91112   180249   312506
+Total time: 1.22782 seconds
 
-Total time: 0.212573 seconds
+With our LLL_FPZZtest:
+LLL5          2543     6599    11889    19372    28548
+LLL8          3370    12650    22586    36106    52300
+LLL99999      3696    20513    45761    68970    99438
 
+With our LLL_PFZZflex:
+LLL5          2359     6908    11512    20036    29576
+LLL8          3208    12281    22975    38997    53318
+LLL99999      3789    21911    44474    69750    98466
+
+
+Types: Int = int64_t, Real = double
+Timings for different methods, in basic clock units
+ dim:          10       20       30       40       50
+
+LLL5          1424     5465    10151    18259    27243
+LLL8          1678    11336    22571    41384    65910
+LLL99999      2064    20915    55015    96772   156141
+UppTri          92      319      520      746     1017
+Tri96          133      591     1006     1522     2015
+mDualUT         50      203      383      772     1303
+mDualUT96       87      481     1142     2820     4460
+Total time: 0.559324 seconds
 
 **/
 
-//#define TYPES_CODE  LD     // Int == int64_t
+// #define TYPES_CODE  LD     // Int == int64_t
 #define TYPES_CODE  ZD     // Int == ZZ
 
 #include <iostream>
@@ -90,13 +112,14 @@ const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
 const long dimensions[numSizes] = { 10, 20, 30, 40, 50 };
 //const long dimensions[numSizes] = {5};
 
-const long numRep = 10;  // Number of replications for each case.
+const long numRep = 50;  // Number of replications (multipliers) for each case.
 const long numMeth = 8;    // Number of methods, and their names.
-std::string names[numMeth] = { "UppTri   ", "Tri96    ", "LLL5     ",
-		"LLL8     ", "LLL99999 ", "mDualUT  ", "mDualUT96", "mDual    " };
+std::string names[numMeth] = { "LLL5     ",	"LLL8     ", "LLL99999 ",
+		 "UppTri   ", "Tri96    ", "mDualUT  ", "mDualUT96", "mDual    " };
+
 
 int main() {
-	// We use ctime for the timings, for implementation simplicity
+	// Here we use ctime directly for the timings, to minimize overhead.
 	clock_t totalTime = clock();  // Global timer for total time.
 	clock_t timer[numMeth][numSizes];
 	clock_t tmp;
@@ -109,59 +132,61 @@ int main() {
 	long d;
 	for (d = 0; d < numSizes; d++) {  // Each matrix size
 		long dim = dimensions[d]; // The corresponding dimension.
-		basis1.SetDims(dim, dim);
-		basis2.SetDims(dim, dim);
+		basis1.SetDims(dim, dim); // Will be initial triangular basis.
+		basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
 		basis3.SetDims(dim, dim);
-		basisdual.SetDims(dim, dim);
+		basisdual.SetDims(dim, dim);  // m-dual basis.
 		for (int64_t meth = 0; meth < numMeth; meth++)
 			timer[meth][d] = 0;
 		for (int64_t r = 0; r < numRep; r++) {
-			a = m / 5 + 10 * r;   // The multiplier we use for this rep.
+			a = (m / 5 + 10 * r) % m;   // The multiplier we use for this rep.
 			korlat = new Rank1Lattice<Int, Real> (m, a, dim);
 			korlat->buildBasis(dim);
 			copy(korlat->getBasis(), basis1); // This initial basis is triangular.
-			// We apply LLL to change basis1.
-			BasisConstruction<Int>::LLLConstruction0(basis1, 0.5);
-			copy(basis1, basis2);
 
-			tmp = clock();
-			BasisConstruction<Int>::upperTriangularBasis(basis2, basis3, m);
-			timer[0][d] += clock() - tmp;
-
-			copy(basis1, basis2);
-			// This one is in Util.h, it is the old method from 1996.
-			tmp = clock();
-			Triangularization(basis2, basis3, dim, dim, m);
-			timer[1][d] += clock() - tmp;
-			// This basis3 is upper triangular.
-
+			// We apply LLL to basis1 in basis2.
 			copy(basis1, basis2);
 			tmp = clock();
 			BasisConstruction<Int>::LLLConstruction0(basis2, 0.5);
-			timer[2][d] += clock() - tmp;
+			timer[0][d] += clock() - tmp;
 
+			copy(basis1, basis2);
 			tmp = clock();
 			BasisConstruction<Int>::LLLConstruction0(basis2, 0.8);
-			timer[3][d] += clock() - tmp;
+			timer[1][d] += clock() - tmp;
 
+			copy(basis1, basis2);
 			tmp = clock();
 			BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999);
-			timer[4][d] += clock() - tmp;
+			timer[2][d] += clock() - tmp;
 
-			copy(basis3, basis2);  // This one should be upper triangular.
+            // We now construct an upper-triangular basis from basis2.
+			// We copy basis2 into basis3, because it will be modified.
+			copy(basis2, basis3);
 			tmp = clock();
-			BasisConstruction<Int>::mDualUpperTriangular(basis2, basisdual, m);
+			BasisConstruction<Int>::upperTriangularBasis(basis3, basis1, m);
+			timer[3][d] += clock() - tmp;
+
+			// Again. This function is in Util.h, it is the old method from 1996.  ???
+			copy(basis2, basis3);
+			tmp = clock();
+			Triangularization(basis3, basis1, dim, dim, m);
+			timer[4][d] += clock() - tmp;
+			// This basis1 is upper triangular.
+
+            // Now we compute an m-dual basis with various methods.
+			tmp = clock();
+			BasisConstruction<Int>::mDualUpperTriangular(basis1, basisdual, m);
 			timer[5][d] += clock() - tmp;
 
-			copy(basis3, basis2);
 			tmp = clock();
-			BasisConstruction<Int>::mDualUpperTriangular96(basis2, basisdual, m);
+			BasisConstruction<Int>::mDualUpperTriangular96(basis1, basisdual, m);
 			timer[6][d] += clock() - tmp;
 
 #if TYPES_CODE  ==  ZD
 			// mDualBasis is currently implemented only for Int = ZZ.
 			tmp = clock();
-			BasisConstruction<Int>::mDualBasis(basis3, basisdual, m);
+			BasisConstruction<Int>::mDualBasis(basis2, basisdual, m);
 			timer[7][d] += clock() - tmp;
 #endif
 			delete korlat;
