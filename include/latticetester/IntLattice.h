@@ -194,6 +194,13 @@ public:
 	 * in the current basis.
 	 */
 	double getShortestLengthBasis();
+	
+
+	/*
+	 * This function yields the length of the shortest vector
+	 * in the current basis.
+	 */
+	double getShortestLengthDualBasis();
 
 	/**
 	 * Returns the dimension of the lattice, which is the dimension of the basis vectors,
@@ -347,6 +354,14 @@ public:
 	 * component to the last by recomputing them.
 	 * */
 	void updateDualVecNorm(const int64_t &d);
+
+	/**
+	 * Updates the array containing the m-dual basis vectors norms from the `d`-th
+	 * component to the last by recomputing them. Only the first c components are
+	 * used for calculating the norm
+	 * */
+	void updateDualVecNorm(const int64_t &d, const int64_t & c);
+	
 
 	/**
 	 * Updates the `i`-th value of the array containing the square norms of the
@@ -728,8 +743,23 @@ double IntLattice<Int, Real>::getShortestLengthBasis() {
    this->updateVecNorm(0);
    temp = this->getVecNorm(0);
    for (int i = 1; i < this->getBasis().NumRows(); i++) {
-	  this->updateVecNorm(i);
-      if (this->getVecNorm(i) < temp) temp = this->getVecNorm(i);
+      if (this->getVecNorm(i) < temp) { temp = this->getVecNorm(i);}
+   }
+   NTL::conv(out,temp);
+   if (this->getNormType()==L2NORM) out = sqrt(out);
+   return out;
+}
+
+//=========================================================================
+
+template<typename Int, typename Real> 
+double IntLattice<Int, Real>::getShortestLengthDualBasis() {
+   double out;
+   Real temp;
+   this->updateVecNorm(0);
+   temp = this->getDualVecNorm(0);
+   for (int i = 1; i < this->getDualBasis().NumRows(); i++) {
+      if (this->getDualVecNorm(i) < temp) { temp = this->getDualVecNorm(i);}
    }
    NTL::conv(out,temp);
    if (this->getNormType()==L2NORM) out = sqrt(out);
@@ -798,6 +828,20 @@ void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d) {
 			CalcNorm<IntVec, Real>(row, this->m_dim, this->m_dualvecNorm[i],
 					this->m_norm);
 		}
+	}
+}
+
+/*=========================================================================*/
+
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d, const int64_t &c) {
+	assert(d >= 0);
+	Int C;
+	assert(this->m_withDual);
+	for (int64_t i = 0; i < d+1; i++) {
+		C = 0;
+		NTL::matrix_row<IntMat> row(this->m_dualbasis, i);
+		ProdScal<Int>(row, row, c, this->m_dualvecNorm[i]);
 	}
 }
 
@@ -928,7 +972,7 @@ void IntLattice<Int, Real>::sort(int64_t d)
 					<< ",  dim = " << dim << std::endl;
 		}
 	}
-	// This is a rather inefficient sort, in O(d^2) operations!
+	// This is a rather inefficient sort, in O(d^2) operations! 
 	for (int64_t i = d; i < dim; i++) {
 		int64_t k = i;
 		for (int64_t j = i + 1; j < dim; j++) {
@@ -957,7 +1001,7 @@ void IntLattice<Int, Real>::sortNoDual(int64_t d)
 					<< ",  dim = " << dim << std::endl;
 		}
 	}
-	// This sort takes O(d^2) operations!
+	// This sort takes O(d^2) operations! 
 	for (int64_t i = d; i < dim; i++) {
 		int64_t k = i;
 		for (int64_t j = i + 1; j < dim; j++) {

@@ -106,6 +106,13 @@ public:
     * That is, we just update the m-dual basis, then apply LLL or BKZ to it, then BB
     */
     double computeMeritMSucc_MethodE (IntLatticeExt<Int, Real> & lat);
+    /*
+    * This function calculates the Figure of Merit M using method F:
+    * Here, the number of colums is kept constant and the first vector inside the LLL
+    * basis instead of trying to find the shortest of the LLL basis vectors.
+    */
+    double computeMeritMSucc_MethodF (IntLatticeExt<Int, Real> & lat);
+    
     
 };
 
@@ -247,6 +254,48 @@ double FoMCalc<Int>::computeMeritMSucc_MethodE(IntLatticeExt<Int, Real> & lat) {
 
 //=========================================================================
 	
+template<typename Int>
+double FoMCalc<Int>::computeMeritMSucc_MethodF(IntLatticeExt<Int, Real> & lat) {
+   double merit = 0;
+   double minmerit = 1.0;
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
+   int64_t max_dim = lat.getDim();
+    
+   lat.buildDualBasis(lower_dim+1, max_dim);
+   
+
+	   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+	       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);  
+	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+	       this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);  
+	    } else if (this->m_reductionMethod == PAIRBB) {
+	       this->m_red->redDieter(0);
+	    }
+   	   lat.updateDualVecNorm(0,lower_dim+1);
+   	NTL::conv(merit, sqrt(lat.getDualVecNorm(0)) / this->m_norma->getBound(lower_dim+1));
+   if (merit == 0) return merit;
+   for (int64_t j = lower_dim+2; j < this->m_t[0] + 1; j++)
+   {
+	   lat.incDimDualBasis(max_dim);
+
+	   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+	       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);
+	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+	       this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);  
+	    } else if (this->m_reductionMethod == PAIRBB) {
+	       this->m_red->redDieter(0);
+	    }
+   	   lat.updateDualVecNorm(0,j);
+	   NTL::conv(merit, sqrt(lat.getDualVecNorm(0)) / this->m_norma->getBound(j));
+
+       if (merit < minmerit) minmerit = merit;
+       if (minmerit <= this->m_lowbound || minmerit > this->m_highbound) return 0;
+   }   
+   return minmerit; 
+}
+
+//=========================================================================
+
 template class FoMCalc<NTL::ZZ>;
 //template class FiguresOfMerit<std::int64_t>;
 
