@@ -58,7 +58,7 @@ namespace LatticeTester {
  *
  * Some of the lattice reduction methods are wrappers of the NTL methods described at
  * https://libntl.org/doc/LLL.cpp.html .
- * The methods are actually more efficient when `Int` is the `NTL::ZZ` type than the `int64_t` type.
+ * The methods are sometimes more efficient when `Int` is the `NTL::ZZ` type than the `int64_t` type.
  * For LLL, we have both an old and slow implementation in `redLLLOld` and the more efficient
  * implementations from NTL in `redLLLNTL` and `redLLLNTLExact`.
  * The method `redBKZ` is also a wrapper for the NTL algorithm for BKZ reduction.
@@ -70,6 +70,12 @@ namespace LatticeTester {
  * to the internal `IntLattice` object of this `Reducer`, and use no other internal variable.
  * All these methods always reduce the full basis contained in the `IntLattice` object
  * (they use the dimension of the `IntMat` object that contains the basis).
+ * They assume that `basis` is a square matrix that contains a set of independent vectors.
+ *
+ * There is also a version of `redLLLNTL` that applies LLL only to the submatrix
+ * that contains the first `dim` rows and columns of the given `basis` matrix.
+ * This is convenient if one wants to apply LLL to several projections without
+ * having to create a new `basis` object (or resize it) for each projection.
  *
  * The `shortestVector` and `reductMinkowski` methods do not apply any pre-reduction by themselves
  * Before calling them, one should always reduce the basis separately beforehand

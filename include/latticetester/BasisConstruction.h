@@ -281,6 +281,8 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 	default:
 		std::cerr << "LLLConstruction0: unknown precision type.\n";
 	}
+	// NTL puts the zero rows at the top of the matrix `gen`.
+	// Here we move the nonzero vectors to the top (first `rank` rows).
 	long num = gen.NumRows();
 	for (long i = 0; i < rank; i++) {
 		NTL::swap(gen[i], gen[num - rank + i]);
@@ -302,6 +304,7 @@ template<>
 long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 		long r, long c, double *b, double delta) {
 	long rank = NTL::LLL_FPZZflex (gen, r, c, b, delta);
+	// This function returns the nonzero basis vectors in the first positions.
 	gen.SetDims(rank, gen.NumCols());
 	return rank;
 }

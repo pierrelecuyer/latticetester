@@ -2,7 +2,7 @@
 // This file is part of LatticeTester, although most of it is just a modified
 // version of the `LLL_FP` module of NTL available at https://libntl.org/.
 // It was modified because we wanted extra flexibility in the functions to improve
-// the performance of our tools.
+// the performance of our tools that use these functions.
 
 #ifndef NTL_LLL_FPZZflex__H
 #define NTL_LLL_FPZZflex__H
@@ -29,6 +29,8 @@
  * but it is hidden in the implementation and not accessible from outside.
  *
  * Each function returns the dimension of the computed basis (number of independent rows).
+ * This basis is always returned in the upper-left corner of the matrix `B`.
+ * This differs from the `LLL_FP` functions, which returns the zero vectors at the top.
  */
 
 
@@ -637,6 +639,7 @@ static void RR_GS(mat_ZZ& B, double **B1, double **mu,
 
    // long n = B.NumCols();
 
+   // Here we reserve space for large matrices !!!
    rr_B1.SetDims(k, n);
    rr_mu.SetDims(k, m_orig);
    rr_b.SetLength(k);
@@ -701,6 +704,7 @@ void ComputeGS(const mat_ZZ& B, mat_RR& mu, vec_RR& c, long k, long n)
    mat_RR B1;
    vec_RR b;
 
+   // We reserve space for temporary RR matrices !!!
    B1.SetDims(k, n);
    mu.SetDims(k, k);
    b.SetLength(k);
@@ -1053,8 +1057,6 @@ long ll_LLL_FP(mat_ZZ& B, mat_ZZ* U, double delta, long deep,
       } // end deep insertions
 
       // test LLL reduction condition
-      // std::cout << "Test reduction condition  \n";
-
       if (k > 1 && delta*c[k-1] > c[k] + mu[k][k-1]*mu[k][k-1]*c[k-1]) {
          // swap rows k, k-1
          swap(B(k), B(k-1));
@@ -1070,11 +1072,9 @@ long ll_LLL_FP(mat_ZZ& B, mat_ZZ* U, double delta, long deep,
          // cout << "-\n";
       }
       else {
-
          k++;
          // cout << "+\n";
       }
-
    }
    if (verbose) {
       LLLStatus(m+1, GetTime(), m, n, B);
@@ -1102,7 +1102,6 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *b,
    B1_store.SetDimsFrom1(m+1, n+1);
    double **B1 = B1_store.get();  // approximates B
 
-
    Unique2DArray<double> mu_store;
    mu_store.SetDimsFrom1(m+1, m+1);
    double **mu = mu_store.get();
@@ -1129,6 +1128,8 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *b,
    new_m = ll_LLL_FP(B, U, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
    for (i = 0; i < new_m; i++)
       b[i] = b[i+1];
+   // In this version, we leave the zero rows at the bottom.
+   // The new_m independent basis vectors will be at the top of `B`.
    /*
    dep = m - new_m;   // Number of dependent rows.
    m = new_m;
@@ -1180,7 +1181,8 @@ long LLL_FPZZflex(mat_ZZ& B,
 
 
 /*
-
+// This is the original version from NTL.
+//
 static
 long LLL_FPZZtest(mat_ZZ& B, mat_ZZ* U, double delta, long deep,
            LLLCheckFct check)
@@ -1254,7 +1256,6 @@ long LLL_FPZZtest(mat_ZZ& B, mat_ZZ& U, double delta, long deep,
       StartTime = GetTime();
       LastTime = StartTime;
    }
-
    if (delta < 0.50 || delta >= 1) LogicError("LLL_FP: bad delta");
    if (deep < 0) LogicError("LLL_FP: bad deep");
    return LLL_FPZZtest(B, U, delta, deep, check);
@@ -1381,7 +1382,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *b, double delt
 
    init_red_fudge();
 
-   mat_ZZ B;    // Will be a deep copy of BB, with one more row.
+   mat_ZZ B;    // Will be a deep copy of BB, with one more row.   ********
    B = BB;
    B.SetDims(m+1, n);   // Here we are reserving new space. Need this ???
                         // Does this change the dimensions of BB in the end ???
@@ -1738,10 +1739,10 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *b, double delt
                 NumNoOps, m, n, B);
    }
 
-   // clean up
+   // In this version, we do not move the zero vectors to the top.
+   /*
    if (m_orig > m) {
       // for consistency, we move zero vectors to the front
-
       for (i = m+1; i <= m_orig; i++) {
          swap(B(i), B(i+1));
          if (U) swap((*U)(i), (*U)(i+1));
@@ -1751,6 +1752,8 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *b, double delt
          if (U) swap((*U)(m_orig-i), (*U)(m-i));
       }
    }
+   */
+
    B.SetDims(m_orig, n);
    BB = B;      // Are we changing the dimensions of BB in the end ??????
 
