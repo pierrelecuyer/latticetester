@@ -246,6 +246,17 @@ public:
 			PrecisionType precision = DOUBLE);
 	
 	/**
+	 * In this version, the reduction is applied only to the square submatrix comprised of
+	 * the first `dim` rows and `dim` columns of the `basis` matrix, which is actually
+	 * considered as the basis. The other rows and columns are ignored.
+	 * This is useful if one wants to reuse the same `basis` object several times
+	 * to pass lattice bases having different dimensions.
+	 * Here, the precision type is always `DOUBLE`.
+	 */
+	static void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, long dim,
+			double delta = 0.999999);
+
+	/**
 	 * This implements an exact algorithm from NTL to perform the original LLL reduction.
 	 * This is slower than `redLLLNTL`, but more accurate.
 	 * There is also a static version which takes the basis as input.
@@ -1150,6 +1161,13 @@ void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
 			}
 	}
 
+template<>
+void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, long dim,
+		        double delta) {
+	 LLL_FPZZflex (basis, dim, dim, delta);
+}
+
+
 //=========================================================================
 
 // This one is for the case where Int != ZZ.
@@ -1744,7 +1762,7 @@ bool Reducer<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm) {
 	/* Compute an interval that contains the admissible values of zj. */
 	/* This computation is for the L2 norm, but also works for the L1 norm. */
 	/* 1. Compute the center of the interval.  */
-	center = 0.0;
+	center = 0.0;   dc = 0.0;
 	if (m_decomp == CHOLESKY) {
 	   for (k = j+1; k < dim; ++k)
 		  center -= m_c0[j][k] * m_zLR[k];

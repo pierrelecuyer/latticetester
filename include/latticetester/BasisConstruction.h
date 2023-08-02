@@ -104,25 +104,47 @@ public:
 	/**
 	 * This function takes a set of generating vectors of a lattice in matrix `gen` and
 	 * finds a lattice basis by applying LLL reduction with the given value of `delta`,
-	 * using the NTL implementation specified by `prec`. It returns this basis in `gen`.
+	 * using the NTL implementation specified by `prec`.
+	 * It returns this basis in `gen`, which is resized to a number of rows equal to its rank.
 	 * See the class `EnumTypes` and the documentation of LLL in NTL for the meaning and
-	 * choices for `prec`.
-	 * This function is implemented only for the `NTL::ZZ` type, because it uses NTL.
-	 * It *does not* assume that all vectors \f$m e_i\f$ belong to the lattice, so
+	 * choices for `prec`. The default value of delta is not very close to 1 because the
+	 * goal here is just to compute a basis. It can be taken much closer to 1 if we
+	 * really prefer a highly-reduced basis.
+	 * This function *does not* assume that all vectors \f$m e_i\f$ belong to the lattice, so
 	 * it may return a basis matrix that has fewer rows than columns!
 	 * To make sure that these vectors belong to the lattice, we can add them
 	 * explicitly beforehand to the set of generating vectors, or call the next method.
+	 * The function returns the dimension of the computed basis (number of rows).
 	 */
-	static void LLLConstruction0(IntMat &gen, double delta = 0.999999,
+	static long LLLConstruction0(IntMat &gen, double delta = 0.9,
 			PrecisionType precision = DOUBLE);
 
-   /**
-    * Similar to `LLLConstruction`, except that in case the set of generating
-    * vectors do not generate a full-dimensional lattice, it adds the vectors
-    * \f$m e_i\f$ to the generating set, so it always returns a square matrix.
-    */
-	static void LLLBasisConstruction(IntMat &gen, const Int &m, double delta = 0.999999,
+	/**
+	 * In this version, one can pass the number `r` of rows and number `c` of columns
+	 * of the matrix `gen` that are actually used, and the square lengths of the basis
+	 * vectors are returned in the array `b`, exactly as in the `LLL_FPZZflex.h` module.
+	 * If `b` is not needed, one can just pass 0 in place of `*b`.
+	 * This function is implemented only for `Int==ZZ` and `Real==double`.
+	 * The function returns the dimension of the newly computed basis, which may differ
+	 * from the number of rows of `gen`.
+	 */
+	static long LLLConstruction0(IntMat &gen, long r, long c, double *b,
+			double delta = 0.9);
+
+    /**
+     * Similar to `LLLConstruction`, except that in case the set of generating
+     * vectors do not generate a full-dimensional lattice, it adds the vectors
+     * \f$m e_i\f$ to the generating set, so it always returns a square matrix.
+	 * The function returns the dimension of the computed basis.
+	 */
+	static void LLLBasisConstruction(IntMat &gen, const Int &m, double delta = 0.9,
 			PrecisionType precision = DOUBLE);
+
+	/**
+	 * In this version, one can specify `r`, `c`, and `b` as for `LLLConstruction0` above.
+	 */
+	static void LLLBasisConstruction(IntMat &gen, const Int &m, long r, long c,
+			double *b, double delta = 0.9);
 
 	/**
 	 * Takes a set of generating vectors in the matrix `gen` and iteratively
@@ -214,18 +236,19 @@ public:
 // Implementation
 
 template<typename Int>
-void BasisConstruction<Int>::LLLConstruction0(IntMat &gen, double delta,
+long BasisConstruction<Int>::LLLConstruction0(IntMat &gen, double delta,
 		PrecisionType prec) {
 	std::cerr << "LLLConstruction0 works only for int64_t or NTL::ZZ integers.\n";
 	std::cerr << "Aborting.\n";
 	exit(1);
+	return 0;
 }
 
 template<>
-void BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
+long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
 		double delta, PrecisionType prec) {
-	long num = gen.NumRows();
-	int64_t rank=num;
+	long num = gen.NumRows();   // Number of generating vectors.
+	int64_t rank = 0;
 	if (prec == DOUBLE)
 		rank = LLL64_FP (gen, delta);
 	else
@@ -234,18 +257,17 @@ void BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
 		NTL::swap(gen[i], gen[num - rank + i]);
 	}
 	gen.SetDims(rank, gen.NumCols());
+	return rank;
 }
 
 template<>
-void BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
+long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 		double delta, PrecisionType prec) {
-	long rank;
+	long rank = 0;
 	switch (prec) {
 	case DOUBLE:
-		// rank = NTL::LLL_FP(gen, delta);
-	    // rank = LLL_FPZZtest(gen, delta);
-		double b[64];   // This is temporary!!!!
-	    rank = LLL_FPZZflex(gen, gen.NumRows(), gen.NumCols(), b, delta);
+		rank = NTL::LLL_FP(gen, delta);
+	    // rank = LLL_FPZZflex(gen, gen.NumRows(), gen.NumCols(), 0, delta);
 		break;
 	case QUADRUPLE:
 		rank = NTL::LLL_QP(gen, delta);
@@ -264,15 +286,34 @@ void BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 		NTL::swap(gen[i], gen[num - rank + i]);
 	}
 	gen.SetDims(rank, gen.NumCols());
+	return rank;
 }
+
+template<typename Int>
+long BasisConstruction<Int>::LLLConstruction0(IntMat &gen,
+		long r, long c, double *b, double delta) {
+	std::cerr << "LLLConstruction0 with r, c, b, works only for ZZ integers.\n";
+	std::cerr << "Aborting.\n";
+	exit(1);
+	return 0;
+}
+
+template<>
+long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
+		long r, long c, double *b, double delta) {
+	long rank = NTL::LLL_FPZZflex (gen, r, c, b, delta);
+	gen.SetDims(rank, gen.NumCols());
+	return rank;
+}
+
 
 //============================================================================
 
 template<typename Int>
 void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m, double delta,
 		PrecisionType prec) {
-	LLLConstruction0 (gen, delta, prec);
-	int64_t rank = gen.NumRows();
+	int64_t rank = LLLConstruction0 (gen, delta, prec);
+	// int64_t rank = gen.NumRows();
 	int64_t dim = gen.NumCols();
 	if (rank == dim)
 		return;  // We are done!
@@ -285,7 +326,28 @@ void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m, dou
         	if (i==j) gen[i][j] = m; else gen[i][j] = 0;
         }
     }
-	LLLConstruction0 (gen, delta, prec);
+	rank = LLLConstruction0 (gen, delta, prec);
+	std::cout << "LLLBasisConstruction: we had to add some rows!\n";
+}
+
+//============================================================================
+
+template<typename Int>
+void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m,
+		long r, long c, double *b, double delta) {
+	int64_t rank = LLLConstruction0 (gen, r, c, b, delta);
+	if (rank == c)
+		return;  // We are done!
+
+    // We now add the m e_i row vectors, and we redo the LLL with that.
+	// No change in the dimensions of gen.
+    int64_t i, j;
+    for (i=rank; i < rank+c; i++) {
+        for (j=0; j < c; j++) {
+        	if (i==j) gen[i][j] = m; else gen[i][j] = 0;
+        }
+    }
+	rank = LLLConstruction0 (gen, rank+c, c, b, delta);
 	std::cout << "LLLBasisConstruction: we had to add some rows!\n";
 }
 
@@ -294,7 +356,7 @@ void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m, dou
 template<typename Int>
 void BasisConstruction<Int>::upperTriangularBasis
          (IntMat &gen, IntMat &basis, const Int &m) {
-	IntVec coeff_gcd, coeff_xi, xi;  // Here we create new vectors!
+	IntVec coeff_gcd, coeff_xi, xi;  // Here we create new vectors!!!
 	Int gcd, gcd_tower, C, D;
 	long dim1 = gen.NumRows();
 	long dim2 = gen.NumCols();
@@ -304,7 +366,7 @@ void BasisConstruction<Int>::upperTriangularBasis
 	coeff_gcd.SetLength(dim1);
 	coeff_xi.SetLength(dim1);
 	xi.SetLength(dim2);
-    basis.SetDims(dim2, dim2);
+    basis.SetDims(dim2, dim2);  // New space for the basis !!!!
 	for (i = 0; i < dim2; i++) {
 		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
 		// xi.clear();   // This call causes a segmentation fault in the int64_t case!
@@ -409,7 +471,7 @@ void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
 	coeff_gcd.SetLength(dim1);
 	coeff_xi.SetLength(dim1);
 	xi.SetLength(dim2);
-    basis.SetDims(dim2, dim2);
+    basis.SetDims(dim2, dim2);   // New space for the basis !!!!
     
 	for (i = dim2-1; i > -1; i--) {
 		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
@@ -515,7 +577,7 @@ void BasisConstruction<Int>::mDualUpperTriangular96(IntMat &basis,
 		std::cout << ":mDualUpperTriangular96: basis matrix must be square.\n";
 		return;
 	}
-	basisDual.SetDims(dim, dim);
+	basisDual.SetDims(dim, dim);   // Resizing the dual matrix.  *******
 	Int mm = m;            // Local copy of m that can be changed.
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
@@ -554,7 +616,7 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96( NTL::matrix<NTL::ZZ>  &
 	NTL::ZZ mm = m;            // Local copy of m that can be changed.
 	int64_t dim;
 	dim = basis.NumRows();
-	basisDual.SetDims(dim, dim);
+	basisDual.SetDims(dim, dim);  // Resizing the dual matrix.  ********
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
 			NTL::clear(basisDual[i][j]);
@@ -598,7 +660,7 @@ template<typename Int>
 void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 		const Int &m) {
 	int64_t dim = A.NumRows();
-	B.SetDims(dim, dim);
+	B.SetDims(dim, dim);    // Resizing the dual matrix !  ***********
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
 			NTL::clear(B[i][j]);
@@ -653,7 +715,7 @@ void BasisConstruction<Int>::projectMatrix (const IntMat &in,
     int inDim = in.NumCols();
     uint64_t lat_dim = in.NumCols();   
 	std::size_t projSize = proj.size();
-	out.SetDims(in.NumRows(), projSize);   // here we resize the matrix each time!
+	out.SetDims(in.NumRows(), projSize);   // Here we resize the whole matrix each time!  ********
 	auto it = proj.cbegin();
 	for (std::size_t i = 0; i < projSize; i++) {
 	    if (*it <= lat_dim) {
@@ -676,7 +738,7 @@ void BasisConstruction<Int>::projectMatrix (const IntMat &in,
     int inDim = in.NumCols();
     uint64_t lat_dim = in.NumCols();   
 	std::size_t projSize = proj.size();
-	out.SetDims(in.NumRows(), projSize);   // here we resize the matrix each time!
+	out.SetDims(in.NumRows(), projSize);   // Here we resize the matrix each time!   *********
 	auto it = proj.cbegin();
 	for (std::size_t i = 0; i < projSize; i++) {
 	    if (*it <= lat_dim) {

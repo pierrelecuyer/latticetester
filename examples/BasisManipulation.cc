@@ -48,12 +48,7 @@ mDualUT96      424     1342     3301     6734    11970
 mDual         7081    33344    91112   180249   312506
 Total time: 1.22782 seconds
 
-With our LLL_FPZZtest:
-LLL5          2543     6599    11889    19372    28548
-LLL8          3370    12650    22586    36106    52300
-LLL99999      3696    20513    45761    68970    99438
-
-With our LLL_PFZZflex:
+With our LLL_PFZZflex, with -O3 we are no longer slower:
 LLL5          2359     6908    11512    20036    29576
 LLL8          3208    12281    22975    38997    53318
 LLL99999      3789    21911    44474    69750    98466
