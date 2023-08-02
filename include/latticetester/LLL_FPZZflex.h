@@ -98,8 +98,7 @@ static double InnerProduct(double *a, double *b, long n)
 {
    double s;
    long i;
-
-   s = 0;
+   s = 0.0;
    for (i = 1; i <= n; i++) 
       s += a[i]*b[i];
    return s;
@@ -1085,7 +1084,7 @@ long ll_LLL_FP(mat_ZZ& B, mat_ZZ* U, double delta, long deep,
 
 
 static
-long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *b,
+long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *sqlen,
 		double delta, long deep, LLLCheckFct check)
 {
    long i, j;
@@ -1112,7 +1111,7 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *b,
 
    UniqueArray<double> b_store;
    b_store.SetLength(m+1);
-   b = b_store.get(); // squared lengths of basis vectors
+   double *b = b_store.get(); // squared lengths of basis vectors
 
    for (i = 1; i <=m; i++)
       for (j = 1; j <= n; j++) {
@@ -1127,7 +1126,7 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *b,
 
    new_m = ll_LLL_FP(B, U, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
    for (i = 0; i < new_m; i++)
-      b[i] = b[i+1];
+      sqlen[i] = b[i+1];
    // In this version, we leave the zero rows at the bottom.
    // The new_m independent basis vectors will be at the top of `B`.
    /*
@@ -1146,7 +1145,7 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *b,
 
 
 static
-long LLL_FPZZflex(mat_ZZ& B, long m, long n, double *b,
+long LLL_FPZZflex(mat_ZZ& B, long m, long n, double *sqlen,
 		double delta, long deep, LLLCheckFct check, long verb)
 {
    verbose = verb;
@@ -1158,7 +1157,7 @@ long LLL_FPZZflex(mat_ZZ& B, long m, long n, double *b,
    }
    if (delta < 0.50 || delta >= 1) LogicError("LLL_FP: bad delta");
    if (deep < 0) LogicError("LLL_FP: bad deep");
-   return LLL_FPZZflex(B, 0, n, m, b, delta, deep, check);
+   return LLL_FPZZflex(B, 0, n, m, sqlen, delta, deep, check);
 }
 
 
