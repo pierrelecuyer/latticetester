@@ -126,7 +126,7 @@ public:
 	 * If `b` is not needed, one can just pass 0 in place of `*b`.
 	 * This function is implemented only for `Int==ZZ` and `Real==double`.
 	 * The function returns the dimension of the newly computed basis, which may differ
-	 * from the number of rows of `gen`.
+	 * from the number of rows of the `gen` object.  The latter is not resized.
 	 */
 	static long LLLConstruction0(IntMat &gen, long r, long c, double *b,
 			double delta = 0.9);
@@ -294,7 +294,7 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 template<typename Int>
 long BasisConstruction<Int>::LLLConstruction0(IntMat &gen,
 		long r, long c, double *b, double delta) {
-	std::cerr << "LLLConstruction0 with r, c, b, works only for ZZ integers.\n";
+	std::cerr << "LLLConstruction0 with r, c, b, works only for ZZ integers for now.\n";
 	std::cerr << "Aborting.\n";
 	exit(1);
 	return 0;
@@ -305,7 +305,7 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 		long r, long c, double *b, double delta) {
 	long rank = NTL::LLL_FPZZflex (gen, r, c, b, delta);
 	// This function returns the nonzero basis vectors in the first positions.
-	gen.SetDims(rank, gen.NumCols());
+	// gen.SetDims(rank, gen.NumCols());
 	return rank;
 }
 
@@ -665,9 +665,12 @@ void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 	int64_t dim = A.NumRows();
 	B.SetDims(dim, dim);    // Resizing the dual matrix !  ***********
 	for (int64_t i = 0; i < dim; i++) {
+		// Put zeros under the diagonal.
 		for (int64_t j = i + 1; j < dim; j++)
 			NTL::clear(B[i][j]);
+		// Set diagonal elements.
 		NTL::div(B[i][i], m, A[i][i]);
+		// Compute the other ones.
 		for (int64_t j = i - 1; j >= 0; j--) {
 			NTL::clear(B[i][j]);
 			for (int64_t k = j + 1; k <= i; k++)
@@ -697,12 +700,12 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(
 		std::cerr << "mDualBasis: the given basis matrix must be square.\n";
 		exit(1);
 	}
-	inv(d, basisDual, basis);
+	inv (d, basisDual, basis);
 	NTL::matrix<NTL::ZZ> C = basisDual;
 	div(fac, d, m);
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = 0; j < dim; j++) {
-			div(basisDual[j][i], C[i][j], fac);
+			div (basisDual[j][i], C[i][j], fac);
 		}
 	}
 }

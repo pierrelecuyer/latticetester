@@ -1125,8 +1125,10 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *sqlen,
    }
 
    new_m = ll_LLL_FP(B, U, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
-   for (i = 0; i < new_m; i++)
-      sqlen[i] = b[i+1];
+
+   if (sqlen)
+	   for (i = 0; i < new_m; i++)
+           sqlen[i] = b[i+1];
    // In this version, we leave the zero rows at the bottom.
    // The new_m independent basis vectors will be at the top of `B`.
    /*
@@ -1366,7 +1368,7 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
 
 
 static
-long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *b, double delta,
+long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *sqlen, double delta,
          long beta, long prune, LLLCheckFct check)
 {
    // long m = BB.NumRows();
@@ -1401,7 +1403,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *b, double delt
 
    UniqueArray<double> b_store;
    b_store.SetLength(m+2);
-   b = b_store.get(); // squared lengths of basis vectors
+   double *b = b_store.get(); // squared lengths of basis vectors
 
    double cbar;
 
@@ -1760,13 +1762,14 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *b, double delt
       U->SetDims(m_orig, m_orig);
       *UU = *U;
    }
-   for (i = 0; i < m; i++)
-      b[i] = b[i+1];
+   if (sqlen)
+	  for (i = 0; i < m; i++)
+          sqlen[i] = b[i+1];
    return m;
 }
 
 
-long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ& UU, long m, long n, double *b, double delta,
+long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ& UU, long m, long n, double *sqlen, double delta,
          long beta, long prune, LLLCheckFct check, long verb)
 {
    verbose = verb;
@@ -1778,14 +1781,14 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ& UU, long m, long n, double *b, double delt
    }
    if (delta < 0.50 || delta >= 1) LogicError("BKZ_FPZZ: bad delta");
    if (beta < 2) LogicError("BKZ_FPZZ: bad block size");
-   return BKZ_FPZZflex(BB, &UU, m, n, b, delta, beta, prune, check);
+   return BKZ_FPZZflex(BB, &UU, m, n, sqlen, delta, beta, prune, check);
 }
 
 
-long BKZ_FPZZflex(mat_ZZ& BB, long m, long n, double *b, double delta,
+long BKZ_FPZZflex(mat_ZZ& BB, long m, long n, double *sqlen, double delta,
          long beta, long prune, LLLCheckFct check, long verb)
 {
-   return BKZ_FPZZflex(BB, 0, m, n, b, delta, beta, prune, check);
+   return BKZ_FPZZflex(BB, 0, m, n, sqlen, delta, beta, prune, check);
 }
 
 

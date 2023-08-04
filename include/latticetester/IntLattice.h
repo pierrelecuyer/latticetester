@@ -44,8 +44,8 @@ namespace LatticeTester {
  * Euclidean norm.
  * Methods and attributes are offered to compute and store the norms of the basis and dual basis vectors,
  * to permute basis vectors, sort them by length and do the corresponding changes in the dual, etc.
- * An `IntLattice` object contains several protected variables to store all these quantities.
- * For better efficiency, we should avoid creating too many of these objects, for example when
+ * An `IntLattice` object contains protected variables to store all these quantities.
+ * For better efficiency, we should avoid creating many of these objects, for example when
  * making searches for good lattices.
  *
  * Often, we want to assess the quality of projections of the lattice over subsets of coordinates.
@@ -76,6 +76,8 @@ public:
 	 * with the specified norm type, and the scaling factor `m`.
 	 * The parameter `withDual` indicates if the m-dual basis is maintained (or not)
 	 * and updated when changes are made to the primal basis.
+	 *
+	 *   dim should be maxDim instead !!!!
 	 */
 	IntLattice(const Int m, const int64_t dim, bool withDual = false, NormType norm = L2NORM);
 
@@ -151,9 +153,10 @@ public:
 	}
 	
 	/**
-	 * Update the basis and sets it to 'IntMat'
+	 * Changes the basis to 'basis', the modulus to `m`, and the current dimension to `dim`.
 	 */
-	void setBasis(const IntMat basis, const Int m, const int64_t dim, bool withDual = false, NormType norm = L2NORM) {
+	void setBasis(const IntMat basis, const Int m, const int64_t dim,
+			bool withDual = false, NormType norm = L2NORM) {
 	   this->m_modulo=m;
 	   this->m_dim=dim;
 	   this->m_withDual=withDual;
@@ -203,7 +206,7 @@ public:
 	double getShortestLengthDualBasis();
 
 	/**
-	 * Returns the dimension of the lattice, which is the dimension of the basis vectors,
+	 * Returns the current dimension of the lattice, which is the dimension of the basis vectors,
 	 * and also usually the number of independent vectors in the basis.
 	 */
 	int64_t getDim() const {
@@ -304,7 +307,8 @@ public:
 	}
 
 	/**
-	 * Sets all the values in the array containing the norms of the basis vectors to -1.
+	 * Sets to -1 the first d values in the array containing the norms of the basis vectors,
+	 * where d is the current dimension of the lattice.
 	 * This means that these norms are no longer up to date.
 	 */
 	void setNegativeNorm();
@@ -456,25 +460,26 @@ protected:
 	Int m_modulo;
 
 	/**
-	 * The maximal dimension for this lattice.
+	 * The maximal dimension for this lattice.  It should correspond to the size of the `IntMat`
+	 * object reserved for the basis or its m-dual.
 	 */
 	int64_t m_maxDim;
 
 	/**
-	 * The dimension of the lattice, which is the number of (independent) vectors
+	 * The current dimension of the lattice, which is the number of (independent) vectors
 	 * in the basis. It cannot exceed the number of coordinates in those vectors.
 	 * It also cannot exceed m_maxDim.
 	 */
 	int64_t m_dim;
 
 	/**
-	 * The rows of this matrix are the primal basis vectors.
+	 * The rows of the m_dim x m_dim upper left corner of this matrix are the primal basis vectors.
 	 */
 	IntMat m_basis;
 
 	/**
-	 * The rows of this matrix are the m-dual basis vectors.  May not be initialized.
-	 * When m_withDual = true, it must be initialized.
+	 * The rows of the m_dim x m_dim upper left corner this matrix are the m-dual basis vectors.
+	 * May not be initialized.  When m_withDual = true, it must be initialized.
 	 */
 	IntMat m_dualbasis;
 
@@ -836,12 +841,11 @@ void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d) {
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d, const int64_t &c) {
 	assert(d >= 0);
-	Int C;
 	assert(this->m_withDual);
 	for (int64_t i = 0; i < d+1; i++) {
-		C = 0;
 		NTL::matrix_row<IntMat> row(this->m_dualbasis, i);
 		ProdScal<Int>(row, row, c, this->m_dualvecNorm[i]);
+		//   This implementation is incorrect:   It always uses the L2 norm !!!!  *********
 	}
 }
 
