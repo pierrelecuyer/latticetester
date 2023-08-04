@@ -233,11 +233,7 @@ public:
      * Reducer object used for finding the shortest vector of a projection
     */
     Reducer<Int, Real> *m_red;     
-    
-    /*
-     * test
-     */
-    vector<int64_t> ttest;
+
 };
 
 //============================================================================

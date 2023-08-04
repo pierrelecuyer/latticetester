@@ -124,7 +124,7 @@ public:
 	 * of the matrix `gen` that are actually used, and the square lengths of the basis
 	 * vectors are returned in the array `b`, exactly as in the `LLL_FPZZflex.h` module.
 	 * If `b` is not needed, one can just pass 0 in place of `*b`.
-	 * This function is currently implemented only for `Int==ZZ` and `Real==double`.
+	 * This function is implemented only for `Int==ZZ` and `Real==double`.
 	 * The function returns the dimension of the newly computed basis, which may differ
 	 * from the number of rows of the `gen` object.  The latter is not resized.
 	 */
@@ -160,12 +160,25 @@ public:
 	 * The algorithm is explained in the lattice tester guide.
 	 * Important: `gen` and `basis` must be different `IntMat` objects.
 	 */
-	static void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m);
+	static void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m);	
+	
+    /**
+     * In this version, one can pass the number `r` of rows and number `c` of columns
+     * of the matrix `gen` that are actually used.
+     */	
+	static void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m, 
+			long r, long c);
 
 	/**
 	 * Similar to `lowerTriangularBasis`, except that the returned basis is upper triangular.
 	 */
 	static void upperTriangularBasis(IntMat &gen, IntMat &basis, const Int &m);
+	
+	/**
+	 * Similar to `lowerTriangularBasis`, except that the returned basis is upper triangular.
+	 */
+	static void upperTriangularBasis(IntMat &gen, IntMat &basis, const Int &m, 
+			long r, long c);
 
 	/**
 	 * Takes an upper triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
@@ -176,6 +189,13 @@ public:
 	 */
 	static void mDualUpperTriangular(const IntMat &basis, IntMat &basisDual,
 			const Int &m);
+	
+    /**
+     * In this version, one can pass the dimension `dim` of rows and columns
+     * of the matrix `gen` that is actually used. 
+     */	
+	static void mDualUpperTriangular(const IntMat &basis, IntMat &basisDual,
+			const Int &m, long dim);
 
 	/**
 	 * This function does essentially the same thing as `mDualUpperTriangular`, but it is
@@ -189,6 +209,12 @@ public:
 	 * the m-dual basis.  It is currently implemented only for `Int = ZZ`.
 	 */
 	static void mDualBasis(const IntMat &basis, IntMat &basisDual, const Int &m);
+	
+	/**
+     * In this version, one can pass the number `r` of rows and number `c` of columns
+     * of the matrix `gen` that are actually used.
+	 */
+	static void mDualBasis(const IntMat &basis, IntMat &basisDual, const Int &m, long dim);
 
 	/**
 	 * Overwrites the matrix 'out' by a matrix formed by the columns of matrix `in` that are
@@ -200,6 +226,13 @@ public:
 	static void projectMatrix(const IntMat &in, IntMat &out, const Coordinates &proj);
 	
 	/**
+     * In this version, one can pass only the number `r` of rows, because the number of
+     * columns to be considered is implictly defined by the projection 'proj'.
+	 */
+	static void projectMatrix(const IntMat &in, IntMat &out, const Coordinates &proj,
+			long r);
+	
+	/**
 	 * Constructs a basis for the projection `proj` of the lattice with basis `inBasis`,
 	 * using `LLLConstruction`, and puts it in `projBasis`. This basis is not triangular in general.
 	 * This will overwrite the matrix `projBasis` and will change its dimensions if needed.
@@ -207,6 +240,14 @@ public:
 	 */
 	static void projectionConstructionLLL(IntMat &inBasis,
 			IntMat &projBasis, const Coordinates &proj, const Int &m, const double delta = 0.9);
+	
+	/**
+     * In this version, one can pass the number `r` of rows and number `c` of columns
+     * of the matrix `inBasis` that are actually used.
+	 */
+	static void projectionConstructionLLL(IntMat &inBasis,
+			IntMat &projBasis, const Coordinates &proj, const Int &m, 
+			long r, long c, double *b, const double delta = 0.9);
 	
 	/**
 	 * Same as `projectionConstructionLLL`, but the construction is made using
@@ -221,6 +262,13 @@ public:
 
 	static void projectionConstructionUpperTri(IntMat &inBasis,
 			IntMat &projBasis, const Coordinates &proj, const Int &m);	
+	
+	/**
+     * In this version, one can pass the number `r` of rows and number `c` of columns
+     * of the matrix `inBasis` that are actually used.
+	 */
+	static void projectionConstructionUpperTri(IntMat &inBasis,
+			IntMat &projBasis, const Coordinates &proj, const Int &m, long r, long c);	
 
 	/**
 	 * In this one, the construction method is passed as a parameter. The default is LLL.
@@ -369,7 +417,8 @@ void BasisConstruction<Int>::upperTriangularBasis
 	coeff_gcd.SetLength(dim1);
 	coeff_xi.SetLength(dim1);
 	xi.SetLength(dim2);
-    basis.SetDims(dim2, dim2);  // New space for the basis !!!!
+	if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
+		basis.SetDims(dim2, dim2); 
 	for (i = 0; i < dim2; i++) {
 		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
 		// xi.clear();   // This call causes a segmentation fault in the int64_t case!
@@ -458,6 +507,111 @@ void BasisConstruction<Int>::upperTriangularBasis
 	}
 }
 
+//===================================================================
+
+template<typename Int>
+void BasisConstruction<Int>::upperTriangularBasis
+         (IntMat &gen, IntMat &basis, const Int &m, long r, long c) {
+	IntVec coeff_gcd, coeff_xi, xi;  // Here we create new vectors!!!
+	Int gcd, gcd_tower, C, D;
+	long dim1 = r;
+	long dim2 = c;
+	long i, j, k, l;
+	
+	// Define dimensions of vectors
+	coeff_gcd.SetLength(dim1);
+	coeff_xi.SetLength(dim1);
+	xi.SetLength(dim2);
+	//if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
+    //   basis.SetDims(dim2, dim2); 
+	for (i = 0; i < dim2; i++) {
+		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
+		// xi.clear();   // This call causes a segmentation fault in the int64_t case!
+		// coeff_gcd.clear();
+		for (j = 0; j < dim1; j++) {
+		    coeff_gcd[j] = 0;
+		}
+		for (j = 0; j < dim2; j++) {
+		    xi[j] = 0;
+		}
+		// Search for the first non-zero element in the row.
+		for (k = 0; (k < dim1 && gen[k][i] == 0); k++) {}
+		//			if (gen[k][i] != 0)	break;
+		// Reduce the other generators as they are used often in what follows.
+		for (j = k; j < dim1; j++) {
+		    NTL::rem(gen[j][i], gen[j][i], m);
+		}
+		// The `else` case adds m e_i to the basis matrix.
+		if (k < dim1) {
+			gcd = m;    // Will be GCD(m, gen[k][i]);
+			coeff_gcd[k] = 1;
+			gcd_tower = gcd;
+
+			// Find the other coefficients by applying the Euclidean algorithm multiple times
+			for (j = k; j < dim1; j++) {
+				if (gen[j][i] == 0)
+					coeff_gcd[j] = 0;
+				else {
+					NTL::XGCD(gcd, C, D, gcd_tower, gen[j][i]);
+					coeff_gcd[j] = D;
+					for (l = 0; l < j; l++) {
+						NTL::mul(coeff_gcd[l], coeff_gcd[l], C);
+					}
+					gcd_tower = gcd;
+				}
+			}
+			// If gcd = m, then this basis (row) vector will be `m e_i`.
+			if (gcd==m) {
+				for (j = 0; j < dim2; j++) {
+				  if (j != i)
+					  basis[i][j] = 0;
+				  else
+				  	basis[i][j] = m;
+				}
+			}
+			else {
+				// Reduce the coefficients found during the Euclidean algorithm.
+				for (j = 0; j < dim1; j++) {
+				  NTL::rem(coeff_gcd[j], coeff_gcd[j], m);
+				}
+				// We have now found all the coefficients and can compute the vector x_i.
+				for (k = 0; k < dim1; k++) {
+					if (coeff_gcd[k] != 0) {
+						for (j = i; j < dim2; j++) {
+							NTL::MulAddTo(xi[j], gen[k][j], coeff_gcd[k]);
+						}
+					}
+				}
+				// Next we calculate the new vectors v_i.
+				// We first calculate the coefficients with which x_i needs to be multiplied.
+				for (j = 0; j < dim1; j++) {
+					NTL::div(coeff_xi[j], gen[j][i], gcd);
+					NTL::rem(coeff_xi[j], coeff_xi[j], m);
+				}
+				for (j = 0; j < dim2; j++) 
+					NTL::rem(xi[j], xi[j], m);
+				// Update the v_i
+				for (k = 0; k < dim1; k++) {
+					if (coeff_xi[k] != 0) {
+						for (j = i; j < dim2; j++) {
+							NTL::MulSubFrom(gen[k][j], coeff_xi[k], xi[j]);
+						}
+					}
+				}
+//				// Set the `i`th base vector.
+				for (j = 0; j < dim2; j++)
+					basis[i][j] = xi[j];
+			}
+		} else {
+			for (j = 0; j < dim2; j++) {
+				if (j != i)
+					basis[i][j] = 0;
+				else
+					basis[i][j] = m;
+			}
+		}
+	}
+}
 
 //==============================================================================
 
@@ -474,7 +628,8 @@ void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
 	coeff_gcd.SetLength(dim1);
 	coeff_xi.SetLength(dim1);
 	xi.SetLength(dim2);
-    basis.SetDims(dim2, dim2);   // New space for the basis !!!!
+	if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
+		basis.SetDims(dim2, dim2); 
     
 	for (i = dim2-1; i > -1; i--) {
 		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
@@ -561,6 +716,108 @@ void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
 		}
 	}
 }
+//==============================================================================
+
+template<typename Int>
+void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
+		const Int &m, long r, long c) {
+	IntVec coeff_gcd, coeff_xi, xi;  // Vectors are created locally here.
+	Int gcd, gcd_tower, C, D;
+	long dim1 = r;
+	long dim2 = c;
+	long i, j, k, l;
+
+	//Define dimensions of vectors
+	coeff_gcd.SetLength(dim1);
+	coeff_xi.SetLength(dim1);
+	xi.SetLength(dim2);
+    
+	for (i = dim2-1; i > -1; i--) {
+		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
+		// xi.clear();   // This call causes a segmentation fault in the int64_t case!
+		// coeff_gcd.clear();
+		for (j = dim1-1; j >-1; j--) 
+		    coeff_gcd[j] = 0;
+		for (j = dim2-1; j >-1; j--) 
+		    xi[j] = 0;
+		// Search for the first non-zero element in the row.
+		for (k = dim1-1; (k > -1 && gen[dim1-1-k][i] == 0); k--) {}
+		//			if (gen[k][i] != 0)	break;
+		// Reduce the other generators as they are used often in what follows.
+		for (j = dim1-1; j > dim1-k-1; j--) {
+		    NTL::rem(gen[j][i], gen[j][i], m);
+		}
+		// The `else` case adds m e_i to the basis matrix.
+		if (k > -1) {
+			gcd = m;    // Will be GCD(m, gen[k][i]);
+			coeff_gcd[k] = 1;
+			gcd_tower = gcd;
+
+			// Find the other coefficients by applying the Euclidean algorithm multiple times
+			for (j = dim1-1; j >dim1-k-1; j--) {
+				if (gen[j][i] == 0)
+					coeff_gcd[j] = 0;
+				else {
+					NTL::XGCD(gcd, C, D, gcd_tower, gen[j][i]);
+					coeff_gcd[j] = D;
+					for (l = dim1-j-1-1; l > -1; l--) {
+						NTL::mul(coeff_gcd[dim1-1-l], coeff_gcd[dim1-1-l], C);
+					}
+					gcd_tower = gcd;
+				}
+			}
+			// If gcd = m, then this basis (row) vector will be `m e_i`.
+			if (gcd==m) {
+				for (j = dim2-1; j > -1; j--) {
+				  if (j != i)
+					  basis[i][j] = 0;
+				  else
+					  basis[i][j] = m;
+				}
+			}
+			else {
+				// Reduce the coefficients found during the Euclidean algorithm.
+				for (j = 0; j < dim1; j++) {
+				  NTL::rem(coeff_gcd[dim1-1-j], coeff_gcd[dim1-1-j], m);
+				}
+				// We have now found all the coefficients and can compute the vector x_i.
+				for (l = dim1-1; l > -1; l--) {
+					if (coeff_gcd[l] != 0) {
+						for (j = dim2-1; j > dim1-1-i-1; j--) {
+							NTL::MulAddTo(xi[j], gen[l][j], coeff_gcd[l]);
+						}
+					}
+				}
+				// Next we calculate the new vectors v_i.
+				// We first calculate the coefficients with which x_i needs to be multiplied.
+				for (j = dim1-1; j > -1; j--) {
+					NTL::div(coeff_xi[j], gen[j][i], gcd);
+					NTL::rem(coeff_xi[j], coeff_xi[j], m);
+				}
+				for (j = dim2-1; j> -1; j--) 
+					NTL::rem(xi[j], xi[j], m);
+				// Update the v_i
+				for (l = dim1-1; l > -1; l--) {
+					if (coeff_xi[l] != 0) {
+						for (j = dim2-1; j > dim1-1-i-1; j--) {
+							NTL::MulSubFrom(gen[l][j], coeff_xi[l], xi[j]);
+						}
+					}
+				}
+				// Set the `i`th base vector.
+				for (j = 0; j < dim2; j++)
+					basis[i][j] = xi[j];
+			}
+		} else {
+			for (j = dim2-1; j > -1; j--) {
+				if (j != i)
+					basis[i][j] = 0;
+				else
+					basis[i][j] = m;
+			}
+		}
+	}
+}
 
 //======================================================
 
@@ -580,7 +837,8 @@ void BasisConstruction<Int>::mDualUpperTriangular96(IntMat &basis,
 		std::cout << ":mDualUpperTriangular96: basis matrix must be square.\n";
 		return;
 	}
-	basisDual.SetDims(dim, dim);   // Resizing the dual matrix.  *******
+	if (basisDual.NumRows() != dim || basisDual.NumCols() != dim)
+	   basisDual.SetDims(dim, dim);   
 	Int mm = m;            // Local copy of m that can be changed.
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
@@ -619,7 +877,8 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96( NTL::matrix<NTL::ZZ>  &
 	NTL::ZZ mm = m;            // Local copy of m that can be changed.
 	int64_t dim;
 	dim = basis.NumRows();
-	basisDual.SetDims(dim, dim);  // Resizing the dual matrix.  ********
+	if (basisDual.NumRows() != dim || basisDual.NumCols() != dim)
+	    basisDual.SetDims(dim, dim);  
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
 			NTL::clear(basisDual[i][j]);
@@ -663,7 +922,29 @@ template<typename Int>
 void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 		const Int &m) {
 	int64_t dim = A.NumRows();
-	B.SetDims(dim, dim);    // Resizing the dual matrix !  ***********
+	if (B.NumRows() != dim || B.NumCols() != dim)
+	   B.SetDims(dim, dim);
+	for (int64_t i = 0; i < dim; i++) {
+		// Put zeros under the diagonal.
+		for (int64_t j = i + 1; j < dim; j++)
+			NTL::clear(B[i][j]);
+		// Set diagonal elements.
+		NTL::div(B[i][i], m, A[i][i]);
+		// Compute the other ones.
+		for (int64_t j = i - 1; j >= 0; j--) {
+			NTL::clear(B[i][j]);
+			for (int64_t k = j + 1; k <= i; k++)
+				NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
+			NTL::div(B[i][j], B[i][j], A[j][j]);
+		}
+	}
+}
+
+//===================================================
+
+template<typename Int>
+void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
+		const Int &m, long dim) {
 	for (int64_t i = 0; i < dim; i++) {
 		// Put zeros under the diagonal.
 		for (int64_t j = i + 1; j < dim; j++)
@@ -702,13 +983,37 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(
 	}
 	inv (d, basisDual, basis);
 	NTL::matrix<NTL::ZZ> C = basisDual;
-	div(fac, d, m);
+	div (fac, d, m);
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = 0; j < dim; j++) {
 			div (basisDual[j][i], C[i][j], fac);
 		}
 	}
 }
+
+template<>
+void BasisConstruction<NTL::ZZ>::mDualBasis(
+		const NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDual, const NTL::ZZ &m, long dim) {
+	NTL::ZZ d, fac;
+	IntMat copyBasis, copyBasisDual;
+	copyBasis.SetDims(dim, dim);
+	for (int64_t i = 0; i < dim; i++) {
+		for (int64_t j = 0; j < dim; j++) 
+			copyBasis[i][j] = basis[i][j];
+	}
+	inv(d, copyBasisDual, copyBasis);
+	NTL::matrix<NTL::ZZ> C = copyBasisDual;
+	div(fac, d, m);
+	for (int64_t i = 0; i < basis.NumRows(); i++) {
+		for (int64_t j = 0; j < basis.NumCols(); j++) {
+			if (i < dim && j < dim)
+			   div(basisDual[j][i], C[i][j], fac);
+			else
+				basisDual[j][i] = 0;
+		}
+	}
+}
+
 
 //=================================================================================
 
@@ -718,14 +1023,37 @@ template<>
 void BasisConstruction<Int>::projectMatrix (const IntMat &in,
 		IntMat &out, const Coordinates &proj) {
 	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
-    int inDim = in.NumCols();
-    uint64_t lat_dim = in.NumCols();   
+	int inDim = in.NumCols();
+	uint64_t lat_dim = in.NumCols();   
 	std::size_t projSize = proj.size();
-	out.SetDims(in.NumRows(), projSize);   // Here we resize the whole matrix each time!  ********
+	if (out.NumRows() != in.NumRows() || out.NumCols() != projSize)
+	   out.SetDims(in.NumRows(), projSize); 
 	auto it = proj.cbegin();
 	for (std::size_t i = 0; i < projSize; i++) {
 	    if (*it <= lat_dim) {
 			for (int j = 0; j < inDim; j++) {
+			   out[j][i] = in[j][*it-1];
+			}
+		}
+		else
+			MyExit(1, "A projection coordinate exceeds the dimension of the current basis.");
+		it++;
+	}
+};
+
+//=================================================================================
+
+template<>
+void BasisConstruction<Int>::projectMatrix (const IntMat &in,
+		IntMat &out, const Coordinates &proj, long r) {
+	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
+	int inDim = r;
+	uint64_t lat_dim = in.NumCols();   
+	std::size_t projSize = proj.size();
+	auto it = proj.cbegin();
+	for (std::size_t i = 0; i < projSize; i++) {
+	    if (*it <= lat_dim) {
+			for (int j = 0; j < r; j++) {
 			   out[j][i] = in[j][*it-1];
 			}
 		}
@@ -741,10 +1069,11 @@ template<typename Int>
 void BasisConstruction<Int>::projectMatrix (const IntMat &in,
 		IntMat &out, const Coordinates &proj) {
 	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
-    int inDim = in.NumCols();
-    uint64_t lat_dim = in.NumCols();   
+	int inDim = in.NumCols();
+	uint64_t lat_dim = in.NumCols();   
 	std::size_t projSize = proj.size();
-	out.SetDims(in.NumRows(), projSize);   // Here we resize the matrix each time!   *********
+	if (out.NumRows() != in.NumRows() || out.NumCols() != projSize)
+	   out.SetDims(in.NumRows(), projSize);
 	auto it = proj.cbegin();
 	for (std::size_t i = 0; i < projSize; i++) {
 	    if (*it <= lat_dim) {
@@ -767,6 +1096,15 @@ void BasisConstruction<Int>::projectionConstructionLLL(
 	LLLBasisConstruction(projBasis, m, delta);
 }
 
+
+template<>
+void BasisConstruction<Int>::projectionConstructionLLL(
+		IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m, 
+		long r, long c, double *b, const double delta) {
+	projectMatrix(inBasis, projBasis, proj, r);
+	LLLBasisConstruction(projBasis, m, r, c, b, delta);
+}
+
 //===================================================
 
 template<>
@@ -784,6 +1122,16 @@ void BasisConstruction<Int>::projectionConstructionUpperTri(
 	IntMat genTemp;
 	projectMatrix(inBasis, genTemp, proj);
 	upperTriangularBasis(genTemp, projBasis, m);
+}
+
+//===================================================
+
+template<>
+void BasisConstruction<Int>::projectionConstructionUpperTri(
+		IntMat &inBasis, IntMat &projBasis, const Coordinates &proj, const Int &m, long r, long c) {
+	IntMat genTemp;
+	projectMatrix(inBasis, genTemp, proj, r);
+	upperTriangularBasis(genTemp, projBasis, m, r, c);
 }
 
 
