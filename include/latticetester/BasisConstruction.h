@@ -124,7 +124,7 @@ public:
 	 * of the matrix `gen` that are actually used, and the square lengths of the basis
 	 * vectors are returned in the array `b`, exactly as in the `LLL_FPZZflex.h` module.
 	 * If `b` is not needed, one can just pass 0 in place of `*b`.
-	 * This function is implemented only for `Int==ZZ` and `Real==double`.
+	 * This function is currently implemented only for `Int==ZZ` and `Real==double`.
 	 * The function returns the dimension of the newly computed basis, which may differ
 	 * from the number of rows of the `gen` object.  The latter is not resized.
 	 */

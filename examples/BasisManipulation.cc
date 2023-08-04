@@ -103,11 +103,11 @@ Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1125899906842597);  // Prime modulus near 2^{50}
 Int a;       // The LCG multiplier
 
-const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
+const long numSizes = 13;    // Number of matrix sizes (choices of dimension).
 // const long dimensions[numSizes] = { 8, 9, 10 };
-// const long dimensions[numSizes] = { 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+const long dimensions[numSizes] = { 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 // const long dimensions[numSizes] = { 5, 20, 30 };
-const long dimensions[numSizes] = { 10, 20, 30, 40, 50 };
+// const long dimensions[numSizes] = { 10, 20, 30, 40, 50 };
 //const long dimensions[numSizes] = {5};
 const long numMeth = 8;    // Number of methods, and their names.
 std::string names[numMeth] = { "LLL5     ", "LLL8     ", "LLL99999 ",
@@ -184,7 +184,7 @@ static void transformBasisLLL (long d, long dim, IntMat & basis1, double *b) {
 static void testLoop1(long numRep) {
 	long d;
 	IntMat basis1, basis2, basis3, basisdual;
-	long maxdim = dimensions[numSizes-1];   // Maximum dimension
+	//long maxdim = dimensions[numSizes-1];   // Maximum dimension
 	// double *b;   b = new double[maxdim];
 	Rank1LatticeFlex<Int, Real> *korlat;    // Will be a Korobov lattice.
 	// Chrono totTime;  	totTime.init();
@@ -214,7 +214,7 @@ static void testLoop1(long numRep) {
 static void testLoop2(long numRep) {
 	long d;
 	IntMat basis1, basis2, basis3, basisdual;
-	long maxdim = dimensions[numSizes-1];   // Maximum dimension
+	//long maxdim = dimensions[numSizes-1];   // Maximum dimension
 	// double *b;   b = new double[maxdim];
 	Rank1LatticeFlex<Int, Real> *korlat;    // Will be a Korobov lattice.
 
@@ -271,7 +271,7 @@ static void testLoop3(long numRep) {
 			// Here, this basis is a maxDim x maxDim IntMat object.
 
 			//transformBases(d, dim, basis1, basis2, basis3, basisdual);
-			// transformBasisLLL(d, dim, korlat->getBasis(), 0);
+			//transformBasisLLL(d, dim, korlat->getBasis(), 0);
 			transformBasisLLL(d, dim, basis1, 0);
 			//tmp = clock();
 			//BasisConstruction<Int>::LLLConstruction0(korlat->getBasis(), dim, dim, b, 0.5);
@@ -304,7 +304,7 @@ static void printResults() {
 }
 
 int main() {
-	long numRep = 1000;  // Number of replications (multipliers) for each case.
+	long numRep = 10000;  // Number of replications (multipliers) for each case.
 	testLoop1(numRep);  printResults();
 	testLoop2(numRep);  printResults();
 	testLoop3(numRep);  printResults();

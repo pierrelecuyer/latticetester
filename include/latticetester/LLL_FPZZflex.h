@@ -75,6 +75,7 @@ static
 long BKZ_FPZZflex(mat_ZZ& BB, long r, long c,  double *b, double delta=0.99,
 	     long blocksize=10, long prune=0, LLLCheckFct check = 0, long verb = 0);
 
+static
 long BKZ_FPZZflex(mat_ZZ& BB, long r, long c, double delta=0.99,
 		 long blocksize=10, long prune=0, LLLCheckFct check = 0, long verb = 0);
 
@@ -132,7 +133,7 @@ static void InnerProduct(RR & xx, const vec_RR& a, const vec_RR& b, long n)
 }
 
 static void RowTransform(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1, long n)
-// A = A - B*MU
+// A = A - B*MU   for the first n vector entries only.
 {
    NTL_ZZRegister(T);
    NTL_ZZRegister(MU);
@@ -239,7 +240,7 @@ static void RowTransformFinish(vec_ZZ& A, double *a, long *in_a, long n)
 static void RowTransform(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1, long n,
                          double *a, double *b, long *in_a,
                          double& max_a, double max_b, long& in_float)
-// A = A - B*MU1
+// A = A - B*MU1   for the first n vector entries only.
 {
    NTL_ZZRegister(T);
    NTL_ZZRegister(MU);
@@ -379,7 +380,7 @@ static void RowTransform(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1, long n,
 }
 
 static void RowTransform2(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1, long n)
-// A = A + B*MU
+// A = A + B*MU  for the first n vector entries only.
 
 {
    NTL_ZZRegister(T);
@@ -616,6 +617,7 @@ void ComputeGS(const mat_ZZ& B, mat_RR& B1,
                vec_RR& c, long k, long n, const RR& bound, long st,
                vec_RR& buf, const RR& bound2)
 {
+	std::cout << "We are now in this ComputeGS with RR vectors!!! \n";
 	ComputeGS(B, B1, mu, b, c, k, bound, st, buf, bound2);
 }
 
@@ -725,11 +727,8 @@ void ComputeGS(const mat_ZZ& B, mat_RR& mu, vec_RR& c, long k, long n)
 
    RR bound2;
    power2(bound2, 2*RR::precision());
-
-
    for (i = 1; i <= k; i++)
       ComputeGS(B, B1, mu, b, c, i, n, bound, 1, buf, bound2);
-
 }
 
 static
@@ -829,7 +828,6 @@ long ll_LLL_FP(mat_ZZ& B, mat_ZZ* U, double delta, long deep,
 
       if (verbose) {
          tt = GetTime();
-
          if (tt > LastTime + LLLStatusInterval)
             LLLStatus(max_k, tt, m, n, B);
       }
@@ -848,6 +846,7 @@ long ll_LLL_FP(mat_ZZ& B, mat_ZZ* U, double delta, long deep,
       st[k] = k;
       // std::cout << "LLL64: after ComputeGS, mu[k][1] = " << mu[k][1] << "\n";
 
+      // The following should happen very rarely.
       if (swap_cnt > 200000) {
          cerr << "LLL_FP: swap loop?\n";
          RR_GS(B, B1, mu, b, c, buf, prec,
@@ -1090,11 +1089,8 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *sqlen,
    long i, j;
    long new_m, quit;
    ZZ MU;
-
    ZZ T1;
-
    init_red_fudge();
-
    if (U) ident(*U, m);
 
    Unique2DArray<double> B1_store;
@@ -1769,6 +1765,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *sqlen, double 
 }
 
 
+static
 long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ& UU, long m, long n, double *sqlen, double delta,
          long beta, long prune, LLLCheckFct check, long verb)
 {
@@ -1785,6 +1782,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ& UU, long m, long n, double *sqlen, double 
 }
 
 
+static
 long BKZ_FPZZflex(mat_ZZ& BB, long m, long n, double *sqlen, double delta,
          long beta, long prune, LLLCheckFct check, long verb)
 {
@@ -1792,6 +1790,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, long m, long n, double *sqlen, double delta,
 }
 
 
+static
 long BKZ_FPZZflex(mat_ZZ& BB, long m, long n, double delta,
          long beta, long prune, LLLCheckFct check, long verb)
 {
@@ -1799,6 +1798,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, long m, long n, double delta,
 }
 
 
+static
 long BKZ_FPZZflex(mat_ZZ& BB, double delta,
          long beta, long prune, LLLCheckFct check, long verb)
 {
