@@ -111,6 +111,11 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
         void buildBasis (int64_t d);
         
         /**
+         * FOR TESTING ONLY (CW)
+         */
+        void buildBasisFullMatrix (int64_t d);
+        
+        /**
          * Builds only the basis in `d` dimensions. This `d` must not exceed `this->maxDim()`.
          * This dual basis will be lower triangular.
          */
@@ -123,6 +128,13 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
          * This dual basis will be lower triangular.
          */
         void buildDualBasis (int64_t d, int64_t c);
+        
+        /** THIS IS FOR TESTING ONLY (CW)
+	     * This method builds a basis for the lattice in `dim` dimensions.
+	     * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix 
+	     * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.
+         */
+        void buildDualBasisFullMatrix (int64_t d);
 
         /**
          * Increases the current dimension by 1 and updates the basis.
@@ -143,6 +155,13 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
          * must hold. 
          */
         void incDimDualBasis (int64_t c);
+        
+        /** THIS IS FOR TESTING ONLY (CW)
+         * Increases the current dimension of only the dual lattice basis by 1
+         * under the assumption the dual basis matrix has dimension 'maxDim' x 'maxDim'. 
+         * while the dimension of the basis is 'd'-1. 
+         */
+        void incDimDualBasisFullMatrix (int64_t d);
 
       protected:
 
@@ -234,7 +253,8 @@ Rank1Lattice<Int, Real> & Rank1Lattice<Int, Real>::operator= (
   //============================================================================
 
 template<typename Int, typename Real>
-Rank1Lattice<Int, Real>::Rank1Lattice (const Rank1Lattice<Int, Real> & lat):
+Rank1Lattice<Int, Real>::Rank1Lattice (
+        const Rank1Lattice<Int, Real> & lat):
       IntLatticeExt<Int, Real> (
           lat.m_modulo, lat.getDim (), lat.m_withDual, lat.getNormType ()) {
     // MyExit (1, "Rank1Lattice:: constructor is incomplete" );
@@ -426,6 +446,8 @@ void Rank1Lattice<Int, Real>::incDimDualBasis () {
     temp.kill();
 }
 
+//============================================================================
+
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::incDimDualBasis (int64_t c) {
 	int64_t d = 1 + this->getDim();
@@ -435,6 +457,15 @@ void Rank1Lattice<Int, Real>::incDimDualBasis (int64_t c) {
 	this->m_dualbasis[d-1][d-1] = 1;
 	this->m_dualbasis[d-1][0] = -m_a[d-1];
 }
+
+//============================================================================
+
+template<typename Int, typename Real>
+void Rank1Lattice<Int, Real>::incDimDualBasisFullMatrix (int64_t d) {
+	this->m_dualbasis[d-1][d-1] = 1;
+	this->m_dualbasis[d-1][0] = -m_a[d-1];
+}
+
 
 
 //============================================================================
@@ -446,6 +477,63 @@ void Rank1Lattice<Int, Real>::buildBasis (int64_t d) {
       this->setDim (d);
       this->m_basis.SetDims(d,d);
       this->m_dualbasis.SetDims(d,d);
+      int64_t i, j;
+
+      // This builds an upper triangular basis in a standard way.
+      for (j = 0; j < d; j++) {
+        this->m_basis[0][j] = this->m_a[j];
+      }
+      for (i = 1; i < d; i++) {
+        for (j = 0; j < d; j++) {
+          if (i == j) this->m_basis[i][i] = this->m_modulo;
+          else this->m_basis[i][j] = 0;
+        }
+      }
+      this->setNegativeNorm ();
+
+      if (!this->m_withDual) return;
+      // If `withDual`, we construct the dual basis also in a direct way.
+      
+      this->m_dualbasis[0][0] = this->m_modulo;
+      for (j = 1; j < d; j++)
+         this->m_dualbasis[0][j] = 0;
+      for (i = 1; i < d; i++) {
+         this->m_dualbasis[i][0] = -this->m_basis[0][i];
+         for (j = 1; j < d; j++) {
+            if (i == j) this->m_dualbasis[i][i] = 1;
+            else this->m_dualbasis[i][j] = 0;
+         }
+      }
+      this->setDualNegativeNorm ();
+      
+//      //New implementation for general k according to L'Ecuyer and Couture (1997) 
+//      for (int i = 0; i < this->m_k; i++) {
+//         for (int j = 0; j < d; j++) {
+//        	 if (i==j) this->m_dualbasis[i][j] = this->m_modulo; 
+//        	 else this->m_dualbasis[i][j] = 0;
+//         }
+//      }
+//      for (int i = this->m_k; i < d; i++) {
+//    	  for (int j = 0; j < d; j++) {
+//              if (i==j) this->m_dualbasis[i][j] = 1;
+//              else this->m_dualbasis[i][j] = 0;
+//              if (j < this->m_k) {
+//                  for (int k = 0; k < this->m_k; k++) {
+//        	    	 this->m_dualbasis[i][j] = this->m_dualbasis[i][j] - m_a[k] * this->m_basis[j][i - k];
+//                  }
+//              }
+//          }
+//      }
+    }
+
+//============================================================================
+
+template<typename Int, typename Real>
+void Rank1Lattice<Int, Real>::buildBasisFullMatrix (int64_t d) {
+      assert(d <= this->m_maxDim);
+      this->setDim (this->m_maxDim);
+      this->m_basis.SetDims(this->m_maxDim,this->m_maxDim);
+      this->m_dualbasis.SetDims(this->m_maxDim,this->m_maxDim);
       int64_t i, j;
 
       // This builds an upper triangular basis in a standard way.
@@ -545,6 +633,10 @@ void Rank1Lattice<Int, Real>::buildDualBasis (int64_t d, int64_t c) {
     this->setDim (d);
     this->m_basis.SetDims(d,c);
     this->m_dualbasis.SetDims(d, c);
+    for (int i = 0; i < d; i++) {
+    	for (int j = 0; j < c; j++)
+    		this->m_dualbasis[i][j] = 0;
+    }
     for (int i = 0; i < d; i++)
     	this->m_dualbasis[i][0] = -m_a[i];
     for (int i = d; i < c; i++)
@@ -552,6 +644,28 @@ void Rank1Lattice<Int, Real>::buildDualBasis (int64_t d, int64_t c) {
     for (int i = 0; i < d; i++) {
     	if (i<1) this->m_dualbasis[i][i] = this->m_modulo;
     	else this->m_dualbasis[i][i] = 1;
+    }  
+}
+
+//============================================================================
+
+template<typename Int, typename Real>
+void Rank1Lattice<Int, Real>::buildDualBasisFullMatrix (int64_t d) {
+    assert(d <= this->m_maxDim);
+    this->setDim (this->m_maxDim);
+    this->m_basis.SetDims(this->m_maxDim, this->m_maxDim);
+    this->m_dualbasis.SetDims(this->m_maxDim, this->m_maxDim);
+    for (int i = 0; i < this->m_maxDim; i++) {
+    	for (int j = 0; j < this->m_maxDim; j++)
+    		this->m_dualbasis[i][j] = 0;
+    }
+    for (int i = 0; i < d; i++)
+    	this->m_dualbasis[i][0] = -m_a[i];
+    for (int i = d; i < this->m_maxDim; i++)
+    	this->m_dualbasis[i][0] = 0;
+    for (int i = 0; i < this->m_maxDim; i++) {
+    	if (i<1) this->m_dualbasis[i][i] = this->m_modulo;
+    	else if (i<d) this->m_dualbasis[i][i] = 1;
     }  
 }
 
