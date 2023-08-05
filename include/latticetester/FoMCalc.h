@@ -37,6 +37,7 @@
 #include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/IntLatticeExt.h"
+#include "latticetester/LLL_FPZZflex.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
 
@@ -106,12 +107,28 @@ public:
     * That is, we just update the m-dual basis, then apply LLL or BKZ to it, then BB
     */
     double computeMeritMSucc_MethodE (IntLatticeExt<Int, Real> & lat);
+    
     /*
     * This function calculates the Figure of Merit M using method F:
     * Here, the number of colums is kept constant and the first vector inside the LLL
     * basis instead of trying to find the shortest of the LLL basis vectors.
     */
     double computeMeritMSucc_MethodF (IntLatticeExt<Int, Real> & lat);
+    
+    /*
+    * This function calculates the Figure of Merit M using method F:
+    * Here, the number of colums and rows is kept constand and  LLL_FPZZflex is
+    * used.
+    */
+    double computeMeritMSucc_MethodG (IntLatticeExt<Int, Real> & lat);
+    
+    /*
+    * This function calculates the Figure of Merit M using method F:
+    * Same as F and G but no vector norms are directly taken from LLL_FPZZflex
+    */
+    double computeMeritMSucc_MethodH (IntLatticeExt<Int, Real> & lat);
+    
+    double *b;
     
     
 };
@@ -262,17 +279,15 @@ double FoMCalc<Int>::computeMeritMSucc_MethodF(IntLatticeExt<Int, Real> & lat) {
    int64_t max_dim = lat.getDim();
     
    lat.buildDualBasis(lower_dim+1, max_dim);
-   
-
-	   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
-	       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);  
-	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
-	       this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);  
-	    } else if (this->m_reductionMethod == PAIRBB) {
-	       this->m_red->redDieter(0);
-	    }
-   	   lat.updateDualVecNorm(0,lower_dim+1);
-   	NTL::conv(merit, sqrt(lat.getDualVecNorm(0)) / this->m_norma->getBound(lower_dim+1));
+   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);  
+   } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+      this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);  
+   } else if (this->m_reductionMethod == PAIRBB) {
+      this->m_red->redDieter(0);
+   }
+   lat.updateSingleDualVecNorm(0,lower_dim+1);
+   NTL::conv(merit, sqrt(lat.getDualVecNorm(0)) / this->m_norma->getBound(lower_dim+1));
    if (merit == 0) return merit;
    for (int64_t j = lower_dim+2; j < this->m_t[0] + 1; j++)
    {
@@ -285,9 +300,90 @@ double FoMCalc<Int>::computeMeritMSucc_MethodF(IntLatticeExt<Int, Real> & lat) {
 	    } else if (this->m_reductionMethod == PAIRBB) {
 	       this->m_red->redDieter(0);
 	    }
-   	   lat.updateDualVecNorm(0,j);
+   	   lat.updateSingleDualVecNorm(0,j);
 	   NTL::conv(merit, sqrt(lat.getDualVecNorm(0)) / this->m_norma->getBound(j));
 
+       if (merit < minmerit) minmerit = merit;
+       if (minmerit <= this->m_lowbound || minmerit > this->m_highbound) return 0;
+   }   
+   return minmerit; 
+}
+
+//=========================================================================
+	
+template<typename Int>
+double FoMCalc<Int>::computeMeritMSucc_MethodG(IntLatticeExt<Int, Real> & lat) {
+   double merit = 0;
+   double minmerit = 1.0;
+   double value;
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
+   int64_t max_dim = lat.getDim();   
+   b = new double[max_dim];
+    
+   lat.buildDualBasisFullMatrix(lower_dim+1);   
+   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+      this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);  
+   } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+      //this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);  
+     LLL_FPZZflex(lat.getDualBasis(), lower_dim+1, lower_dim+1, b, this->m_delta);
+   } else if (this->m_reductionMethod == PAIRBB) {
+     this->m_red->redDieter(0);
+   }
+   lat.updateSingleDualVecNorm(0,lower_dim+1);
+   NTL::conv(merit, sqrt(lat.getDualVecNorm(0)) / this->m_norma->getBound(lower_dim+1));
+   if (merit == 0) return merit;
+   for (int64_t j = lower_dim+2; j < this->m_t[0] + 1; j++)
+   {
+	   lat.incDimDualBasisFullMatrix(j);
+	   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+	       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);
+	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+	       //this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);
+	    	LLL_FPZZflex(lat.getDualBasis(), j, j, b, this->m_delta);
+	    } else if (this->m_reductionMethod == PAIRBB) {
+	       this->m_red->redDieter(0);
+	    }
+   	   lat.updateSingleDualVecNorm(0,j);
+	   NTL::conv(merit, sqrt(lat.getDualVecNorm(0)) / this->m_norma->getBound(j));
+       if (merit < minmerit) minmerit = merit;
+       if (minmerit <= this->m_lowbound || minmerit > this->m_highbound) return 0;
+   }   
+   return minmerit; 
+}
+
+//=========================================================================
+	
+template<typename Int>
+double FoMCalc<Int>::computeMeritMSucc_MethodH(IntLatticeExt<Int, Real> & lat) {
+   double merit = 0;
+   double minmerit = 1.0;
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
+   int64_t max_dim = lat.getDim();   
+   b = new double[max_dim];
+    
+   lat.buildDualBasisFullMatrix(lower_dim+1);   
+   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+      this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);  
+   } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+      //this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);  
+     LLL_FPZZflex(lat.getDualBasis(), lower_dim+1, lower_dim+1, b, this->m_delta);
+   } else if (this->m_reductionMethod == PAIRBB) {
+     this->m_red->redDieter(0);
+   }
+   NTL::conv(merit, sqrt(b[0]) / this->m_norma->getBound(lower_dim+1));
+   if (merit == 0) return merit;
+   for (int64_t j = lower_dim+2; j < this->m_t[0] + 1; j++)
+   {
+	   lat.incDimDualBasisFullMatrix(j);
+	   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+	       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);
+	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+	       //this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);
+	    	LLL_FPZZflex(lat.getDualBasis(), j, j, b, this->m_delta);
+	    } else if (this->m_reductionMethod == PAIRBB) {
+	       this->m_red->redDieter(0);
+	    }
+	   NTL::conv(merit, sqrt(b[0]) / this->m_norma->getBound(j));
        if (merit < minmerit) minmerit = merit;
        if (minmerit <= this->m_lowbound || minmerit > this->m_highbound) return 0;
    }   

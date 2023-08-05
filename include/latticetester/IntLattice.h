@@ -352,6 +352,12 @@ public:
 	 * Assumes that the dual basis is available.
 	 */
 	void updateDualVecNorm();
+	
+	/**
+	 * Updates the 'd'-th entry of the array containing the m-dual basis vectors norms.
+	 * Only the first c components are used for calculating the norm.
+	 * */
+	void updateSingleDualVecNorm(const int64_t &d, const int64_t & c);
 
 	/**
 	 * Updates the array containing the m-dual basis vectors norms from the `d`-th
@@ -847,6 +853,16 @@ void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d, const int64_t &c
 		ProdScal<Int>(row, row, c, this->m_dualvecNorm[i]);
 		//   This implementation is incorrect:   It always uses the L2 norm !!!!  *********
 	}
+}
+
+/*=========================================================================*/
+
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::updateSingleDualVecNorm(const int64_t &d, const int64_t &c) {
+	assert(d >= 0);
+	assert(this->m_withDual);
+	NTL::matrix_row<IntMat> row(this->m_dualbasis, d);
+	ProdScal<Int>(row, row, c, this->m_dualvecNorm[d]);
 }
 
 /*=========================================================================*/
