@@ -315,7 +315,7 @@ template<typename Int>
 double FoMCalc<Int>::computeMeritMSucc_MethodG(IntLatticeExt<Int, Real> & lat) {
    double merit = 0;
    double minmerit = 1.0;
-   double value;
+   // double value;
    int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
    int64_t max_dim = lat.getDim();   
    b = new double[max_dim];

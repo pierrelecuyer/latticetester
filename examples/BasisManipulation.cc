@@ -135,6 +135,7 @@ static void transformBases(long d, long dim, IntMat & basis1, IntMat & basis2,
 	tmp = clock();
 	BasisConstruction<Int>::LLLConstruction0(basis2, dim, dim, 0, 0.99999);
 	timer[2][d] += clock() - tmp;
+	//std::cout << " LLL done \n";
 
 //	return;
 
@@ -142,32 +143,37 @@ static void transformBases(long d, long dim, IntMat & basis1, IntMat & basis2,
 	// We copy basis2 into basis3, because it will be modified.
 	copy(basis2, basis3);
 	tmp = clock();
-	BasisConstruction<Int>::upperTriangularBasis(basis3, basis1, m);
+	BasisConstruction<Int>::upperTriangularBasis(basis3, basis1, m, dim, dim);
 	timer[3][d] += clock() - tmp;
+	//std::cout << " UppTri done \n";
 
 	// Again. This function is in Util.h, it is the old method from 1996.  ???
 	copy(basis2, basis3);
 	tmp = clock();
 	Triangularization(basis3, basis1, dim, dim, m);
 	timer[4][d] += clock() - tmp;
+	//std::cout << " Triang done \n";
 	// This basis1 is upper triangular.
 
 	// Now we compute an m-dual basis with various methods.
 	tmp = clock();
-	BasisConstruction<Int>::mDualUpperTriangular(basis1, basisdual, m);
+	BasisConstruction<Int>::mDualUpperTriangular(basis1, basisdual, m, dim);
 	timer[5][d] += clock() - tmp;
+	//std::cout << " mDualTri done \n";
 
 	tmp = clock();
-	BasisConstruction<Int>::mDualUpperTriangular96(basis1, basisdual, m);
+	// BasisConstruction<Int>::mDualUpperTriangular96(basis1, basisdual, m);
 	timer[6][d] += clock() - tmp;
+	//std::cout << " mDualTri96 done \n";
 
 	return;
 
 #if TYPES_CODE  ==  ZD
 	// mDualBasis is currently implemented only for Int = ZZ.
 	tmp = clock();
-	BasisConstruction<Int>::mDualBasis(basis2, basisdual, m);
+	BasisConstruction<Int>::mDualBasis(basis2, basisdual, m, dim);
 	timer[7][d] += clock() - tmp;
+	//std::cout << " mDualB done \n";
 #endif
 }
 
@@ -175,7 +181,8 @@ static void transformBasisLLL (long d, long dim, IntMat & basis1, double *b) {
 	// We apply LLL to basis1.
 	// double *b;   b = new double[dim];
 	tmp = clock();
-	BasisConstruction<Int>::LLLConstruction0(basis1, dim, dim, b, 0.5);
+	BasisConstruction<Int>::LLLBasisConstruction(basis1, m, dim, dim, b, 0.5);
+	// BasisConstruction<Int>::LLLConstruction0(basis1, dim, dim, b, 0.5);
 	// BasisConstruction<Int>::LLLConstruction0(basis1, 0.5);
 	timer[0][d] += clock() - tmp;
 	// std::cout << " dim = " << dim << ", b[0] = " << b[0] << " \n ";
@@ -236,8 +243,8 @@ static void testLoop2(long numRep) {
 
 			copy(korlat->getBasis(), basis1); // This initial basis is triangular.
 			// Here this basis is a dim x dim IntMat object.
-			//transformBases(d, dim, basis1, basis2, basis3, basisdual);
-			transformBasisLLL(d, dim, basis1, 0);
+			transformBases(d, dim, basis1, basis2, basis3, basisdual);
+			//transformBasisLLL(d, dim, basis1, 0);
 			delete korlat;
 		}
 	}
@@ -270,9 +277,11 @@ static void testLoop3(long numRep) {
 			copy(korlat->getBasis(), basis1); // This initial basis is triangular.
 			// Here, this basis is a maxDim x maxDim IntMat object.
 
-			//transformBases(d, dim, basis1, basis2, basis3, basisdual);
-			//transformBasisLLL(d, dim, korlat->getBasis(), 0);
-			transformBasisLLL(d, dim, basis1, 0);
+			transformBases(d, dim, basis1, basis2, basis3, basisdual);
+			// transformBasisLLL(d, dim, basis1, 0);
+			// Doing the following turns out to be much slower!
+			// transformBasisLLL(d, dim, korlat->getBasis(), 0);
+
 			//tmp = clock();
 			//BasisConstruction<Int>::LLLConstruction0(korlat->getBasis(), dim, dim, b, 0.5);
 			// BasisConstruction<Int>::LLLConstruction0(basis1, dim, dim, b, 0.5);
@@ -304,8 +313,8 @@ static void printResults() {
 }
 
 int main() {
-	long numRep = 10000;  // Number of replications (multipliers) for each case.
-	testLoop1(numRep);  printResults();
+	long numRep = 1000;  // Number of replications (multipliers) for each case.
+//	testLoop1(numRep);  printResults();
 	testLoop2(numRep);  printResults();
 	testLoop3(numRep);  printResults();
 }

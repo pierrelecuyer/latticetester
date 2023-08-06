@@ -417,8 +417,8 @@ void BasisConstruction<Int>::upperTriangularBasis
 	coeff_gcd.SetLength(dim1);
 	coeff_xi.SetLength(dim1);
 	xi.SetLength(dim2);
-	if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
-		basis.SetDims(dim2, dim2); 
+	// if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
+    basis.SetDims(dim2, dim2);
 	for (i = 0; i < dim2; i++) {
 		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
 		// xi.clear();   // This call causes a segmentation fault in the int64_t case!
@@ -628,8 +628,8 @@ void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
 	coeff_gcd.SetLength(dim1);
 	coeff_xi.SetLength(dim1);
 	xi.SetLength(dim2);
-	if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
-		basis.SetDims(dim2, dim2); 
+	// if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
+    basis.SetDims(dim2, dim2);
     
 	for (i = dim2-1; i > -1; i--) {
 		// Reset these vectors to 0, as they may contain nonzero values from the previous i.
@@ -837,8 +837,8 @@ void BasisConstruction<Int>::mDualUpperTriangular96(IntMat &basis,
 		std::cout << ":mDualUpperTriangular96: basis matrix must be square.\n";
 		return;
 	}
-	if (basisDual.NumRows() != dim || basisDual.NumCols() != dim)
-	   basisDual.SetDims(dim, dim);   
+	// if (basisDual.NumRows() != dim || basisDual.NumCols() != dim)
+	basisDual.SetDims(dim, dim);
 	Int mm = m;            // Local copy of m that can be changed.
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
@@ -877,8 +877,8 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96( NTL::matrix<NTL::ZZ>  &
 	NTL::ZZ mm = m;            // Local copy of m that can be changed.
 	int64_t dim;
 	dim = basis.NumRows();
-	if (basisDual.NumRows() != dim || basisDual.NumCols() != dim)
-	    basisDual.SetDims(dim, dim);  
+	// if (basisDual.NumRows() != dim || basisDual.NumCols() != dim)
+	basisDual.SetDims(dim, dim);
 	for (int64_t i = 0; i < dim; i++) {
 		for (int64_t j = i + 1; j < dim; j++)
 			NTL::clear(basisDual[i][j]);
@@ -922,8 +922,8 @@ template<typename Int>
 void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 		const Int &m) {
 	int64_t dim = A.NumRows();
-	if (B.NumRows() != dim || B.NumCols() != dim)
-	   B.SetDims(dim, dim);
+	// if (B.NumRows() != dim || B.NumCols() != dim)
+	B.SetDims(dim, dim);
 	for (int64_t i = 0; i < dim; i++) {
 		// Put zeros under the diagonal.
 		for (int64_t j = i + 1; j < dim; j++)
@@ -1026,8 +1026,8 @@ void BasisConstruction<Int>::projectMatrix (const IntMat &in,
 	int inDim = in.NumCols();
 	uint64_t lat_dim = in.NumCols();   
 	std::size_t projSize = proj.size();
-	if (out.NumRows() != in.NumRows() || out.NumCols() != projSize)
-	   out.SetDims(in.NumRows(), projSize); 
+	// if (out.NumRows() != in.NumRows() || out.NumCols() != projSize)
+	out.SetDims(in.NumRows(), projSize);
 	auto it = proj.cbegin();
 	for (std::size_t i = 0; i < projSize; i++) {
 	    if (*it <= lat_dim) {
@@ -1047,7 +1047,7 @@ template<>
 void BasisConstruction<Int>::projectMatrix (const IntMat &in,
 		IntMat &out, const Coordinates &proj, long r) {
 	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
-	int inDim = r;
+	// int inDim = r;
 	uint64_t lat_dim = in.NumCols();   
 	std::size_t projSize = proj.size();
 	auto it = proj.cbegin();
@@ -1072,8 +1072,8 @@ void BasisConstruction<Int>::projectMatrix (const IntMat &in,
 	int inDim = in.NumCols();
 	uint64_t lat_dim = in.NumCols();   
 	std::size_t projSize = proj.size();
-	if (out.NumRows() != in.NumRows() || out.NumCols() != projSize)
-	   out.SetDims(in.NumRows(), projSize);
+	// if (out.NumRows() != in.NumRows() || out.NumCols() != projSize)
+	out.SetDims(in.NumRows(), projSize);
 	auto it = proj.cbegin();
 	for (std::size_t i = 0; i < projSize; i++) {
 	    if (*it <= lat_dim) {
