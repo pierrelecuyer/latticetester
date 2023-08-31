@@ -29,7 +29,7 @@
  * but it is hidden in the implementation and not accessible from outside.
  *
  * Each function returns the dimension of the computed basis (number of independent rows).
- * This basis is always returned in the upper-left corner of the matrix `B`.
+ * Important: This basis is always returned in the upper-left corner of the matrix `B`.
  * This differs from the `LLL_FP` functions, which returns the zero vectors at the top.
  */
 
@@ -43,45 +43,27 @@ NTL_OPEN_NNS
  * `B` are ignored. The basis is returned in the upper left corner of `B`
  * and its dimension d (the number of independent rows) is returned by the function.
  * The square lengths of the returned basis vectors are also returned in the
- * vector `b`,  in `b[0],..., b[d-1]`.  The other parameters are the same as
- * for `LLL_FP` in NTL.  The function returns the dimension of the computed
- * basis (the number of independent rows).
+ * vector `sqlen`,  in `sqlen[0],..., sqlen[d-1]`.
+ * The function returns the dimension of the computed basis (the number of independent rows).
  */
 static
-long LLL_FPZZflex(mat_ZZ& B, long r, long c, double *b, double delta = 0.99,
-	    long deep = 0, LLLCheckFct check = 0, long verb = 0);
+long LLL_FPZZflex(mat_ZZ& B, double delta = 0.99, long r = 0, long c = 0, double *sqlen = 0);
 
-/**
- * This version does not return the vector `b`.
- */
-static
-long LLL_FPZZflex(mat_ZZ& B, long r, long c, double delta = 0.99,
-	    long deep = 0, LLLCheckFct check = 0, long verb = 0);
 
 /**
  * This one is the same as `LLL_FP`, it takes `r` and `c` equal to the numbers
  * of rows and columns in the object `B`.
  */
-static
-long LLL_FPZZflex(mat_ZZ& B, double delta = 0.99,
-	    long deep = 0, LLLCheckFct check = 0, long verb = 0);
 
 /**
- * These functions are similar to `BKZ_FP` in NTL, with the same modifications
+ * This function is similar to `BKZ_FP` in NTL, with the same modifications
  * as in LLL_FPZZflex above.
  */
 
 static
-long BKZ_FPZZflex(mat_ZZ& BB, long r, long c,  double *b, double delta=0.99,
-	     long blocksize=10, long prune=0, LLLCheckFct check = 0, long verb = 0);
+long BKZ_FPZZflex(mat_ZZ& BB, double delta=0.99, long blocksize=10,
+		 long r = 0, long c = 0, double *sqlen = 0);
 
-static
-long BKZ_FPZZflex(mat_ZZ& BB, long r, long c, double delta=0.99,
-		 long blocksize=10, long prune=0, LLLCheckFct check = 0, long verb = 0);
-
-static
-long BKZ_FPZZflex(mat_ZZ& BB, double delta=0.99,
-		 long blocksize=10, long prune=0, LLLCheckFct check = 0, long verb = 0);
 
 NTL_CLOSE_NNS
 
@@ -1083,8 +1065,8 @@ long ll_LLL_FP(mat_ZZ& B, mat_ZZ* U, double delta, long deep,
 
 
 static
-long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *sqlen,
-		double delta, long deep, LLLCheckFct check)
+long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, double delta, long m, long n, double *sqlen,
+		long deep, LLLCheckFct check)
 {
    long i, j;
    long new_m, quit;
@@ -1143,39 +1125,15 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, long m, long n, double *sqlen,
 
 
 static
-long LLL_FPZZflex(mat_ZZ& B, long m, long n, double *sqlen,
-		double delta, long deep, LLLCheckFct check, long verb)
+long LLL_FPZZflex(mat_ZZ& B, double delta, long m, long n, double *sqlen)
 {
-   verbose = verb;
+   if (m == 0) m = B.NumRows();
+   if (n == 0) n = B.NumCols();
    RR_GS_time = 0;
    NumSwaps = 0;
-   if (verbose) {
-      StartTime = GetTime();
-      LastTime = StartTime;
-   }
    if (delta < 0.50 || delta >= 1) LogicError("LLL_FP: bad delta");
-   if (deep < 0) LogicError("LLL_FP: bad deep");
-   return LLL_FPZZflex(B, 0, n, m, sqlen, delta, deep, check);
+   return LLL_FPZZflex(B, 0, delta, m, n, sqlen, 0, 0);
 }
-
-
-static
-long LLL_FPZZflex(mat_ZZ& B, long m, long n,
-		double delta, long deep, LLLCheckFct check, long verb)
-{
-   return LLL_FPZZflex(B, n, m, 0, delta, deep, check);
-}
-
-
-static
-long LLL_FPZZflex(mat_ZZ& B,
-		double delta, long deep, LLLCheckFct check, long verb)
-{
-	long m = B.NumRows();
-	long n = B.NumCols();
-	return LLL_FPZZflex(B, n, m, 0, delta, deep, check);
-}
-
 
 /*
 // This is the original version from NTL.
@@ -1364,8 +1322,8 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
 
 
 static
-long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *sqlen, double delta,
-         long beta, long prune, LLLCheckFct check)
+long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
+		long m, long n, double *sqlen, long prune, LLLCheckFct check)
 {
    // long m = BB.NumRows();
    // long n = BB.NumCols();
@@ -1735,21 +1693,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *sqlen, double 
       BKZStatus(GetTime(), enum_time, NumIterations, NumTrivial, NumNonTrivial, 
                 NumNoOps, m, n, B);
    }
-
    // In this version, we do not move the zero vectors to the top.
-   /*
-   if (m_orig > m) {
-      // for consistency, we move zero vectors to the front
-      for (i = m+1; i <= m_orig; i++) {
-         swap(B(i), B(i+1));
-         if (U) swap((*U)(i), (*U)(i+1));
-      }
-      for (i = 0; i < m; i++) {
-         swap(B(m_orig-i), B(m-i));
-         if (U) swap((*U)(m_orig-i), (*U)(m-i));
-      }
-   }
-   */
 
    B.SetDims(m_orig, n);
    BB = B;      // Are we changing the dimensions of BB in the end ??????
@@ -1766,46 +1710,23 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, long m, long n, double *sqlen, double 
 
 
 static
-long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ& UU, long m, long n, double *sqlen, double delta,
-         long beta, long prune, LLLCheckFct check, long verb)
-{
-   verbose = verb;
+long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ& UU, double delta, long beta,
+      long m, long n, double *sqlen) {
+   if (m == 0) m = BB.NumRows();
+   if (n == 0) n = BB.NumCols();
    RR_GS_time = 0;
    NumSwaps = 0;
-   if (verbose) {
-      StartTime = GetTime();
-      LastTime = StartTime;
-   }
    if (delta < 0.50 || delta >= 1) LogicError("BKZ_FPZZ: bad delta");
    if (beta < 2) LogicError("BKZ_FPZZ: bad block size");
-   return BKZ_FPZZflex(BB, &UU, m, n, sqlen, delta, beta, prune, check);
+   return BKZ_FPZZflex(BB, &UU, delta, beta, m, n, sqlen, 0, 0);
 }
-
 
 static
-long BKZ_FPZZflex(mat_ZZ& BB, long m, long n, double *sqlen, double delta,
-         long beta, long prune, LLLCheckFct check, long verb)
-{
-   return BKZ_FPZZflex(BB, 0, m, n, sqlen, delta, beta, prune, check);
+long BKZ_FPZZflex(mat_ZZ& BB, double delta, long beta,
+		long m, long n, double *sqlen) {
+   return BKZ_FPZZflex (BB, 0, delta, beta, m, n, sqlen);
 }
 
-
-static
-long BKZ_FPZZflex(mat_ZZ& BB, long m, long n, double delta,
-         long beta, long prune, LLLCheckFct check, long verb)
-{
-   return BKZ_FPZZflex(BB, 0, m, n, 0, delta, beta, prune, check);
-}
-
-
-static
-long BKZ_FPZZflex(mat_ZZ& BB, double delta,
-         long beta, long prune, LLLCheckFct check, long verb)
-{
-	long m = BB.NumRows();
-	long n = BB.NumCols();
-	return BKZ_FPZZflex(BB, 0, m, n, 0, delta, beta, prune, check);
-}
 
 NTL_END_IMPL
 
