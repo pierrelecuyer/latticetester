@@ -1339,8 +1339,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
 
    mat_ZZ B;    // Will be a deep copy of BB, with one more row.   ********
    B = BB;
-   B.SetDims(m+1, n);   // Here we are reserving new space. Need this ???
-                        // Does this change the dimensions of BB in the end ???
+   B.SetDims(m+1, n);   // Here we are reserving new space.
 
    Unique2DArray<double> B1_store;
    B1_store.SetDimsFrom1(m+2, n+1);
@@ -1710,7 +1709,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
 
 
 static
-long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ& UU, double delta, long beta,
+long BKZ_FPZZflex(mat_ZZ& BB, double delta, long beta,
       long m, long n, double *sqlen) {
    if (m == 0) m = BB.NumRows();
    if (n == 0) n = BB.NumCols();
@@ -1718,13 +1717,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ& UU, double delta, long beta,
    NumSwaps = 0;
    if (delta < 0.50 || delta >= 1) LogicError("BKZ_FPZZ: bad delta");
    if (beta < 2) LogicError("BKZ_FPZZ: bad block size");
-   return BKZ_FPZZflex(BB, &UU, delta, beta, m, n, sqlen, 0, 0);
-}
-
-static
-long BKZ_FPZZflex(mat_ZZ& BB, double delta, long beta,
-		long m, long n, double *sqlen) {
-   return BKZ_FPZZflex (BB, 0, delta, beta, m, n, sqlen);
+   return BKZ_FPZZflex(BB, 0, delta, beta, m, n, sqlen, 0, 0);
 }
 
 

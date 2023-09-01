@@ -72,7 +72,7 @@ namespace LatticeTester {
  * `upperTriangularBasis` constructs an upper-triangular basis.
  *
  * To compute the  \f$m\f$-dual of a given basis, we have a general method implemented in
- * `mDualBasis`, and a faster method in `mDualUpperTriangular` that works only when
+ * `mDualBasis`, and a much faster method in `mDualUpperTriangular` that works only when
  * the basis is upper-triangular.
  *
  * We also have functions to compute the basis of a projection of a given lattice over
@@ -80,6 +80,12 @@ namespace LatticeTester {
  * by using LLL to construct the basis of the projection, while `projectionConstructionUpperTri`
  * constructs an upper-triangular basis for the projection.
  * The function `projectionConstruction` takes the construction method as a parameter.
+ *
+ * All functions take as input a `IntMat` object that contains either a basis or a set of
+ * generating vectors. By default, all rows and columns of this matrix object are used.
+ * But in some functions, the user can ask to use only a subset of these rows and columns,
+ * via the optional parameters `r` and `c`.  This can permit one to use the same `IntMat`
+ * object for several numbers of dimensions, to avoid object creations.
  *
  * All functions in this class are static, so there is no reason to create any
  * `BasisConstruction` object. We also avoid to create new objects (such as vectors and
@@ -105,39 +111,38 @@ public:
     * This function takes a set of generating vectors of a lattice in matrix `gen` and
     * finds a lattice basis by applying LLL reduction with the given value of `delta`,
     * using the NTL implementation specified by `prec`.
-    * It returns this basis in `gen`, which is resized to a number of rows equal to its rank.
+    * The basis is returned in the first rows of `gen`, in a number of rows equal to its rank.
     * See the class `EnumTypes` and the documentation of LLL in NTL for the meaning and
     * choices for `prec`. The default value of delta is not very close to 1 because the
     * goal here is just to compute a basis. It can be taken much closer to 1 if we
     * really prefer a highly-reduced basis.
+    * The optional parameters `r` and `c` indicate the numbers of rows and columns
+    * of the matrix `gen` that are actually used. When they are 0 (the default values),
+    * then these numbers are taken to be the dimensions of the matrix `gen`.
+    * When `sqlen` is not 0, the square lengths of the basis
+    * vectors are returned in this array, exactly as in the `LLL_FPZZflex.h` module.
+    * These optional parameters are allowed only when `Int==ZZ` and `precision = DOUBLE`.
+    * The function returns the dimension (number of rows) of the newly computed basis,
+    * which may differ from the number of rows of the `gen` object.
+    * The latter is never resized.
+    *
     * This function *does not* assume that all vectors \f$m e_i\f$ belong to the lattice, so
     * it may return a basis matrix that has fewer rows than columns!
     * To make sure that these vectors belong to the lattice, we can add them
     * explicitly beforehand to the set of generating vectors, or call the next method.
-    * The function returns the dimension of the computed basis (number of rows).
-    */
-
-
-   /**
-    * In this version, one can pass the number `r` of rows and number `c` of columns
-    * of the matrix `gen` that are actually used, and the square lengths of the basis
-    * vectors are returned in the array `b`, exactly as in the `LLL_FPZZflex.h` module.
-    * If `b` is not needed, one can just pass 0 in place of `*b`.
-    * This function is implemented only for `Int==ZZ` and `Real==double`.
-    * The function returns the dimension of the newly computed basis, which may differ
-    * from the number of rows of the `gen` object.  The latter is not resized.
     */
    static long LLLConstruction0(IntMat &gen, double delta = 0.9, long r = 0,
-         long c = 0, double *b = 0, PrecisionType precision = DOUBLE);
+         long c = 0, double *sqlen = 0, PrecisionType precision = DOUBLE);
 
    /**
-    * Similar to `LLLConstruction`, except that in case the set of generating
+    * Similar to `LLLConstruction0`, except that in case the set of generating
     * vectors do not generate a full-dimensional lattice, it adds the vectors
     * \f$m e_i\f$ to the generating set, so it always returns a square matrix.
-    * The function returns the dimension of the computed basis.
+    * The matrix `gen` is not resized by this function, so it can remain larger
+    * than the lattice dimension.
     */
    static void LLLBasisConstruction(IntMat &gen, const Int &m, double delta = 0.9,
-         long r = 0, long c = 0, double *b = 0, PrecisionType precision = DOUBLE);
+         long r = 0, long c = 0, double *sqlen = 0, PrecisionType precision = DOUBLE);
 
    /**
     * Takes a set of generating vectors in the matrix `gen` and iteratively
@@ -152,23 +157,16 @@ public:
     * and `basis` will contain an upper triangular basis.
     * The algorithm is explained in the lattice tester guide.
     * Important: `gen` and `basis` must be different `IntMat` objects.
-    */
-   // static void lowerTriangularBasis0(IntMat &gen, IntMat &basis, const Int &m);
-
-   /**
-    * In this version, one can pass the number `r` of rows and number `c` of columns
-    * of the matrix `gen` that are actually used.
+    *
+    * When `r` and/or `c` are strictly positive, they specify the numbers of
+    * rows and columns of `gen` that are actually used, as in `LLLConstruction0`.
+    * The matrix `gen` is never resized.
     */
    static void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m,
          long r = 0, long c = 0);
 
    /**
-    * Similar to `lowerTriangularBasis`, except that the returned basis is upper triangular.
-    */
-   // static void upperTriangularBasis0(IntMat &gen, IntMat &basis, const Int &m);
-
-   /**
-    * Similar to `lowerTriangularBasis`, except that the returned basis is upper triangular.
+    * Same as `lowerTriangularBasis`, except that the returned basis is upper triangular.
     */
    static void upperTriangularBasis(IntMat &gen, IntMat &basis, const Int &m,
          long r = 0, long c = 0);
@@ -179,18 +177,15 @@ public:
     * That is, the basis matrix must be square and invertible.
     * The algorithm is described in the Lattice Tester guide \cite iLEC22l.
     * Since the basis is upper triangular, its m-dual will be lower triangular.
-    */
-
-   /**
-    * In this version, one can pass the dimension `dim` of rows and columns
-    * of the matrix `gen` that is actually used.
+    * When `dim > 0`, it gives the number of rows and columns of the matrix `gen`
+    * that is actually used.  By default, it is the number of columns of `gen`.
     */
    static void mDualUpperTriangular(const IntMat &basis, IntMat &basisDual,
          const Int &m, long dim = 0);
 
    /**
-    * This function does essentially the same thing as `mDualUpperTriangular`, but it is
-    * slightly different and slower. It uses the method described in \cite rCOU96a.
+    * This function does essentially the same thing as `mDualUpperTriangular`, but the
+    * algorithm is slightly different. It uses the method described in \cite rCOU96a.
     */
    static void mDualUpperTriangular96(IntMat &basis, IntMat &basisDual,
          const Int &m, long dim = 0);
@@ -202,23 +197,20 @@ public:
     * This function assumes that `basis` contains a basis of the primal lattice
     * scaled by the factor `m`, not necessarily triangular, and it returns in `basisDual`
     * the m-dual basis.  It is currently implemented only for `Int = ZZ`.
-    */
-   /**
-    * In this version, one can pass the number `r` of rows and number `c` of columns
-    * of the matrix `gen` that are actually used.
+    * It used matrix inversion and is rather slow.
     */
    static void mDualBasis(const IntMat &basis, IntMat &basisDual, const Int &m);
 
    /**
-    * If `r > 0`, overwrites the first `r` rows of matrix 'out' by a matrix formed by the
-    * first `r` rows of the c columns of matrix `in` that are specified by `proj`.
-    * The value of c is the cardinality of the projection `proj`.
+    * This function overwrites the first `r` rows of matrix 'out' by a matrix formed by the
+    * first `r` rows of the c columns of matrix `in` that are specified by `proj`,
+    * where c is the cardinality of the projection `proj`.
     * Only the first c columns of the first `r` rows are overwritten;
     * the other entries are left unchanged.
     * If `r = 0`, then all the rows of matrix `in` are taken.
     * The dimensions of the matrices `in` and `out` are always left unchanged.
-    * The dimensions of `out` are assumed to be large enough.
-    * The matrix `out` will then contain a set of generating vectors for the projection `proj`.
+    * The dimensions of `out` are assumed to be large enough.   After the call,
+    * the matrix `out` will then contain a set of generating vectors for the projection `proj`.
     * The matrices `in` and `out` must be different IntMat objects, otherwise the program
     * halts with an error message.
     */
@@ -227,44 +219,39 @@ public:
 
    /**
     * Constructs a basis for the projection `proj` of the lattice with basis `inBasis`,
-    * using `LLLConstruction`, and puts it in `projBasis`. This basis is not triangular in general.
+    * using `LLLBasisConstruction`, and puts it in `projBasis`.
+    * This basis is not triangular in general.
     * This will overwrite the matrix `projBasis`, or part of it.
-    *
-    *  and will change its dimensions if needed.
     * It does not compute the dual.
+    * When `r > 0`, only the first `r` rows of the matrix `inBasis` are actually used.
+    * The square lengths of the basis vectors are returned in the array `sqlen` when
+    * the latter is given.
     */
-
-   /**
-    * In this version, one can pass the number `r` of rows and number `c` of columns
-    * of the matrix `inBasis` that are actually used.
-    */
-   static void projectionConstructionLLL(IntMat &inBasis, IntMat &projBasis,
+   static void projectionConstructionLLL(const IntMat &inBasis, IntMat &projBasis,
          const Coordinates &proj, const Int &m, const double delta = 0.9,
-         long r = 0, long c = 0, double *b = 0);
+         long r = 0, double *sqlen = 0);
 
    /**
     * Same as `projectionConstructionLLL`, but the construction is made using
     * `upperTriangularBasis`, so the returned basis is upper triangular.
-    * The matrix `genTemp` will be used to store the generating vectors of the
-    * projection before making the triangularization. We pass it as a parameter
-    * to avoid the internal creation of a new matrix each time.
-    * If `genTemp` is not passed as input, then a temporary matrix will be created internally.
+    * In the first version, we pass a matrix `genTemp` that will be used to store the
+    * generating vectors of the projection before making the triangularization.
+    * We pass it as a parameter to avoid the internal creation of a new matrix each time.
+    * In the second version, this matrix is not passed and a temporary one is created internally.
     */
-   static void projectionConstructionUpperTri(IntMat &inBasis,
-         IntMat &projBasis, const Coordinates &proj, const Int &m,
-         long r = 0, long c = 0, IntMat &genTemp = 0);
+   static void projectionConstructionUpperTri(const IntMat &inBasis,
+         IntMat &projBasis, IntMat &genTemp, const Coordinates &proj, const Int &m,
+         long r = 0);
 
-   /**
-    * In this version, one can pass the number `r` of rows and number `c` of columns
-    * of the matrix `inBasis` that are actually used.
-    */
+   static void projectionConstructionUpperTri(const IntMat &inBasis,
+         IntMat &projBasis, const Coordinates &proj, const Int &m, long r = 0);
 
    /**
     * In this version, the construction method is passed as a parameter. The default is LLL.
     * In the triangular case, a temporary matrix is created internally.
     */
-   static void projectionConstruction(IntMat &inBasis, IntMat &projBasis,
-         const Coordinates &proj, const Int &m, const ProjConstructType t_proj =
+   static void projectionConstruction(const IntMat &inBasis, IntMat &projBasis,
+         const Coordinates &proj, const Int &m, const ProjConstructType projType =
                LLLPROJ, const double delta = 0.9);
 
 };
@@ -290,17 +277,17 @@ long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
       double delta, long r, long c, double *sqlen, PrecisionType precision) {
    long num = gen.NumRows();   // Number of generating vectors.
    int64_t rank = 0;
-   if (precision == DOUBLE & c==0 & r==0 & sqlen==0)
+   if ((precision == DOUBLE) & (c==0) & (r==0) & (sqlen==0))
       rank = LLL64_FP(gen, delta);
       // rank = LLL_FP64flex(gen, delta, r, c, sqlen);
    else
       std::cerr
-            << "LLLConstruction0 for int64_t: implemented only for precision=DOUBLE, c=r=0.\n";
+            << "LLLConstruction0 for int64_t: implemented only for precision=DOUBLE and c=r=0.\n";
    // Move the zero rows to the bottom.
    for (long i = 0; i < rank; i++) {
       NTL::swap(gen[i], gen[num - rank + i]);
    }
-   gen.SetDims(rank, gen.NumCols());
+   // gen.SetDims(rank, gen.NumCols());  // Here, gen is resized.
    return rank;
 }
 
@@ -311,11 +298,13 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
    long rank = 0;
    if (precision == DOUBLE)
       // This function returns the nonzero vectors in the top rows of `gen`.
+      // It never resizes the matrix `gen`.                                    ***
       return rank = NTL::LLL_FPZZflex(gen, delta, r, c, sqlen);
 
-   // If precision is not DOUBLE, we are not allowed to specify r, c, sqlen.
-   if (r | c | sqlen)
-      std::cerr << "LLLConstruction0: r, c, sqlen params not allowed when precision != DOUBLE.\n";
+   // If precision is not DOUBLE, we are not allowed to specify r or c
+   // with positive values that differ from the dimensions of gen.
+   if (((r > 0) & (r != gen.NumRows())) | (((c > 0) & (c != gen.NumCols()))))
+      std::cerr << "LLLConstruction0: r and c params not allowed when precision != DOUBLE.\n";
 
    switch (precision) {
    case QUADRUPLE:
@@ -336,7 +325,7 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
    for (long i = 0; i < rank; i++) {
       NTL::swap(gen[i], gen[num - rank + i]);
    }
-   gen.SetDims(rank, gen.NumCols());
+   // gen.SetDims(rank, gen.NumCols());
    return rank;
 }
 
@@ -345,8 +334,8 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 template<typename Int>
 void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m,
       double delta, long r, long c, double *sqlen, PrecisionType precision) {
-   if (!c) c = gen.NumCols();
    int64_t rank = LLLConstruction0(gen, delta, r, c, sqlen, precision);
+   if (!c) c = gen.NumCols();
    if (rank == c)
       return;  // We are done!
 
@@ -375,7 +364,7 @@ void BasisConstruction<Int>::upperTriangularBasis(IntMat &gen, IntMat &basis,
    long i, j, k, l;
    // long dim1 = r;
    // long dim2 = c;
-   // In case r or c is zero:
+   // In case dim1 or dim2 is zero:
    if (!dim1)
       dim1 = gen.NumRows();
    if (!dim2)
@@ -602,7 +591,7 @@ void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
       const Int &m, long dim) {
    if (!dim) {
       dim = A.NumRows();
-      B.SetDims(dim, dim);
+      B.SetDims(dim, dim);    // B is resized to the dim of the basis.
       }
    if (dim != A.NumCols()) {
       MyExit (1, ":mDualUpperTriangular: basis matrix must be square");
@@ -629,14 +618,14 @@ void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
 // This is the old version from Couture and L'Ecuyer (1996).
 template<typename Int>
 void BasisConstruction<Int>::mDualUpperTriangular96(IntMat &basis,
-      IntMat &basisDual, Int &m, long dim) {
+      IntMat &basisDual, const Int &m, long dim) {
    if (m < 1) {
       MyExit (1, "mDualUpperTriangular96: m must be a positive integer");
       return;
    }
    if (!dim) {
       dim = basis.NumRows();
-      basisDual.SetDims(dim, dim);
+      basisDual.SetDims(dim, dim);   // Here B is resized.
       }
    if (dim != basis.NumCols()) {
       MyExit (1, ":mDualUpperTriangular96: basis matrix must be square");
@@ -677,7 +666,7 @@ void BasisConstruction<Int>::mDualUpperTriangular96(IntMat &basis,
 template<>
 void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96ZZ (
       NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDual,
-      NTL::ZZ &m, long dim) {
+      const NTL::ZZ &m, long dim) {
    if (m < 1) {
       MyExit (1, "mDualUpperTriangular96: m must be a positive integer");
       return;
@@ -724,24 +713,24 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96ZZ (
 
 template<typename Int>
 void BasisConstruction<Int>::mDualBasis(const IntMat &basis, IntMat &basisDual,
-      const Int &m, long dim) {
+      const Int &m) {
    std::cerr << "mDualBasis is implemented only for NTL::ZZ integers.\n";
    exit(1);
 }
 
 // The specialization for the case where `Int = ZZ`.
 template<>
-void BasisConstruction<NTL::ZZ>::mDualBasisOld(const NTL::matrix<NTL::ZZ> &basis,
+void BasisConstruction<NTL::ZZ>::mDualBasis (const NTL::matrix<NTL::ZZ> &basis,
       NTL::matrix<NTL::ZZ> &basisDual, const NTL::ZZ &m) {
-   NTL::ZZ d, fac;
+   NTL::ZZ det, fac;
    int64_t dim = basis.NumRows();
    if (dim != basis.NumCols()) {
       std::cerr << "mDualBasis: the given basis matrix must be square.\n";
       exit(1);
    }
-   inv(d, basisDual, basis);
+   inv(det, basisDual, basis);
    NTL::matrix<NTL::ZZ> C = basisDual;
-   div(fac, d, m);
+   div(fac, det, m);
    for (int64_t i = 0; i < dim; i++) {
       for (int64_t j = 0; j < dim; j++) {
          div(basisDual[j][i], C[i][j], fac);
@@ -762,7 +751,7 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(const NTL::matrix<NTL::ZZ> &basis,
    copyBasis.SetDims(dim, dim);
    // We added the dim param. just to avoid this type of creation of new objects,
    // so this creation and copying defeats the purpose and seems to be nonsense!!!
-   // But the function `inv` is very slow anyway.                         ******
+   // But the function `inv` is very slow anyway.
 
    // Here we copy only the part that we need.
    for (int64_t i = 0; i < dim; i++) {
@@ -791,7 +780,7 @@ void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
       const Coordinates &proj, long r) {
    if (in == out)
       MyExit(1, "in and out must be different IntMat objects.");
-   // int inDim = r;
+   if (!r) r = in.NumRows();   // In case r=0.
    uint64_t lat_dim = in.NumCols();
    std::size_t projSize = proj.size();
    auto it = proj.cbegin();
@@ -835,41 +824,45 @@ void BasisConstruction<Int>::projectMatrix0(const IntMat &in, IntMat &out,
 
 //===================================================
 
-template<>
-void BasisConstruction<Int>::projectionConstructionLLL(IntMat &inBasis,
-      IntMat &projBasis, const Coordinates &proj, const double delta,
-      const Int &m, long r, long c, double *b) {
-
+template<typename Int>
+void BasisConstruction<Int>::projectionConstructionLLL(const IntMat &inBasis,
+      IntMat &projBasis, const Coordinates &proj, const Int &m,
+      const double delta, long r, double *sqlen) {
    projectMatrix(inBasis, projBasis, proj, r);
-   LLLBasisConstruction(projBasis, m, delta, r, c, b);
+   LLLBasisConstruction(projBasis, m, delta, r, proj.size(), sqlen);
 }
 
 //===================================================
 
-template<>
-void BasisConstruction<Int>::projectionConstructionUpperTri(IntMat &inBasis,
-      IntMat &projBasis, const Coordinates &proj, const Int &m,
-      long r, IntMat &genTemp) {
-   if (!r) r = inBasis.NumRows();
-   long dim = proj.size();    // Dimension of projection
-   IntMat temp;
-   if (!genTemp) {
-      genTemp = temp;
-      genTemp.setDims (dim, dim);
-   }
+
+template<typename Int>
+void BasisConstruction<Int>::projectionConstructionUpperTri(const IntMat &inBasis,
+      IntMat &projBasis, IntMat &genTemp, const Coordinates &proj, const Int &m,
+      long r) {
+   //  if (!r) r = inBasis.NumRows();
    projectMatrix(inBasis, genTemp, proj, r);
-   upperTriangularBasis(genTemp, projBasis, m, r, dim);     //  ????????
+   upperTriangularBasis(genTemp, projBasis, m, r, proj.size());  // Check this  *****
+}
+
+template<typename Int>
+void BasisConstruction<Int>::projectionConstructionUpperTri(const IntMat &inBasis,
+      IntMat &projBasis, const Coordinates &proj, const Int &m, long r) {
+   long dim = proj.size();    // Dimension of projection
+   IntMat genTemp;
+   genTemp.SetDims (dim, dim);
+   projectMatrix(inBasis, genTemp, proj, r);
+   upperTriangularBasis(genTemp, projBasis, m, r, dim);
 }
 
 //===================================================
 
-template<>
-void BasisConstruction<Int>::projectionConstruction(IntMat &inBasis,
+template<typename Int>
+void BasisConstruction<Int>::projectionConstruction(const IntMat &inBasis,
       IntMat &projBasis, const Coordinates &proj, const Int &m,
-      const ProjConstructType t_proj, const double delta) {
-   if (t_proj == LLLPROJ)
+      const ProjConstructType projType, const double delta) {
+   if (projType == LLLPROJ)
       projectionConstructionLLL(inBasis, projBasis, proj, m, delta);
-   if (t_proj == UPPERTRIPROJ)
+   if (projType == UPPERTRIPROJ)
       projectionConstructionUpperTri(inBasis, projBasis, proj, m);
 }
 

@@ -325,7 +325,7 @@ double FoMCalc<Int>::computeMeritMSucc_MethodG(IntLatticeExt<Int, Real> & lat) {
       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);  
    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
       //this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);  
-     LLL_FPZZflex(lat.getDualBasis(), lower_dim+1, lower_dim+1, b, this->m_delta);
+     LLL_FPZZflex(lat.getDualBasis(), this->m_delta, lower_dim+1, lower_dim+1, b);
    } else if (this->m_reductionMethod == PAIRBB) {
      this->m_red->redDieter(0);
    }
@@ -339,7 +339,7 @@ double FoMCalc<Int>::computeMeritMSucc_MethodG(IntLatticeExt<Int, Real> & lat) {
 	       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);
 	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
 	       //this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);
-	    	LLL_FPZZflex(lat.getDualBasis(), j, j, b, this->m_delta);
+	    	LLL_FPZZflex(lat.getDualBasis(), this->m_delta, j, j, b);
 	    } else if (this->m_reductionMethod == PAIRBB) {
 	       this->m_red->redDieter(0);
 	    }
@@ -366,7 +366,7 @@ double FoMCalc<Int>::computeMeritMSucc_MethodH(IntLatticeExt<Int, Real> & lat) {
       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);  
    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
       //this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);  
-     LLL_FPZZflex(lat.getDualBasis(), lower_dim+1, lower_dim+1, b, this->m_delta);
+     LLL_FPZZflex(lat.getDualBasis(), this->m_delta, lower_dim+1, lower_dim+1, b);
    } else if (this->m_reductionMethod == PAIRBB) {
      this->m_red->redDieter(0);
    }
@@ -379,7 +379,7 @@ double FoMCalc<Int>::computeMeritMSucc_MethodH(IntLatticeExt<Int, Real> & lat) {
 	       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);
 	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
 	       //this->m_red->redLLLNTL(lat.getDualBasis(), this->m_delta);
-	    	LLL_FPZZflex(lat.getDualBasis(), j, j, b, this->m_delta);
+	    	LLL_FPZZflex(lat.getDualBasis(), this->m_delta, j, j, b);
 	    } else if (this->m_reductionMethod == PAIRBB) {
 	       this->m_red->redDieter(0);
 	    }

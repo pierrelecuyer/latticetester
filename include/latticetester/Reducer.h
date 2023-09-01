@@ -245,22 +245,18 @@ public:
 	 */
 	void redLLLNTL(double delta = 0.999999, PrecisionType precision = DOUBLE);
 
-    /**
-     * A static version of the same function for which the basis is passed as a parameter.
-     */
-	static void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta = 0.999999,
-			PrecisionType precision = DOUBLE);
-	
 	/**
-	 * In this version, the reduction is applied only to the square submatrix comprised of
-	 * the first `dim` rows and `dim` columns of the `basis` matrix, which is actually
+    * A static version of the same function for which the basis is passed as a parameter.
+	 * In this version, when `dim > 0`, the reduction is applied only to the square submatrix
+	 * comprised of the first `dim` rows and `dim` columns of the `basis` matrix, which is actually
 	 * considered as the basis. The other rows and columns are ignored.
 	 * This is useful if one wants to reuse the same `basis` object several times
 	 * to pass lattice bases having different dimensions.
+	 * When `dim = 0`, the number of columns of `gen` is used for the dimension.
 	 * Here, the precision type is always `DOUBLE`.
 	 */
-	static void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, long dim,
-			double delta = 0.999999);
+	static void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta = 0.999999,
+	      long dim = 0, double *sqlen = 0, PrecisionType precision = DOUBLE);
 
 	/**
 	 * This implements an exact algorithm from NTL to perform the original LLL reduction.
@@ -1146,33 +1142,33 @@ void redLLLNTL (Reducer<NTL::ZZ, Real> &red, double delta, PrecisionType precisi
 // Static version: a specialization for the case where Int = ZZ.
 // See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
 // about the `PrecisionType` choices.
-template<>
+template<typename Int, typename Real>
 void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
-			  PrecisionType precision) {
-	    switch (precision) {
-			case DOUBLE:
-				LLL_FP(basis, delta, 0, 0);
-				break;
-			case QUADRUPLE:
-				LLL_QP(basis, delta, 0, 0);
-				break;
-			case XDOUBLE:
-				LLL_XD(basis, delta, 0, 0);
-				break;
-			case RR:
-				LLL_RR(basis, delta, 0, 0);
-				break;
-			default:
-				MyExit(1, "redLLLNTL: undefined PrecisionType.");
-			}
-	}
+         long dim, double *sqlen, PrecisionType precision) {
+   // long rank;
+   if (precision == DOUBLE) {
+      NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
+      return;
+   }
+   // If precision is not DOUBLE, we are not allowed to specify dim;
+   // it is taken as the dimension of basis.
+   if ((dim > 0) & (dim != basis.NumRows()))
+      std::cerr << "redLLLNTL: dim param not allowed when precision != DOUBLE.\n";
 
-template<>
-void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, long dim,
-		        double delta) {
-	 LLL_FPZZflex (basis, dim, dim, delta);
+   switch (precision) {
+   case QUADRUPLE:
+      NTL::LLL_QP(basis, delta);
+      break;
+   case XDOUBLE:
+      NTL::LLL_XD(basis, delta);
+      break;
+   case RR:
+      NTL::LLL_RR(basis, delta);
+      break;
+	default:
+      MyExit(1, "redLLLNTL: undefined PrecisionType.");
+   }
 }
-
 
 //=========================================================================
 

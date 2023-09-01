@@ -122,7 +122,7 @@ int main() {
     BasisConstruction<Int>::projectionConstructionLLL (basis1, basis2, proj, m);
     std::cout << "Basis for this projection, with LLL: \n" << basis2 << "\n";
 
-    BasisConstruction<Int>::projectionConstructionUpperTri (basis1, basis2, proj, m, basis3);
+    BasisConstruction<Int>::projectionConstructionUpperTri (basis1, basis2, basis3, proj, m);
     std::cout << "Basis for this projection, with upper-triangular method: \n" << basis2 << "\n";
     
     IntLattice<Int, Real> *projLat; // Another IntLattice to store the projection, needed for `red`.
