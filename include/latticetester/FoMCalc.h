@@ -128,7 +128,42 @@ public:
     */
     double computeMeritMSucc_MethodH (IntLatticeExt<Int, Real> & lat);
     
+    // So far the following works only for the dual lattice 
+    
+    /*
+    * The very first algorithm as implementend in FiguresOfMerit 
+    */
+    double computeMeritMNonSucc_Method0 (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
+    
+    /*
+    * As 0, but shortest vector length is taken from first vector of LLL Algorithm
+    */
+    
+    double computeMeritMNonSucc_MethodA (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
+    
+    /* 
+    * Same as A but the atrix for calculating the projection is reused
+    */
+    
+    double computeMeritMNonSucc_MethodB (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, IntMat & temp);
+    
+    
+    /* 
+    * Idea: Use structure of LCG and by that reduce size of matrices involved
+    */
+    
+    double computeMeritMNonSucc_MethodC (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
+    
+    
+    /* 
+    * Idea: Try to avoid the call of mDual
+    */
+    
+    double computeMeritMNonSucc_MethodD (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
+    
+    
     double *b;
+
     
     
 };
@@ -391,6 +426,177 @@ double FoMCalc<Int>::computeMeritMSucc_MethodH(IntLatticeExt<Int, Real> & lat) {
 }
 
 //=========================================================================
+
+//=========================================================================
+template<typename Int>
+double FoMCalc<Int>::computeMeritMNonSucc_Method0 (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+    double merit = 0;
+    double minmerit = 1.0;
+    double shortest = 0.0;
+    for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
+       // Calculate upper-triangular basis for projection
+       BasisConstruction<Int>::projectionConstructionUpperTri(lat.getBasis(), this->m_projBasis, *it, lat.getModulo());
+       // Calculate upper-triangular mdual basis
+       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, this->m_temp, lat.getModulo());
+       // Define IntLattice based on mdual basis
+       proj.setBasis(this->m_temp, this->m_projBasis.NumCols());
+       
+       // Apply selected reduction technique
+       if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+           this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
+       } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+           this->m_red->redLLLNTL(proj.getBasis(), this->m_delta);  
+       } else if (this->m_reductionMethod == PAIRBB) {
+           this->m_red->redDieter(0);
+       }
+       // Calculate shortest vector
+       if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == LLLBB || this->m_reductionMethod == PAIRBB) {
+           if (!this->m_red->shortestVector(proj)) return 0;
+           shortest = NTL::conv<double>(this->m_red->getMinLength());
+       } else {
+           shortest = proj.getShortestLengthBasis();
+       }
+       merit = shortest / this->m_norma->getBound(proj.getDim());
+       if (merit < minmerit) minmerit = merit;
+       if (merit == 0 || merit < this->m_lowbound || merit > this->m_highbound) return 0;
+    }
+
+    return minmerit;  
+}
+
+//=========================================================================
+template<typename Int>
+double FoMCalc<Int>::computeMeritMNonSucc_MethodA (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+    double merit = 0;
+    double minmerit = 1.0;
+    double shortest = 0.0; 
+    
+    for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
+       // Calculate upper-triangular basis for projection
+       BasisConstruction<Int>::projectionConstructionUpperTri(lat.getBasis(), this->m_projBasis, *it, lat.getModulo());
+       // Calculate upper-triangular mdual basis
+       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, this->m_temp, lat.getModulo());
+       // Define IntLattice based on mdual basis
+       proj.setBasis(this->m_temp, this->m_projBasis.NumCols());
+       
+       int64_t max_dim = proj.getDim();   
+       // Apply selected reduction technique
+       if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+          this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
+       } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+           LLL_FPZZflex(proj.getBasis(), this->m_delta, proj.getBasis().NumRows(), proj.getBasis().NumCols(), this->m_b);  
+       } else if (this->m_reductionMethod == PAIRBB) {
+           this->m_red->redDieter(0);
+       }
+       // Use first basis vector as proxy for shortest length
+	     NTL::conv(merit, sqrt(this->m_b[0]) / this->m_norma->getBound(proj.getDim()));
+       if (merit < minmerit) minmerit = merit;
+       if (merit == 0 || merit < this->m_lowbound) return 0;
+    }
+    
+     return minmerit;  
+}
+
+
+//=========================================================================
+template<typename Int>
+double FoMCalc<Int>::computeMeritMNonSucc_MethodB (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, IntMat & temp) {
+    double merit = 0;
+    double minmerit = 1.0;
+    double shortest = 0.0; 
+    
+    for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
+    
+       BasisConstruction<Int>::projectMatrix(lat.getBasis(), temp, *it);
+       BasisConstruction<Int>::upperTriangularBasis(temp, this->m_projBasis, lat.getModulo());
+       // Calculate upper-triangular mdual basis
+       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, this->m_temp, lat.getModulo());
+       // Define IntLattice based on mdual basis
+       proj.setBasis(this->m_temp, this->m_projBasis.NumCols());
+       // Apply selected reduction technique
+       if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+           this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
+       } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+           LLL_FPZZflex(proj.getBasis(), this->m_delta, proj.getBasis().NumRows(), proj.getBasis().NumCols(), this->m_b);  
+       } else if (this->m_reductionMethod == PAIRBB) {
+           this->m_red->redDieter(0);
+       }
+       // Use first basis vector as proxy for shortest length
+	     NTL::conv(merit, sqrt(this->m_b[0]) / this->m_norma->getBound(proj.getDim()));
+       if (merit < minmerit) minmerit = merit;
+       if (merit == 0 || merit < this->m_lowbound) return 0;         
+    }
+    
+    return minmerit;  
+}
+
+//=========================================================================
+template<typename Int>
+double FoMCalc<Int>::computeMeritMNonSucc_MethodC (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+    double merit = 0;
+    double minmerit = 1.0;
+    double shortest = 0.0; 
+  
+    for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
+       
+       
+       //BasisConstruction<Int>::pMatrix(lat.getBasis(), this->m_projBasis, *it);
+       BasisConstruction<Int>::projectMatrix_minRows(lat.getBasis(), this->m_projBasis, *it);
+       // Calculate upper-triangular mdual basis
+       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, this->m_temp, lat.getModulo());
+       // Define IntLattice based on mdual basis
+       proj.setBasis(this->m_temp, this->m_projBasis.NumCols());
+       // Apply selected reduction technique
+       if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+           this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
+       } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+           LLL_FPZZflex(proj.getBasis(), this->m_delta, proj.getBasis().NumRows(), proj.getBasis().NumCols(), this->m_b);  
+       } else if (this->m_reductionMethod == PAIRBB) {
+           this->m_red->redDieter(0);
+       }
+       // Use first basis vector as proxy for shortest length
+	     NTL::conv(merit, sqrt(this->m_b[0]) / this->m_norma->getBound(proj.getDim()));
+       if (merit < minmerit) minmerit = merit;
+       if (merit == 0 || merit < this->m_lowbound) return 0;
+      
+       
+    }
+  
+    return minmerit;  
+}
+
+//=========================================================================
+template<typename Int>
+double FoMCalc<Int>::computeMeritMNonSucc_MethodD (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+    double merit = 0;
+    double minmerit = 1.0;
+    double shortest = 0.0;
+     
+    for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
+
+       BasisConstruction<Int>::projectMatrixDual(lat.getBasis(), this->m_temp, *it);
+       // Define IntLattice based on mdual basis
+       proj.setBasis(this->m_temp, this->m_temp.NumCols());  
+       // Apply selected reduction technique
+       if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+           this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
+       } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+           LLL_FPZZflex(proj.getBasis(), this->m_delta, proj.getBasis().NumRows(), proj.getBasis().NumCols(), this->m_b);    
+       } else if (this->m_reductionMethod == PAIRBB) {
+           this->m_red->redDieter(0);
+       }
+       // Use first basis vector as proxy for shortest length
+	     NTL::conv(merit, sqrt(this->m_b[0]) / this->m_norma->getBound(proj.getDim()));
+       if (merit < minmerit) minmerit = merit;
+       if (merit == 0 || merit < this->m_lowbound) return 0;  
+    } 
+  
+    return minmerit;  
+}
+
+
+//=========================================================================
+
 
 template class FoMCalc<NTL::ZZ>;
 //template class FiguresOfMerit<std::int64_t>;
