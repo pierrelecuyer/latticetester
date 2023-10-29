@@ -210,6 +210,12 @@ public:
     vector<int64_t> m_t; 
     
     /*
+     * The vector 'm_b' is used to store the basis after pre-reduction has
+     * been performed.
+     */
+    double *m_b;
+    
+    /*
      * Stores the matrix of the projection basis
      */
     IntMat m_projBasis; 
@@ -262,6 +268,7 @@ void FiguresOfMerit<Int>::setTVector (const vector<int64_t> & t) {
    for (int64_t i = 1; i < lower_dim; i++)
        m_coordRange.includeOrder(i,min_dim,t[i],true);
    m_t = t;
+   m_b = new double[m_t.size()];
 }
   
 
