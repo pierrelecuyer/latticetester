@@ -37,6 +37,7 @@
 #include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/IntLatticeExt.h"
+#include "latticetester/LLL_FPZZflex.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
 
@@ -91,12 +92,13 @@ public:
      * dimensions for which the figure of merit is calculated. It contains
      * the values of t_1,..., t_d in the definition of the FoM.
      * The IntLattice object 'proj' is needed for saving projections.
-     *  The value 0 is returned if an error occurs
+     * The value 0 is returned if an error occurs
      * while calculating the shortest vector.
      */
     double computeMeritM (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
     
     /*
+     * WAS NECESSARY FOR TESTING PURPOSES (FoMCalc.h) ONLY AND MAY BE DELETED AFTER TESTING
      * This function calculates the Figure of Merit for a given lattice 'lat' 
      * without applying any projection. 
      */
@@ -106,9 +108,15 @@ public:
      * This function calculates the Figure of Merit for all projections 
      * consisting of successive coordinates of the forms 
      * {1, 2, ..., m_t.size()} to {1, 2, ..., m_t[0]}
+     * for the primal lattice.
      * The value 0 is returned if an error occurs while calculating the shortest vector.
      */
-    double computeMeritMSucc (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
+    double computeMeritMSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
+    
+    /*
+     * Same as computeMeritMSuccPrimal but for the dual lattice.
+     */
+    double computeMeritMSuccDual (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
     
     /*
      * This functions calculates the figure of merit of the primal lattice 
@@ -119,10 +127,7 @@ public:
     double computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
 
     /*
-     * This functions calculates the figure of merit of the dual lattice 
-     * for all projections consisting of non-successive coordinates. 
-     * The value 0 is returned if an error occurs while calculating the 
-     * shortest vector.
+     * Same as computeMeritMNonSuccPrimal but for the dual lattice.
      */
     double computeMeritMNonSuccDual (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
 
@@ -211,8 +216,8 @@ public:
     
     /*
      * The vector 'm_b' is used to store the basis after pre-reduction has
-     * been performed.
-     */
+     * been performed
+    */
     double *m_b;
     
     /*
@@ -239,6 +244,11 @@ public:
      * Reducer object used for finding the shortest vector of a projection
     */
     Reducer<Int, Real> *m_red;     
+    
+    /*
+    * Preliminary variable for storing vector length. Might be deleted / moved somewhere else later on. 
+    */
+    double *b;
 
 };
 
@@ -277,8 +287,9 @@ double FiguresOfMerit<Int>::computeMeritM (IntLatticeExt<Int, Real> & lat, IntLa
    double merit = 0;
    double minmerit = 1.0;
    
-   if (m_succCoordFirst == true) { 
-       minmerit = computeMeritMSucc(lat, proj);
+   if (m_succCoordFirst == true) {         
+       if (!m_fomInDual) minmerit = computeMeritMSuccPrimal(lat, proj);
+       minmerit = computeMeritMSuccDual(lat, proj);
        // In any of these cases the calcuation is stopped
        if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound) return 0;
    }   
@@ -288,16 +299,19 @@ double FiguresOfMerit<Int>::computeMeritM (IntLatticeExt<Int, Real> & lat, IntLa
    if (merit < minmerit) minmerit = merit;
    // In any of these cases the calcuation is stopped
    if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound) return 0;
-
-   if (m_succCoordFirst == false) {
-       merit = computeMeritMSucc(lat, proj);
+   
+   if (m_succCoordFirst == false) {   
+       if (!m_fomInDual) merit = computeMeritMSuccPrimal(lat, proj);
+       else merit = computeMeritMSuccDual(lat, proj);
        if (merit < minmerit) minmerit = merit;
        // In any of these cases the calcuation is stopped
        if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound) return 0;
-   } 
+   }    
+   
    return minmerit; 
 }
 
+// Was necessary only for testing (FoMCalc.h) - may be deleted later
 //=========================================================================
 
 template<typename Int>
@@ -330,33 +344,117 @@ double FiguresOfMerit<Int>::computeMeritMNoProj (IntLatticeExt<Int, Real> & lat)
 }
 
 //=========================================================================
-// !!! Old version - needs to be replaced as soon as we have decided which of the methods we want to have !!!
+// CODE IS UPDATED BUT HAS NOT BEEN TESTED (in particual the use of buildDualBasisFullMatrix and incDimBasisFullMatrix)
 template<typename Int>
-double FiguresOfMerit<Int>::computeMeritMSucc (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+double FiguresOfMerit<Int>::computeMeritMSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
    double merit = 0;
    double minmerit = 1.0;
-   double dim = lat.getBasis().NumCols();
-   int64_t low = static_cast<int64_t>(m_t.size());
-   // Build basis
-   lat.buildBasis(low+1);
-   merit = computeMeritMNoProj(lat);
-   BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
-   if (merit == 0) return merit;
-   for (int j = low +1; j < m_t[0]; j++)
-   {
-       if (m_incDualOnly == true) {
-           lat.incDimDualBasis();
-       } else {
-           lat.incDimBasis();
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
+   int64_t max_dim = lat.getDim();   
+   b = new double[max_dim];
+   lat.buildBasisFullMatrix(lower_dim+1);
+   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+      this->m_red->redBKZ(lat.getBasis(), this->m_delta, this->m_blocksize);  
+   } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+     LLL_FPZZflex(lat.getBasis(), this->m_delta, lower_dim+1, lower_dim+1, b);
+   } else if (this->m_reductionMethod == PAIRBB) {
+     this->m_red->redDieter(0);
+   }
+   if (this->m_reductionMethod == LLL || this->m_reductionMethod == BKZ) {
+	      NTL::conv(merit, sqrt(b[0]) / this->m_norma->getBound(lower_dim+1));
+     } else {
+       m_temp.SetDims(lower_dim+1,lower_dim+1);
+       for (int k = 0; k < lower_dim+1; k++) {
+          for (int l = 0; l < lower_dim+1; l++) m_temp[k][l] = lat.getBasis()[k][l];
        }
-       merit = computeMeritMNoProj(lat);
-       BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
+       proj.setBasis(m_temp, m_temp.NumCols());
+       if (!m_red->shortestVector(proj)) return 0;
+       merit = NTL::conv<double>(m_red->getMinLength() / this->m_norma->getBound(lower_dim+1));
+     }
+   if (merit == 0) return merit;
+   minmerit = merit;
+   for (int64_t j = lower_dim+2; j < this->m_t[0] + 1; j++)
+   {
+	   lat.incDimBasisFullMatrix(j);  
+	   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+	       this->m_red->redBKZ(lat.getBasis(), this->m_delta, this->m_blocksize);
+	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+	    	LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, b);
+	    } else if (this->m_reductionMethod == PAIRBB) {
+	       this->m_red->redDieter(0);
+	    }
+     if (this->m_reductionMethod == LLL || this->m_reductionMethod == BKZ) {
+	      NTL::conv(merit, sqrt(b[0]) / this->m_norma->getBound(j));
+     } else {
+       m_temp.SetDims(j,j);
+       for (int k = 0; k < j; k++) {
+          for (int l = 0; l < j; l++) m_temp[k][l] = lat.getBasis()[k][l];
+       }
+       proj.setBasis(m_temp, m_temp.NumCols());
+       if (!m_red->shortestVector(proj)) return 0;
+       merit = NTL::conv<double>(m_red->getMinLength() / this->m_norma->getBound(j));
+     }
        if (merit < minmerit) minmerit = merit;
-       if (merit == 0 || merit < m_lowbound || merit > m_highbound) return 0;
-   }   
-   if (m_t[0] < dim)
-      lat.buildBasis(dim);
-   return minmerit;
+       if (minmerit <= this->m_lowbound || minmerit > this->m_highbound) return 0;
+   }  
+   return minmerit; 
+}
+
+
+//=========================================================================
+template<typename Int>
+double FiguresOfMerit<Int>::computeMeritMSuccDual (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+   double merit = 0;
+   double minmerit = 1.0;
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
+   int64_t max_dim = lat.getDim();   
+   b = new double[max_dim];
+   lat.buildDualBasisFullMatrix(lower_dim+1);   
+   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+      this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);  
+   } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+     LLL_FPZZflex(lat.getDualBasis(), this->m_delta, lower_dim+1, lower_dim+1, b);
+   } else if (this->m_reductionMethod == PAIRBB) {
+     this->m_red->redDieter(0);
+   }
+   if (this->m_reductionMethod == LLL || this->m_reductionMethod == BKZ) {
+	      NTL::conv(merit, sqrt(b[0]) / this->m_norma->getBound(lower_dim+1));
+     } else {
+       m_temp.SetDims(lower_dim+1,lower_dim+1);
+       for (int k = 0; k < lower_dim+1; k++) {
+          for (int l = 0; l < lower_dim+1; l++) m_temp[k][l] = lat.getDualBasis()[k][l];
+       }
+       proj.setBasis(m_temp, m_temp.NumCols());
+       if (!m_red->shortestVector(proj)) return 0;
+       merit = NTL::conv<double>(m_red->getMinLength() / this->m_norma->getBound(lower_dim+1));
+     }
+   if (merit == 0) return merit;
+   minmerit = merit;
+   for (int64_t j = lower_dim+2; j < this->m_t[0] + 1; j++)
+   {
+	   lat.incDimDualBasisFullMatrix(j);
+	   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+	       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);
+	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+	    	LLL_FPZZflex(lat.getDualBasis(), this->m_delta, j, j, b);
+	    } else if (this->m_reductionMethod == PAIRBB) {
+	       this->m_red->redDieter(0);
+	    }
+     if (this->m_reductionMethod == LLL || this->m_reductionMethod == BKZ) {
+	      NTL::conv(merit, sqrt(b[0]) / this->m_norma->getBound(j));
+     } else {
+       m_temp.SetDims(j,j);
+       for (int k = 0; k < j; k++) {
+          for (int l = 0; l < j; l++) m_temp[k][l] = lat.getDualBasis()[k][l];
+       }
+       proj.setBasis(m_temp, m_temp.NumCols());
+       if (!m_red->shortestVector(proj)) return 0;
+       merit = NTL::conv<double>(m_red->getMinLength() / this->m_norma->getBound(j));
+     }
+       if (merit < minmerit) minmerit = merit;
+       if (minmerit <= this->m_lowbound || minmerit > this->m_highbound) return 0;
+   }  
+   return minmerit; 
 }
 
 
@@ -366,6 +464,7 @@ double FiguresOfMerit<Int>::computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real>
     double merit = 0;
     double minmerit = 1.0;
     double shortest = 0.0;
+    //TODO: Question: Should we use LLL_FPZZFlex instead of the LLL implementation to have access to the length of the shortest vector?
     for (auto it = m_coordRange.begin(); it != m_coordRange.end(); it++){
     	//calculate LLL projection
        BasisConstruction<Int>::projectionConstructionLLL(lat.getBasis(), m_projBasis, *it, lat.getModulo(), m_delta); 
@@ -376,6 +475,7 @@ double FiguresOfMerit<Int>::computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real>
            if (!m_red->shortestVector(proj)) return 0;
            shortest = NTL::conv<double>(m_red->getMinLength());
        } else {
+           //TODO: Better NOT use this function but use LLL_FPZZFlex output
            shortest = proj.getShortestLengthBasis();
        }
        merit = shortest / m_norma->getBound(proj.getDim());
@@ -390,40 +490,36 @@ template<typename Int>
 double FiguresOfMerit<Int>::computeMeritMNonSuccDual (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
     double merit = 0;
     double minmerit = 1.0;
-    double shortest = 0.0;
-    for (auto it = m_coordRange.begin(); it != m_coordRange.end(); it++){
-       // Calculate upper-triangular basis for projection
-       BasisConstruction<Int>::projectionConstructionUpperTri(lat.getBasis(), m_projBasis, *it, lat.getModulo());
-       // Calculate upper-triangular mdual basis
-       BasisConstruction<Int>::mDualUpperTriangular(m_projBasis, m_temp, lat.getModulo());
+   for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
+       BasisConstruction<Int>::projectMatrixDual(lat.getBasis(), this->m_temp, *it);
+       //QUESTION: Do we potentially need to rows here? Maybe this is missing?
        // Define IntLattice based on mdual basis
-       proj.setBasis(m_temp, lat.getModulo(), m_projBasis.NumCols());
+       proj.setBasis(this->m_temp, this->m_temp.NumCols());  
        // Apply selected reduction technique
-       if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
-           m_red->redBKZ(proj.getBasis(), m_delta, m_blocksize);  
-       } else if (m_reductionMethod == LLLBB || m_reductionMethod == LLL) {
-           m_red->redLLLNTL(proj.getBasis(), m_delta);  
-       } else if (m_reductionMethod == PAIRBB) {
-           m_red->redDieter(0);
+       if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+           this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
+       } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+           LLL_FPZZflex(proj.getBasis(), this->m_delta, proj.getBasis().NumRows(), proj.getBasis().NumCols(), this->m_b);    
+       } else if (this->m_reductionMethod == PAIRBB) {
+           this->m_red->redDieter(0);
        }
-       // Calculate shortest vector
-       if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {
-           if (!m_red->shortestVector(proj)) return 0;
-           shortest = NTL::conv<double>(m_red->getMinLength());
+       if (this->m_reductionMethod == LLL || this->m_reductionMethod == BKZ) {
+         // Use first basis vector as proxy for shortest length
+	       NTL::conv(merit, sqrt(this->m_b[0]) / this->m_norma->getBound(proj.getDim()));
        } else {
-           shortest = proj.getShortestLengthBasis();
+         if (!m_red->shortestVector(proj)) return 0;
+         merit = NTL::conv<double>(m_red->getMinLength() / this->m_norma->getBound(proj.getDim()));
        }
-       merit = shortest / m_norma->getBound(proj.getDim());
        if (merit < minmerit) minmerit = merit;
-       if (merit == 0 || merit < m_lowbound || merit > m_highbound) return 0;
-    }
+       if (merit == 0 || merit < this->m_lowbound) return 0;  
+    }  
+
     return minmerit;  
 }
 
 //=========================================================================
 	
 template class FiguresOfMerit<NTL::ZZ>;
-//template class FiguresOfMerit<std::int64_t>;
 
 } // end namespace LatticeTester
 
