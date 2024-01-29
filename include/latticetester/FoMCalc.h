@@ -67,8 +67,7 @@ public:
      * needs to be passed. 
      */
     FoMCalc(Reducer<Int, Real> & red, const vector<int64_t> & t);
-	
-	
+	       
     /*
      * This function calculates the Figure of Merit M using method A: 
      * This method uses incDimBasis to increase the basis at each step, 
@@ -570,7 +569,6 @@ template<typename Int>
 double FoMCalc<Int>::computeMeritMNonSucc_MethodD (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
     double merit = 0;
     double minmerit = 1.0;
-    double shortest = 0.0;
      
     for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
 
