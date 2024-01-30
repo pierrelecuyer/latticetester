@@ -131,7 +131,15 @@ public:
 	 * It is really used somewhere?
 	 */
 	virtual void incDimBasis();
-	
+ 
+        /** THIS IS FOR TESTING ONLY (CW)
+         * Increases the current dimension of only the (primal) lattice basis by 1
+         * under the assumption the dual basis matrix has dimension 'maxDim' x 'maxDim'. 
+         * while the dimension of the basis is 'd'-1. This implementation is meant to be overridden 
+	 * by subclasses as well.
+         */
+        virtual void incDimBasisFullMatrix (int64_t d);
+
 	/**
 	 * Increments the dimension of only the dual basis vectors by one.  
 	 * This implementation works as incDim and is meant to be overridden 
@@ -139,21 +147,21 @@ public:
 	 */
 	virtual void incDimDualBasis();
 	
-    /**
-     * Increases the current dimension of only the dual lattice basis by 1
-     * while fixing the number of columns to 'c'. Note that dim + 1 <= c <= maxDim
-     * must hold. This implementation is meant to be overridden 
+        /**
+         * Increases the current dimension of only the dual lattice basis by 1
+         * while fixing the number of columns to 'c'. Note that dim + 1 <= c <= maxDim
+         * must hold. This implementation is meant to be overridden 
 	 * by subclasses as well.
-     */
-    virtual void incDimDualBasis (int64_t c);
+         */
+        virtual void incDimDualBasis (int64_t c);
     
-    /** THIS IS FOR TESTING ONLY (CW)
-     * Increases the current dimension of only the dual lattice basis by 1
-     * under the assumption the dual basis matrix has dimension 'maxDim' x 'maxDim'. 
-     * while the dimension of the basis is 'd'-1. This implementation is meant to be overridden 
+        /** THIS IS FOR TESTING ONLY (CW)
+         * Increases the current dimension of only the dual lattice basis by 1
+         * under the assumption the dual basis matrix has dimension 'maxDim' x 'maxDim'. 
+         * while the dimension of the basis is 'd'-1. This implementation is meant to be overridden 
 	 * by subclasses as well.
-     */
-    virtual void incDimDualBasisFullMatrix (int64_t d);
+         */
+        virtual void incDimDualBasisFullMatrix (int64_t d);
 
 	/**
 	 * Computes and stores the logarithm of the normalization factors
@@ -187,6 +195,14 @@ public:
 	 * This `dim` must not exceed `maxDim`.
 	 */
 	virtual void buildBasis(int64_t dim);
+ 
+ 	/** THIS IS FOR TESTING ONLY (CW)
+	 * This virtual method builds a basis for the lattice in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix 
+	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.
+	 * The fucntion must be implemented in subclasses.
+	 */
+	virtual void buildBasisFullMatrix(int64_t dim);
 	
 	/**
 	 * This virtual method builds only the dual basis for the lattice in `dim` dimensions.
@@ -196,18 +212,18 @@ public:
 	virtual void buildDualBasis(int64_t dim);
 	
 	/** THIS IS FOR TESTING ONLY (CW)
-	 * This virtual method builds a basis for the lattice in `dim` dimensions.
+	 * This virtual method builds a basis for the dual lattice in `dim` dimensions.
 	 * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix 
-	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.
+	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.<
 	 * The fucntion must be implemented in subclasses.
 	 */
 	virtual void buildDualBasisFullMatrix(int64_t dim);
 	
-    /**
-     * This virtual method builds only the dual basis in 'dim' dimensions while setting
-     * the number of columns to fixed a value 'c'. It must be implemented in subclasses.
-     */
-    virtual void buildDualBasis (int64_t d, int64_t c);
+        /**
+         * This virtual method builds only the dual basis in 'dim' dimensions while setting
+         * the number of columns to fixed a value 'c'. It must be implemented in subclasses.
+         */
+        virtual void buildDualBasis (int64_t d, int64_t c);
     
 	/**
 	 * REMOVE: This depends on the lattice only via the density.
@@ -365,6 +381,14 @@ IntLatticeExt<Int, Real>::incDimBasis() {
 //===========================================================================
 
 template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::incDimBasisFullMatrix(int64_t d) {
+	MyExit(1, " incDimBasisFullMatrix(d) does nothing, it must be implemented in subclass");
+	d++;  // eliminates compiler warning
+}
+
+//===========================================================================
+
+template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::incDimDualBasis() {
 	IntLatticeExt<Int, Real> lattmp(*this);
 	int64_t dim = this->getDim();
@@ -394,7 +418,7 @@ void IntLatticeExt<Int, Real>::incDimDualBasis(int64_t c) {
 
 template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::incDimDualBasisFullMatrix(int64_t d) {
-	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
+	MyExit(1, " incDimDualBasisFullMatrix(d) does nothing, it must be implemented in subclass");
 	d++;  // eliminates compiler warning
 }
 
@@ -446,6 +470,15 @@ void IntLatticeExt<Int, Real>::buildBasis(int64_t d) {
 //===========================================================================
 
 template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::buildBasisFullMatrix(int64_t d) {
+	// To be re-implemented in subclasses.
+	MyExit(1, " buildBasisFullMatrix(d) does nothing, it must be implemented in subclass");
+	d++;  // eliminates compiler warning
+}
+
+//===========================================================================
+
+template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d) {
 	// To be re-implemented in subclasses.
 	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
@@ -466,7 +499,7 @@ void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d, int64_t c) {
 template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::buildDualBasisFullMatrix(int64_t d) {
 	// To be re-implemented in subclasses.
-	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
+	MyExit(1, " buildDualBasisFullMatrix(d) does nothing, it must be implemented in subclass");
 	d++;  // eliminates compiler warning
 }
 

@@ -153,18 +153,28 @@ public:
 	}
 	
 	/**
-	 * Changes the basis to 'basis', the modulus to `m`, and the current dimension to `dim`.
+	 * Changes the basis to 'basis', the modulus to 'm', and the current dimension to 'dim'.
 	 */
 	void setBasis(const IntMat basis, const Int m, const int64_t dim,
 			bool withDual = false, NormType norm = L2NORM) {
 	   this->m_modulo=m;
-	   this->m_dim=dim;
 	   this->m_withDual=withDual;
 	   this->m_norm=norm;
-	   this->m_basis=basis;    
+  	 this->m_dim=dim;
 	   this->m_vecNorm.resize(dim);
-	   setNegativeNorm();
+	   setNegativeNorm();     
+     this->m_basis=basis;     
 	}
+ 
+       /**
+        * Changes only the 'basis' and the current dimension to 'dim'
+        */
+ 	void setBasis(const IntMat basis, const int64_t dim) {
+	  this->m_dim=dim;
+	  this->m_vecNorm.resize(dim);
+	  setNegativeNorm();     
+	  this->m_basis=basis;    
+ 	}
 
 	/**
 	 * Returns the m-dual basis represented in a matrix.

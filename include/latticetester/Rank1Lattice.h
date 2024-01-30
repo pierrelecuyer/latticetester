@@ -110,8 +110,10 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
          */
         void buildBasis (int64_t d);
         
-        /**
-         * FOR TESTING ONLY (CW)
+        /** THIS IS FOR TESTING ONLY (CW)
+	 * This method builds a basis for the lattice in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix 
+	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.
          */
         void buildBasisFullMatrix (int64_t d);
         
@@ -130,9 +132,9 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
         void buildDualBasis (int64_t d, int64_t c);
         
         /** THIS IS FOR TESTING ONLY (CW)
-	     * This method builds a basis for the lattice in `dim` dimensions.
-	     * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix 
-	     * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.
+	 * This method builds a basis for the dual lattice in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix 
+	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.
          */
         void buildDualBasisFullMatrix (int64_t d);
 
@@ -141,6 +143,13 @@ class Rank1Lattice: public IntLatticeExt<Int, Real> {
          * The dimension must be smaller than `maxDim` when calling this function.
          */
         void incDimBasis ();
+        
+        /** THIS IS FOR TESTING ONLY (CW)
+         * Increases the current dimension of only the lattice basis by 1
+         * under the assumption the dual basis matrix has dimension 'maxDim' x 'maxDim'. 
+         * while the dimension of the basis is 'd'-1. 
+         */
+        void incDimBasisFullMatrix (int64_t d);
         
         /**
          * Increases the current dimension of only the m-dual lattice basis by 1.
@@ -411,6 +420,13 @@ void Rank1Lattice<Int, Real>::incDimBasis () {
        else temp.kill();
     }
 
+//============================================================================
+
+template<typename Int, typename Real>
+void Rank1Lattice<Int, Real>::incDimBasisFullMatrix (int64_t d) {
+	this->m_basis[d-1][d-1] = this->m_modulo;
+	this->m_dualbasis[0][d-1] =-m_a[d-1];
+}
 
 //============================================================================
 
