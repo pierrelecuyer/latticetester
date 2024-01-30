@@ -25,7 +25,7 @@
 
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
-#include "latticetester/FiguresOfMerit.h"
+#include "latticetester/FiguresOfMeritM.h"
 #include "latticetester/FoMCalc.h"
 #include "latticetester/Util.h"
 // #include "latticetester/ParamReader.h"
@@ -98,6 +98,7 @@ int main() {
   Normalizer *norma;
   Reducer<Int, Real> *red;
   red = new Reducer<Int, Real>(max_dim);
+  ReductionType meth = BKZBB;
   
   // Set all necessary objects
   IntLattice<Int, Real> *proj; // The IntLattice used to store projections  
@@ -106,13 +107,12 @@ int main() {
   t.resize(1); 
   t[0] = 32;
   
-  FoMCalc<Int> fom(*red, t); 
+  FoMCalc<Int> fom(t, meth, *red); 
   //FoMCalc<Int> test(*red); 
   
-  fom.m_succCoordFirst = true; // successive coordinates shall be calculated first 
+  //fom.m_succCoordFirst = true; // successive coordinates shall be calculated first 
   fom.m_reductionMethod = BKZBB; //Set pre-reduction to BKZ
   fom.m_fomInDual = true; // Calculate FoM for the dual
-  fom.m_incDualOnly = true; //Only the dual basis shall be calculated when increasing the dimension but not the primal
   fom.m_pctype = LLLPROJ; // Define the projecton type
   
   // Create all objects which need to be passed to the FiguresOfMerit object 
