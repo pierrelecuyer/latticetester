@@ -92,8 +92,8 @@ namespace LatticeTester {
 
         /**
          * Fills the values of this object with `maxDim` indices starting from
-         * `0` by groups of \f$s\f$, spaced apart by \f$2^w\f$. If \f$w=0\f$,
-         * this is the case of non-lacunary indices. Returns `true` in the
+         * `0` by groups of \f$s\f$, spaced apart by \f$2^w\f$. When \f$w=0\f$,
+         * we have non-lacunary indices. Returns `true` in the
          * lacunary case, and `false` otherwise.
          */
         bool calcIndicesStreams (int64_t s, int64_t w, int64_t maxDim);
