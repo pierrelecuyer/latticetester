@@ -164,6 +164,7 @@ public:
     */
    static void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m,
          long r = 0, long c = 0);
+         
 
    /**
     * Same as `lowerTriangularBasis`, except that the returned basis is upper triangular.
@@ -216,6 +217,21 @@ public:
     */
    static void projectMatrix(const IntMat &in, IntMat &out,
          const Coordinates &proj, long r = 0);
+         
+         
+   /**
+    * Same like projectMatrix but the number of rows is equal to the number of projection coordinates
+    */
+   static void projectMatrix_minRows(const IntMat &in, IntMat &out,
+         const Coordinates &proj);
+
+
+   /**
+    * This function directly calculates the projection of the dual matrix for an LCG
+    * if the basis itself is given in the standard form.
+    */ 
+   static void projectMatrixDual(const IntMat &in, IntMat &out, const Coordinates &proj);
+	
 
    /**
     * Constructs a basis for the projection `proj` of the lattice with basis `inBasis`,
@@ -365,16 +381,16 @@ void BasisConstruction<Int>::upperTriangularBasis(IntMat &gen, IntMat &basis,
    // long dim1 = r;
    // long dim2 = c;
    // In case dim1 or dim2 is zero:
-   if (!dim1)
+   if (dim1 == 0)
       dim1 = gen.NumRows();
-   if (!dim2)
+   if (dim2 == 0)
       dim2 = gen.NumCols();
 
    // Allocate space for the vectors:
    coeff_gcd.SetLength(dim1);
    coeff_xi.SetLength(dim1);
    xi.SetLength(dim2);
-   if (!dim2)
+	if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
       basis.SetDims(dim2, dim2);
 
    for (i = 0; i < dim2; i++) {
@@ -486,7 +502,7 @@ void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
    coeff_gcd.SetLength(dim1);
    coeff_xi.SetLength(dim1);
    xi.SetLength(dim2);
-   if (!dim2)
+	 if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
       basis.SetDims(dim2, dim2);
 
    for (i = dim2 - 1; i > -1; i--) {
@@ -783,6 +799,8 @@ void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
    if (!r) r = in.NumRows();   // In case r=0.
    uint64_t lat_dim = in.NumCols();
    std::size_t projSize = proj.size();
+   if (out.NumRows() != in.NumRows() || out.NumCols() != projSize)
+	   out.SetDims(in.NumRows(), projSize); 
    auto it = proj.cbegin();
    for (std::size_t i = 0; i < projSize; i++) {
       if (*it <= lat_dim) {
@@ -795,6 +813,62 @@ void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
       it++;
    }
 }
+
+//=================================================================================
+
+template<>
+void BasisConstruction<Int>::projectMatrix_minRows (const IntMat &in,
+		IntMat &out, const Coordinates &proj) {
+	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
+	int inDim = in.NumCols();
+	uint64_t lat_dim = in.NumCols();   
+	std::size_t projSize = proj.size();
+	if (out.NumRows() != projSize || out.NumCols() != projSize)
+	   out.SetDims(projSize, projSize); 
+	auto it = proj.cbegin();
+	for (std::size_t i = 0; i < projSize; i++) {
+      out[0][i] = in[0][*it-1];
+      for (int j = 1; j < projSize; j++) {
+			   out[j][i] = 0;
+         if (i==j)
+           out[j][i] = in[j][j];
+			}
+	    it++;
+	}
+		// }
+		// else
+		//	MyExit(1, "A projection coordinate exceeds the dimension of the current basis.");
+
+};
+
+//=================================================================================
+
+template<>
+void BasisConstruction<Int>::projectMatrixDual (const IntMat &in,
+		IntMat &out, const Coordinates &proj) {
+	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
+	int inDim = in.NumCols();
+	uint64_t lat_dim = in.NumCols();   
+	std::size_t projSize = proj.size();
+	if (out.NumRows() != projSize || out.NumCols() != projSize)
+	   out.SetDims(projSize, projSize); 
+	auto it = proj.cbegin();
+	for (std::size_t i = 0; i < projSize; i++) {
+      out[i][0] = -in[0][*it-1];
+      for (int j = 1; j < projSize; j++) {
+			   out[j][i] = 0;
+         if (i==j)
+           out[j][i] = 1;
+			}
+	    it++;
+	}
+  out[0][0] = in[1][1];
+		//}
+		//else
+		//	MyExit(1, "A projection coordinate exceeds the dimension of the current basis.");
+
+};
+
 
 //===================================================
 
