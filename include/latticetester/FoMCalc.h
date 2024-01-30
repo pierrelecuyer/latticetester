@@ -55,7 +55,7 @@ namespace LatticeTester {
  *
  */
 template<typename Int>
-class FoMCalc: public FiguresOfMerit<Int>  {
+class FoMCalc: public FiguresOfMeritM<Int>  {
 
 private:
 	typedef NTL::vector<Int> IntVec;
@@ -66,7 +66,7 @@ public:
      * Constructor of a FoMCalc object. For this purpose a reducer object 
      * needs to be passed. 
      */
-    FoMCalc(Reducer<Int, Real> & red, const vector<int64_t> & t);
+    FoMCalc(const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red);
 	       
     /*
      * This function calculates the Figure of Merit M using method A: 
@@ -130,7 +130,7 @@ public:
     // So far the following works only for the dual lattice 
     
     /*
-    * The very first algorithm as implementend in FiguresOfMerit 
+    * The very first algorithm as implementend in FiguresOfMeritM 
     */
     double computeMeritMNonSucc_Method0 (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
     
@@ -162,16 +162,24 @@ public:
     
     
     double *b;
-
     
+    /*
+     * Matrix necessary for intermediate steps of calculation
+     */
+    IntMat m_temp;   
+    
+    /*
+     * Is needed because the variable has been deleted in FiguresOfMerit
+     */
+    bool m_fomInDual = true;
     
 };
 
 //============================================================================
 // Implementation
 template<typename Int>
-FoMCalc<Int>::FoMCalc(Reducer<Int, Real> & red, const vector<int64_t> & t):
-    FiguresOfMerit<Int> (red, t) {};
+FoMCalc<Int>::FoMCalc (const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red):
+    FiguresOfMeritM<Int> (t, meth, red) {};
 
 
 template<typename Int>
@@ -181,14 +189,14 @@ double FoMCalc<Int>::computeMeritMSucc_MethodA(IntLatticeExt<Int, Real> & lat) {
    int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
    
    lat.buildBasis(lower_dim+1);
-   merit = this->computeMeritMNoProj(lat);
+   merit = this->computeMeritMNoProj(lat, m_fomInDual);
    BasisConstruction<Int>::mDualBasis(lat.getDualBasis(), lat.getBasis(), lat.getModulo());  
    if (merit == 0) return merit;
    //uint64_t / size_t
    for (int64_t j = lower_dim+1; j < this->m_t[0]; j++)
    {
        lat.incDimBasis(); // Increase the dimension of the lattice and of its dual 
-       merit = this->computeMeritMNoProj(lat);
+       merit = this->computeMeritMNoProj(lat, m_fomInDual);
        BasisConstruction<Int>::mDualBasis(lat.getDualBasis(), lat.getBasis(), lat.getModulo());  
        if (merit < minmerit) minmerit = merit;
        if (merit <= this->m_lowbound || merit > this->m_highbound) return 0;
@@ -209,13 +217,13 @@ double FoMCalc<Int>::computeMeritMSucc_MethodB(IntLatticeExt<Int, Real> & lat) {
    lat.buildBasis(lower_dim+1);
    BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
    this->m_pctype = UPPERTRIPROJ; // Use upper triangular algorithm to calculate the dual
-   merit = this->computeMeritMNoProj(lat);
+   merit = this->computeMeritMNoProj(lat, m_fomInDual);
    if (merit == 0) return merit;
    for (int64_t j = lower_dim+1; j < this->m_t[0]; j++)
    {
        lat.incDimBasis(); // Increase the dimension of the lattice and of its dual 
        BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
-       merit = this->computeMeritMNoProj(lat);
+       merit = this->computeMeritMNoProj(lat, m_fomInDual);
        if (merit < minmerit) minmerit = merit;
        if (merit <= this->m_lowbound || merit > this->m_highbound) return 0;
    }   
@@ -237,13 +245,13 @@ double FoMCalc<Int>::computeMeritMSucc_MethodC(IntLatticeExt<Int, Real> & lat) {
    lat.buildBasis(lower_dim+1);
    BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
    this->m_pctype = LLLPROJ; // Use the general method to calculate the dual
-   merit = this->computeMeritMNoProj(lat);
+   merit = this->computeMeritMNoProj(lat, m_fomInDual);
    if (merit == 0) return merit;
    for (int64_t j = lower_dim+1; j < this->m_t[0]; j++)
    {
        lat.incDimBasis(); // Increase the dimension of the lattice and of its dual
        BasisConstruction<Int>::mDualBasis(lat.getBasis(), lat.getDualBasis(), lat.getModulo());
-       merit = this->computeMeritMNoProj(lat);
+       merit = this->computeMeritMNoProj(lat, m_fomInDual);
        if (merit < minmerit) minmerit = merit;
        if (merit <= this->m_lowbound || merit > this->m_highbound) return 0;
    }   
@@ -263,12 +271,12 @@ double FoMCalc<Int>::computeMeritMSucc_MethodD(IntLatticeExt<Int, Real> & lat) {
    
    double dim = lat.getBasis().NumCols();
    lat.buildDualBasis(lower_dim+1);
-   merit = this->computeMeritMNoProj(lat);
+   merit = this->computeMeritMNoProj(lat, m_fomInDual);
    if (merit == 0) return merit;
    for (int64_t j = lower_dim+1; j < this->m_t[0]; j++)
    {
        lat.buildDualBasis(j+1); // Build (only) the dual basis from scratch 
-       merit = this->computeMeritMNoProj(lat);
+       merit = this->computeMeritMNoProj(lat, m_fomInDual);
        if (merit < minmerit) minmerit = merit;
        if (merit <= this->m_lowbound || merit > this->m_highbound) return 0;
    }   
@@ -288,12 +296,12 @@ double FoMCalc<Int>::computeMeritMSucc_MethodE(IntLatticeExt<Int, Real> & lat) {
    
    double dim = lat.getBasis().NumCols();
    lat.buildDualBasis(lower_dim+1);
-   merit = this->computeMeritMNoProj(lat);
+   merit = this->computeMeritMNoProj(lat, m_fomInDual);
    if (merit == 0) return merit;
    for (int64_t j = lower_dim+1; j < this->m_t[0]; j++)
    {
        lat.incDimDualBasis(); // Increase the dimension of (only) the dual basis 
-       merit = this->computeMeritMNoProj(lat);
+       merit = this->computeMeritMNoProj(lat, m_fomInDual);
        if (merit < minmerit) minmerit = merit;
        if (merit <= this->m_lowbound || merit > this->m_highbound) return 0;
    }   
@@ -436,9 +444,9 @@ double FoMCalc<Int>::computeMeritMNonSucc_Method0 (IntLatticeExt<Int, Real> & la
        // Calculate upper-triangular basis for projection
        BasisConstruction<Int>::projectionConstructionUpperTri(lat.getBasis(), this->m_projBasis, *it, lat.getModulo());
        // Calculate upper-triangular mdual basis
-       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, this->m_temp, lat.getModulo());
+       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, m_temp, lat.getModulo());
        // Define IntLattice based on mdual basis
-       proj.setBasis(this->m_temp, this->m_projBasis.NumCols());
+       proj.setBasis(m_temp, this->m_projBasis.NumCols());
        
        // Apply selected reduction technique
        if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
@@ -468,17 +476,15 @@ template<typename Int>
 double FoMCalc<Int>::computeMeritMNonSucc_MethodA (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
     double merit = 0;
     double minmerit = 1.0;
-    double shortest = 0.0; 
     
     for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
        // Calculate upper-triangular basis for projection
        BasisConstruction<Int>::projectionConstructionUpperTri(lat.getBasis(), this->m_projBasis, *it, lat.getModulo());
        // Calculate upper-triangular mdual basis
-       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, this->m_temp, lat.getModulo());
+       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, m_temp, lat.getModulo());
        // Define IntLattice based on mdual basis
-       proj.setBasis(this->m_temp, this->m_projBasis.NumCols());
+       proj.setBasis(m_temp, this->m_projBasis.NumCols());
        
-       int64_t max_dim = proj.getDim();   
        // Apply selected reduction technique
        if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
           this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
@@ -502,16 +508,15 @@ template<typename Int>
 double FoMCalc<Int>::computeMeritMNonSucc_MethodB (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj, IntMat & temp) {
     double merit = 0;
     double minmerit = 1.0;
-    double shortest = 0.0; 
     
     for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
     
        BasisConstruction<Int>::projectMatrix(lat.getBasis(), temp, *it);
        BasisConstruction<Int>::upperTriangularBasis(temp, this->m_projBasis, lat.getModulo());
        // Calculate upper-triangular mdual basis
-       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, this->m_temp, lat.getModulo());
+       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, m_temp, lat.getModulo());
        // Define IntLattice based on mdual basis
-       proj.setBasis(this->m_temp, this->m_projBasis.NumCols());
+       proj.setBasis(m_temp, this->m_projBasis.NumCols());
        // Apply selected reduction technique
        if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
            this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
@@ -534,7 +539,6 @@ template<typename Int>
 double FoMCalc<Int>::computeMeritMNonSucc_MethodC (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
     double merit = 0;
     double minmerit = 1.0;
-    double shortest = 0.0; 
   
     for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
        
@@ -542,9 +546,9 @@ double FoMCalc<Int>::computeMeritMNonSucc_MethodC (IntLatticeExt<Int, Real> & la
        //BasisConstruction<Int>::pMatrix(lat.getBasis(), this->m_projBasis, *it);
        BasisConstruction<Int>::projectMatrix_minRows(lat.getBasis(), this->m_projBasis, *it);
        // Calculate upper-triangular mdual basis
-       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, this->m_temp, lat.getModulo());
+       BasisConstruction<Int>::mDualUpperTriangular(this->m_projBasis, m_temp, lat.getModulo());
        // Define IntLattice based on mdual basis
-       proj.setBasis(this->m_temp, this->m_projBasis.NumCols());
+       proj.setBasis(m_temp, this->m_projBasis.NumCols());
        // Apply selected reduction technique
        if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
            this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
@@ -572,9 +576,9 @@ double FoMCalc<Int>::computeMeritMNonSucc_MethodD (IntLatticeExt<Int, Real> & la
      
     for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
 
-       BasisConstruction<Int>::projectMatrixDual(lat.getBasis(), this->m_temp, *it);
+       BasisConstruction<Int>::projectMatrixDual(lat.getBasis(), m_temp, *it);
        // Define IntLattice based on mdual basis
-       proj.setBasis(this->m_temp, this->m_temp.NumCols());  
+       proj.setBasis(m_temp, m_temp.NumCols());  
        // Apply selected reduction technique
        if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
            this->m_red->redBKZ(proj.getBasis(), this->m_delta, this->m_blocksize);  
@@ -597,7 +601,7 @@ double FoMCalc<Int>::computeMeritMNonSucc_MethodD (IntLatticeExt<Int, Real> & la
 
 
 template class FoMCalc<NTL::ZZ>;
-//template class FiguresOfMerit<std::int64_t>;
+//template class FiguresOfMeritM<std::int64_t>;
 
 } // end namespace LatticeTester
 
