@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LATTICETESTER_FIGURESOFMERITM_H
-#define LATTICETESTER_FIGURESOFMERITM_H
+#ifndef LATTICETESTER_FIGUREOFMERITM_H
+#define LATTICETESTER_FIGUREOFMERITM_H
 
 #include <iostream>
 #include <cstdint>
@@ -55,7 +55,7 @@ namespace LatticeTester {
  *
  */
 
-template<typename Int> class FiguresOfMeritM {
+template<typename Int> class FigureOfMeritM {
 
 private:
     typedef NTL::vector<Int> IntVec;
@@ -63,12 +63,12 @@ private:
 public:	
         
     /*
-     * Constructor of a FiguresOfMeritM object. Needs a reducer object
+     * Constructor of a FigureOfMeritM object. Needs a reducer object
      * to be passed. The vector 't' defines the set of 
      * dimensions for which the figure of merit is calculated. It contains
      * the values of t_1,..., t_d in the definition of the FoM.
      */
-    FiguresOfMeritM (const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red);
+    FigureOfMeritM (const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red);
     
     /*
      * Sets a new vector 't' =  t_1,..., t_d in the definition of the FoM.
@@ -207,16 +207,7 @@ public:
     IntMat m_projBasis; 
     
     /*
-<<<<<<< Updated upstream:include/latticetester/FiguresOfMeritM.h
      * Internal CoordinateSets object is used to store sets of coordinates.
-=======
-     * Matrix necessary for intermediate steps of calculation  ???
-     */
-    IntMat m_temp;
-	    
-    /*
-     * CoordinateSets object is used to store sets of coordinates
->>>>>>> Stashed changes:include/latticetester/FiguresOfMerit.h
      */
     CoordinateSets::FromRanges m_coordRange;  
     
@@ -236,7 +227,7 @@ public:
 // Implementation
 
 template<typename Int>
-FiguresOfMeritM<Int>::FiguresOfMeritM (const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red) {    
+FigureOfMeritM<Int>::FigureOfMeritM (const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red) {    
    setTVector(t);
    setReductionMethod(meth);
    m_red = &red;
@@ -245,7 +236,7 @@ FiguresOfMeritM<Int>::FiguresOfMeritM (const vector<int64_t> & t, ReductionType 
 //=========================================================================
 
 template<typename Int>
-void FiguresOfMeritM<Int>::setTVector (const vector<int64_t> & t) { 
+void FigureOfMeritM<Int>::setTVector (const vector<int64_t> & t) { 
    // Clear CoordinateSets object
    for (Coordinates::size_type i = 0; i < m_t.size(); i++)
       m_coordRange.excludeOrder(i);
@@ -266,7 +257,7 @@ void FiguresOfMeritM<Int>::setTVector (const vector<int64_t> & t) {
 //=========================================================================
 
 template<typename Int>
-void FiguresOfMeritM<Int>::setReductionMethod(ReductionType & meth, double delta, int64_t blocksize) {
+void FigureOfMeritM<Int>::setReductionMethod(ReductionType & meth, double delta, int64_t blocksize) {
 	m_reductionMethod = meth;
 	if (m_reductionMethod == BKZBB || m_reductionMethod == LLLBB || m_reductionMethod == PAIRBB) {
 		m_doingBB = true;
@@ -281,7 +272,7 @@ void FiguresOfMeritM<Int>::setReductionMethod(ReductionType & meth, double delta
 //=========================================================================
 
 template<typename Int>
-double FiguresOfMeritM<Int>::computeMeritM (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+double FigureOfMeritM<Int>::computeMeritM (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
    double merit = 0;
    double minmerit = 1.0;
    
@@ -312,13 +303,13 @@ double FiguresOfMeritM<Int>::computeMeritM (IntLatticeExt<Int, Real> & lat, IntL
 // Was necessary only for testing (FoMCalc.h) - may be deleted later
 //=========================================================================
 template<typename Int>
-double FiguresOfMeritM<Int>::computeMeritMNoProj (IntLatticeExt<Int, Real> & lat, bool & m_fomInDual) {
+double FigureOfMeritM<Int>::computeMeritMNoProj (IntLatticeExt<Int, Real> & lat, bool & m_fomInDual) {
    double shortest, merit;
    merit = 0.0;
    // Switches primal and dual lattice if calculations shall be done for the dual
    if (m_fomInDual) lat.dualize();
    lat.updateVecNorm();
-   lat.sort(0); 
+   lat.sortBasis(0); 
    // Apply pre-reduction
    if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
       m_red->redBKZ(lat.getBasis(), m_delta, m_blocksize);  
@@ -343,7 +334,7 @@ double FiguresOfMeritM<Int>::computeMeritMNoProj (IntLatticeExt<Int, Real> & lat
 //=========================================================================
 // CODE IS UPDATED BUT HAS NOT BEEN TESTED (in particual the use of buildDualBasisFullMatrix and incDimBasisFullMatrix)
 template<typename Int>
-double FiguresOfMeritM<Int>::computeMeritMSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+double FigureOfMeritM<Int>::computeMeritMSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
    double merit = 0;
    double minmerit = 1.0;
    int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
@@ -398,7 +389,7 @@ double FiguresOfMeritM<Int>::computeMeritMSuccPrimal (IntLatticeExt<Int, Real> &
 
 //=========================================================================
 template<typename Int>
-double FiguresOfMeritM<Int>::computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+double FigureOfMeritM<Int>::computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
     double merit = 0;
     double minmerit = 1.0;
     //TODO: Question: Should we use LLL_FPZZFlex instead of the LLL implementation to have access to the length of the shortest vector?
@@ -444,7 +435,7 @@ double FiguresOfMeritM<Int>::computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real
 
 //=========================================================================
 //template<typename Int>
-//double FiguresOfMeritM<Int>::computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+//double FigureOfMeritM<Int>::computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
 //    double merit = 0;
 //    double minmerit = 1.0;
 //    double shortest = 0.0;
@@ -471,7 +462,7 @@ double FiguresOfMeritM<Int>::computeMeritMNonSuccPrimal (IntLatticeExt<Int, Real
 
 //=========================================================================
 	
-template class FiguresOfMeritM<NTL::ZZ>;
+template class FigureOfMeritM<NTL::ZZ>;
 
 } // end namespace LatticeTester
 
