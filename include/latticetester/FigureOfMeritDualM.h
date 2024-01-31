@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LATTICETESTER_FIGURESOFMERITDUALM_H
-#define LATTICETESTER_FIGURESOFMERITDUALM_H
+#ifndef LATTICETESTER_FIGUREOFMERITDUALM_H
+#define LATTICETESTER_FIGUREOFMERITDUALM_H
 
 #include <iostream>
 #include <cstdint>
@@ -55,7 +55,7 @@ namespace LatticeTester {
  *
  */
 template<typename Int>
-class FiguresOfMeritDualM: public FiguresOfMeritM<Int>  {
+class FigureOfMeritDualM: public FigureOfMeritM<Int>  {
 
 private:
 	typedef NTL::vector<Int> IntVec;
@@ -66,7 +66,7 @@ public:
      * Constructor of a FoMCalc object. For this purpose a reducer object 
      * needs to be passed. 
      */
-	FiguresOfMeritDualM(const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red);
+	FigureOfMeritDualM(const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red);
 	       
     /*
      * Same as computeMeritM for the dual lattice.
@@ -87,12 +87,12 @@ public:
 //============================================================================
 // Implementation
 template<typename Int>
-FiguresOfMeritDualM<Int>::FiguresOfMeritDualM (const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red):
-    FiguresOfMeritM<Int> (t, meth, red) {};
+FigureOfMeritDualM<Int>::FigureOfMeritDualM (const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red):
+    FigureOfMeritM<Int> (t, meth, red) {};
 
 //=========================================================================
 template<typename Int>
-double FiguresOfMeritDualM<Int>::computeMeritDualM (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+double FigureOfMeritDualM<Int>::computeMeritDualM (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
    double merit = 0;
    double minmerit = 1.0;
    
@@ -122,11 +122,12 @@ double FiguresOfMeritDualM<Int>::computeMeritDualM (IntLatticeExt<Int, Real> & l
 
 //=========================================================================
 template<typename Int>
-double FiguresOfMeritDualM<Int>::computeMeritMSuccDual (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+double FigureOfMeritDualM<Int>::computeMeritMSuccDual (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
    double merit = 0;
    double minmerit = 1.0;
    int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
-   lat.buildDualBasisFullMatrix(lower_dim+1);   
+   lat.buildDualBasisFullMatrix(this->m_t[0]);   
+   //lat.buildDualBasisFullMatrix(lower_dim+1);
    if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);  
    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
@@ -149,7 +150,7 @@ double FiguresOfMeritDualM<Int>::computeMeritMSuccDual (IntLatticeExt<Int, Real>
    minmerit = merit;
    for (int64_t j = lower_dim+2; j < this->m_t[0] + 1; j++)
    {
-	   lat.incDimDualBasisFullMatrix(j);
+	   //lat.incDimDualBasisFullMatrix(j);
 	   if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
 	       this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);
 	    } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
@@ -176,11 +177,11 @@ double FiguresOfMeritDualM<Int>::computeMeritMSuccDual (IntLatticeExt<Int, Real>
 
 //=========================================================================
 template<typename Int>
-double FiguresOfMeritDualM<Int>::computeMeritMNonSuccDual (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
+double FigureOfMeritDualM<Int>::computeMeritMNonSuccDual (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj) {
     double merit = 0;
     double minmerit = 1.0;
    for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
-       BasisConstruction<Int>::projectMatrixDual(lat.getBasis(), this->m_projBasis, *it);
+       BasisConstruction<Int>::projectMatrixDual(lat.getBasis(), this->m_projBasis, *it); //m_projBasis is resized by projectMatrixDual
        //QUESTION: Do we potentially need to rows here? Maybe this is missing?
        // Define IntLattice based on mdual basis
        proj.setBasis(this->m_projBasis, this->m_projBasis.NumCols());  
@@ -210,7 +211,7 @@ double FiguresOfMeritDualM<Int>::computeMeritMNonSuccDual (IntLatticeExt<Int, Re
 //=========================================================================
 
 
-template class FiguresOfMeritDualM<NTL::ZZ>;
+template class FigureOfMeritDualM<NTL::ZZ>;
 //template class FiguresOfMeritM<std::int64_t>;
 
 } // end namespace LatticeTester
