@@ -55,7 +55,7 @@ namespace LatticeTester {
  *
  */
 template<typename Int>
-class FoMCalc: public FiguresOfMeritM<Int>  {
+class FoMCalc: public FigureOfMeritM<Int>  {
 
 private:
 	typedef NTL::vector<Int> IntVec;
@@ -130,7 +130,7 @@ public:
     // So far the following works only for the dual lattice 
     
     /*
-    * The very first algorithm as implementend in FiguresOfMeritM 
+    * The very first algorithm as implementend in FigureOfMeritM 
     */
     double computeMeritMNonSucc_Method0 (IntLatticeExt<Int, Real> & lat, IntLattice<Int, Real> & proj);
     
@@ -169,7 +169,7 @@ public:
     IntMat m_temp;   
     
     /*
-     * Is needed because the variable has been deleted in FiguresOfMerit
+     * Is needed because the variable has been deleted in FigureOfMerit
      */
     bool m_fomInDual = true;
     
@@ -179,7 +179,7 @@ public:
 // Implementation
 template<typename Int>
 FoMCalc<Int>::FoMCalc (const vector<int64_t> & t, ReductionType & meth, Reducer<Int, Real> & red):
-    FiguresOfMeritM<Int> (t, meth, red) {};
+    FigureOfMeritM<Int> (t, meth, red) {};
 
 
 template<typename Int>
