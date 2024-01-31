@@ -121,8 +121,14 @@ public:
 
 	/**
 	 * This virtual method builds a basis for the lattice in `dim` dimensions,
+<<<<<<< Updated upstream
 	 * and stored it in the internal `m_basis` variable, which is assumed to exist already.
 	 * This `dim` must not exceed `maxDim`.
+=======
+	 * and stored it in the internal `m_basis` variable, which is assumed to be an
+	 * `IntMat` object of dimensions maxDim x maxDim.
+	 * The parameter `dim` must not exceed `maxDim`.
+>>>>>>> Stashed changes
 	 */
 	virtual void buildBasis(int64_t dim) {};
 
@@ -260,7 +266,7 @@ public:
 	/**
 	 * Selects and stores a vector of indices with lacunary values.
 	 */
-//	virtual void setLac(const Lacunary<Int>& lac);
+    //	virtual void setLac(const Lacunary<Int>& lac);
 
 	/**
 	 * Returns a string describing the lattice.
