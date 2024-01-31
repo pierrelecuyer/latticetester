@@ -205,15 +205,9 @@ public:
      * Internal variable which stores the matrix of the projection basis.
      */
     IntMat m_projBasis; 
-<<<<<<< Updated upstream:include/latticetester/FigureOfMeritM.h
     
     /*
      * Internal CoordinateSets object is used to store sets of coordinates.
-=======
-	    
-    /*
-     * CoordinateSets object is used to store sets of coordinates
->>>>>>> Stashed changes:include/latticetester/FiguresOfMeritM.h
      */
     CoordinateSets::FromRanges m_coordRange;  
     

@@ -121,14 +121,9 @@ public:
 
 	/**
 	 * This virtual method builds a basis for the lattice in `dim` dimensions,
-<<<<<<< Updated upstream
-	 * and stored it in the internal `m_basis` variable, which is assumed to exist already.
-	 * This `dim` must not exceed `maxDim`.
-=======
-	 * and stored it in the internal `m_basis` variable, which is assumed to be an
+	 * and store it in the internal `m_basis` variable, which is assumed to be an
 	 * `IntMat` object of dimensions maxDim x maxDim.
 	 * The parameter `dim` must not exceed `maxDim`.
->>>>>>> Stashed changes
 	 */
 	virtual void buildBasis(int64_t dim) {};
 
