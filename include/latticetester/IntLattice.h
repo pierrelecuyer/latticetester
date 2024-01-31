@@ -60,7 +60,8 @@ namespace LatticeTester {
  * The class `IntLatticeExt` extends this class and contains virtual methods that must
  * be defined in its subclasses.
  * An `IntLatticeExt` object keeps a current projection of the lattice on a subset
- * of coordinates, as well as a basis (and perhaps its dual basis) for this current projection.  ???  ******
+ * of coordinates, as well as a basis (and perhaps its dual basis) for this current projection.
+ *   ???  ******
  */
 
 template<typename Int, typename Real>
@@ -132,7 +133,7 @@ public:
 	 * Note that the same `lattice` objects can be used when calling this method several
 	 * times to examine different projections.
 	 */
-	// void buildProjection(IntLattice<Int, Real> *lattice, const Coordinates &proj);
+	void buildProjection(IntLattice<Int, Real> *lattice, const Coordinates &proj);
 
 	/**
 	 * Initializes a vector containing the norms of the basis vectors to -1
@@ -185,22 +186,25 @@ public:
 	 * This function calculates a projection 'projBasis' of the basis.
 	 * The coordinates of the projection are given by 'coord'.
 	*/
-	// void getProjBasis (const Coordinates & coord, IntMat projBasis);
+	//void getProjBasis (const Coordinates & coord, IntMat projBasis);
 	
 	/* 
 	 * This function calculates a projection 'projBasisDual' of the dual basis.
 	 * The coordinates of the projection are given by 'coord'.
 	*/
-	// void getProjBasisDual (const Coordinates & coord, IntMat projBasisDual);
+	//void getProjBasisDual (const Coordinates & coord, IntMat projBasisDual);
 	
 	/* 
 	 * This function calculates a projection 'projBasis' of the basis and of the dual basis.
 	 * The coordinates of the projection are given by 'coord'.
 	*/
-	// void getProjBasisPrimalDual (const Coordinates & coord, IntMat projBasis, IntMat projDualBasis);
+	//void getProjBasisPrimalDual (const Coordinates & coord, IntMat projBasis, IntMat projDualBasis);
 	
 	/*
-	 * ****  NOTE: We really want to avoid computing square roots!  ****
+	 * ****  PIERRE: The two functions below are doing a lot of work, perhaps more than needed!
+	 * ****  They recompute the normsd even when the norms are available!
+	 * ****  Also, We really want to avoid computing square roots, in all cases!    ****
+	 *
 	 * Returns the length (squared in case of the L^2 norm) of the shortest vector in the current basis.
 	 */
 	double getShortestLengthBasis();
@@ -433,13 +437,13 @@ public:
 	 * that the lengths (norms) of the corresponding basis vectors are up to date.
 	 */
 	void sortBasis (int64_t d);
-
+	
 	/**
 	 * Sorts the basis vectors with indices greater of equal to `d` by
 	 * increasing length. The m-dual vectors are **not** permuted. See `sort()`.
 	 */
 	void sortBasisNoDual(int64_t d);
-
+	
 	/**
 	 * Returns a string that contains the primal basis vectors and their norms.
 	 */
@@ -583,7 +587,7 @@ IntLattice<Int, Real>::IntLattice (const IntMat basis, const Int m,
     this->m_dim=maxDim;
     this->m_withDual=withDual;
     this->m_norm=norm;
-    assert (basis.numRows() == maxDim);
+    assert (basis.NumRows() == maxDim);
     this->m_basis=basis;
     this->m_vecNorm.resize(maxDim);
 	setNegativeNorm();
@@ -595,7 +599,7 @@ template<typename Int, typename Real>
 IntLattice<Int, Real>::IntLattice(const IntMat primalbasis,
 		const IntMat dualbasis, const Int m, const int64_t maxDim, NormType norm) :
 		IntLattice<Int, Real>(primalbasis, m, maxDim, true, norm) {
-    assert (dualbasis.numRows() == maxDim);
+    assert (dualbasis.NumRows() == maxDim);
 	this->m_dualbasis = dualbasis;
 	this->m_dualvecNorm.resize(maxDim);
 	setDualNegativeNorm();
@@ -645,6 +649,7 @@ void IntLattice<Int, Real>::overwriteLattice (
 		CopyVect(this->m_vecNorm, lat.m_vecNorm, dim);
 		this->m_withDual = lat.m_withDual;
 		if (this->m_withDual) {
+			// We want to avoid resizing!
 			// this->m_dualbasis.resize(this->m_basis.size1(),
 			//		this->m_basis.size1());
 			// this->m_dualvecNorm.resize(this->m_basis.size1());
@@ -689,10 +694,10 @@ void IntLattice<Int, Real>::init() {
 
 //===========================================================================
 
-// template<typename Int>
-// class BasisConstruction;
+template<typename Int>
+class BasisConstruction;
 
-/*  I am not conviced at all of the need for this function.   ******
+/*  I am not conviced at all of the need for this function.   ****** */
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::buildProjection(
@@ -730,11 +735,11 @@ void IntLattice<Int, Real>::buildProjection(
 		lattice->setDualNegativeNorm();
 	}
 }
-*/
+
 
 //=========================================================================
 
-/*  The following is not needed since we can just call `projectMatrix` directly.
+/* **** The following is not needed since we can just call `projectMatrix` directly.  Right?
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::getProjBasis (const Coordinates & coord, IntMat projBasis) {	
@@ -743,7 +748,9 @@ void IntLattice<Int, Real>::getProjBasis (const Coordinates & coord, IntMat proj
 
 //=========================================================================
 
-template<typename Int, typename Real>        // ToDo: getProjBasisPrimalDual
+//  **** Warning: We cannot just project the m-dual basis on a set of coordinates!!!!!
+//       See the guide.
+template<typename Int, typename Real>
 void IntLattice<Int, Real>::getProjBasisDual (const Coordinates & coord, IntMat projDualBasis) {
 	 BasisConstruction<Int>::projectMatrix(this->getDualBasis(), projDualBasis, coord);
 }

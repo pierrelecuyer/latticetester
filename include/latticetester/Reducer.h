@@ -1021,7 +1021,7 @@ void Reducer<Int, Real>::redDieter(int64_t d, bool xx[]) {
 	bool withDual = m_lat->withDual();
 
 	m_lat->updateScalL2Norm(d, dim);
-	m_lat->sort(d);
+	m_lat->sortBasis(d);
 	int64_t i = dim - 1;
 	m_cpt = 0;
 	m_countDieter = 0;
@@ -1047,7 +1047,7 @@ void Reducer<Int, Real>::redDieterRandomized(int64_t d, int64_t seed) {
 
 	m_lat->updateScalL2Norm(d, dim);
 	//m_lat->getDualBasis ().updateScalL2Norm (d, dim);
-	m_lat->sort(d);
+	m_lat->sortBasis(d);
 	int64_t i = dim - 1;
 	m_cpt = 0;
 	m_countDieter = 0;
@@ -1903,7 +1903,7 @@ bool Reducer<Int, Real>::redBBShortVec() {
     // Here we sort the basis by L2 lengths, otherwise Cholesky will fail more rapidly
     // due to floating-point errors.
 	m_lat->updateScalL2Norm(0, dim);
-	m_lat->sortNoDual(0);
+	m_lat->sortBasisNoDual(0);
 
     // Approximate the square norm of the current shortest vector.
 	if (norm == L2NORM) {
@@ -1994,7 +1994,7 @@ bool Reducer<Int, Real>::redBBShortVec() {
 		}
 	}
 	m_lat->updateVecNorm();
-	m_lat->sortNoDual(0);
+	m_lat->sortBasisNoDual(0);
 	return true;
 }
 
@@ -2026,7 +2026,7 @@ bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
 				m_lat->setDualNegativeNorm(d);
 				m_lat->updateDualVecNorm(d);
 			}
-			m_lat->sort(d);
+			m_lat->sortBasis(d);
 			found = false;
 
 			for (i = 0; i < dim; i++) {
@@ -2095,7 +2095,7 @@ void Reducer<Int, Real>::tracePrintBases(char *message) {
 	//m_lat->setDualNegativeNorm();
 	m_lat->updateVecNorm();
 	//m_lat->updateDualVecNorm();
-	m_lat->sort(0);
+	m_lat->sortBasis(0);
 	m_lat->write();
 }
 

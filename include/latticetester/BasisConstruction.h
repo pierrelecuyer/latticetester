@@ -227,7 +227,7 @@ public:
 
 
    /**
-    * This function directly calculates the projection of the dual matrix for an LCG   ******  NOT HERE!
+    * This function directly calculates the projection of the dual matrix for an LCG
     * if the basis itself is given in the standard form.
     */ 
    static void projectMatrixDual(const IntMat &in, IntMat &out, const Coordinates &proj);
@@ -798,11 +798,11 @@ void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
       MyExit(1, "in and out must be different IntMat objects.");
    if (!r) r = in.NumRows();   // In case r=0.
    uint64_t lat_dim = in.NumCols();
-   std::size_t projSize = proj.size();
+   int64_t projSize = (int64_t) proj.size();
    if (out.NumRows() != in.NumRows() || out.NumCols() != projSize)
 	   out.SetDims(in.NumRows(), projSize); 
    auto it = proj.cbegin();
-   for (std::size_t i = 0; i < projSize; i++) {
+   for (int64_t i = 0; i < projSize; i++) {
       if (*it <= lat_dim) {
          for (int j = 0; j < r; j++) {
             out[j][i] = in[j][*it - 1];
@@ -820,13 +820,11 @@ template<>
 void BasisConstruction<Int>::projectMatrix_minRows (const IntMat &in,
 		IntMat &out, const Coordinates &proj) {
 	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
-	int inDim = in.NumCols();
-	uint64_t lat_dim = in.NumCols();   
-	std::size_t projSize = proj.size();
+	int64_t projSize = (int64_t) proj.size();
 	if (out.NumRows() != projSize || out.NumCols() != projSize)
 	   out.SetDims(projSize, projSize); 
 	auto it = proj.cbegin();
-	for (std::size_t i = 0; i < projSize; i++) {
+	for (int64_t i = 0; i < projSize; i++) {
       out[0][i] = in[0][*it-1];
       for (int j = 1; j < projSize; j++) {
 			   out[j][i] = 0;
@@ -847,13 +845,11 @@ template<>
 void BasisConstruction<Int>::projectMatrixDual (const IntMat &in,
 		IntMat &out, const Coordinates &proj) {
 	if (in == out) MyExit(1, "in and out must be different IntMat objects.");
-	int inDim = in.NumCols();
-	uint64_t lat_dim = in.NumCols();   
-	std::size_t projSize = proj.size();
+	int64_t projSize = (int64_t) proj.size();
 	if (out.NumRows() != projSize || out.NumCols() != projSize)
 	   out.SetDims(projSize, projSize); 
 	auto it = proj.cbegin();
-	for (std::size_t i = 0; i < projSize; i++) {
+	for (int64_t i = 0; i < projSize; i++) {
       out[i][0] = -in[0][*it-1];
       for (int j = 1; j < projSize; j++) {
 			   out[j][i] = 0;

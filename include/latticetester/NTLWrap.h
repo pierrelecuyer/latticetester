@@ -104,7 +104,7 @@ public:
 	 * BAD RENAMING!  REMOVE !!!
 	 * clear() should not be the same as kill().    **********
 	 */
-	void clear() { this->clear(); }
+	void clear() { this->kill(); }
 
 	/*
 	 * The function in this comment adds nothing since NTL::Vec<T> now
@@ -223,7 +223,7 @@ public:
 	 * NOT COMPATIBLE WITH clear() in NTL and ELSEWHERE !!!   *********
 	 * It should initialize to 0 but not destroy the object !!
 	 */
-    void clear() { this->clear(); }
+    void clear() { this->kill(); }
 
 	/**
 	 * Returns the number of rows of the matrix.
