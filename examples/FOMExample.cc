@@ -24,8 +24,8 @@
 
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
-#include "latticetester/FiguresOfMeritM.h"
-#include "latticetester/FiguresOfMeritDualM.h"
+#include "latticetester/FigureOfMeritM.h"
+#include "latticetester/FigureOfMeritDualM.h"
 #include "latticetester/FoMCalc.h"
 #include "latticetester/Util.h"
 #include "latticetester/ParamReader.h"
@@ -88,8 +88,8 @@ int main() {
   t[3] = 12;
   t[4] = 8;
   
-  //FiguresOfMeritM<Int> fom(*weights, *red); 
-  FiguresOfMeritDualM<Int> fom(t, meth, *red); 
+  //FigureOfMeritM<Int> fom(*weights, *red); 
+  FigureOfMeritDualM<Int> fom(t, meth, *red); 
   
   double log_density=(double)(-log(abs(m)));
   norma = new NormaBestLat(log_density, dim);
