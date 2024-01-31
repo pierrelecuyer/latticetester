@@ -44,18 +44,20 @@ namespace LatticeTester {
  * An `IntLatticeExt` object is an `IntLattice` with additional (virtual) methods
  * that must be implemented in subclasses.
  *
- * There are virtual methods to construct a basis and a dual basis,
- * to extend a basis by one coordinate, to construct the lattice defined as the
- * projection of the full lattice on a subset  \f$I\f$  of coordinates indices
- * defined by a `Coordinates` object, and to
- * recompute a basis for different numbers of dimensions and subsets of coordinates.
+ * There are virtual methods to construct a basis and/or an m-dual basis of the full lattice,
+ * to construct a basis and/or an m-dual basis for the projection of the full lattice on a subset
+ * \f$I\f$  of coordinates indices specified by a `Coordinates` object,
+ * and to extend the current basis and/or its m-dual by one coordinate.
+ *
+ * ***   Is the following still used?   ***
  * An `IntLatticeExt` object keeps a current projection of the whole lattice on a subset
- * of coordinates, as well as a basis (and perhaps its dual basis) for this current projection.
+ * of coordinates, as well as a basis (and perhaps its m-dual basis) for this current projection.
  * When computing figures of merit, this projection is frequently changed and the basis must
  * be updated.  The method `buildProjection` takes care of that.
  *
  * **REMOVE ?**
- * (I do not think we need to have this here, but only where we compute the FOMs.)
+ * (I do not think we need to have the following here, but only where we compute the FOMs.)
+ *
  * The lattices considered here are assumed to have a special structure, which is used
  * for the computation of the lattice density and the normalization constants in the
  * figures of merit.  It is assumed that the lattice has rank \f$k\f$ and that the
@@ -91,8 +93,6 @@ public:
 	 * expanded/tested
 	 * @param withDual Specifies whether this object contains a dual or not
 	 * @param norm  The norm type to measure the vector lengths.
-	 *
-	 * WARNING: I have reordered the last two parameters to be consistent with IntLattice!
 	 */
 	IntLatticeExt(Int m, int64_t maxDim, bool withDual=false, NormType norm = L2NORM);
 
@@ -107,7 +107,7 @@ public:
 	 * internal vectors and matrices using the NTL assign operator =
 	 * (see https://libntl.org/doc/matrix.cpp.html).
 	 */
-	void copy(const IntLatticeExt<Int, Real> &lattice);
+	void copy(const IntLatticeExt<Int, Real> &lat);
 
 	/**
 	 * Destructor. Depends on the specific subclass.
@@ -120,6 +120,56 @@ public:
 	// int64_t getOrder() const { return m_order; }
 
 	/**
+	 * This virtual method builds a basis for the lattice in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`.
+	 *
+	 * WHERE IS THE BASIS STORED?  DOES THIS CREATE A NEW OBJECT?   ******
+	 */
+	virtual void buildBasis(int64_t dim);
+
+ 	/** THIS IS FOR TESTING ONLY (CW)
+	 * This virtual method builds a basis for the lattice in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`. In contrast to buildBasis above,
+	 * the `IntMat` object that holds the basis will have
+	 * dimensions 'maxDim' x 'maxDim' and the entries that exceed 'dim' are set to 0.
+	 * This function must be implemented in subclasses.
+	 */
+	virtual void buildBasisFullMatrix(int64_t dim);
+
+	/**
+	 * This virtual method builds only the dual basis for the lattice in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`. buildDualBasis(d) does nothing, it must be
+	 * implemented in subclasses.
+	 */
+	virtual void buildDualBasis(int64_t dim);
+
+	/** THIS IS FOR TESTING ONLY (CW)
+	 * This virtual method builds a basis for the dual lattice in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix
+	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.<
+	 * The fucntion must be implemented in subclasses.
+	 */
+	virtual void buildDualBasisFullMatrix(int64_t dim);
+
+        /**
+         * This virtual method builds only the dual basis in 'dim' dimensions while setting
+         * the number of columns to fixed a value 'c'. It must be implemented in subclasses.
+         */
+    virtual void buildDualBasis (int64_t d, int64_t c);
+
+	/**
+	 * Builds a basis for the projection of the lattice over the coordinates in `proj`
+	 * and returns it in `projBasis`.
+	 */
+	virtual void buildBasisProj (IntMat &projBasis, const Coordinates &proj);
+
+	/**
+	 * Builds a basis for the m-dual of the projection of the lattice over the coordinates in `proj`
+	 * and returns it in `projBasis`.
+	 */
+	virtual void buildDualBasisProj (IntMat &projBasis, const Coordinates &proj);
+
+    /**
 	 * Increments the dimension of the basis and dual basis vectors by one.
 	 * This implementation initializes the added components to `0` and does not
 	 * compute the value taken by the added components and vector. It also
@@ -132,13 +182,13 @@ public:
 	 */
 	virtual void incDimBasis();
  
-        /** THIS IS FOR TESTING ONLY (CW)
+    /** THIS IS FOR TESTING ONLY (CW)
          * Increases the current dimension of only the (primal) lattice basis by 1
          * under the assumption the dual basis matrix has dimension 'maxDim' x 'maxDim'. 
          * while the dimension of the basis is 'd'-1. This implementation is meant to be overridden 
 	 * by subclasses as well.
-         */
-        virtual void incDimBasisFullMatrix (int64_t d);
+     */
+    virtual void incDimBasisFullMatrix (int64_t d);
 
 	/**
 	 * Increments the dimension of only the dual basis vectors by one.  
@@ -151,9 +201,9 @@ public:
          * Increases the current dimension of only the dual lattice basis by 1
          * while fixing the number of columns to 'c'. Note that dim + 1 <= c <= maxDim
          * must hold. This implementation is meant to be overridden 
-	 * by subclasses as well.
+	     * by subclasses as well.
          */
-        virtual void incDimDualBasis (int64_t c);
+    virtual void incDimDualBasis (int64_t c);
     
         /** THIS IS FOR TESTING ONLY (CW)
          * Increases the current dimension of only the dual lattice basis by 1
@@ -161,7 +211,7 @@ public:
          * while the dimension of the basis is 'd'-1. This implementation is meant to be overridden 
 	 * by subclasses as well.
          */
-        virtual void incDimDualBasisFullMatrix (int64_t d);
+    virtual void incDimDualBasisFullMatrix (int64_t d);
 
 	/**
 	 * Computes and stores the logarithm of the normalization factors
@@ -190,41 +240,6 @@ public:
 	//    void fixLatticeNormalization (bool dualF);
 
 
-	/**
-	 * This virtual method builds a basis for the lattice in `dim` dimensions.
-	 * This `dim` must not exceed `maxDim`.
-	 */
-	virtual void buildBasis(int64_t dim);
- 
- 	/** THIS IS FOR TESTING ONLY (CW)
-	 * This virtual method builds a basis for the lattice in `dim` dimensions.
-	 * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix 
-	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.
-	 * The fucntion must be implemented in subclasses.
-	 */
-	virtual void buildBasisFullMatrix(int64_t dim);
-	
-	/**
-	 * This virtual method builds only the dual basis for the lattice in `dim` dimensions.
-	 * This `dim` must not exceed `maxDim`. buildDualBasis(d) does nothing, it must be 
-	 * implemented in subclasses.
-	 */
-	virtual void buildDualBasis(int64_t dim);
-	
-	/** THIS IS FOR TESTING ONLY (CW)
-	 * This virtual method builds a basis for the dual lattice in `dim` dimensions.
-	 * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix 
-	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.<
-	 * The fucntion must be implemented in subclasses.
-	 */
-	virtual void buildDualBasisFullMatrix(int64_t dim);
-	
-        /**
-         * This virtual method builds only the dual basis in 'dim' dimensions while setting
-         * the number of columns to fixed a value 'c'. It must be implemented in subclasses.
-         */
-        virtual void buildDualBasis (int64_t d, int64_t c);
-    
 	/**
 	 * REMOVE: This depends on the lattice only via the density.
 	 * This method is used nowhere else inside lattice tester.
@@ -345,6 +360,51 @@ void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
 
 //===========================================================================
 
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::buildBasis(int64_t d) {
+	// To be re-implemented in subclasses.
+	MyExit(1, " buildBasis(d) does nothing, it must be implemented in subclass");
+	d++;  // eliminates compiler warning
+}
+
+//===========================================================================
+
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::buildBasisFullMatrix(int64_t d) {
+	// To be re-implemented in subclasses.
+	MyExit(1, " buildBasisFullMatrix(d) does nothing, it must be implemented in subclass");
+	d++;  // eliminates compiler warning
+}
+
+//===========================================================================
+
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d) {
+	// To be re-implemented in subclasses.
+	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
+	d++;  // eliminates compiler warning
+}
+
+//===========================================================================
+
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d, int64_t c) {
+	// To be re-implemented in subclasses.
+	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
+	d++;  // eliminates compiler warning
+}
+
+//===========================================================================
+
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::buildDualBasisFullMatrix(int64_t d) {
+	// To be re-implemented in subclasses.
+	MyExit(1, " buildDualBasisFullMatrix(d) does nothing, it must be implemented in subclass");
+	d++;  // eliminates compiler warning
+}
+
+//===========================================================================
+
 /*
  *
  * I THINK THIS SHOULD HAVE NO IMPLEMENTATION AT ALL!
@@ -457,51 +517,6 @@ void IntLatticeExt<Int, Real>::incDimDualBasisFullMatrix(int64_t d) {
  //      std::cout << " fix  " << m_lgVolDual2[i] << endl;
  }ss
  */
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildBasis(int64_t d) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildBasis(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildBasisFullMatrix(int64_t d) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildBasisFullMatrix(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d, int64_t c) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildDualBasisFullMatrix(int64_t d) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildDualBasisFullMatrix(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
 
 //===========================================================================
 

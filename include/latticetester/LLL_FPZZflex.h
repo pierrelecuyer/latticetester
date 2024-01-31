@@ -13,7 +13,7 @@
 
 /**
  * This module contains a  modified version of the `LLL_FP` module of NTL.
- * With the modified functions, we can apply LLL or BKZ only to a submatrix
+ * With the modified functions, we can apply LLL or BKZ to a submatrix
  * (first `r` rows and `c` columns) of the matrix `B` that is passed in and returned.
  * The returned basis will have `c` columns and at most `max(r,c)` rows
  * (the rank of the basis matrix), so it may not occupy the entire space in `B`.
@@ -24,7 +24,7 @@
  *
  * QUESTION: Check if the dimensions of BB are changed in BKZ functions.  *************
  *
- * Another addition is the possibility to recover an array `b` that gives the square
+ * Another change is the possibility to recover an array `b` that gives the square
  * lengths of the basis vectors. This array is maintained in the LLL functions of NTL,
  * but it is hidden in the implementation and not accessible from outside.
  *

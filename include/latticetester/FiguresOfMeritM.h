@@ -207,7 +207,16 @@ public:
     IntMat m_projBasis; 
     
     /*
+<<<<<<< Updated upstream:include/latticetester/FiguresOfMeritM.h
      * Internal CoordinateSets object is used to store sets of coordinates.
+=======
+     * Matrix necessary for intermediate steps of calculation  ???
+     */
+    IntMat m_temp;
+	    
+    /*
+     * CoordinateSets object is used to store sets of coordinates
+>>>>>>> Stashed changes:include/latticetester/FiguresOfMerit.h
      */
     CoordinateSets::FromRanges m_coordRange;  
     

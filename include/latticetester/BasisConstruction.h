@@ -227,7 +227,7 @@ public:
 
 
    /**
-    * This function directly calculates the projection of the dual matrix for an LCG
+    * This function directly calculates the projection of the dual matrix for an LCG   ******  NOT HERE!
     * if the basis itself is given in the standard form.
     */ 
    static void projectMatrixDual(const IntMat &in, IntMat &out, const Coordinates &proj);
