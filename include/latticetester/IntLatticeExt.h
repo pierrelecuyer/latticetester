@@ -115,17 +115,16 @@ public:
 	virtual ~IntLatticeExt();
 
 	/**
-	 * This returns the rank (order) of the lattice.
+	 * This returns the rank (order) of the lattice.   Needed?
 	 */
 	// int64_t getOrder() const { return m_order; }
 
 	/**
-	 * This virtual method builds a basis for the lattice in `dim` dimensions.
+	 * This virtual method builds a basis for the lattice in `dim` dimensions,
+	 * and stored it in the internal `m_basis` variable, which is assumed to exist already.
 	 * This `dim` must not exceed `maxDim`.
-	 *
-	 * WHERE IS THE BASIS STORED?  DOES THIS CREATE A NEW OBJECT?   ******
 	 */
-	virtual void buildBasis(int64_t dim);
+	virtual void buildBasis(int64_t dim) {};
 
  	/** THIS IS FOR TESTING ONLY (CW)
 	 * This virtual method builds a basis for the lattice in `dim` dimensions.
@@ -134,14 +133,14 @@ public:
 	 * dimensions 'maxDim' x 'maxDim' and the entries that exceed 'dim' are set to 0.
 	 * This function must be implemented in subclasses.
 	 */
-	virtual void buildBasisFullMatrix(int64_t dim);
+	virtual void buildBasisFullMatrix(int64_t dim) {};
 
 	/**
 	 * This virtual method builds only the dual basis for the lattice in `dim` dimensions.
 	 * This `dim` must not exceed `maxDim`. buildDualBasis(d) does nothing, it must be
 	 * implemented in subclasses.
 	 */
-	virtual void buildDualBasis(int64_t dim);
+	virtual void buildDualBasis(int64_t dim) {};
 
 	/** THIS IS FOR TESTING ONLY (CW)
 	 * This virtual method builds a basis for the dual lattice in `dim` dimensions.
@@ -149,25 +148,25 @@ public:
 	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.<
 	 * The fucntion must be implemented in subclasses.
 	 */
-	virtual void buildDualBasisFullMatrix(int64_t dim);
+	virtual void buildDualBasisFullMatrix(int64_t dim) {};
 
         /**
          * This virtual method builds only the dual basis in 'dim' dimensions while setting
          * the number of columns to fixed a value 'c'. It must be implemented in subclasses.
          */
-    virtual void buildDualBasis (int64_t d, int64_t c);
+    virtual void buildDualBasis (int64_t d, int64_t c) {};
 
 	/**
 	 * Builds a basis for the projection of the lattice over the coordinates in `proj`
 	 * and returns it in `projBasis`.
 	 */
-	virtual void buildBasisProj (IntMat &projBasis, const Coordinates &proj);
+	virtual void buildBasisProj (IntMat &projBasis, const Coordinates &proj) {};
 
 	/**
 	 * Builds a basis for the m-dual of the projection of the lattice over the coordinates in `proj`
 	 * and returns it in `projBasis`.
 	 */
-	virtual void buildDualBasisProj (IntMat &projBasis, const Coordinates &proj);
+	virtual void buildDualBasisProj (IntMat &projBasis, const Coordinates &proj) {};
 
     /**
 	 * Increments the dimension of the basis and dual basis vectors by one.
@@ -180,7 +179,7 @@ public:
 	 * The current implementation does not increase the dimension at all.
 	 * It is really used somewhere?
 	 */
-	virtual void incDimBasis();
+	virtual void incDimBasis() {};
  
     /** THIS IS FOR TESTING ONLY (CW)
          * Increases the current dimension of only the (primal) lattice basis by 1
@@ -188,14 +187,14 @@ public:
          * while the dimension of the basis is 'd'-1. This implementation is meant to be overridden 
 	 * by subclasses as well.
      */
-    virtual void incDimBasisFullMatrix (int64_t d);
+    virtual void incDimBasisFullMatrix (int64_t d) {};
 
 	/**
 	 * Increments the dimension of only the dual basis vectors by one.  
 	 * This implementation works as incDim and is meant to be overridden 
 	 * by subclasses as well.
 	 */
-	virtual void incDimDualBasis();
+	virtual void incDimDualBasis() {};
 	
         /**
          * Increases the current dimension of only the dual lattice basis by 1
@@ -203,7 +202,7 @@ public:
          * must hold. This implementation is meant to be overridden 
 	     * by subclasses as well.
          */
-    virtual void incDimDualBasis (int64_t c);
+    virtual void incDimDualBasis (int64_t c) {};
     
         /** THIS IS FOR TESTING ONLY (CW)
          * Increases the current dimension of only the dual lattice basis by 1
@@ -211,7 +210,7 @@ public:
          * while the dimension of the basis is 'd'-1. This implementation is meant to be overridden 
 	 * by subclasses as well.
          */
-    virtual void incDimDualBasisFullMatrix (int64_t d);
+    virtual void incDimDualBasisFullMatrix (int64_t d) {};
 
 	/**
 	 * Computes and stores the logarithm of the normalization factors
@@ -360,6 +359,8 @@ void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
 
 //===========================================================================
 
+/*  ****  It seems to me that we do not need this, since the methods are virtual.  Right?
+
 template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::buildBasis(int64_t d) {
 	// To be re-implemented in subclasses.
@@ -402,6 +403,7 @@ void IntLatticeExt<Int, Real>::buildDualBasisFullMatrix(int64_t d) {
 	MyExit(1, " buildDualBasisFullMatrix(d) does nothing, it must be implemented in subclass");
 	d++;  // eliminates compiler warning
 }
+*/
 
 //===========================================================================
 
@@ -410,7 +412,7 @@ void IntLatticeExt<Int, Real>::buildDualBasisFullMatrix(int64_t d) {
  * I THINK THIS SHOULD HAVE NO IMPLEMENTATION AT ALL!
  * The current implementation does not increase the dimension at all.
  * It is really used somewhere?
- */
+
 template<typename Int, typename Real> void
 IntLatticeExt<Int, Real>::incDimBasis() {
 	IntLatticeExt<Int, Real> lattmp(*this);
@@ -481,6 +483,7 @@ void IntLatticeExt<Int, Real>::incDimDualBasisFullMatrix(int64_t d) {
 	MyExit(1, " incDimDualBasisFullMatrix(d) does nothing, it must be implemented in subclass");
 	d++;  // eliminates compiler warning
 }
+ */
 
 //===========================================================================
 /**
