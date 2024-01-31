@@ -68,7 +68,7 @@ Total time: 286.992 seconds
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
-#include "latticetester/FiguresOfMeritM.h"
+#include "latticetester/FigureOfMeritM.h"
 
 using namespace LatticeTester;
 
