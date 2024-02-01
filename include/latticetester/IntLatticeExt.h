@@ -94,11 +94,12 @@ public:
 	 * @param withDual Specifies whether this object contains a dual or not
 	 * @param norm  The norm type to measure the vector lengths.
 	 */
-	IntLatticeExt(Int m, int64_t maxDim, bool withDual=false, NormType norm = L2NORM);
+	IntLatticeExt(Int m, int64_t maxDim, bool withPrimal=false, bool withDual=false,
+			      NormType norm = L2NORM);
 
 	/**
 	 * Copy constructor that makes a copy of `lat`. The maximal dimension
-	 * of the created basis is set equal to the current dimension in `lat`.
+	 * of the created basis is set equal to the current maximal dimension in `lat`.
 	 */
 	IntLatticeExt(const IntLatticeExt<Int, Real> &lat);
 
@@ -121,9 +122,10 @@ public:
 
 	/**
 	 * This virtual method builds a basis for the lattice in `dim` dimensions,
-	 * and store it in the internal `m_basis` variable, which is assumed to be an
-	 * `IntMat` object of dimensions maxDim x maxDim.
+	 * and store it in the upper-left part of the internal `m_basis` variable,
+	 * which is assumed to be an `IntMat` object of dimensions maxDim x maxDim.
 	 * The parameter `dim` must not exceed `maxDim`.
+	 * If `withDual` is true, it also builds an m-dual basis.
 	 */
 	virtual void buildBasis(int64_t dim) {};
 
@@ -134,12 +136,12 @@ public:
 	 * dimensions 'maxDim' x 'maxDim' and the entries that exceed 'dim' are set to 0.
 	 * This function must be implemented in subclasses.
 	 */
-	virtual void buildBasisFullMatrix(int64_t dim) {};
+	// virtual void buildBasisFullMatrix(int64_t dim) {};
 
 	/**
-	 * This virtual method builds only the dual basis for the lattice in `dim` dimensions.
-	 * This `dim` must not exceed `maxDim`. buildDualBasis(d) does nothing, it must be
-	 * implemented in subclasses.
+	 * Similar to `buildBasis`, but for the m-dual only.
+	 * This virtual method builds only the m-dual basis for the lattice in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`. The flag  `withDual` is assumed to be true.
 	 */
 	virtual void buildDualBasis(int64_t dim) {};
 
@@ -149,36 +151,37 @@ public:
 	 * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.<
 	 * The fucntion must be implemented in subclasses.
 	 */
-	virtual void buildDualBasisFullMatrix(int64_t dim) {};
+	// virtual void buildDualBasisFullMatrix(int64_t dim) {};
 
-        /**
-         * This virtual method builds only the dual basis in 'dim' dimensions while setting
-         * the number of columns to fixed a value 'c'. It must be implemented in subclasses.
-         */
-    virtual void buildDualBasis (int64_t d, int64_t c) {};
+    /**
+     * **** This seems to be the same as the `buildDualBasis` above.
+     *
+     * This virtual method builds only the dual basis in 'dim' dimensions while setting
+     * the number of columns to fixed a value 'c'. It must be implemented in subclasses.
+     */
+    // virtual void buildDualBasis (int64_t d, int64_t c) {};
 
 	/**
-	 * Builds a basis for the projection of the lattice over the coordinates in `proj`
-	 * and returns it in `projBasis`.
+	 * Builds a basis for the projection of this lattice over the coordinates in `proj`
+	 * and returns it in `projBasis`. The latter must have a large enough dimension.
+	 * It is not resized, so one can re-use the same `projBasis` objects for many calls
+	 * with different numbers of coordinates.
 	 */
 	virtual void buildBasisProj (IntMat &projBasis, const Coordinates &proj) {};
 
 	/**
+	 * Similar to `buildBasisProj` but for the m-dual basis.
 	 * Builds a basis for the m-dual of the projection of the lattice over the coordinates in `proj`
-	 * and returns it in `projBasis`.
+	 * and returns it in `projBasis`.  Beware: In general, the m-dual of the projection is not the
+	 * same as the projection of the m-dual basis over the same set of coordinates!
 	 */
 	virtual void buildDualBasisProj (IntMat &projBasis, const Coordinates &proj) {};
 
     /**
-	 * Increments the dimension of the basis and dual basis vectors by one.
-	 * This implementation initializes the added components to `0` and does not
-	 * compute the value taken by the added components and vector. It also
-	 * resets the norm vectors to -1. The implementation in this
-	 * class is meant to be overridden by subclasses.
-	 *
-	 * I THINK THIS SHOULD HAVE NO IMPLEMENTATION AT ALL!
-	 * The current implementation does not increase the dimension at all.
-	 * It is really used somewhere?
+	 * Increments the dimension `dim` of the basis by one. One coordinate is added
+	 * to each basis vector and one new basis vector is added as well.
+	 * Usually, the other coordinates are left unchanged.
+	 * If `withDual` is true, then the dimension of the m-dual is also increased by 1.
 	 */
 	virtual void incDimBasis() {};
  
@@ -188,30 +191,30 @@ public:
          * while the dimension of the basis is 'd'-1. This implementation is meant to be overridden 
 	 * by subclasses as well.
      */
-    virtual void incDimBasisFullMatrix (int64_t d) {};
+    // virtual void incDimBasisFullMatrix (int64_t d) {};
 
 	/**
-	 * Increments the dimension of only the dual basis vectors by one.  
-	 * This implementation works as incDim and is meant to be overridden 
-	 * by subclasses as well.
+	 * Similar to `incDimBasis`. Increments the dimension `dim` by 1, but only for the dual basis.
 	 */
 	virtual void incDimDualBasis() {};
 	
         /**
+         * **** Same as the other one, it seems.
+         *
          * Increases the current dimension of only the dual lattice basis by 1
          * while fixing the number of columns to 'c'. Note that dim + 1 <= c <= maxDim
          * must hold. This implementation is meant to be overridden 
 	     * by subclasses as well.
          */
-    virtual void incDimDualBasis (int64_t c) {};
+    // virtual void incDimDualBasis (int64_t c) {};
     
         /** THIS IS FOR TESTING ONLY (CW)
          * Increases the current dimension of only the dual lattice basis by 1
          * under the assumption the dual basis matrix has dimension 'maxDim' x 'maxDim'. 
          * while the dimension of the basis is 'd'-1. This implementation is meant to be overridden 
 	 * by subclasses as well.
-         */
-    virtual void incDimDualBasisFullMatrix (int64_t d) {};
+     */
+    // virtual void incDimDualBasisFullMatrix (int64_t d) {};
 
 	/**
 	 * Computes and stores the logarithm of the normalization factors
@@ -264,7 +267,7 @@ public:
     //	virtual void setLac(const Lacunary<Int>& lac);
 
 	/**
-	 * Returns a string describing the lattice.
+	 * Returns a string describing this lattice.
 	 */
 	virtual std::string toString() const;
 
@@ -296,19 +299,19 @@ protected:
 //===========================================================================
 
 template<typename Int, typename Real>
-IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, bool withDual, NormType norm) :
-		IntLattice<Int, Real>(m, maxDim, withDual, norm) {
-	this->m_maxDim = maxDim;
-	// this->m_withDual = withDual;
+IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, bool withPrimal, bool withDual, NormType norm) :
+		IntLattice<Int, Real>(m, maxDim, withPrimal, withDual, norm) {
+	// this->m_maxDim = maxDim;
 	// m_order = k;
 	// Reserves space for the lattice and the projections (via initProj()) in up to maxDim dimensions.
 	//this->initProj();
-	this->m_basis.resize(this->m_dim, this->m_dim);
-	this->m_vecNorm.resize(this->m_dim);
-	this->setNegativeNorm();
+	if (withPrimal) {
+	    this->m_basis.resize(this->m_maxDim, this->m_maxDim);
+	    this->m_vecNorm.resize(this->m_maxDim);
+	    this->setNegativeNorm();
 	if (withDual) {
-		this->m_dualbasis.resize(this->m_dim, this->m_dim);
-		this->m_dualvecNorm.resize(this->m_dim);
+		this->m_dualbasis.resize(this->m_maxDim, this->m_maxDim);
+		this->m_dualvecNorm.resize(this->m_maxDim);
 		this->setDualNegativeNorm();
 	}
 }
@@ -318,14 +321,10 @@ IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, bool withDual, No
 template<typename Int, typename Real>
 IntLatticeExt<Int, Real>::IntLatticeExt(const IntLatticeExt<Int, Real> &lat) :
 		IntLattice<Int, Real>(lat) {
-	this->m_withDual = lat.m_withDual;
+	// this->m_withDual = lat.m_withDual;
 	// m_order = lat.m_order;
-	//this->initProj();
-	//this->m_basisProj = lat.m_basisProj;
-	if (this->m_withDual) {
-		this->setDualNegativeNorm();
-		//this->m_dualbasisProj = lat.m_dualbasisProj;
-	}
+	if (this->m_withPrimal)  this->setPrimalNegativeNorm();
+	if (this->m_withDual)  this->setDualNegativeNorm();
 }
 
 //===========================================================================
@@ -351,226 +350,9 @@ void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
 	// Uses the NTL assignment operator = to make a copy of the bases.
 	// m_order = lat.getOrder();
 	this->m_modulo = lat.m_modulo;
-	//m_m2 = lat.m_m2;
-	this->m_basis = lat.m_basis;
-	if (lat.m_withDual)
-		this->m_dualbasis = lat.m_dualbasis;
-	//this->initProj();  // Resizes the bases to the dimensions of the current object.
+	if (lat.m_withPrimal) this->m_basis = lat.m_basis;
+	if (lat.m_withDual) this->m_dualbasis = lat.m_dualbasis;
 }
-
-//===========================================================================
-
-/*  ****  It seems to me that we do not need this, since the methods are virtual.  Right?
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildBasis(int64_t d) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildBasis(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildBasisFullMatrix(int64_t d) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildBasisFullMatrix(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildDualBasis(int64_t d, int64_t c) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::buildDualBasisFullMatrix(int64_t d) {
-	// To be re-implemented in subclasses.
-	MyExit(1, " buildDualBasisFullMatrix(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-*/
-
-//===========================================================================
-
-/*
- *
- * I THINK THIS SHOULD HAVE NO IMPLEMENTATION AT ALL!
- * The current implementation does not increase the dimension at all.
- * It is really used somewhere?
-
-template<typename Int, typename Real> void
-IntLatticeExt<Int, Real>::incDimBasis() {
-	IntLatticeExt<Int, Real> lattmp(*this);
-	int64_t dim = this->getDim();
-	this->m_basis.resize(dim + 1, dim + 1);
-	this->m_vecNorm.resize(dim + 1);
-	if (this->m_withDual) {
-		this->m_dualbasis.resize(dim + 1, dim + 1);
-		this->m_dualvecNorm.resize(dim + 1);
-	}
-	for (int64_t i = 0; i < dim; i++) {
-		for (int64_t j = 0; j < dim; j++) {
-			this->m_basis(i, j) = lattmp.m_basis(i, j);
-			if (this->m_withDual)
-				this->m_dualbasis(i, j) = lattmp.m_dualbasis(i, j);
-		}
-		this->m_vecNorm(i) = lattmp.m_vecNorm(i);
-		if (this->m_withDual)
-			this->m_dualvecNorm(i) = lattmp.m_dualvecNorm(i);
-	}
-	this->setNegativeNorm(dim);
-	if (this->m_withDual)
-		this->setDualNegativeNorm(dim);
-	this->setDim(dim + 1);
-	return;
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::incDimBasisFullMatrix(int64_t d) {
-	MyExit(1, " incDimBasisFullMatrix(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::incDimDualBasis() {
-	IntLatticeExt<Int, Real> lattmp(*this);
-	int64_t dim = this->getDim();
-	this->m_dualbasis.resize(dim + 1, dim + 1);
-	this->m_dualvecNorm.resize(dim + 1);
-
-	for (int64_t i = 0; i < dim; i++) {
-		for (int64_t j = 0; j < dim; j++) {
-				this->m_dualbasis(i, j) = lattmp.m_dualbasis(i, j);
-		}
-		this->m_dualvecNorm(i) = lattmp.m_dualvecNorm(i);
-	}
-	this->setDualNegativeNorm(dim);
-	this->setDim(dim + 1);
-	return;
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::incDimDualBasis(int64_t c) {
-	MyExit(1, " buildDualBasis(d) does nothing, it must be implemented in subclass");
-	c++;  // eliminates compiler warning
-}
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::incDimDualBasisFullMatrix(int64_t d) {
-	MyExit(1, " incDimDualBasisFullMatrix(d) does nothing, it must be implemented in subclass");
-	d++;  // eliminates compiler warning
-}
- */
-
-//===========================================================================
-/**
- template<typename Int, typename Real>
- void IntLatticeExt<Int, Real>::calcLgVolDual2 (double lgm2)
- {
- if(!(this->m_withDual)) return;
- int64_t dim = this->getDim();
- int64_t rmax = std::min(m_order, dim);
-
- m_lgVolDual2[1] = lgm2;
- for (int64_t r = 2; r <= rmax; r++)
- m_lgVolDual2[r] = m_lgVolDual2[r - 1] + lgm2;
- // WARNING [David]: one version had `m_order` instead of `rmax`.
- for (int64_t r = rmax + 1; r <= dim; r++)
- m_lgVolDual2[r] = m_lgVolDual2[r - 1];
- }
- */
-
-//===========================================================================
-/**
- template<typename Int, typename Real>
- void IntLatticeExt<Int, Real>::computeNormalConstants(
- bool dualF)
- {
- // Normalization factor: dual to primal : m^(k/dim) -> 1/m^(k/dim)
- // This is the part of the normalization that depends on the lattice density.
- if (( dualF && m_lgVolDual2[1] < 0.0) ||
- (!dualF && m_lgVolDual2[1] > 0.0)) {
- for (int64_t i = 0; i < this->getDim(); i++)
- m_lgVolDual2[i] = -m_lgVolDual2[i];
- }
- //   for (int64_t i = 1; i <= getMaxDim(); i++)
- //      std::cout << " fix  " << m_lgVolDual2[i] << endl;
- }ss
- */
-
-//===========================================================================
-
-/**
- template<typename Int, typename Real>
- Normalizer<Real> * IntLatticeExt<Int, Real>::getNormalizer(
- NormaType norma, int64_t alpha, bool dualF)
- {
- int64_t dim = this->getDim();
- Normalizer<Real> *normal;
-
- Real logDensity;
-
- // The primal lattice density is assumed to be m^k, and m^{-k} for the dual.
- if (dualF) // dual basis
- logDensity = - m_order * NTL::log(this->m_modulo);
- else // primal basis
- logDensity = m_order * NTL::log(this->m_modulo);
-
- // We create a normalizer normal for the given density, and return it.
- // This normalizer is not stored in this object.
- switch (norma) {
- case BESTLAT:
- normal = new NormaBestLat<Real> (logDensity, dim);
- break;
- case BESTBOUND:
- normal = new NormaBestBound<Real> (logDensity, dim);
- break;
- case LAMINATED:
- normal = new NormaLaminated<Real> (logDensity, dim);
- break;
- case ROGERS:
- normal = new NormaRogers<Real> (logDensity, dim);
- break;
- case MINKL1:
- normal = new NormaMinkL1<Real> (logDensity, dim);
- break;
- case MINK:
- normal = new NormaMinkL2<Real> (logDensity, dim);
- break;
- case NONE:
- normal = new Normalizer<Real> (logDensity, dim, "Norma_generic");
- break;
- default:
- std::cout << "normalizer:   no such case";
- exit (2);
- }
- return normal;
- }
- */
 
 //===========================================================================
 template<typename Int, typename Real>

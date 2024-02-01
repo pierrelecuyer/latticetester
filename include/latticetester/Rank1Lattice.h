@@ -660,29 +660,6 @@ void Rank1Lattice<Int, Real>::incDimDualBasisFullMatrix (int64_t d) {
 	this->m_dualbasis[d-1][0] = -m_a[d-1];
 }
 
-
-//============================================================================
-
-/*
- *  This is already in IntLattice!
-template<typename Int, typename Real>
-void Rank1Lattice<Int, Real>::dualize () {
-      IntMat tmps(this->m_basis);
-      this->m_basis = this->m_dualbasis;
-      this->m_dualbasis = tmps;
-    }
-*/
-
-//============================================================================
-
-/**
- * Selects and stores a vector of indices with lacunary values.
- */
-template<typename Int>
-void setLac(const Lacunary<Int>& lac) {           // ??????????
-	return;
-}
-
 //============================================================================
 
 template<typename Int, typename Real>
