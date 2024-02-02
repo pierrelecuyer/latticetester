@@ -163,6 +163,8 @@ namespace LatticeTester {
          * Increases the current dimension of only the m-dual basis by 1.
          * The primal basis is left unchanged (not updated).
          * The new increased dimension must not exceed `maxDim`.
+         * This method uses the simplified method given in the lattice tester guide:
+         * the new m-dual basis vector is simply  w_d = (-a_d, 0, ..., 0, 1).
          */
         void incDimDualBasis ();
 
@@ -311,8 +313,7 @@ namespace LatticeTester {
 
         // If `withDual`, we construct the m-dual basis also in a direct way.
         this->m_dualbasis[0][0] = this->m_modulo;
-        for (j = 1; j < d; j++)
-        this->m_dualbasis[0][j] = 0;
+        for (j = 1; j < d; j++) this->m_dualbasis[0][j] = 0;
         for (i = 1; i < d; i++) {
             this->m_dualbasis[i][0] = -this->m_a[i];
             for (j = 1; j < d; j++) {
@@ -331,10 +332,8 @@ namespace LatticeTester {
         assert(d <= this->m_maxDim);
         this->setDim (d);
         int64_t i, j;
-
         this->m_dualbasis[0][0] = this->m_modulo;
-        for (j = 1; j < d; j++)
-        this->m_dualbasis[0][j] = 0;
+        for (j = 1; j < d; j++) this->m_dualbasis[0][j] = 0;
         for (i = 1; i < d; i++) {
             this->m_dualbasis[i][0] = -this->m_a[i];
             for (j = 1; j < d; j++) {
@@ -400,14 +399,14 @@ namespace LatticeTester {
         Int m_add;
 
         // Update new row and new column.
-        for (j = 0; j < d-1; j++)
-        this->m_basis[d-1][j] = 0;
+        for (j = 0; j < d-1; j++) this->m_basis[d-1][j] = 0;
         this->m_basis[d-1][d-1] = this->m_modulo;
         for (i = 0; i < d-1; i++) {
             this->m_basis[i][d-1] = (this->m_a[d-1] * this->m_basis[i][0]) % this->m_modulo;
         }
         this->setNegativeNorm ();
 
+        // If m-dual basis is maintained, we also increase its dimension.
         if (this->m_withDual) {
             // Add extra coordinate to each vector
             for (i = 0; i < d; i++) {
@@ -415,7 +414,6 @@ namespace LatticeTester {
                 this->m_dualbasis[d-1][i] = 0;
             }
             this->m_dualbasis[d-1][d-1] = 1;
-
             for (j = 0; j < d-1; j++) {
                 m_add = 0;
                 for (int i = 0; i < d-1; i++) {
@@ -434,12 +432,14 @@ namespace LatticeTester {
     void Rank1Lattice<Int, Real>::incDimDualBasis () {
         int64_t d = 1 + this->getDim();
         assert(d <= this->m_maxDim);
-        this->setDim (d);
+        m_dim = d;
+        int64_t i, j;
+        Int m_add;
         // Add extra coordinate to each vector
-        for (int64_t i = 0; i < d-1; i++) {
+        for (i = 0; i < d; i++) {
             this->m_dualbasis[i][d-1] = 0;
+            this->m_dualbasis[d-1][i] = 0;
         }
-        //  What about the other elements in the last row ??????????      ********
         this->m_dualbasis[d-1][0] = -m_a[d-1];
         this->m_dualbasis[d-1][d-1] = 1;
         this->setDualNegativeNorm ();
