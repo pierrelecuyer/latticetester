@@ -70,8 +70,8 @@ namespace LatticeTester {
  * to the internal `IntLattice` object of this `Reducer`, and use no other internal variable.
  * All these methods always reduce the full basis contained in the `IntLattice` object
  * (they use the dimension of the `IntMat` object that contains the basis).
+ * ****   Not always, see also below !!!!!   This part should be rewritten.   *****
  * They assume that `basis` is a square matrix that contains a set of independent vectors.
- *
  * There is also a version of `redLLLNTL` that applies LLL only to the submatrix
  * that contains the first `dim` rows and columns of the given `basis` matrix.
  * This is convenient if one wants to apply LLL to several projections without
@@ -85,7 +85,9 @@ namespace LatticeTester {
  * internal variables, vectors, and matrices.  The recommended way is to create
  * a single `Reducer` object with a maximal dimension large enough,
  * and then call the `shortestVector` and `reductMinkowski` methods with the relevant
- * `IntLattice` object as a parameter. The norm type, dimension, basis, vector lengths, etc.
+ * `IntLattice` object as a parameter.
+ * *****  In fact, it can be always the same IntLattice object all the time!!!  *****
+ * The norm type, dimension, basis, vector lengths, etc.
  * will be taken from this `IntLattice` object.  The dimensions of the internal vectors
  * and matrices can be larger than required; the methods will use only the
  * entries that are needed for the given `IntLattice` basis.

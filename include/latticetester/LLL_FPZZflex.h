@@ -24,9 +24,13 @@
  *
  * QUESTION: Check if the dimensions of BB are changed in BKZ functions.  *************
  *
- * Another change is the possibility to recover an array `b` that gives the square
- * lengths of the basis vectors. This array is maintained in the LLL functions of NTL,
+ * Another change is the possibility to recover an array `sqlen` that gives the square
+ * Euclidean lengths of the basis vectors, in `double`.
+ * This array is maintained in the LLL functions of NTL,
  * but it is hidden in the implementation and not accessible from outside.
+ * Note that in `IntLattice`, these lengths are maintained in a `RealVec` object,
+ * which is not always an array of `double`, and the norm is not always the Euclidean one.
+ * One has to be careful about that.
  *
  * Each function returns the dimension of the computed basis (number of independent rows).
  * Important: This basis is always returned in the upper-left corner of the matrix `B`.
@@ -43,7 +47,7 @@ NTL_OPEN_NNS
  * `B` are ignored. The basis is returned in the upper left corner of `B`
  * and its dimension d (the number of independent rows) is returned by the function.
  * The square lengths of the returned basis vectors are also returned in the
- * vector `sqlen`,  in `sqlen[0],..., sqlen[d-1]`.
+ * `double` vector `sqlen`,  in `sqlen[0],..., sqlen[d-1]`.
  * The function returns the dimension of the computed basis (the number of independent rows).
  */
 static

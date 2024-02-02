@@ -19,16 +19,6 @@
 #define LATTICETESTER_INTLATTICEEXT_H
 
 #include "latticetester/IntLattice.h"
-/*
- #include "latticetester/NormaBestLat.h"
- #include "latticetester/NormaBestBound.h"
- #include "latticetester/NormaLaminated.h"
- #include "latticetester/NormaRogers.h"
- #include "latticetester/NormaMinkL1.h"
- #include "latticetester/NormaPalpha.h"
- #include "latticetester/NormaMinkL2.h"
- #include "latticetester/Normalizer.h"
- */
 #include "latticetester/Coordinates.h"
 #include "latticetester/Lacunary.h"
 #include "latticetester/Util.h"
@@ -44,16 +34,23 @@ namespace LatticeTester {
  * An `IntLatticeExt` object is an `IntLattice` with additional (virtual) methods
  * that must be implemented in subclasses.
  *
- * There are virtual methods to construct a basis and/or an m-dual basis of the full lattice,
- * to construct a basis and/or an m-dual basis for the projection of the full lattice on a subset
- * \f$I\f$  of coordinates indices specified by a `Coordinates` object,
+ * There are virtual methods to construct a basis and/or an m-dual basis of the full lattice
  * and to extend the current basis and/or its m-dual by one coordinate.
+ * These methods must be implemented in the subclasses.
+ * The `IntLattice` base class already implements methods to construct a basis and/or
+ * an m-dual basis for the projection of the full lattice on a subset
+ * of coordinates indices specified by a `Coordinates` object.  These general default
+ * implementation can often be overridden by faster specialized implementations in the subclasses.
  *
- * ***   Is the following still used?   ***
+ * Recall that the lattices in `IntLattice` (and here) have `dim < maxDim` dimensions and
+ * the bases are stored in `IntMat` objects of dimensions `maxDim x maxDim`.
+ *
+ * ***  The following has been changed.   ***
  * An `IntLatticeExt` object keeps a current projection of the whole lattice on a subset
  * of coordinates, as well as a basis (and perhaps its m-dual basis) for this current projection.
  * When computing figures of merit, this projection is frequently changed and the basis must
  * be updated.  The method `buildProjection` takes care of that.
+ * ****   This has been changed:  The projection must now be kept in a separate `IntLattice` object.
  *
  * **REMOVE ?**
  * (I do not think we need to have the following here, but only where we compute the FOMs.)
@@ -161,22 +158,6 @@ public:
      */
     // virtual void buildDualBasis (int64_t d, int64_t c) {};
 
-	/**
-	 * Builds a basis for the projection of this lattice over the coordinates in `proj`
-	 * and returns it in `projBasis`. The latter must have a large enough dimension.
-	 * It is not resized, so one can re-use the same `projBasis` objects for many calls
-	 * with different numbers of coordinates.
-	 */
-	virtual void buildBasisProj (IntMat &projBasis, const Coordinates &proj) {};
-
-	/**
-	 * Similar to `buildBasisProj` but for the m-dual basis.
-	 * Builds a basis for the m-dual of the projection of the lattice over the coordinates in `proj`
-	 * and returns it in `projBasis`.  Beware: In general, the m-dual of the projection is not the
-	 * same as the projection of the m-dual basis over the same set of coordinates!
-	 */
-	virtual void buildDualBasisProj (IntMat &projBasis, const Coordinates &proj) {};
-
     /**
 	 * Increments the dimension `dim` of the basis by one. One coordinate is added
 	 * to each basis vector and one new basis vector is added as well.
@@ -269,7 +250,7 @@ public:
 	/**
 	 * Returns a string describing this lattice.
 	 */
-	virtual std::string toString() const;
+	virtual std::string toString() const { };
 
 protected:
 
@@ -352,14 +333,6 @@ void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
 	this->m_modulo = lat.m_modulo;
 	if (lat.m_withPrimal) this->m_basis = lat.m_basis;
 	if (lat.m_withDual) this->m_dualbasis = lat.m_dualbasis;
-}
-
-//===========================================================================
-template<typename Int, typename Real>
-std::string IntLatticeExt<Int, Real>::toString() const {
-	// To be re-implemented in subclasses.
-	assert(0);
-	return std::string();
 }
 
 //===========================================================================
