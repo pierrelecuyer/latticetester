@@ -47,6 +47,8 @@ namespace LatticeTester {
      * of points (has the same density \f$m\f$) as the full lattice.
      * When searching for lattices that satisfy this condition, one may assume
      * without loss of generality generality that \f$a_1 = 1\f$.
+     * Under that condition, it is straightforward to construct a basis for a projection that
+     * contains the first coordinate, and also its m-dual basis.  We exploit this.
      */
 
     template<typename Int, typename Real>
@@ -122,14 +124,14 @@ namespace LatticeTester {
         void buildBasis (int64_t dim);
 
         /**
-         * Builds only an m-dual basis (and not the primal) directly in `dim` dimensions.
-         * This `dim` must not exceed `this->maxDim()`.
-         * This m-dual basis will be lower triangular.
+         * Builds only an m-dual lower triangular basis (and not the primal) directly
+         * in `dim` dimensions.  This `dim` must not exceed `maxDim`.
          */
         void buildDualBasis (int64_t dim);
 
         /**
          * Increases the current dimension of the primal basis by 1 and updates the basis.
+         * If `withDual`, it also increases the m-dual basis.
          * The new increased dimension must not exceed `maxDim`.
          */
         void incDimBasis ();
@@ -144,9 +146,11 @@ namespace LatticeTester {
         void incDimDualBasis ();
 
         /**
-         * This method overrides its namesake in `IntLattice`.  The implementation
-         * given here exploits the rank-1 lattice structure and is simpler in the
-         * case where the first coordinate is 1 and belongs to the projection.
+         * This method overrides its namesake in `IntLattice`. The projection of this
+         * `Rank1Lattice` over the coordinates in `proj` is returned in `projLattice`.
+         * When the first coordinate is 1 and belongs to the projection, the implementation
+         * used here exploits the rank-1 lattice structure and is simpler and faster.
+         * Otherwise, the implementation of the parent class is used.
          */
         void buildProjection (IntLattice<Int, Real> *projLattice,
                 const Coordinates &proj) override;
@@ -193,7 +197,7 @@ namespace LatticeTester {
             const Int & m, const Int & a, int64_t maxDim, bool withDual, NormType norm):
     IntLatticeExt<Int, Real> (m, maxDim, withDual, norm) {
         this->m_a.SetLength(maxDim);
-        this->seta(a);
+        this->seta(a);    // Set to a Korobov lattice.
     }
 
 //============================================================================
@@ -247,7 +251,7 @@ namespace LatticeTester {
     //============================================================================
 
     /**
-     * Sets this lattice to a Korobov lattice with multiplier `a`.
+     * Sets this lattice to a Korobov lattice with multiplier `a`, with dim = maxDim.
      */
     template<typename Int, typename Real>
     void Rank1Lattice<Int, Real>::seta (const Int & a) {
