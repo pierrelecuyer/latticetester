@@ -793,24 +793,11 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(const NTL::matrix<NTL::ZZ> &basis,
 template<typename Int>
 void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
         const Coordinates &proj, long r) {
-    if (in == out)
-        MyExit(1, "in and out must be different IntMat objects.");
-    if (!r)
-        r = in.NumRows();   // In case r=0.
-    uint64_t lat_dim = in.NumCols();
-    int64_t projSize = (int64_t) proj.size();
-    if (out.NumRows() != in.NumRows() || out.NumCols() != projSize)
-        out.SetDims(in.NumRows(), projSize);
-    auto it = proj.cbegin();
-    for (int64_t i = 0; i < projSize; i++) {
-        if (*it <= lat_dim) {
-            for (int j = 0; j < r; j++) {
-                out[j][i] = in[j][*it - 1];
-            }
-        } else
-            MyExit(1,
-                    "A projection coordinate exceeds the dimension of the current basis.");
-        it++;
+    if (in == out) MyExit(1, "in and out must be different IntMat objects.");
+    if (!r) r = in.NumRows();   // In case r=0.
+    // We assume without testing that out is large enough for proj.size().
+    for (auto it = proj.begin(), long j = 0; it != proj.end(); it++, j++) {
+        for (long i = 0; i < r; i++)  out[i][j] = in[i][*it - 1];
     }
 }
 

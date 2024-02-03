@@ -133,22 +133,22 @@ public:
     void overwriteLattice(const IntLattice<Int, Real> &lat, long d);
 
     /**
-     * Takes the projection of the lattice represented by the object `lattice`
+     * Takes the projection of the lattice represented by the present object
      * over the set of coordinates determined by `proj`, finds a set of generating
      * vectors for that projection, and builds a basis and perhaps its m-dual basis
-     * (if maintained) for the projection. After that, the `IntLattice` object that called
-     * this method will represent the projection. The basis for the projection will be
-     * upper-triangular if we also compute its m-dual, and otherwise it will be computed
-     * by LLL with the parameter `delta`.
-     * The modulus `m` must be the same for `lattice` and for the current object.
+     * (if maintained) for the projection. After that, the `IntLattice` object
+     * given by `projLattice` will represent the projection.
+     * The basis for the projection will be upper-triangular if we also compute its m-dual,
+     * and otherwise it will be computed by LLL with the parameter `delta`.
+     * The modulus `m` must be the same for `projLattice` and for the current object.
      * The variables associated with the projection (dimension, norms, etc.) are also updated.
-     * The `maxDim` of the calling object must be large enough so it can holds the projection.
-     * This method can be called several times with the same `IntLattice` object
+     * The `maxDim` of the `projLattice` object must be large enough so it can holds the projection.
+     * This method can be called several times with the same `projLattice` object
      * to examine several different projections.
      * Note that representing each projection as an `IntLattice` object is required when
      * we want to call `Reducer::shortestVector` for several projections.
      */
-    void buildProjection(IntLattice<Int, Real> *lattice,
+    void buildProjection(IntLattice<Int, Real> *projLattice,
             const Coordinates &proj, delta = 0.99);
 
     /**
@@ -655,20 +655,20 @@ void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat,
 // template<typename Int>class BasisConstruction;  // Needed?
 
 template<typename Int, typename Real>
-void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *lattice,
+void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
         const Coordinates &proj, double delta) {
     // We may want to check if this and lattice have the same m,
-    // if m_dim is equal to the size of proj, etc.
-    this->m_dim = proj.size();  // Number of coordinates in the projection.
-    if (!m_withDual) { // This builds only the primal basis.
-        BasisConstruction<Int>::projectionConstructionLLL(lattice->m_basis,
-                this->m_basis, proj, lattice->m_modulo, delta, this->m_dim,
-                m_vecNorm);
+    // if projLattice->m_maxDim >= proj.size(), etc.
+    projLattice->m_dim = proj.size();  // Number of coordinates in the projection.
+    if (!projLattice->m_withDual) { // This builds only the primal basis.
+        BasisConstruction<Int>::projectionConstructionLLL(this->m_basis,
+                projLattice->m_basis, proj, this->m_modulo, delta, proj.size(),
+                projLattice->m_vecNorm);
     } else { // This builds both the primal and the m-dual bases.
-        BasisConstruction<Int>::projectionConstructionUpperTri(lattice->m_basis,
-                this->m_basis, proj, this->m_modulo, lattice->m_dim);
-        BasisConstruction<Int>::mDualUpperTriangular(this->m_basis,
-                this->m_dualbasis, this->m_modulo, this->m_dim);
+        BasisConstruction<Int>::projectionConstructionUpperTri(this->m_basis,
+                projLattice->m_basis, proj, this->m_modulo, this->m_dim);
+        BasisConstruction<Int>::mDualUpperTriangular(projLattice->m_basis,
+                projLattice->m_dualbasis, this->m_modulo, projLattice->m_dim);
         this->setNegativeNorm();
         this->setDualNegativeNorm();
     }

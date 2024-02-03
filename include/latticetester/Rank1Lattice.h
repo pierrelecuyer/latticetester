@@ -121,12 +121,6 @@ namespace LatticeTester {
          */
         void buildBasis (int64_t dim);
 
-        /** THIS IS FOR TESTING ONLY (CW)
-         * This method builds a basis for the lattice in `d` dimensions.
-         * This `d` must not exceed `maxDim`. In contrast to buildBasis, the basis matrix
-         * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.
-         */
-        // void buildBasisFullMatrix (int64_t d);
         /**
          * Builds only an m-dual basis (and not the primal) directly in `dim` dimensions.
          * This `dim` must not exceed `this->maxDim()`.
@@ -135,30 +129,11 @@ namespace LatticeTester {
         void buildDualBasis (int64_t dim);
 
         /**
-         * Builds only the basis in `d` dimensions for the given number of columns 'c'.
-         * Columns which are larger than 'd' are filled with zeros.
-         * Neither 'd` nor 'c' must exceed `this->maxDim()` and 'd' can be at most 'c'.
-         * This dual basis will be lower triangular.
-         */
-        // void buildDualBasis (int64_t d, int64_t c);
-        /** THIS IS FOR TESTING ONLY (CW)
-         * This method builds a basis for the dual lattice in `dim` dimensions.
-         * This `dim` must not exceed `maxDim`. In contrast to buildDualBasis, the basis matrix
-         * has dimension 'maxDim' x 'maxDim' and the entries which exceed 'd' are set to 0.
-         */
-        // void buildDualBasisFullMatrix (int64_t d);
-        /**
          * Increases the current dimension of the primal basis by 1 and updates the basis.
          * The new increased dimension must not exceed `maxDim`.
          */
         void incDimBasis ();
 
-        /** THIS IS FOR TESTING ONLY (CW)
-         * Increases the current dimension of only the lattice basis by 1
-         * under the assumption the dual basis matrix has dimension 'maxDim' x 'maxDim'. 
-         * while the dimension of the basis is 'd'-1. 
-         */
-        // void incDimBasisFullMatrix (int64_t d);
         /**
          * Increases the current dimension of only the m-dual basis by 1.
          * The primal basis is left unchanged (not updated).
@@ -169,17 +144,13 @@ namespace LatticeTester {
         void incDimDualBasis ();
 
         /**
-         * Increases the current dimension of only the m-dual lattice basis by 1
-         * while fixing the number of columns to 'c'. Note that dim + 1 <= c <= maxDim
-         * must hold. 
+         * This method overrides its namesake in `IntLattice`.  The implementation
+         * given here exploits the rank-1 lattice structure and is simpler in the
+         * case where the first coordinate is 1 and belongs to the projection.
          */
-        // void incDimDualBasis (int64_t c);
-        /** THIS IS FOR TESTING ONLY (CW)
-         * Increases the current dimension of only the dual lattice basis by 1
-         * under the assumption the dual basis matrix has dimension 'maxDim' x 'maxDim'. 
-         * while the dimension of the basis is 'd'-1. 
-         */
-        // void incDimDualBasisFullMatrix (int64_t d);
+        void buildProjection (IntLattice<Int, Real> *projLattice,
+                const Coordinates &proj) override;
+
         /**
          * Returns the first `dim` components of the generating vector \f$\ba\f$ as a string,
          * where `dim` is the current lattice dimension.
@@ -345,50 +316,6 @@ namespace LatticeTester {
     }
 
 //============================================================================
-    /*
-     template<typename Int, typename Real>
-     void Rank1Lattice<Int, Real>::buildDualBasis (int64_t d, int64_t c) {
-     assert(d <= this->m_maxDim);
-     assert(d <= c);
-     this->setDim (d);
-     this->m_basis.SetDims(d,c);
-     this->m_dualbasis.SetDims(d, c);
-     for (int i = 0; i < d; i++) {
-     for (int j = 0; j < c; j++)
-     this->m_dualbasis[i][j] = 0;
-     }
-     for (int i = 0; i < d; i++)
-     this->m_dualbasis[i][0] = -m_a[i];
-     for (int i = d; i < c; i++)
-     this->m_dualbasis[i][0] = 0;
-     for (int i = 0; i < d; i++) {
-     if (i<1) this->m_dualbasis[i][i] = this->m_modulo;
-     else this->m_dualbasis[i][i] = 1;
-     }
-     }
-
-     //============================================================================
-
-     template<typename Int, typename Real>
-     void Rank1Lattice<Int, Real>::buildDualBasisFullMatrix (int64_t d) {
-     assert(d <= this->m_maxDim);
-     this->setDim (this->m_maxDim);
-     this->m_basis.SetDims(this->m_maxDim, this->m_maxDim);
-     this->m_dualbasis.SetDims(this->m_maxDim, this->m_maxDim);
-     for (int i = 0; i < this->m_maxDim; i++) {
-     for (int j = 0; j < this->m_maxDim; j++)
-     this->m_dualbasis[i][j] = 0;
-     }
-     for (int i = 0; i < d; i++)
-     this->m_dualbasis[i][0] = -m_a[i];
-     for (int i = d; i < this->m_maxDim; i++)
-     this->m_dualbasis[i][0] = 0;
-     for (int i = 0; i < this->m_maxDim; i++) {
-     if (i<1) this->m_dualbasis[i][i] = this->m_modulo;
-     else if (i<d) this->m_dualbasis[i][i] = 1;
-     }
-     }
-     */
 
     template<typename Int, typename Real>
     void Rank1Lattice<Int, Real>::incDimBasis () {
@@ -433,9 +360,8 @@ namespace LatticeTester {
         int64_t d = 1 + this->getDim();
         assert(d <= this->m_maxDim);
         m_dim = d;
-        int64_t i, j;
-        Int m_add;
-        // Add extra coordinate to each vector
+        int64_t i;
+        // Add one extra coordinate to each vector.
         for (i = 0; i < d; i++) {
             this->m_dualbasis[i][d-1] = 0;
             this->m_dualbasis[d-1][i] = 0;
@@ -445,65 +371,51 @@ namespace LatticeTester {
         this->setDualNegativeNorm ();
     }
 
-//============================================================================
-    /*
-     template<typename Int, typename Real>
-     void Rank1Lattice<Int, Real>::incDimDualBasis () {
-     int64_t d = 1 + this->getDim();
-     assert(d <= this->m_maxDim);
-     this->setDim (d);
-     IntMat temp;     // New temporary IntMat object.
-     temp.SetDims(d, d);
-
-     // Use old basis for first d - 1 dimension
-     for (int i = 0; i < d-1; i++) {
-     for (int j = 0; j < d-1; j++) {
-     temp[i][j] = this->m_dualbasis[i][j];
-     }
-     }
-     // Add extra coordinate to each vector
-     for (int i = 0; i < d; i++) {
-     temp[i][d-1] = 0;
-     }
-     temp[d-1][0] = -m_a[d-1];
-     //temp[d-1][0] = temp[d-1][0] % this->m_modulo;
-     temp[d-1][d-1] = 1;
-     this->m_dualbasis.SetDims(d, d);
-     this->m_dualbasis = temp;
-     this->setDualNegativeNorm ();
-
-     // The dimension of the primal lattice has to be increased as well,
-     // because primal and dual lattice currently need to have the same
-     // dimension for technical reasons.
-     this->m_basis.SetDims(d, d);
-     temp.kill();
-     }
-
-     //============================================================================
-
-     template<typename Int, typename Real>
-     void Rank1Lattice<Int, Real>::incDimDualBasis (int64_t c) {
-     int64_t d = 1 + this->getDim();
-     this->setDim (d);
-     this->m_basis.SetDims(d, c);
-     this->m_dualbasis.SetDims(d, c);
-     this->m_dualbasis[d-1][d-1] = 1;
-     this->m_dualbasis[d-1][0] = -m_a[d-1];
-     }
-
-     //============================================================================
-
-     template<typename Int, typename Real>
-     void Rank1Lattice<Int, Real>::incDimDualBasisFullMatrix (int64_t d) {
-     this->m_dualbasis[d-1][d-1] = 1;
-     this->m_dualbasis[d-1][0] = -m_a[d-1];
-     }
-     */
+    //============================================================================
+    template<typename Int, typename Real>
+    void Rank1Lattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
+            const Coordinates &proj, double delta) {
+        if (!proj.contains(1) || m_a[0] > 1) {
+            Rank1Lattice<Int, Real>::buildProjection(*lattice, proj, delta);
+            return;
+        }
+        // Here, the first coordinate is selected and we have a_1 = 1.
+        // We use the method described in the Lattice Tester guide, section 5.5.
+        // Does not assume that the basis or its m-dual has been computed.
+        long i, j;
+        long d = proj.size();// Number of coordinates in the projection.
+        projLattice->setDim (d);
+        if (projLattice->withPrimal) {
+            for (auto it = proj.begin(), long j = 0; it != proj.end(); it++, j++) {
+                projLattice->m_basis[0][j] = m_a[*it - 1];  // First row.
+            }
+            for (i = 1; i < d; i++) {
+                for (j = 0; j < d; j++) {
+                    if (i == j) projLattice->m_basis[i][i] = this->m_modulo;
+                    else projLattice->m_basis[i][j] = 0;
+                }
+            }
+            projLattice->setNegativeNorm ();
+        }
+        if (projLattice->withDual) {
+            projLattice->m_dualBasis[0][0] = this->m_modulo;;
+            for (auto it = proj.begin(), it++, long i = 1; it != proj.end(); it++, i++) {
+                projLattice->m_dualBasis[i][0] = m_a[*it - 1];  // First column.
+            }
+            for (i = 0; i < d; i++) {
+                for (j = 1; j < d; j++) {
+                    if (i == j) projLattice->m_dualBasis[i][i] = 1;
+                    else projLattice->m_dualBasis[i][j] = 0;
+                }
+            }
+            projLattice->setDualNegativeNorm ();
+        }
+    }
 
 //============================================================================
     template<typename Int, typename Real>
-    std::string Rank1Lattice<Int, Real>::toStringCoef ()const {
-        return toString (this->m_a, 0, this->getDim ());
+    std::string Rank1Lattice<Int, Real>::toStringCoef() const {
+        return toString(this->m_a, 0, this->getDim());
     }
 
 //============================================================================

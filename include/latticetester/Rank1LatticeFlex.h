@@ -395,8 +395,8 @@ namespace LatticeTester {
         // Add extra coordinate to each vector
         for (int64_t i = 0; i < d-1; i++) {
             this->m_dualbasis[i][d-1] = 0;
+            this->m_dualbasis[d-1][i] = 0;
         }
-        //  What about the other elements in the last row ??????????      ********
         this->m_dualbasis[d-1][0] = -m_a[d-1];
         this->m_dualbasis[d-1][d-1] = 1;
         this->setDualNegativeNorm ();

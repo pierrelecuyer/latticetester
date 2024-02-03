@@ -59,7 +59,7 @@ namespace LatticeTester {
        * */
       Coordinates(const std::vector<std::size_t>& coord) {
         for (auto it = coord.begin(); it != coord.end(); it++) {
-          insert(*it);
+           insert(*it);
         }
       }
 
