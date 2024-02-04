@@ -162,6 +162,10 @@ public:
      * `false`. Otherwise, it returns `true`. If the reduction was
      * successful, the new reduced basis can be accessed via `getIntLattice()`.
      *
+     * This function uses only the basis of the internal lattice, its vector
+     * lengths, and scalar products. It never uses its m-dual.
+     * To compute a shortest vector in the m-dual, one must first call `dualize`
+     * on the target `IntLattice` object.
      * It is strongly recommended to use `redBKZ` or `redLLLNTL` to pre-reduce
      * the basis before invoking this method; this is not done automatically.
      */
@@ -1080,7 +1084,7 @@ void Reducer<Int, Real>::reductionFaible(int64_t i, int64_t j) {
      * Reduit la matrice de Cholesky (d'ordre 2) en ajoutant un multiple du
      * vecteur i au vecteur j, si possible.  Modifie le vecteur dual W_i en
      * consequence et remet a jour la matrice des produits scalaires.
-     * Utilise par redLLLOld.
+     * Utilise seulement par redLLLOld.
      */
     Real cte;
     std::int64_t cteLI;
@@ -1939,14 +1943,14 @@ bool Reducer<Int, Real>::redBBShortVec() {
         /* Perform the Cholesky decomposition; if it fails we exit. */
         if (!calculCholesky(m_dc2, m_c0))
             return false;
-    } else if (m_decomp == TRIANGULAR) {
+    } else if (m_decomp == TRIANGULAR) {  // Just for testing; this is very slow!
         // std::cerr << "RedBBShortVec:decomp=TRIANGULAR not supported for now.";
         // return false;
         /* Perform a triangular decomposition:
          * TO DO: Instead of doing the following, I think we should assume that the basis
          * is already lower triangular!
          */
-        IntMat m_v, m_v2;   // Here we create new matrices each time!
+        IntMat m_v, m_v2;   // Here we create new matrices each time!!!!
         m_v.resize(dim, dim);
         m_v2.resize(dim, dim);
         Int mod = m_lat->getModulo();

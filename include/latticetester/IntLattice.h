@@ -137,12 +137,14 @@ public:
      * over the set of coordinates determined by `proj`, finds a set of generating
      * vectors for that projection, and builds a basis and perhaps its m-dual basis
      * (if maintained) for the projection. After that, the `IntLattice` object
-     * given by `projLattice` will represent the projection.
-     * The basis for the projection will be upper-triangular if we also compute its m-dual,
-     * and otherwise it will be computed by LLL with the parameter `delta`.
-     * The modulus `m` must be the same for `projLattice` and for the current object.
-     * The variables associated with the projection (dimension, norms, etc.) are also updated.
+     * given by `projLattice` will represent the projection. It is assumed that the basis
+     * of the present lattice is already available and contains all the coordinates in `proj`.
+     * If `projLattice.withDual() == true`, the primal basis of the projection is obtained by
+     * a triangularization method and a lower-triangular basis of the m-dual is also computed.
+     * Otherwise, only the primal basis is computed, using LLL with the parameter `delta`.
+     * The modulus `m` is assumed to be the same for `projLattice` and for the current object.
      * The `maxDim` of the `projLattice` object must be large enough so it can holds the projection.
+     * The variables associated with the projection (dimension, norms, etc.) are also updated.
      * This method can be called several times with the same `projLattice` object
      * to examine several different projections.
      * Note that representing each projection as an `IntLattice` object is required when
@@ -657,9 +659,8 @@ void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat,
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
         const Coordinates &proj, double delta) {
-    // We may want to check if this and lattice have the same m,
-    // if projLattice->m_maxDim >= proj.size(), etc.
-    projLattice->m_dim = proj.size();  // Number of coordinates in the projection.
+    // We assume here that this and lattice have the same m.
+    projLattice->setDim (proj.size());  // Number of coordinates in the projection.
     if (!projLattice->m_withDual) { // This builds only the primal basis.
         BasisConstruction<Int>::projectionConstructionLLL(this->m_basis,
                 projLattice->m_basis, proj, this->m_modulo, delta, proj.size(),
@@ -844,7 +845,9 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::dualize() {
     std::swap(this->m_basis, this->m_dualbasis);
     std::swap(this->m_vecNorm, this->m_dualvecNorm);
-    // std::swap (this->m_withPrimal, this->m_withDual);
+    bool temp = this->m_withPrimal;
+    this->m_withPrimal = this->m_withDual;
+    this->m_withDual = temp;
 }
 
 /*=========================================================================*/

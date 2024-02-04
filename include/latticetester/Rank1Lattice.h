@@ -148,9 +148,18 @@ namespace LatticeTester {
         /**
          * This method overrides its namesake in `IntLattice`. The projection of this
          * `Rank1Lattice` over the coordinates in `proj` is returned in `projLattice`.
-         * When the first coordinate is 1 and belongs to the projection, the implementation
-         * used here exploits the rank-1 lattice structure and is simpler and faster.
-         * Otherwise, the implementation of the parent class is used.
+         * The implementation used here exploits the rank-1 lattice structure and it
+         * is simpler and faster than the general one. See Section 5.5 of the guide.
+         * When the first coordinate is 1 and belongs to the projection, both the primal
+         * and m-dual constructions are direct, just by selecting the rows and columns
+         * whose indices are in `proj`. Otherwise, those rows and columns plus the
+         * first row form a set of `proj.size()+1` generating vectors for the primal.
+         * This number must not exceed the `maxDim` of `projLattice`.
+         * We reduce them to a primal basis, using LLL if we only want the primal.
+         * If we want an m-dual basis, then we find an upper triangular basis for the primal,
+         * and the corresponding lower-triangular m-dual basis.
+         * In contrast to the same method in the parent class, this specialized version
+         * does not require that a basis for the whole lattice has been constructed before.
          */
         void buildProjection (IntLattice<Int, Real> *projLattice,
                 const Coordinates &proj) override;
@@ -357,7 +366,7 @@ namespace LatticeTester {
         }
     }
 
-//============================================================================
+    //============================================================================
 
     template<typename Int, typename Real>
     void Rank1Lattice<Int, Real>::incDimDualBasis () {
@@ -379,29 +388,46 @@ namespace LatticeTester {
     template<typename Int, typename Real>
     void Rank1Lattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
             const Coordinates &proj, double delta) {
-        if (!proj.contains(1) || m_a[0] > 1) {
-            Rank1Lattice<Int, Real>::buildProjection(*lattice, proj, delta);
-            return;
-        }
-        // Here, the first coordinate is selected and we have a_1 = 1.
         // We use the method described in the Lattice Tester guide, section 5.5.
-        // Does not assume that the basis or its m-dual has been computed.
+        // Does not assume that a basis for `this` has been computed before.
+        bool case1 = proj.contains(1) && m_a[0] > 1;// First coord. selected and a_1 = 1.
         long i, j;
         long d = proj.size();// Number of coordinates in the projection.
         projLattice->setDim (d);
-        if (projLattice->withPrimal) {
+
+        // *****   Not sure if this is the correct way to do it, but we want genTemp
+        //         to be an alias of projLattice->m_basis in case 1, to avoid repeating the code.
+        //    Otherwise, we can write a small function with an `IntMat` parameter ....
+        IntMat genTemp;
+        if (case1 || !projLattice->withDual) genTemp = &projLattice->m_basis;
+        // Here want `genTemp` to be an alias.  *********
+        else genTemp->setDims (d+1, d);// `genTemp` will holds the generating vectors.
+
+        if (projLattice->withPrimal || !case1) {  // Build a primal basis.
             for (auto it = proj.begin(), long j = 0; it != proj.end(); it++, j++) {
-                projLattice->m_basis[0][j] = m_a[*it - 1];  // First row.
+                genTemp[0][j] = m_a[*it - 1];  // First row.
             }
             for (i = 1; i < d; i++) {
                 for (j = 0; j < d; j++) {
-                    if (i == j) projLattice->m_basis[i][i] = this->m_modulo;
-                    else projLattice->m_basis[i][j] = 0;
+                    if (i == j) genTemp[i][i] = this->m_modulo;
+                    else genTemp[i][j] = 0;
                 }
             }
-            projLattice->setNegativeNorm ();
+            if (!case1) { // We need to add a extra row in this case, and then find a basis.
+                genTemp[d][0] = this->m_modulo;
+                for (j = 1; j < d; j++) genTemp[i][j] = 0;
+                if (!withDual) LLLBasisConstruction(genTemp, this->m_modulo, delta, d+1, d);
+                else {
+                    BasisConstruction<Int>::upperTriangularBasis(genTemp, projLattice->m_basis,
+                            this->m_modulo, d+1, d);
+                    BasisConstruction<Int>::mDualUpperTriangular(projLattice->m_basis,
+                            projLattice->m_dualbasis, this->m_modulo, d); // m-dual is done!
+                }
+            }
+            // projLattice->setNegativeNorm ();
+            return;
         }
-        if (projLattice->withDual) {
+        if (projLattice->withDual) { // We must be in case 1, no primal projection.
             projLattice->m_dualBasis[0][0] = this->m_modulo;;
             for (auto it = proj.begin(), it++, long i = 1; it != proj.end(); it++, i++) {
                 projLattice->m_dualBasis[i][0] = m_a[*it - 1];  // First column.
@@ -412,7 +438,7 @@ namespace LatticeTester {
                     else projLattice->m_dualBasis[i][j] = 0;
                 }
             }
-            projLattice->setDualNegativeNorm ();
+            // projLattice->setDualNegativeNorm ();
         }
     }
 
