@@ -1902,6 +1902,14 @@ bool Reducer<Int, Real>::redBBShortVec() {
      * Stops and returns false if not finished after examining MaxNodesBB nodes in the
      * branch-and-bound tree.  When succeeds, returns true, and the squared shortest
      * vector length will be in m_lMin2.
+     *
+     * This function uses (directly or indirectly) the following class variables:
+     *    m_lMin, m_lMin2, m_decomp, m_boundL2, m_n2, m_countNodes, m_foundZero,
+     *    m_bw, m_zShort, m_c0, m_zLR, m_zLI, m_dc2, ....  and more.
+     * From m_lat (current lattice object):
+     *    norm, sortBasisNoDual, updateScalL2Norm, getBasis,
+     *
+     *
      */
     NormType norm = m_lat->getNormType();
     if ((norm != L1NORM) & (norm != L2NORM)) {
@@ -2085,14 +2093,11 @@ bool Reducer<Int, Real>::reductMinkowski(IntLattice<Int, Real> &lat,
 
 template<typename Int, typename Real>
 bool Reducer<Int, Real>::shortestVector() {
-    // IntLattice<Int, Real> *lat = this->m_lat;
-    // return shortestVector(this->m_lat);
     return Reducer<Int, Real>::redBBShortVec();
 }
 
 template<typename Int, typename Real>
 bool Reducer<Int, Real>::shortestVector(IntLattice<Int, Real> &lat) {
-    // m_lat = &lat;
     setIntLattice(lat);
     return Reducer<Int, Real>::redBBShortVec();
 }

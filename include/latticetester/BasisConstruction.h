@@ -65,17 +65,15 @@ namespace LatticeTester {
  * to the lattices and it does not even know about \f$m\f$.
  * The method `LLLBasisConstruction` adds those vectors to the set of generating vectors,
  * so it always returns a square basis.
- * ****   We must make sure that it works in `dim < maxDim` dimensions as well!   ****
- * ****   Currently, it seems that this works only when `Int==ZZ` and `precision = DOUBLE`.
  *
  * We also offer an alternative methods that construct a triangular basis from a set of
  * generating vectors. They always add the rescaled unit vectors implicitly to the set.
  * The method `lowerTriangularBasis` constructs a lower-triangular basis, while
  * `upperTriangularBasis` constructs an upper-triangular basis.
  *
- * To compute the  \f$m\f$-dual of a given basis, we have a general method implemented in
- * `mDualBasis`, and a much faster method in `mDualUpperTriangular` that works only when
- * the basis is upper-triangular.
+ * To compute the  \f$m\f$-dual of a given basis, we have a general (but slow) method
+ * implemented in `mDualBasis`, and a much faster method in `mDualUpperTriangular`
+ * that works only when the basis is upper-triangular.
  *
  * We also have functions to compute the basis of a projection of a given lattice over
  * a specified set of coordinates.  The function `projectionConstructionLLL` does this
@@ -85,9 +83,9 @@ namespace LatticeTester {
  *
  * All functions take as input a `IntMat` object that contains either a basis or a set of
  * generating vectors. By default, all rows and columns of this matrix object are used.
- * But in some functions, the user can ask to use only a subset of these rows and columns,
+ * But in most functions, the user can ask to use only a subset of these rows and columns,
  * via the optional parameters `r` and `c`.  This can permit one to use the same `IntMat`
- * object for several numbers of dimensions, to avoid object creations.
+ * object for several numbers of dimensions, to avoid doing many object creations or resizing.
  *
  * All functions in this class are static, so there is no reason to create any
  * `BasisConstruction` object. We also avoid to create new objects (such as vectors and
@@ -95,9 +93,16 @@ namespace LatticeTester {
  * of times in a program, and we want the user to be able to re-use the same vectors and
  * matrices over and over again instead of creating new ones.
  *
+ * Note that when one of these functions is used for an `IntMat` object that store the primal
+ * or \f$m\f$-dual basis inside an `IntLattice` object, only the primal or the \f$m\f$-dual
+ * basis is changed, and therefore the  \f$m\f$-dual relationship will no longer hold after
+ * the call. The user must be aware of that.  Most of the time, there is no need to reinstate
+ * this relationship, because for example if we want to compute a shortest nonzero vector
+ * is the \f$m\f$-dual lattice, then once we have an \f$m\f$-dual basis we no longer need
+ * a primal basis.
+ *
  * The programs `BasisManipulationVerbose` and `BasisManipulation` in the examples
  * illustrate how to use these functions and make speed comparisons.
- *
  */
 
 template<typename Int> class BasisConstruction {
@@ -489,6 +494,7 @@ void BasisConstruction<Int>::upperTriangularBasis(IntMat &gen, IntMat &basis,
     for (i = 0; i < dim2; i++) {
         // Reset these vectors to 0, as they may contain nonzero values from the previous i.
         // xi.clear();   // This call causes a segmentation fault in the int64_t case!
+                         // Maybe because `clear ` is redefined in NTLWrap.
         // coeff_gcd.clear();  // Replaced by loops below.
         for (j = 0; j < dim1; j++)
             coeff_gcd[j] = 0;
