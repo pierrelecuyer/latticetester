@@ -519,6 +519,7 @@ void BasisConstruction<Int>::upperTriangularBasis(IntMat &gen, IntMat &basis,
                 if (gen[j][i] == 0)
                     coeff_gcd[j] = 0;
                 else {
+                    // XGCD (g, c, d, a, b) does g = gcd(a, b) = a*c + b*d.
                     NTL::XGCD(gcd, C, D, gcd_tower, gen[j][i]);
                     coeff_gcd[j] = D;
                     for (l = 0; l < j; l++) {
