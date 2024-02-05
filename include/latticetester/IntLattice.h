@@ -557,6 +557,10 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim,
     this->m_norm = norm;
     this->m_basis.resize(maxDim, maxDim);
     this->m_vecNorm.resize(maxDim);
+    if (withDual) {
+    	m_dualbasis.resize(maxDim, maxDim);
+    	m_dualvecNorm.resize(maxDim);
+    }
     setNegativeNorm();
 }
 
@@ -575,6 +579,10 @@ IntLattice<Int, Real>::IntLattice(const IntMat basis, const Int m,
     assert(basis.NumRows() == maxDim);
     this->m_basis = basis;
     this->m_vecNorm.resize(maxDim);
+    if (withDual) {
+    	m_dualbasis.resize(maxDim, maxDim);
+    	m_dualvecNorm.resize(maxDim);
+    }
     setNegativeNorm();
 }
 
