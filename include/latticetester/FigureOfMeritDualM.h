@@ -110,13 +110,12 @@ double FigureOfMeritDualM<Int>::computeMeritDualM (IntLatticeExt<Int, Real> & la
    if (minmerit == 0 || minmerit < this->m_lowbound || minmerit > this->m_highbound) return 0;
    
 // if (m_succCoordFirst == false) {    
-	   this->m_b = new double[lat.getDim()];
-       merit = computeMeritMSuccDual(lat, proj);
-       if (merit < minmerit) minmerit = merit;
+      this->m_b = new double[lat.getDim()];
+      merit = computeMeritMSuccDual(lat, proj);
+      if (merit < minmerit) minmerit = merit;
        // In any of these cases the calcuation is stopped
-       if (minmerit == 0 || minmerit < this->m_lowbound || minmerit > this->m_highbound) return 0;
+      if (minmerit == 0 || minmerit < this->m_lowbound || minmerit > this->m_highbound) return 0;
 // }    
-   
    return minmerit; 
 }
 
