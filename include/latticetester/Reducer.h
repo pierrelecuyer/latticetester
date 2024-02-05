@@ -1292,7 +1292,7 @@ void Reducer<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
                 + (m_cho2[h][h + 1]) / m_cho2[h][h]
                         * (m_cho2[h][h + 1] / m_cho2[h][h]) < delta) {
             ++cpt;
-            m_lat->permuteNoDual(h, h + 1);
+            m_lat->permutePrimal(h, h + 1);
             permuteGramVD(h, h + 1, dim);
             m_cho2[h][h] = m_gramVD[h][h];
             for (i = 0; i < h; i++) {
@@ -1427,7 +1427,7 @@ void Reducer<Int, Real>::transformStage3ShortVec(std::vector<std::int64_t> &z,
             }
             // Permutation.
             std::swap(z[i], z[j]);
-            m_lat->permuteNoDual(i, j);
+            m_lat->permutePrimal(i, j);
         }
         j = i;
     }
@@ -1924,7 +1924,7 @@ bool Reducer<Int, Real>::redBBShortVec() {
     // Here we sort the basis by L2 lengths, otherwise Cholesky will fail more rapidly
     // due to floating-point errors.
     m_lat->updateScalL2Norm(0, dim);
-    m_lat->sortBasisNoDual(0);
+    m_lat->sortPrimalBasis(0);
 
     // Approximate the square norm of the current shortest vector.
     if (norm == L2NORM) {
@@ -2002,19 +2002,19 @@ bool Reducer<Int, Real>::redBBShortVec() {
          m_lat->getBasis()(0). */
         /* In the case of L1NORM, we must check if it is really smaller.  */
         if (norm == L2NORM)
-            m_lat->permuteNoDual(k, 0);
+            m_lat->permutePrimal(k, 0);
         else {
             NTL::matrix_row<IntMat> row5(m_lat->getBasis(), k);
             CalcNorm(row5, dim, x, norm);
             if (x < m_lMin) {
                 m_lMin = x;
                 m_lMin2 = m_lMin * m_lMin;
-                m_lat->permuteNoDual(k, 0);
+                m_lat->permutePrimal(k, 0);
             }
         }
     }
     m_lat->updateVecNorm();
-    m_lat->sortBasisNoDual(0);
+    m_lat->sortPrimalBasis(0);
     return true;
 }
 
