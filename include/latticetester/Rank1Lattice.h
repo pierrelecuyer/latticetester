@@ -162,13 +162,13 @@ namespace LatticeTester {
          * does not require that a basis for the whole lattice has been constructed before.
          */
         void buildProjection (IntLattice<Int, Real> *projLattice,
-                const Coordinates &proj) override;
+                const Coordinates &proj, double delta) override;
 
         /**
          * Returns the first `dim` components of the generating vector \f$\ba\f$ as a string,
          * where `dim` is the current lattice dimension.
          */
-        std::string toStringCoef() const;
+        //std::string toStringCoef() const;
 
     protected:
 
@@ -240,7 +240,7 @@ namespace LatticeTester {
     //============================================================================
 
     template<typename Int, typename Real>
-    Rank1Lattice<Int, Real>::Rank1Lattice (const Rank1LatticeFlex<Int, Real> & lat):
+    Rank1Lattice<Int, Real>::Rank1Lattice (const Rank1Lattice<Int, Real> & lat):
     IntLatticeExt<Int, Real> (
             lat.m_modulo, lat.getDim (), lat.m_withDual, lat.getNormType ()) {
         this->m_a = lat.m_a;
@@ -312,7 +312,7 @@ namespace LatticeTester {
 
     // This one builds only the m-dual basis, also in a direct way.
     template<typename Int, typename Real>
-    void Rank1LatticeFlex<Int, Real>::buildDualBasis (int64_t d) {
+    void Rank1Lattice<Int, Real>::buildDualBasis (int64_t d) {
         assert(d <= this->m_maxDim);
         this->setDim (d);
         int64_t i, j;
@@ -372,7 +372,7 @@ namespace LatticeTester {
     void Rank1Lattice<Int, Real>::incDimDualBasis () {
         int64_t d = 1 + this->getDim();
         assert(d <= this->m_maxDim);
-        m_dim = d;
+        this->m_dim = d;
         int64_t i;
         // Add one extra coordinate to each vector.
         for (i = 0; i < d; i++) {
