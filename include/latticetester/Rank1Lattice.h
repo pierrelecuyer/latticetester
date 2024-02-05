@@ -390,47 +390,50 @@ namespace LatticeTester {
             const Coordinates &proj, double delta) {
         // We use the method described in the Lattice Tester guide, section 5.5.
         // Does not assume that a basis for `this` has been computed before.
-        bool case1 = proj.contains(1) && m_a[0] > 1;// First coord. selected and a_1 = 1.
+        // bool case1 = proj.contains(1) && m_a[0] == 1;// First coord. selected and a_1 = 1.
+        bool case1 = m_a[*proj.begin()-1] == 1);
         long i, j;
         long d = proj.size();// Number of coordinates in the projection.
         projLattice->setDim (d);
+        Int c1, b1, b2, y1;
 
-        // *****   Not sure if this is the correct way to do it, but we want genTemp
-        //         to be an alias of projLattice->m_basis in case 1, to avoid repeating the code.
-        //    Otherwise, we can write a small function with an `IntMat` parameter ....
-        IntMat genTemp;
-        if (case1 || !projLattice->withDual) genTemp = &projLattice->m_basis;
-        // Here want `genTemp` to be an alias.  *********
-        else genTemp->setDims (d+1, d);// `genTemp` will holds the generating vectors.
-
-        if (projLattice->withPrimal || !case1) {  // Build a primal basis.
+        if (projLattice->withPrimal) { // Build a primal basis.
+            if (case1)
             for (auto it = proj.begin(), long j = 0; it != proj.end(); it++, j++) {
-                genTemp[0][j] = m_a[*it - 1];  // First row.
+                projLattice->m_basis[0][j] = m_a[*it - 1];  // First row.
+            }
+            else {
+                // XGCD (g, c, d, a, b) does g = gcd(a, b) = a*c + b*d.
+                NTL::XGCD(c1, b1, b2, m_a[*proj.begin()-1], m);
+                projLattice->m_basis[0][0] = c1;
+                for (auto it = proj.begin(), it++, long j = 1; it != proj.end(); it++, j++) {
+                    MulMod (projLattice->m_basis[0][j], m_a[*it - 1], b1, m); // First row
+                }
             }
             for (i = 1; i < d; i++) {
                 for (j = 0; j < d; j++) {
-                    if (i == j) genTemp[i][i] = this->m_modulo;
-                    else genTemp[i][j] = 0;
+                    if (i == j) projLattice->m_basis[i][i] = this->m_modulo;
+                    else projLattice->m_basis[i][j] = 0;
                 }
             }
-            if (!case1) { // We need to add a extra row in this case, and then find a basis.
-                genTemp[d][0] = this->m_modulo;
-                for (j = 1; j < d; j++) genTemp[i][j] = 0;
-                if (!withDual) LLLBasisConstruction(genTemp, this->m_modulo, delta, d+1, d);
-                else {
-                    BasisConstruction<Int>::upperTriangularBasis(genTemp, projLattice->m_basis,
-                            this->m_modulo, d+1, d);
-                    BasisConstruction<Int>::mDualUpperTriangular(projLattice->m_basis,
-                            projLattice->m_dualbasis, this->m_modulo, d); // m-dual is done!
-                }
-            }
-            // projLattice->setNegativeNorm ();
-            return;
         }
-        if (projLattice->withDual) { // We must be in case 1, no primal projection.
-            projLattice->m_dualBasis[0][0] = this->m_modulo;;
-            for (auto it = proj.begin(), it++, long i = 1; it != proj.end(); it++, i++) {
-                projLattice->m_dualBasis[i][0] = m_a[*it - 1];  // First column.
+        if (projLattice->withDual) { // Compute m-dual basis directly.
+            if (case1) {
+                projLattice->m_dualBasis[0][0] = this->m_modulo;
+                for (auto it = proj.begin(), it++, long i = 1; it != proj.end(); it++, i++) {
+                    projLattice->m_dualBasis[i][0] = m_a[*it - 1]; // First column.
+                }
+            }
+            else {
+                if (!projLattice->withPrimal)
+                NTL::XGCD(c1, b1, b2, m_a[*proj.begin()-1], m); // Was not computed.
+                y1 = m / c1;
+                projLattice->m_dualBasis[0][0] = y1;
+                for (auto it = proj.begin(), it++, long j = 1; it != proj.end(); it++, j++) {
+                    // ?????
+                    //  MulMod (projLattice->m_dualBasis[0][j], m_a[*it - 1], b1, m);  // First row
+                    projLattice->m_dualBasis[0][j] = y_j;
+                }
             }
             for (i = 0; i < d; i++) {
                 for (j = 1; j < d; j++) {
@@ -438,7 +441,6 @@ namespace LatticeTester {
                     else projLattice->m_dualBasis[i][j] = 0;
                 }
             }
-            // projLattice->setDualNegativeNorm ();
         }
     }
 
