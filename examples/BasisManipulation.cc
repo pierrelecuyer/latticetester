@@ -223,13 +223,14 @@ static void testLoop2(long numRep) {
 	IntMat basis1, basis2, basis3, basisdual;
 	//long maxdim = dimensions[numSizes-1];   // Maximum dimension
 	// double *b;   b = new double[maxdim];
-	Rank1LatticeFlex<Int, Real> *korlat;    // Will be a Korobov lattice.
+	Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
 
 	// Chrono totTime;  	totTime.init();
 	for (d = 0; d < numSizes; d++)   // Each matrix size
 		for (int64_t meth = 0; meth < numMeth; meth++)
 			timer[meth][d] = 0;
 	totalTime = clock();
+	
 	for (int64_t r = 0; r < numRep; r++) {
 		a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
 		for (d = 0; d < numSizes; d++) {  // Each matrix size
@@ -237,17 +238,19 @@ static void testLoop2(long numRep) {
 			basis1.SetDims(dim, dim); // Will be initial triangular basis.
 			basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
 			basis3.SetDims(dim, dim);
-			basisdual.SetDims(dim, dim);  // m-dual basis.
-			korlat = new Rank1LatticeFlex<Int, Real>(m, a, dim);
-			korlat->buildBasis(dim);
-
-			copy(korlat->getBasis(), basis1); // This initial basis is triangular.
+			basisdual.SetDims(dim, dim);  // m-dual basis.			
+			korlat = new Rank1Lattice<Int, Real>(m, a, dim);
+			korlat->buildBasis(dim);			
+			
+			copy(korlat->getBasis(), basis1); // This initial basis is triangular.			
 			// Here this basis is a dim x dim IntMat object.
 			transformBases(d, dim, basis1, basis2, basis3, basisdual);
 			//transformBasisLLL(d, dim, basis1, 0);
 			delete korlat;
+
 		}
 	}
+
 }
 
 
