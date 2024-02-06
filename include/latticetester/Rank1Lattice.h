@@ -162,7 +162,7 @@ namespace LatticeTester {
          * does not require that a basis for the whole lattice has been constructed before.
          */
         void buildProjection (IntLattice<Int, Real> *projLattice,
-                const Coordinates &proj, double delta);
+                const Coordinates &proj, double delta = 0.99) override;
 
         /**
          * Returns the first `dim` components of the generating vector \f$\ba\f$ as a string,
@@ -410,12 +410,12 @@ namespace LatticeTester {
             else {
                 // XGCD (g, c, d, a, b) does g = gcd(a, b) = a*c + b*d.
                 NTL::XGCD(c1, b1, b2, m_a[*proj.begin()-1], this->m_modulo);
-                basis[0][0] = c1;
-                j = 1; //CW
+                j = 0; //CW
                 for (auto it = proj.begin(); it != proj.end(); it++, j++) {                	
                     // NTL::MulMod (projLattice->m_basis[0][j], m_a[*it - 1], b1, this->m_modulo); // First row - does not work here
                     basis[0][j] = m_a[*it - 1] * b1 % this->m_modulo;
                 }
+                basis[0][0] = c1;
             }
             for (i = 1; i < d; i++) {
                 for (j = 0; j < d; j++) {
@@ -426,20 +426,20 @@ namespace LatticeTester {
         }
         if (projLattice->withDual()) { // Compute m-dual basis directly.
             if (case1) {
-                dualBasis[0][0] = this->m_modulo;
-                i = 1; // CW
-                for (auto it = proj.begin(); it != proj.end(); it++, i++) {
+                i = 0; // CW 
+                for (auto it = proj.begin(); it != proj.end(); ++it, ++i) {
                     dualBasis[i][0] = m_a[*it - 1]; // First column.
                 }
+                dualBasis[0][0] = this->m_modulo;
             }
             else {
             	if (!projLattice->withPrimal())
                      NTL::XGCD(c1, b1, b2, m_a[*proj.begin()-1], this->m_modulo);   //  c1 and b1 were not computed.
-            	dualBasis[0][0] = this->m_modulo / c1;
-            	j = 1; // CW
+            	j = 0; // CW
             	for (auto it = proj.begin(); it != proj.end(); it++, j++) {
             	   dualBasis[0][j] = - m_a[*it - 1] * b1 / c1;  // Warning: If c1 > 1, this may not be an integer.
             	}
+            	dualBasis[0][0] = this->m_modulo / c1;
             }
             for (i = 0; i < d; i++) {
                 for (j = 1; j < d; j++) {
