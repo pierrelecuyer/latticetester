@@ -162,7 +162,7 @@ namespace LatticeTester {
          * does not require that a basis for the whole lattice has been constructed before.
          */
         void buildProjection (IntLattice<Int, Real> *projLattice,
-                const Coordinates &proj, double delta) override;
+                const Coordinates &proj, double delta);
 
         /**
          * Returns the first `dim` components of the generating vector \f$\ba\f$ as a string,
@@ -388,60 +388,67 @@ namespace LatticeTester {
     template<typename Int, typename Real>
     void Rank1Lattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
             const Coordinates &proj, double delta) {
+    	
         // We use the method described in the Lattice Tester guide, section 5.5.
         // Does not assume that a basis for `this` has been computed before.
         // bool case1 = proj.contains(1) && m_a[0] == 1;// First coord. selected and a_1 = 1.
-        bool case1 = m_a[*proj.begin()-1] == 1);
+        bool case1 = m_a[*proj.begin()-1] == 1;
         long i, j;
         long d = proj.size();// Number of coordinates in the projection.
         projLattice->setDim (d);
-        Int c1, b1, b2, y1;
+        Int c1, b1, b2;      
+        IntMat &basis = projLattice->getBasis();
+        IntMat &dualBasis = projLattice->getDualBasis();
 
-        if (projLattice->withPrimal) { // Build a primal basis.
-            if (case1)
-            for (auto it = proj.begin(), long j = 0; it != proj.end(); it++, j++) {
-                projLattice->m_basis[0][j] = m_a[*it - 1];  // First row.
+        if (projLattice->withPrimal()) { // Build a primal basis.
+            if (case1) {
+                j = 0; // CW
+                for (auto it = proj.begin(); it != proj.end(); it++, j++) {
+                    basis[0][j] = m_a[*it - 1];  // First row.
+                }
             }
             else {
                 // XGCD (g, c, d, a, b) does g = gcd(a, b) = a*c + b*d.
-                NTL::XGCD(c1, b1, b2, m_a[*proj.begin()-1], m);
-                projLattice->m_basis[0][0] = c1;
-                for (auto it = proj.begin(), it++, long j = 1; it != proj.end(); it++, j++) {
-                    MulMod (projLattice->m_basis[0][j], m_a[*it - 1], b1, m); // First row
+                NTL::XGCD(c1, b1, b2, m_a[*proj.begin()-1], this->m_modulo);
+                basis[0][0] = c1;
+                j = 1; //CW
+                for (auto it = proj.begin(); it != proj.end(); it++, j++) {                	
+                    // NTL::MulMod (projLattice->m_basis[0][j], m_a[*it - 1], b1, this->m_modulo); // First row - does not work here
+                    basis[0][j] = m_a[*it - 1] * b1 % this->m_modulo;
                 }
             }
             for (i = 1; i < d; i++) {
                 for (j = 0; j < d; j++) {
-                    if (i == j) projLattice->m_basis[i][i] = this->m_modulo;
-                    else projLattice->m_basis[i][j] = 0;
+                    if (i == j) basis[i][i] = this->m_modulo;
+                    else basis[i][j] = 0;
                 }
             }
         }
-        if (projLattice->withDual) { // Compute m-dual basis directly.
+        if (projLattice->withDual()) { // Compute m-dual basis directly.
             if (case1) {
-                projLattice->m_dualBasis[0][0] = this->m_modulo;
-                for (auto it = proj.begin(), it++, long i = 1; it != proj.end(); it++, i++) {
-                    projLattice->m_dualBasis[i][0] = m_a[*it - 1]; // First column.
+                dualBasis[0][0] = this->m_modulo;
+                i = 1; // CW
+                for (auto it = proj.begin(); it != proj.end(); it++, i++) {
+                    dualBasis[i][0] = m_a[*it - 1]; // First column.
                 }
             }
             else {
-                if (!projLattice->withPrimal)
-                NTL::XGCD(c1, b1, b2, m_a[*proj.begin()-1], m); // Was not computed.
-                y1 = m / c1;
-                projLattice->m_dualBasis[0][0] = y1;
-                for (auto it = proj.begin(), it++, long j = 1; it != proj.end(); it++, j++) {
-                    // ?????
-                    //  MulMod (projLattice->m_dualBasis[0][j], m_a[*it - 1], b1, m);  // First row
-                    projLattice->m_dualBasis[0][j] = y_j;
-                }
+            	if (!projLattice->withPrimal())
+                     NTL::XGCD(c1, b1, b2, m_a[*proj.begin()-1], this->m_modulo);   //  c1 and b1 were not computed.
+            	dualBasis[0][0] = this->m_modulo / c1;
+            	j = 1; // CW
+            	for (auto it = proj.begin(); it != proj.end(); it++, j++) {
+            	   dualBasis[0][j] = - m_a[*it - 1] * b1 / c1;  // Warning: If c1 > 1, this may not be an integer.
+            	}
             }
             for (i = 0; i < d; i++) {
                 for (j = 1; j < d; j++) {
-                    if (i == j) projLattice->m_dualBasis[i][i] = 1;
-                    else projLattice->m_dualBasis[i][j] = 0;
+                    if (i == j) dualBasis[i][i] = 1;
+                    else dualBasis[i][j] = 0;
                 }
             }
         }
+        
     }
 
 //============================================================================
