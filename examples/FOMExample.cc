@@ -26,6 +26,7 @@
 #include "latticetester/EnumTypes.h"
 #include "latticetester/FigureOfMeritM.h"
 #include "latticetester/FigureOfMeritDualM.h"
+#include "latticetester/FoMCalc.h"
 #include "latticetester/Util.h"
 #include "latticetester/ParamReader.h"
 #include "latticetester/IntLattice.h"
@@ -81,7 +82,7 @@ int main() {
   
   //FOM M_{5,32,16,12,8}
   t.resize(5);
-  t[0] = 5;
+  t[0] = 32;
   t[1] = 32;
   t[2] = 16;
   t[3] = 12;
@@ -103,7 +104,7 @@ int main() {
      for (int k = 0; k < numDelta; k++) {
         lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
         lat->buildBasis(dim);         
-        f = fom.computeMeritDualM(*lat, proj);
+        f = fom.computeMeritDualM(*lat, *proj);
         std::cout << "For dim = " << dim << " and a = " << a << " and t = " << t << "" << "\n";
         std::cout << "the figure of merit M is: " << f << "\n";
         std::cout << "\n";  
