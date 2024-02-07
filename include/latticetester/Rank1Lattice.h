@@ -415,29 +415,29 @@ void Rank1Lattice<Int, Real>::buildProjection(
     IntMat &dualBasis = projLattice->getDualBasis();
 
     Int c1, b1, b2; // c1 will be gcd(a_{i_1}, m). We should always have c1=1.
-    // Recall:  XGCD (g, c, d, a, b) does g = gcd(a, b) = a*c + b*d.
-    if (case1)
-        b1 = 1;
-    else
+    if (!case1) {
+        // Recall:  XGCD (g, c, d, a, b) does g = gcd(a, b) = a*c + b*d.
         NTL::XGCD(c1, b1, b2, m_a[*proj.begin() - 1], this->m_modulo);
-
-    // Here we must return an error message if c1 is not 1.  *******************
-
+        if (c1 > 1)
+            MyExit(1, "Rank1Lattice::buildProjection: c1 > 1.");
+    }
     if (projLattice->withPrimal()) { // Build a primal basis.
+        // We first compute the first row.
         if (case1) {
             j = 0; // CW
             for (auto it = proj.begin(); it != proj.end(); it++, j++) {
-                basis[0][j] = m_a[*it - 1];  // First row.
+                basis[0][j] = m_a[*it - 1];
             }
         } else {
             j = 0; //CW
             for (auto it = proj.begin(); it != proj.end(); it++, j++) {
                 // NTL::MulMod (basis[0][j], m_a[*it - 1], b1, this->m_modulo);
-                // First row - does not work here
+                // .... does not work here
                 basis[0][j] = (m_a[*it - 1] * b1) % this->m_modulo;
             }
             basis[0][0] = 1;
         }
+        // Then the other rows.
         for (i = 1; i < d; i++) {
             for (j = 0; j < d; j++) {
                 if (i == j)
@@ -470,7 +470,6 @@ void Rank1Lattice<Int, Real>::buildProjection(
             }
         }
     }
-
 }
 
 //============================================================================
