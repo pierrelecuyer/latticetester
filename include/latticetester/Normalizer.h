@@ -62,13 +62,13 @@ namespace LatticeTester {
  * because the latter is sometimes extremely large or extremely small.
  * This constructor works fine when the density \f$ \eta\f$ is the same in all dimensions.
  * Note that the log density of an arbitrary integral lattice with basis `V` can be computed
- * via `-log(abs(det(V)))`.  In most cases of interest, the density is known a priori.
+ * via `-log(abs(det(V)))`, but in most cases of interest, the density is known a priori.
  *
- * Sometimes, the density may depend on the dimension.
+ * Sometimes, the density depends on the dimension.
  * This occurs for example for the lattice obtained from an MRG with modulus \f$ m\f$ and order \f$ k\f$,
- * whose density is typically \f$ m^k\f$ in \f$ s\ge k\f$ dimensions, and \f$ m^s\f$
- * in \f$ s < k\f$ dimensions.  The bounds can then be computed by taking this into account.
- * This is done by passing \f$ m\f$ and \f$ k\f$ as inputs to the constructor (in subclasses).
+ * whose density is typically \f$ m^k\f$ in \f$ s\ge k\f$ dimensions, and \f$ m^t\f$
+ * in \f$ t < k\f$ dimensions.  The bounds can then be computed by taking this into account.
+ * This is done by passing \f$ \log m\f$ and \f$ k\f$ as inputs to the constructor (in subclasses).
  *
  * In subclasses, it is important to implement the
  * `getGamma(int) const` and `computeBounds` methods and to call the latter
@@ -76,7 +76,7 @@ namespace LatticeTester {
  * The constructors in the present abstract class do not compute any bounds,
  * they basically just reserve the space (an array) for the bounds.
  *
- * The prefered usage for this class is to declare a pointer to a Normalizer
+ * The preferred usage for this class is to declare a pointer to a Normalizer
  * and to instantiate a subclass with dynamically allocated memory:
  * \code{.cpp}
  * Normalizer* norma;
@@ -168,23 +168,8 @@ public:
 	/**
 	 * Returns the norm associated with this object.
 	 */
-	// NormType getNorm () const
-	//  { return m_norm; }
-	/**
-	 * Sets the log-density associated with this object to `logDensity`.
-	 */
-	// void setLogDensity (Real logDensity)
-	// { m_logDensity = logDensity; }
-	/**
-	 * Returns the `logDensity` associated with this object.
-	 */
-	// Real getLogDensity () const
-	// { return m_logDensity; }
-	/**
-	 * Sets the norm associated with this object to `norm`.
-	 */
-	// void setNorm (NormType norm)
-	//  { m_norm = norm; }
+	NormType getNorm () const { return m_norm; }
+
 	/**
 	 * Returns the maximal dimension for this object. This is the `maxDim`
 	 * parameter of the constructors.
@@ -280,8 +265,7 @@ private:
 //===========================================================================
 
 Normalizer::Normalizer (int64_t maxDim, std::string name, NormType norm) :
- m_name(name), m_norm(norm),m_maxDim(maxDim)
-{
+ m_name(name), m_norm(norm),m_maxDim(maxDim) {
 	m_bounds = new double[maxDim + 1];
 }
 
@@ -308,10 +292,8 @@ void Normalizer::computeBounds(double logm, int64_t k) {
 	}
 }
 
-
 /*-------------------------------------------------------------------------*/
- int64_t Normalizer::min(int64_t k, int64_t j)
- {
+ int64_t Normalizer::min(int64_t k, int64_t j) {
 	return (k<j)?k:j;
  }
 
