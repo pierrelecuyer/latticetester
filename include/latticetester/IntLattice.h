@@ -151,7 +151,7 @@ public:
      * we want to call `Reducer::shortestVector` for several projections.
      */
     void buildProjection(IntLattice<Int, Real> *projLattice,
-            const Coordinates &proj, delta = 0.99);
+            const Coordinates &proj, double delta = 0.99);
 
     /**
      * Returns the `IntMat` object that contains the basis of this lattice.
@@ -251,7 +251,7 @@ public:
      * basis vectors, but only the dimension variable.
      */
     void setDim(const int64_t &dim) {
-        assert(dim <= this->maxDim)
+        assert(dim <= this->m_maxDim);
         if (dim > 0)
             m_dim = dim;
     }
@@ -353,6 +353,13 @@ public:
      */
     void updateVecNorm(const int64_t &d);
 
+    /**
+     * Updates the 'd'-th entry of the array containing the basis vectors norms.
+     * Only the first c components are used for calculating the norm.
+     * */
+    void updateSingleVecNorm(const int64_t &d, const int64_t &c);
+
+    
     /**
      * Updates the array containing the m-dual basis vectors norms by recomputing them.
      * Assumes that the dual basis is available.
@@ -550,6 +557,10 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim,
     this->m_norm = norm;
     this->m_basis.resize(maxDim, maxDim);
     this->m_vecNorm.resize(maxDim);
+    if (withDual) {
+    	m_dualbasis.resize(maxDim, maxDim);
+    	m_dualvecNorm.resize(maxDim);
+    }
     setNegativeNorm();
 }
 
@@ -568,6 +579,10 @@ IntLattice<Int, Real>::IntLattice(const IntMat basis, const Int m,
     assert(basis.NumRows() == maxDim);
     this->m_basis = basis;
     this->m_vecNorm.resize(maxDim);
+    if (withDual) {
+    	m_dualbasis.resize(maxDim, maxDim);
+    	m_dualvecNorm.resize(maxDim);
+    }
     setNegativeNorm();
 }
 
@@ -654,7 +669,7 @@ void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat,
 
 //===========================================================================
 
-// template<typename Int>class BasisConstruction;  // Needed?
+template<typename Int>class BasisConstruction;  // Needed? CW: Yes! Otherwise it does not compile.
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
@@ -663,8 +678,8 @@ void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
     projLattice->setDim (proj.size());  // Number of coordinates in the projection.
     if (!projLattice->m_withDual) { // This builds only the primal basis.
         BasisConstruction<Int>::projectionConstructionLLL(this->m_basis,
-                projLattice->m_basis, proj, this->m_modulo, delta, proj.size(),
-                projLattice->m_vecNorm);
+                projLattice->m_basis, proj, this->m_modulo, delta, proj.size());//, CW
+                //projLattice->m_vecNorm);
     } else { // This builds both the primal and the m-dual bases.
         BasisConstruction<Int>::projectionConstructionUpperTri(this->m_basis,
                 projLattice->m_basis, proj, this->m_modulo, this->m_dim);
@@ -696,14 +711,14 @@ void IntLattice<Int, Real>::setDualNegativeNorm() {
 /*=========================================================================*/
 
 template<typename Int, typename Real>
-IntLattice<Int, Real>::updateVecNorm() {
+void IntLattice<Int, Real>::updateVecNorm() {
     updateVecNorm(0);
 }
 
 /*=========================================================================*/
 
 template<typename Int, typename Real>
-IntLattice<Int, Real>::updateVecNorm(const int64_t &d) {
+void IntLattice<Int, Real>::updateVecNorm(const int64_t &d) {
     assert(d >= 0);
     for (int64_t i = d; i < this->m_dim; i++) {
         NTL::matrix_row<IntMat> row(this->m_basis, i);
@@ -719,14 +734,28 @@ IntLattice<Int, Real>::updateVecNorm(const int64_t &d) {
 /*=========================================================================*/
 
 template<typename Int, typename Real>
-double IntLattice<Int, Real>::updateDualVecNorm() {
-    return updateDualVecNorm(0);
+void IntLattice<Int, Real>::updateDualVecNorm() {
+    updateDualVecNorm(0);
 }
 
 /*=========================================================================*/
 
 template<typename Int, typename Real>
-double IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d) {
+void IntLattice<Int, Real>::updateSingleVecNorm(const int64_t &d,
+        const int64_t &c) {
+    assert(d >= 0);
+    NTL::matrix_row<IntMat> row(this->m_basis, d);
+    if (this->m_norm == L2NORM) {
+        ProdScal<Int>(row, row, c, this->m_vecNorm[d]);
+    } else {
+        CalcNorm<IntVec, Real>(row, c, this->m_vecNorm[d], this->m_norm);
+    }
+}
+
+/*=========================================================================*/
+
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d) {
     assert(d >= 0);
     assert(this->m_withDual);
     for (int64_t i = d; i < this->m_dim; i++) {
@@ -918,7 +947,7 @@ void IntLattice<Int, Real>::sortBasis(int64_t d) {
  * the square Euclidean length.
  */
 template<typename Int, typename Real>
-void IntLattice<Int, Real>::sortBasisPrimal(int64_t d) {
+void IntLattice<Int, Real>::sortPrimalBasis(int64_t d) {
     int64_t dim = getDim();
     for (int64_t i = 0; i < dim; i++) {
         if (getVecNorm(i) < 0) {
@@ -934,7 +963,7 @@ void IntLattice<Int, Real>::sortBasisPrimal(int64_t d) {
                 k = j;
         }
         if (i != k)
-            permuteNoDual(i, k);
+            permutePrimal(i, k);
     }
 }
 

@@ -622,7 +622,7 @@ void BasisConstruction<Int>::mDualUpperTriangular96(IntMat &basis,
         IntMat &basisDual, const Int &m, long dim) {
     if (!dim)
         dim = basis.NumRows();
-    assert(dim <= dualBasis.NumRows() && dim <= dualBasis.NumCols());
+    assert(dim <= basisDual.NumRows() && dim <= basisDual.NumCols());
     Int gcd;
     Int mm = m;            // Local copy of m that can be changed.
     for (int64_t i = 0; i < dim; i++) {
@@ -657,7 +657,7 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96ZZ(
         const NTL::ZZ &m, long dim) {
     if (!dim)
         dim = basis.NumRows();
-    assert(dim <= dualBasis.NumRows() && dim <= dualBasis.NumCols());
+    assert(dim <= basisDual.NumRows() && dim <= basisDual.NumCols());
     NTL::ZZ gcd, fac;
     NTL::ZZ mm = m;            // Local copy of m that can be changed.
     for (int64_t i = 0; i < dim; i++) {
@@ -760,10 +760,12 @@ void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
     if (!r)
         r = in.NumRows();   // In case r=0.
     // We assume without testing that `out` is large enough for proj.size().
-    long j;
-    for (auto it = proj.begin(), j = 0; it != proj.end(); it++, j++)
+    long j = 0; //CW
+    for (auto it = proj.begin(); it != proj.end(); it++, j++)
+    {
         for (long i = 0; i < r; i++)
             out[i][j] = in[i][*it - 1];
+    }
 }
 
 //===================================================

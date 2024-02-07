@@ -248,9 +248,7 @@ public:
     /**
      * Returns a string describing this lattice.
      */
-    virtual std::string toString() const {
-    }
-    ;
+    virtual std::string toString() const { return "";};
 
 protected:
 
@@ -295,7 +293,7 @@ IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, bool withPrimal,
             this->setDualNegativeNorm();
         }
     }
-
+}
 //===========================================================================
 
     template<typename Int, typename Real>
@@ -303,7 +301,7 @@ IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, bool withPrimal,
     IntLattice<Int, Real>(lat) {
         // this->m_withDual = lat.m_withDual;
         // m_order = lat.m_order;
-        if (this->m_withPrimal) this->setPrimalNegativeNorm();
+        if (this->m_withPrimal) this->setNegativeNorm();
         if (this->m_withDual) this->setDualNegativeNorm();
     }
 
