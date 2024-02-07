@@ -119,12 +119,6 @@ public:
     void seta(const Int &a);
 
     /**
-     * Returns the first components of the generating vector \f$\ba\f$ as a string.
-     * The number of components in the string will be the current dimension of the lattice.
-     */
-    std::string toStringCoef() const;
-
-    /**
      * Builds a basis in `dim` dimensions. This `dim` must not exceed `this->maxDim()`.
      * This initial basis will be upper triangular.
      */
