@@ -119,12 +119,6 @@ public:
     void seta(const Int &a);
 
     /**
-     * Returns the first components of the generating vector \f$\ba\f$ as a string.
-     * The number of components in the string will be the current dimension of the lattice.
-     */
-    std::string toStringCoef() const;
-
-    /**
      * Builds a basis in `dim` dimensions. This `dim` must not exceed `this->maxDim()`.
      * This initial basis will be upper triangular.
      */
@@ -421,18 +415,19 @@ void Rank1Lattice<Int, Real>::buildProjection(
     if (projLattice->withPrimal()) { // Build a primal basis.
         // We first compute the first row.
         if (case1) {
-            j = 0; // CW
+            j = 0; 
             for (auto it = proj.begin(); it != proj.end(); it++, j++) {
                 basis[0][j] = m_a[*it - 1];
             }
         } else {
-            j = 0; //CW
-            for (auto it = proj.begin(); it != proj.end(); it++, j++) {
+            basis[0][0] = 1;
+            auto it = proj.begin();
+            j = 1;
+            for (it++; it != proj.end(); it++, j++) {
                 // NTL::MulMod (basis[0][j], m_a[*it - 1], b1, this->m_modulo);
                 // .... does not work here
                 basis[0][j] = (m_a[*it - 1] * b1) % this->m_modulo;
             }
-            basis[0][0] = 1;
         }
         // Then the other rows.
         for (i = 1; i < d; i++) {
@@ -446,17 +441,19 @@ void Rank1Lattice<Int, Real>::buildProjection(
     }
     if (projLattice->withDual()) { // Compute m-dual basis directly.
         if (case1) {
-            i = 0; // CW
-            for (auto it = proj.begin(); it != proj.end(); ++it, ++i) {
+            dualBasis[0][0] = this->m_modulo;
+            i = 1;
+            auto it = proj.begin();
+            for (it++; it != proj.end(); ++it, ++i) {
                 dualBasis[i][0] = m_a[*it - 1]; // First column.
             }
-            dualBasis[0][0] = this->m_modulo;
         } else {
-            i = 0; // CW
-            for (auto it = proj.begin(); it != proj.end(); it++, i++) {
+            dualBasis[0][0] = this->m_modulo;
+            i = 1;
+            auto it = proj.begin(); 
+            for (it++; it != proj.end(); it++, i++) {
                 dualBasis[i][0] = -(m_a[*it - 1] * b1 % this->m_modulo);
             }
-            dualBasis[0][0] = this->m_modulo;
         }
         for (i = 0; i < d; i++) {
             for (j = 1; j < d; j++) {

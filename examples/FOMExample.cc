@@ -26,7 +26,6 @@
 #include "latticetester/EnumTypes.h"
 #include "latticetester/FigureOfMeritM.h"
 #include "latticetester/FigureOfMeritDualM.h"
-#include "latticetester/FoMCalc.h"
 #include "latticetester/Util.h"
 #include "latticetester/ParamReader.h"
 #include "latticetester/IntLattice.h"
@@ -88,23 +87,25 @@ int main() {
   t[3] = 12;
   t[4] = 8;
   
-  //FigureOfMeritM<Int> fom(*weights, *red); 
-  FigureOfMeritDualM<Int> fom(t, meth, *red); 
-  
+
   double log_density=(double)(-log(abs(m)));
   norma = new NormaBestLat(log_density, dim);
-  fom.setNormalizer(*norma);
+  
+  //FigureOfMeritM<Int> fom(*weights, *red); 
+  FigureOfMeritDualM<Int> fom(t, meth, *red, *norma); 
   
   a = multipliers[0];
   lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
-  proj = new IntLattice<Int, Real> (lat->getBasis(), m, lat->getBasis().NumCols()); // initialize object for projection
+//  proj = new IntLattice<Int, Real> (lat->getBasis(), m, lat->getBasis().NumCols()); // initialize object for projection
+  proj = new IntLattice<Int, Real> (m, lat->getBasis().NumCols(), true, true); // initialize object for projection
+
   
   for (int j = 0; j < numMult; j++) {
      a = multipliers[j]; 
      for (int k = 0; k < numDelta; k++) {
         lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
         lat->buildBasis(dim);         
-        f = fom.computeMeritDualM(*lat, *proj);
+        f = fom.computeMeritDualM(*lat, proj);
         std::cout << "For dim = " << dim << " and a = " << a << " and t = " << t << "" << "\n";
         std::cout << "the figure of merit M is: " << f << "\n";
         std::cout << "\n";  

@@ -114,7 +114,7 @@ public:
     /**
      * Destructor.
      */
-    ~IntLattice();
+    virtual ~IntLattice();
 
     /**
      * Makes a deep copy of the lattice `lat` into this (existing) object.

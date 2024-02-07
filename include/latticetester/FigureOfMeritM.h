@@ -48,23 +48,25 @@
 namespace LatticeTester {
 
 /**
- * This class offers methods (functions) to calculate figure of merit for a given
- * IntLattice object.   ****  Requires more specific explanations!   ********
+ * This class offers methods (functions) to calculate the figure of merit M for a given
+ * IntLattice object. The FoM M is defined as the minimum of the normalized shortest
+ * vector lengths for a set of projections which is determined by a vector (t_1,...,t_d).
+ * These projections can consist of successive coordinates as well as non-successive coordinates.
+ * The exact lengths of the shortest vectors can either be calculated exactly by using the 
+ * BB algorithm or they can be approximated using the shortest base vector length after LLL, BKZ 
+ * or pairwise pre-reduction has been applied, which is much faster but less exact. 
  *
  * Essential ingredients to pass to the constructor:
  * (1) the vector (t_1,...,t_d);
- * (2) a Reducer object;
- * (3) a Normalizer object;
- *     Those three cannot have default values, so they should be passed to the constructor.
- * (4) the reduction method to be used.  This one (only) may have a default value.
- * (5) the bounds and the parameters of the reduction method also have default values.
- *     Maybe they do not have to be passed as parameters.
- *
- * Some of the internal variables in this class should be protected.
- *
- * Some of them are kind of hidden and the user will not even know that they exist!
- * For example, m_firstCoordinateAlwaysIn, which does not appear in the constructor
- * and has no `set` function.
+ * (2) the reduction method to be used;
+ * (3) a Reducer object;
+ * (4) a Normalizer object.
+ * 
+ * Moreoover, the bounds and the parameters of the reduction method also have default values.
+ * These can be changed by the methods 'setReductionMethod' and 'setBounds'.
+ * 
+ * The main method of this class is 'computeMeritM' which calculates the actual figure of merit
+ * M for a given lattice.
  *
  */
 
@@ -82,7 +84,7 @@ public:
      * the values of t_1,..., t_d in the definition of the FoM.
      */
     FigureOfMeritM(const vector<int64_t> &t, ReductionType &meth,
-            Reducer<Int, Real> &red);
+            Reducer<Int, Real> &red, Normalizer & norma);
 
     /*
      * Sets a new vector 't' =  t_1,..., t_d in the definition of the FoM.
@@ -123,6 +125,13 @@ public:
     void setNormalizer(Normalizer &norma) {
         m_norma = &norma;
     }
+    
+    /* 
+     * Sets if first variable shall always be included for the non-successive coordinates
+     */
+    void setFirstCoordinateAlwaysIn (bool & first) {
+        m_firstCoordinateAlwaysIn = first;
+    }
 
     /*
      * This function calculates the Figure of Merit M of a given lattice 'lat'
@@ -156,72 +165,9 @@ public:
             IntLattice<Int, Real> *proj);
 
     /*
-     * The reduction type used to compute (or estimate) the FOM.
-     */
-    ReductionType m_reductionMethod = BKZBB;
-
-    /*
-     * The delta parameter for LLL and BKZ reduction
-     */
-    double m_delta = 0.99999;
-
-    /*
-     * Blocksize of BKZ algorithm
-     */
-    int64_t m_blocksize = 10;
-
-    /*
-     * If FoM is above this bound, then calculation of FoM is stopped
-     */
-    double m_highbound = 1;
-
-    /*
-     * If FoM is below this bound, then calculation of FoM is stopped.
-     */
-    double m_lowbound = 0;
-
-    /*
-     * The boolean variable indicates whether the BB algorithm needs to be performed or not.
-     */
-    bool m_doingBB;
-
-    /*
      * If set to true successive coordinates a considered first when calculating FigureOfMerit
      */
     //bool m_succCoordFirst = false;
-
-    /*
-     * Sets if first variable shall always be included for the non-successive coordinates
-     */
-    bool m_firstCoordinateAlwaysIn = true;  //  *****  Where is this variable set?
-
-    /*
-     * Type of projection construction
-     */
-    ProjConstructType m_pctype = UPPERTRIPROJ;
-
-    /*
-     * Variable containing the Weights for the FoM
-     */
-    //Weights *m_weights;
-
-    /*
-     * The vector 'm_t' defines the set of
-     * dimensions for which the figure of merit is calculated. It contains
-     * the values of t_1,..., t_d in the definition of the FOM M.
-     */
-    vector<int64_t> m_t;
-
-    /*
-     * The vector 'm_b' is used to store the basis after pre-reduction has
-     * been performed.    *****  What is this?   The basis is in an array of double  ?????  *****
-     */
-    double *m_b;
-
-    /*
-     * Internal variable which stores the matrix of the projection basis.
-     */
-    IntMat m_projBasis;
 
     /*
      * Internal CoordinateSets object is used to store sets of coordinates.
@@ -238,6 +184,71 @@ public:
      */
     Reducer<Int, Real> *m_red;
 
+protected:
+    
+    /*
+     * The vector 'm_t' defines the set of
+     * dimensions for which the figure of merit is calculated. It contains
+     * the values of t_1,..., t_d in the definition of the FOM M.
+     */
+    vector<int64_t> m_t;
+    
+    /*
+     * The reduction type used to compute (or estimate) the FOM.
+     */
+    ReductionType m_reductionMethod = BKZBB;
+    
+    /*
+     * Variable containing the Weights for the FoM
+     */
+    //Weights *m_weights;
+    
+    /*
+     * The boolean variable indicates whether the BB algorithm needs to be performed.
+     */
+    bool m_doingBB;
+    
+    /*
+     * The boolean variable indicates whether the LLL algorithm is performed.
+     */
+    bool m_doingLLL;
+    
+    /*
+     * The boolean variable indicates whether the BKZ algorithm is performed.
+     */
+    bool m_doingBKZ;
+    
+    /*
+     * The delta parameter for LLL and BKZ reduction
+     */
+    double m_delta = 0.99999;
+
+    /*
+     * Blocksize of BKZ algorithm
+     */
+    int64_t m_blocksize = 10;
+    
+    /*
+     * Indicates if first variable shall always be included for the non-successive coordinates
+     */
+    bool m_firstCoordinateAlwaysIn = true;  
+    
+    /*
+     * If FoM is above this bound, then calculation of FoM is stopped
+     */
+    double m_highbound = 1;
+
+    /*
+     * If FoM is below this bound, then calculation of FoM is stopped.
+     */
+    double m_lowbound = 0;
+    
+     /*
+     * The vector 'm_b' is used to store the length of the basis after pre-reduction has
+     * been performed.    *****  What is this?   The basis is in an array of double  ?????  *****
+     */
+    double *m_b;
+    
 };
 
 //============================================================================
@@ -245,9 +256,10 @@ public:
 
 template<typename Int>
 FigureOfMeritM<Int>::FigureOfMeritM(const vector<int64_t> &t,
-        ReductionType &meth, Reducer<Int, Real> &red) {
+        ReductionType &meth, Reducer<Int, Real> &red, Normalizer & norma) {
     setTVector(t);
     setReductionMethod(meth);
+    setNormalizer(norma);
     m_red = &red;
 }
 
@@ -284,6 +296,16 @@ void FigureOfMeritM<Int>::setReductionMethod(ReductionType &meth, double delta,
         m_doingBB = true;
     } else {
         m_doingBB = false;
+    }
+    if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
+        m_doingBKZ = true;
+    } else {
+        m_doingBKZ = false;
+    }
+    if (m_reductionMethod == LLLBB || m_reductionMethod == LLL) {
+        m_doingLLL = true;
+    } else {
+        m_doingLLL = false;
     }
     m_delta = delta;
     m_blocksize = blocksize;
@@ -326,24 +348,28 @@ double FigureOfMeritM<Int>::computeMeritMSuccPrimal(
     lat.buildBasis(lower_dim);
     for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
         lat.incDimBasis();
-        if (this->m_reductionMethod == BKZBB
-                || this->m_reductionMethod == BKZ) {
+        if (m_doingBKZ) {
             this->m_red->redBKZ(lat.getBasis(), this->m_delta,
                     this->m_blocksize);
-        } else if (this->m_reductionMethod == LLLBB
-                || this->m_reductionMethod == LLL) {
+        } else if (m_doingLLL) {
             LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_b);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
         }
         if (!m_doingBB) {
             lat.updateSingleVecNorm(0, j);
-            NTL::conv(merit,
-                    sqrt(lat.getVecNorm(0)) / this->m_norma->getBound(j));
+            if (lat.getNormType() == L2NORM) {
+                NTL::conv(merit,
+                        sqrt(lat.getVecNorm(0)) / this->m_norma->getBound(j));
+            } else
+            {
+                NTL::conv(merit,
+                        lat.getVecNorm(0) / this->m_norma->getBound(j));
+            }
         } else {
             if (!m_red->shortestVector(lat))
                 return 0;
-            merit = NTL::conv<double>(
+            NTL::conv(merit,
                     m_red->getMinLength() / this->m_norma->getBound(j));
         }
         if (merit < minmerit)
@@ -365,12 +391,10 @@ double FigureOfMeritM<Int>::computeMeritMNonSuccPrimal(
     for (auto it = m_coordRange.begin(); it != m_coordRange.end(); it++) {
         coord = *it;
         lat.buildProjection(proj, *it, this->m_delta);
-        if (this->m_reductionMethod == BKZBB
-                || this->m_reductionMethod == BKZ) {
+        if (m_doingBKZ) {
             this->m_red->redBKZ(proj->getBasis(), this->m_delta,
                     this->m_blocksize);
-        } else if (this->m_reductionMethod == LLLBB
-                || this->m_reductionMethod == LLL) {
+        } else if (m_doingLLL) {
             LLL_FPZZflex(proj->getBasis(), this->m_delta, coord.size(),
                     coord.size(), this->m_b);
         } else if (this->m_reductionMethod == PAIRBB) {
@@ -378,9 +402,15 @@ double FigureOfMeritM<Int>::computeMeritMNonSuccPrimal(
         }
         if (!m_doingBB) {
             proj->updateSingleVecNorm(0, coord.size());
+            if (lat.getNormType() == L2NORM) {
             NTL::conv(merit,
                     sqrt(proj->getVecNorm(0))
                             / this->m_norma->getBound(proj->getDim()));
+            } else {
+                NTL::conv(merit,
+                        proj->getVecNorm(0)
+                           / this->m_norma->getBound(proj->getDim()));
+            }
         } else {
             if (!m_red->shortestVector(*proj))
                 return 0;
