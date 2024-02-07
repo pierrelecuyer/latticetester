@@ -87,12 +87,12 @@ int main() {
   t[3] = 12;
   t[4] = 8;
   
-  //FigureOfMeritM<Int> fom(*weights, *red); 
-  FigureOfMeritDualM<Int> fom(t, meth, *red); 
-  
+
   double log_density=(double)(-log(abs(m)));
   norma = new NormaBestLat(log_density, dim);
-  fom.setNormalizer(*norma);
+  
+  //FigureOfMeritM<Int> fom(*weights, *red); 
+  FigureOfMeritDualM<Int> fom(t, meth, *red, *norma); 
   
   a = multipliers[0];
   lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
