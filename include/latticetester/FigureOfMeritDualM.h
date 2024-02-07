@@ -129,9 +129,9 @@ double FigureOfMeritDualM<Int>::computeMeritMSuccDual (IntLatticeExt<Int, Real> 
    lat.buildDualBasis(lower_dim);
    for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
        lat.incDimDualBasis();
-       if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+       if (this->m_doingBKZ) {
           this->m_red->redBKZ(lat.getDualBasis(), this->m_delta, this->m_blocksize);
-       } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+       } else if (this->m_doingLLL) {
           LLL_FPZZflex(lat.getDualBasis(), this->m_delta, j, j, this->m_b);
        } else if (this->m_reductionMethod == PAIRBB) {
           this->m_red->redDieter(0);
@@ -139,10 +139,15 @@ double FigureOfMeritDualM<Int>::computeMeritMSuccDual (IntLatticeExt<Int, Real> 
        lat.dualize();
        if (!this->m_doingBB) {
            lat.updateSingleVecNorm(0,j);
-           NTL::conv(merit, sqrt(lat.getVecNorm(0)) / this->m_norma->getBound(j));
+           if (lat.getNormType() == L2NORM) {
+               NTL::conv(merit, sqrt(lat.getVecNorm(0)) / this->m_norma->getBound(j));
+           } else {
+               NTL::conv(merit, lat.getVecNorm(0) / this->m_norma->getBound(j));
+           }
+           
        } else {
            if (!this->m_red->shortestVector(lat)) return 0;
-           merit = NTL::conv<double>(this->m_red->getMinLength() / this->m_norma->getBound(j));
+           NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(j));
        }
        lat.dualize();
        if (merit < minmerit) minmerit = merit;
@@ -162,20 +167,24 @@ double FigureOfMeritDualM<Int>::computeMeritMNonSuccDual (IntLatticeExt<Int, Rea
     for (auto it = this->m_coordRange.begin(); it != this->m_coordRange.end(); it++){
         coord = *it;
         lat.buildProjection(proj, coord, this->m_delta);
-        if (this->m_reductionMethod == BKZBB || this->m_reductionMethod == BKZ) {
+        if (this->m_doingBKZ) {
            this->m_red->redBKZ(proj->getDualBasis(), this->m_delta, this->m_blocksize);
-        } else if (this->m_reductionMethod == LLLBB || this->m_reductionMethod == LLL) {
+        } else if (this->m_doingLLL) {
            LLL_FPZZflex(proj->getDualBasis(), this->m_delta, coord.size(), coord.size(), this->m_b);
          } else if (this->m_reductionMethod == PAIRBB) {
            this->m_red->redDieter(0);
         }
         if (!this->m_doingBB) {
             proj->updateSingleDualVecNorm(0,coord.size());
-            NTL::conv(merit, sqrt(proj->getDualVecNorm(0)) / this->m_norma->getBound(coord.size()));
+            if (lat.getNormType() == L2NORM) {
+                NTL::conv(merit, sqrt(proj->getDualVecNorm(0)) / this->m_norma->getBound(coord.size()));
+            } else {
+                NTL::conv(merit, proj->getDualVecNorm(0) / this->m_norma->getBound(coord.size()));
+            }
         } else {
             proj->dualize();
             if (!this->m_red->shortestVector(*proj)) return 0;
-            merit = NTL::conv<double>(this->m_red->getMinLength() / this->m_norma->getBound(coord.size()));
+            NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(coord.size()));
         }
         if (merit < minmerit) minmerit = merit;
         if (minmerit <= this->m_lowbound || minmerit > this->m_highbound) return 0;
