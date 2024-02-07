@@ -204,9 +204,19 @@ protected:
     //Weights *m_weights;
     
     /*
-     * The boolean variable indicates whether the BB algorithm needs to be performed or not.
+     * The boolean variable indicates whether the BB algorithm needs to be performed.
      */
     bool m_doingBB;
+    
+    /*
+     * The boolean variable indicates whether the LLL algorithm is performed.
+     */
+    bool m_doingLLL;
+    
+    /*
+     * The boolean variable indicates whether the BKZ algorithm is performed.
+     */
+    bool m_doingBKZ;
     
     /*
      * The delta parameter for LLL and BKZ reduction
@@ -287,6 +297,16 @@ void FigureOfMeritM<Int>::setReductionMethod(ReductionType &meth, double delta,
     } else {
         m_doingBB = false;
     }
+    if (m_reductionMethod == BKZBB || m_reductionMethod == BKZ) {
+        m_doingBKZ = true;
+    } else {
+        m_doingBKZ = false;
+    }
+    if (m_reductionMethod == LLLBB || m_reductionMethod == LLL) {
+        m_doingLLL = true;
+    } else {
+        m_doingLLL = false;
+    }
     m_delta = delta;
     m_blocksize = blocksize;
 }
@@ -328,24 +348,28 @@ double FigureOfMeritM<Int>::computeMeritMSuccPrimal(
     lat.buildBasis(lower_dim);
     for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
         lat.incDimBasis();
-        if (this->m_reductionMethod == BKZBB
-                || this->m_reductionMethod == BKZ) {
+        if (m_doingBKZ) {
             this->m_red->redBKZ(lat.getBasis(), this->m_delta,
                     this->m_blocksize);
-        } else if (this->m_reductionMethod == LLLBB
-                || this->m_reductionMethod == LLL) {
+        } else if (m_doingLLL) {
             LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_b);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
         }
         if (!m_doingBB) {
             lat.updateSingleVecNorm(0, j);
-            NTL::conv(merit,
-                    sqrt(lat.getVecNorm(0)) / this->m_norma->getBound(j));
+            if (lat.getNormType() == L2NORM) {
+                NTL::conv(merit,
+                        sqrt(lat.getVecNorm(0)) / this->m_norma->getBound(j));
+            } else
+            {
+                NTL::conv(merit,
+                        lat.getVecNorm(0) / this->m_norma->getBound(j));
+            }
         } else {
             if (!m_red->shortestVector(lat))
                 return 0;
-            merit = NTL::conv<double>(
+            NTL::conv(merit,
                     m_red->getMinLength() / this->m_norma->getBound(j));
         }
         if (merit < minmerit)
@@ -367,12 +391,10 @@ double FigureOfMeritM<Int>::computeMeritMNonSuccPrimal(
     for (auto it = m_coordRange.begin(); it != m_coordRange.end(); it++) {
         coord = *it;
         lat.buildProjection(proj, *it, this->m_delta);
-        if (this->m_reductionMethod == BKZBB
-                || this->m_reductionMethod == BKZ) {
+        if (m_doingBKZ) {
             this->m_red->redBKZ(proj->getBasis(), this->m_delta,
                     this->m_blocksize);
-        } else if (this->m_reductionMethod == LLLBB
-                || this->m_reductionMethod == LLL) {
+        } else if (m_doingLLL) {
             LLL_FPZZflex(proj->getBasis(), this->m_delta, coord.size(),
                     coord.size(), this->m_b);
         } else if (this->m_reductionMethod == PAIRBB) {
@@ -380,9 +402,15 @@ double FigureOfMeritM<Int>::computeMeritMNonSuccPrimal(
         }
         if (!m_doingBB) {
             proj->updateSingleVecNorm(0, coord.size());
+            if (lat.getNormType() == L2NORM) {
             NTL::conv(merit,
                     sqrt(proj->getVecNorm(0))
                             / this->m_norma->getBound(proj->getDim()));
+            } else {
+                NTL::conv(merit,
+                        proj->getVecNorm(0)
+                           / this->m_norma->getBound(proj->getDim()));
+            }
         } else {
             if (!m_red->shortestVector(*proj))
                 return 0;
