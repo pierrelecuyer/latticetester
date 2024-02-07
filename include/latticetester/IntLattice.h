@@ -150,7 +150,7 @@ public:
      * Note that representing each projection as an `IntLattice` object is required when
      * we want to call `Reducer::shortestVector` for several projections.
      */
-    void buildProjection(IntLattice<Int, Real> *projLattice,
+    virtual void buildProjection(IntLattice<Int, Real> *projLattice,
             const Coordinates &proj, double delta = 0.99);
 
     /**

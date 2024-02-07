@@ -223,7 +223,6 @@ public:
      */
     // void computeNormalConstants(bool dualF);
     //    void fixLatticeNormalization (bool dualF);
-    
     /**
      * REMOVE: This depends on the lattice only via the density.
      * This method is used nowhere else inside lattice tester.
@@ -240,7 +239,6 @@ public:
      */
     // LatticeTester::Normalizer * getNormalizer (NormaType norma,
     //    int64_t alpha, bool dualF);
-
     /**
      * Selects and stores a vector of indices with lacunary values.
      */
@@ -248,7 +246,10 @@ public:
     /**
      * Returns a string describing this lattice.
      */
-    virtual std::string toString() const { return "";};
+    virtual std::string toString() const {
+        return "";
+    }
+    ;
 
 protected:
 
@@ -296,47 +297,51 @@ IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, bool withPrimal,
 }
 //===========================================================================
 
-    template<typename Int, typename Real>
-    IntLatticeExt<Int, Real>::IntLatticeExt(const IntLatticeExt<Int, Real> &lat) :
-    IntLattice<Int, Real>(lat) {
-        // this->m_withDual = lat.m_withDual;
-        // m_order = lat.m_order;
-        if (this->m_withPrimal) this->setNegativeNorm();
-        if (this->m_withDual) this->setDualNegativeNorm();
-    }
+template<typename Int, typename Real>
+IntLatticeExt<Int, Real>::IntLatticeExt(const IntLatticeExt<Int, Real> &lat) :
+        IntLattice<Int, Real>(lat) {
+    // this->m_withDual = lat.m_withDual;
+    // m_order = lat.m_order;
+    if (this->m_withPrimal)
+        this->setNegativeNorm();
+    if (this->m_withDual)
+        this->setDualNegativeNorm();
+}
 
 //===========================================================================
 
-    template<typename Int, typename Real>
-    void IntLatticeExt<Int, Real>::kill() {
-        // IntLattice<Int, Real>::kill();
-    }
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::kill() {
+    // IntLattice<Int, Real>::kill();
+}
 
 //===========================================================================
 
-    template<typename Int, typename Real>
-    IntLatticeExt<Int, Real>::~IntLatticeExt() {
-        //this->m_basisProj.kill();
-        //this->m_dualbasisProj.kill();
-        // IntLatticeExt<Int, Real>::~IntLatticeExt();
-    }
+template<typename Int, typename Real>
+IntLatticeExt<Int, Real>::~IntLatticeExt() {
+    //this->m_basisProj.kill();
+    //this->m_dualbasisProj.kill();
+    // IntLatticeExt<Int, Real>::~IntLatticeExt();
+}
 
 //===========================================================================
 
-    template<typename Int, typename Real>
-    void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
-        // Uses the NTL assignment operator = to make a copy of the bases.
-        // m_order = lat.getOrder();
-        this->m_modulo = lat.m_modulo;
-        if (lat.m_withPrimal) this->m_basis = lat.m_basis;
-        if (lat.m_withDual) this->m_dualbasis = lat.m_dualbasis;
-    }
+template<typename Int, typename Real>
+void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
+    // Uses the NTL assignment operator = to make a copy of the bases.
+    // m_order = lat.getOrder();
+    this->m_modulo = lat.m_modulo;
+    if (lat.m_withPrimal)
+        this->m_basis = lat.m_basis;
+    if (lat.m_withDual)
+        this->m_dualbasis = lat.m_dualbasis;
+}
 
 //===========================================================================
 
-    template class IntLatticeExt<std::int64_t, double> ;
-    template class IntLatticeExt<NTL::ZZ, double> ;
-    template class IntLatticeExt<NTL::ZZ, NTL::RR> ;
+template class IntLatticeExt<std::int64_t, double> ;
+template class IntLatticeExt<NTL::ZZ, double> ;
+template class IntLatticeExt<NTL::ZZ, NTL::RR> ;
 
 } // End namespace LatticeTester
 
