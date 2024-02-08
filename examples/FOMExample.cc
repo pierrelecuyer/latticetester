@@ -81,7 +81,7 @@ int main() {
   
   //FOM M_{5,32,16,12,8}
   t.resize(5);
-  t[0] = 32;
+  t[0] = 5;
   t[1] = 32;
   t[2] = 16;
   t[3] = 12;
@@ -92,7 +92,7 @@ int main() {
   norma = new NormaBestLat(log_density, dim);
   
   //FigureOfMeritM<Int> fom(*weights, *red); 
-  FigureOfMeritDualM<Int> fom(t, meth, *red, *norma); 
+  FigureOfMeritDualM<Int> fom(t, meth, *red, *norma, true); 
   
   a = multipliers[0];
   lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
@@ -103,9 +103,9 @@ int main() {
   for (int j = 0; j < numMult; j++) {
      a = multipliers[j]; 
      for (int k = 0; k < numDelta; k++) {
-        lat = new Rank1Lattice<Int, Real>(m, a, dim, with_dual);
+        lat = new Rank1Lattice<Int, Real>(m, a, dim, true, with_dual);
         lat->buildBasis(dim);         
-        f = fom.computeMeritDualM(*lat, proj);
+        f = fom.computeMeritDual(*lat, proj);
         std::cout << "For dim = " << dim << " and a = " << a << " and t = " << t << "" << "\n";
         std::cout << "the figure of merit M is: " << f << "\n";
         std::cout << "\n";  
