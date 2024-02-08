@@ -26,7 +26,8 @@
 namespace LatticeTester {
 
   /**
-   * The classes `FromRange`, `SubSets`, and `AddCoordinate` are implemented here.
+   * The classes `FromRange`, `SubSets`, and `AddCoordinate` are defined here.
+   * They are implemented in `CoordinateSets.cc`.
    *
    * `CoordinateSets` (below) is a namespace that contains different implementations
    * of sets of coordinates.  They resemble Set objects in standard C++.
@@ -141,7 +142,7 @@ namespace LatticeTester {
      * When you iterate through this class, it generates the next subset of 
      * coordinates in the interval associated with the current order. If there 
      * is none left, it moves on to the next order and starts generating subsets
-     * from the interval associated with this order. It is not possible to 
+     * from the interval associated with it. It is not possible to
      * generate coordinate sets of the same order for different intervals with 
      * the same instance of this class.
      */
@@ -162,9 +163,9 @@ namespace LatticeTester {
         // Having a private getter is not that useful.
         const RangeMap& ranges() const {return m_ranges;}
         
-        //This boolean variable indicates if the first variable should always be included 
-        //in the coordinates sets
-        bool includeFirstVariable;
+        // This boolean variable indicates if the first coordinate will always be included
+        // (added to each projection) in the coordinates sets.
+        bool includeFirstCoordinate;
 
       public:
         /**
@@ -172,17 +173,21 @@ namespace LatticeTester {
          * \mathtt{maxCoord}\}\f$ with minimum and maximum cardinality
          * specified by \c minOrder and \c maxOrder.
          * For example, to select  all 1, 2, and 3-tuples over coordinates 2, 3, 4,
-         * one may use the declaration <tt>FromRanges range(1, 3, 2, 4)</tt>;
-         * this gives the sets
+         * one may use the declaration <tt>FromRanges range(1, 3, 2, 4)</tt>.
+         * This gives the sets
          * <tt>range = {{2}, {3}, {4}, {2, 3}, {2, 4}, {3, 4}, {2, 3, 4}}</tt>.
-         * The variable includeFirst indicates if the first variable shall always
-         * be included. For instance, the above mentioned example would change to
+         *
+         * The boolean variable `includeFirst` indicates if coordinate 1 is always included and
+         * added to each projection.
+         * In the previous example, `includeFirst = false` by default.
+         * If we put `includeFirst = true` in the same example, we obtain
          * <tt>range = {{1, 2}, {1, 3}, {1, 4}, {1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {1, 2, 3, 4}}</tt>.
-         * if includeFirst was set to true. 
-         * Note: includefirst can only set to true if minorder > 1. Otherwise an error message appears.
+         * Note that `includeFirst` can be set to true only if `minorder > 1`.
+         * Otherwise an error message is given.
          */
         FromRanges (Coordinates::size_type minOrder, Coordinates::size_type maxOrder,
-            Coordinates::value_type minCoord, Coordinates::value_type maxCoord, const bool includeFirst = false);
+            Coordinates::value_type minCoord, Coordinates::value_type maxCoord,
+            const bool includeFirst = false);
 
         /**
          * Constructs an empty set of coordinate sets. When using this
@@ -339,9 +344,9 @@ namespace LatticeTester {
            * */
           Coordinates m_value;
           
-          //This boolean variable indicates if the first variable should always be included 
+          //This boolean variable indicates if the first coordinate should always be included
           //in the coordinates sets
-          bool includeFirstVariable = false;                   
+          bool includeFirstCoordinate = false;
 
       }; // end FromRanges::const_iterator class
 

@@ -31,7 +31,7 @@ namespace LatticeTester {
         Coordinates::value_type minCoord, Coordinates::value_type maxCoord,
 		const bool includeFirst)
     {
-      includeFirstVariable = includeFirst;  
+      includeFirstCoordinate = includeFirst;
       if (minCoord < 2 && includeFirst)
       { 
          std::cerr << "Error: minCoord needs to be at least 2 if includeFirst is true!\n";
@@ -53,7 +53,7 @@ namespace LatticeTester {
         Coordinates::value_type minCoord,
         Coordinates::value_type maxCoord, const bool includeFirst)
     {
-      includeFirstVariable = includeFirst;  
+      includeFirstCoordinate = includeFirst;
       if (order > 0 && maxCoord < minCoord + order - 1)
         throw std::invalid_argument
           ("CoordinateSets::FromRanges::includeOrder(): maxCoord < minCoord + order - 1");
@@ -78,8 +78,8 @@ namespace LatticeTester {
       // empty coordinate set
       m_value.clear ();
 
-      //Set includeFirstVariable inside the iterator
-      includeFirstVariable = m_seq->includeFirstVariable;      
+      //Set includeFirstCoordinate inside the iterator
+      includeFirstCoordinate = m_seq->includeFirstCoordinate;
 
       // stop if all orders exhausted
       if (itRange == m_seq->ranges().end ()) {
@@ -104,7 +104,7 @@ namespace LatticeTester {
       while (m_value.size () < order && i <= maxCoord)
         m_value.insert(i++);
       
-      if (includeFirstVariable == true) {
+      if (includeFirstCoordinate == true) {
          m_value.insert(1);
       }
     }
@@ -116,8 +116,8 @@ namespace LatticeTester {
       if (m_atEnd)
         return *this;
       
-      //Delete 1 from m_value if includeFirstVariable is activated
-      if (includeFirstVariable == true) {
+      //Delete 1 from m_value if includeFirstCoordinate is activated
+      if (includeFirstCoordinate == true) {
     	  m_value.erase(1);
       }
       
@@ -174,7 +174,7 @@ namespace LatticeTester {
         m_value.insert(++high);      
       
       // include first variable if set
-      if (includeFirstVariable == true) {
+      if (includeFirstCoordinate == true) {
     	m_value.insert(1);
       }
       

@@ -71,7 +71,8 @@ public:
     /**
      * This constructor takes as input the modulus `m`, the generating vector `aa`,
      * and the norm used to measure the vector lengths.
-     * The maximal dimension `maxDim` will be the length of the vector `aa`.
+     * The maximal dimension `maxDim` will be the length `d` of the vector `aa`.
+     * Note that the coefficient @f$a_j$@f will be `aa[j-1]`.
      * This constructor does not build the basis, to leave
      * more flexibility in the dimension when doing so.
      */
@@ -351,7 +352,9 @@ void Rank1Lattice<Int, Real>::incDimBasis() {
     this->setNegativeNorm();
 
     // If m-dual basis is maintained, we also increase its dimension.
-    // For this, we need the primal basis!
+    // Note: This is different from `incDimDualBasis`, because here we want this
+    // m-dual to be the m-dual of the primal basis we just computed!
+    // This requires the primal and a bit more calculations.             **********
     if (this->m_withDual) {
         // Add extra coordinate to each vector
         for (i = 0; i < d; i++) {
