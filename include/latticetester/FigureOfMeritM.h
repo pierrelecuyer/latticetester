@@ -39,28 +39,50 @@
 #include "latticetester/LLL_FPZZflex.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
-
-#include "latticetester/NormaBestLat.h"
-#include "latticetester/NormaBestBound.h"
-#include "latticetester/WeightsUniform.h"
+#include "latticetester/Normalizer.h"
 #include "latticetester/CoordinateSets.h"
 
 namespace LatticeTester {
 
 /**
- * This class offers methods (functions) to calculate the figure of merit M for a given
- * IntLattice object. The FoM M is defined as the minimum of the normalized shortest
- * vector lengths for a set of projections which is determined by a vector (t_1,...,t_d).
- * These projections can consist of successive coordinates as well as non-successive coordinates.
- * The exact lengths of the shortest vectors can either be calculated exactly by using the 
- * BB algorithm or they can be approximated using the shortest base vector length after LLL, BKZ 
- * or pairwise pre-reduction has been applied, which is much faster but less exact. 
- * 
- * Moreoover, the bounds and the parameters of the reduction method also have default values.
- * These can be changed by the methods 'setReductionMethod' and 'setBounds'.
- * 
- * The main method of this class is 'computeMeritM' which calculates the actual figure of merit
- * M for a given lattice.
+ * This class offers functions to calculate the figure of merit (FOM)
+ * \f{equation}{
+ *    M_{t_1,\dots,t_d} = \min\left[ \min_{I\in S(t_1)} \omega_I \ell_I/\ell_I^*(\eta_I),\;
+ *    \min_{2\le s\le d}\, \min_{I\in S(s,t_s)} \omega_I \ell_I/\ell_I^*(\eta_I) \right],
+ * \f}
+ * defined in Section 10 of the guide, for any given `IntLatticeExt` object.
+ * The FOM is computed only for the primal lattice, the m-dual is never used.
+ * The projections in \f$S(t_1)$\f are those over successive coordinates in up to \f$t_1$\f
+ * dimensions, while those is  @f$S(s,t_s)$@f are projections over \f$s$\f distinct coordinates
+ * that are non necessarily successive and are all in the set \f$\{1,\dots,t_s\}$\f,
+ * for each order @f$s > 1$@f.
+ * There are two variants for the latter: the first (default) variant takes
+ * @f$S(s,t_s)$@f as just defined (also defined in the guide), and the other considers
+ * only the set @f$S^{(1)}(s,t_s)$@f of projections that contain coordinate 1.
+ * The parameter `includeFirst` in the constructor determines which variant is taken.
+ *
+ * The lengths of the shortest vectors in the projections can be calculated exactly by using the
+ * BB algorithm after applying some pre-reduction, or they can be just approximated
+ * by the lengths of the shortest basis vector obtained after applying some pre-reduction
+ * such as LLL or BKZ.  The latter is much faster but not exact.
+ * The `ReductionType` parameter in the constructor selects the method.
+ * Note that we need a `Reducer` object only when BB is applied.
+ * I other cases, we just use static methods for the reduction.
+ *
+ * The constructor requires the vector @f$(t_1,\dots,t_d)$@f, the type of reduction
+ * that will be used to compute or approximate the vector lengths,
+ * a `Reducer` object used for the reduction in case the reduction method includes BB,
+ * a `Normalizer` object used to normalize the merit values, and the optional
+ * `includeFirst` parameter in case we want to put it to `true`.
+ * The function `setTVector` permits one to set (or reset) the vector  @f$(t_1,\dots,t_d)$@f.
+ * One can use `setReductionMethod` to reset the type of reduction or change its parameters
+ * `delta` and `blocksize` from their default values of 0.99999 and 10.
+ * The `Normalizer` can be changed via `setNormalizer`.
+ *
+ * The method `computeMerit` computes the FOM.
+ * The computation is stopped (early exit) as soon as we know that the value of the FOM
+ * will be outside the interval `[low, high]`.  By default,
+ * these two bounds are 0 and 1, but they can be changed via the function `setBounds`.
  *
  */
 
@@ -72,35 +94,40 @@ private:
 public:
 
     /*
-     * Constructor of a FigureOfMeritM object. Needs a reducer object
-     * to be passed. The vector 't' defines the set of
-     * dimensions for which the figure of merit is calculated. It contains
-     * the values of t_1,..., t_d in the definition of the FoM.
-     *
-     * ****  I put `includeFirst` to have the same name as in CoordinateSets
-     *       and the same default value, for consistency.
+     * This constructor will call `setTVector` with the given vector `t`
+     * and `includeFirst` variable,
+     * then set the `ReductionType`, `Reducer`, and `Normalizer` to the given values.
      */
     FigureOfMeritM(const vector<int64_t> &t, ReductionType &meth,
             Reducer<Int, Real> &red, Normalizer &norma, bool includeFirst = false);
 
     /*
-     * Sets the vector 't' @f$=  (t_1,..., t_d)$@f in the definition of this FOM.
-     * ******   Are the values in t[0],..., t[d-1]  or in t[1],...,t[d] ??????   *******
-     *          It should be the first case.   This must be said.
-     *          t[0] will contain $t_1$, etc.
+     * Sets the vector @f$(t_1,..., t_d)$@f in the FOM definition to the vector `t`.
+     * Note that the values of @f$t_1,..., t_d$@f are taken from `t[0],...,t[d-1]`,
+     * respectively.  When `includeFirst` is `true`, we consider only the non-successive
+     * projections that contain coordinate 1.
+     * See the doc of the class `FromRanges` in `CoordinateSets` for more details.
      */
-    void setTVector(const vector<int64_t> &t);
+    void setTVector(const vector<int64_t> &t, bool includeFirst = false);
 
     /*
-     * Sets the reduction method and the parameter delta for LLL / BKZ algorithm
-     * as well as the blocksize used in the BKZ algorithm.
+     * Sets the reduction method and the parameters delta and blocksize used
+     * for the LLL and BKZ algorithm.
      */
     void setReductionMethod(ReductionType &meth, double delta = 0.99999,
             int64_t blocksize = 10);
 
     /*
+     * Sets the normalizer to `norma`.
+     */
+    void setNormalizer(Normalizer &norma) {
+        m_norma = &norma;
+    }
+
+    /*
      * Directly sets a new coordinate set.
      *   Why do we want this??  It may be inconsistent with the definition of M.  ******
+     *   It would also require much more explanations!                  REMOVE  ********
      */
     void setCoordinateSets(CoordinateSets::FromRanges coordRange) {
         m_coordRange = coordRange;
@@ -109,19 +136,13 @@ public:
     /*
      * Sets the low and the high bound for the FOM.
      * The FOM computation is stopped as soon as we know it is outside these bounds.
+     *                              ******    Is this correct ?   *********
      */
     void setBounds(double &low, double &high) {
         m_highbound = high;
         m_lowbound = low;
     }
 
-    /*
-     * Sets the normalizer to `norma`.
-     */
-    void setNormalizer(Normalizer &norma) {
-        m_norma = &norma;
-    }
-    
     /* 
      * Sets a boolean variable that indicates if the first coordinate will always
      * be included in all the projections over the non-successive coordinates.
@@ -132,58 +153,60 @@ public:
      * ******   Problem:  If we call this after the constructor,
      *          m_coordRange  is no longer correct!   So this "set..." does not work.
      *          This variable must be set in the constructor.
+     *                                                         REMOVE   **********
      */
     void setFirstCoordinateAlwaysIn(bool &includeFirst) {
         m_firstCoordinateAlwaysIn = includeFirst;
     }
 
     /*
-     * This function calculates the Figure of Merit M of a given lattice 'lat'
-     * and should be called by the user. The vector 't' defines the set of
-     * dimensions for which the figure of merit is calculated. It contains
-     * the values of t_1,..., t_d in the definition of the FoM.
-     * The IntLattice object 'proj' is needed for saving projections.
-     * The value 0 is returned if an error occurs
-     * while calculating the shortest vector.
+     * This function computes and returns the value of the FOM for the given lattice 'lat'.
+     * The function returns 0 if the computation was not completed for some reason
+     * (early exit, error, etc.).
+     * The parameter `proj` points to an `IntLattice` object that is used to store the
+     * projections when computing the FOM.  The `maxDim` in this object must be large
+     * enough so it can store any of the projections: it must be at least \f$d$\f and
+     * at least \f$t_1$\f.                       Is that enough ???    *************
+     * Re-using this object permits one to avoid creating new objects internally.
      *
      * In practice, we may also want to recover which projection gave the worst `merit`.  ********
      * And in some cases, we will want to recover the merit for each of the projections.  ********
-     *
-     * I removed `M`.  No longer relevant.
+     * I think this is done in LatMRG.                                                    ********
      */
-    double computeMerit(IntLatticeExt<Int, Real> &lat,
-            IntLattice<Int, Real> *proj);
+    double computeMerit(IntLatticeExt<Int, Real> &lat,     IntLattice<Int, Real> *proj);
 
     /*
-     * This function calculates the Figure of Merit for all projections
-     * consisting of successive coordinates of the forms
-     * {1, 2, ..., m_t.size()} to {1, 2, ..., m_t[0]}
-     * for the primal lattice.
-     * The value 0 is returned if an error occurs while calculating the shortest vector.
-     *
-     * I removed "Primal".   Was no longer relevant.
+     * This function computes and returns the FOM for all projections
+     * over sets of successive coordinates of the form
+     * {1, 2, ..., m_t.size()} to {1, 2, ..., m_t[0]}.
+     * It returns 0 if the computation was not completed for some reason.
+     * The parameter `proj` is like for `computeMerit`.
      */
     double computeMeritSucc(IntLatticeExt<Int, Real> &lat,
             IntLattice<Int, Real> *proj);
 
     /*
-     * This functions calculates the figure of merit of the primal lattice
-     * for all projections consisting of non-successive coordinates.
-     * The value 0 is returned if an error occurs while calculating the
-     * shortest vector.
+     * This function computes and returns the FOM for all projections
+     * over sets on non-successive coordinates determined by
+     *  @f$S(s,t_s)$@f or  @f$S^{(1)}(s,t_s)$@f.
+     * It returns 0 if the computation was not completed for some reason.
+     * The parameter `proj` is like for `computeMerit`.
      */
     double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
             IntLattice<Int, Real> *proj);
 
     /*
-     * Internal `CoordinateSets` object used to store the sets of projections
-     * that are considered. It is populated by the `setTVector` function.
+     * Internal `CoordinateSets` object used to store the set of projections
+     * that are considered for the non-successive coordinates.
+     * It is constructed and populated by the `setTVector` function.
      * This object will contain a set of projections of each order.
+     *                                      Should we hide this ???     ***********
      */
     CoordinateSets::FromRanges m_coordRange;
 
     /*
      * Internal normalizer object for storing normalizing values in FiguresOfMeritM class
+     *                       Should we hide this and the next one ???     ***********
      */
     Normalizer *m_norma;
 
@@ -195,8 +218,8 @@ public:
 protected:
 
     /*
-     * The vector 'm_t' defines the set of projections for which the FOM is
-     * computed . It contains the values of t_1,..., t_d in the definition of the FOM.
+     * The vector 'm_t' defines the set of projections for which the FOM is computed.
+     * `m_t[s-1]` represents t_s, for s=1,...,d.
      */
     vector<int64_t> m_t;
 
@@ -221,7 +244,7 @@ protected:
      * Section 10 of the user's guide, otherwise we use @f$S(s,t_s)$@f and we therefore
      * have a larger set of projections.
      */
-    bool m_firstCoordinateAlwaysIn = true;
+    bool m_firstCoordinateAlwaysIn = false;
 
     /*
      * As soon as we know the FOM is above this bound, its calculation stopped.
@@ -234,10 +257,13 @@ protected:
     double m_lowbound = 0.0;
 
     /*
-     * The vector 'm_b' is used to store the length of the basis vectors after pre-reduction has
-     * been performed.    *****  What is this?   The basis is in an array of double  ?????  *****
+     * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
+     * after an LLL or BKZ pre-reduction via the static methods of `LLL_FPZZflex`.
+     *         I figured out what it is, updated the doc, and changed the name
+     *         to a more significant one, the same as in LLL_FPZZflex for better consistency.
+     *         But it seems to be used nowhere!    **********
      */
-    double *m_b;
+    double *m_sqlen;
 
     /*
      * The next three variables below are introduced just to simplify the code.
@@ -263,8 +289,7 @@ protected:
 template<typename Int>
 FigureOfMeritM<Int>::FigureOfMeritM(const vector<int64_t> &t,
         ReductionType &meth, Reducer<Int, Real> &red, Normalizer &norma, bool includeFirst) {
-    m_firstCoordinateAlwaysIn = includeFirst;  // This must be set first.    ********
-    setTVector(t);
+    setTVector(t, includeFirst);
     setReductionMethod(meth);
     setNormalizer(norma);
     m_red = &red;
@@ -273,9 +298,11 @@ FigureOfMeritM<Int>::FigureOfMeritM(const vector<int64_t> &t,
 //=========================================================================
 
 template<typename Int>
-void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t) {
+void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t, bool includeFirst) {
     m_t = t;
+    m_firstCoordinateAlwaysIn = includeFirst;
     // Clear the CoordinateSets object.
+    //   We could also just create a new one here, this is simpler and be done only once.  **********
     for (Coordinates::size_type i = 0; i < m_t.size(); i++)
         m_coordRange.excludeOrder(i);
     /* Defines the lower bound for the range of coordinates that belong to a projection.
@@ -285,13 +312,12 @@ void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t) {
      * See the doc of the class `FromRanges` in `CoordinateSets`.
      */
     int64_t min_dim = 1;
-    if (m_firstCoordinateAlwaysIn) min_dim = 2;
+    if (includeFirst) min_dim = 2;
     int64_t d = static_cast<int>(t.size()); // Number of orders for the projections.
-    // ******   Are the values in t[0],..., t[d-1]  or in t[1],...,t[d] ??????   *******
     for (int64_t i = 1; i < d; i++)
         // Adds the set of projections of order i.
         // I think we want orders from 2 to d.  So the first i below should be i+1.  *******
-        m_coordRange.includeOrder(i, min_dim, t[i], true);
+        m_coordRange.includeOrder(i+1, min_dim, t[i], true);
 }
 
 //=========================================================================
@@ -328,7 +354,8 @@ double FigureOfMeritM<Int>::computeMerit(IntLatticeExt<Int, Real> &lat,
     double merit = 0;
     double minmerit = 1.0;
 
-    m_b = new double[m_t.size()];
+    m_sqlen = new double[m_t.size()];    // Why create this vector again each time ????  *******
+                         // Also, we do not see where it is used!  Is it really used??? ******
     merit = computeMeritNonSucc(lat, proj);
     if (merit < minmerit)
         minmerit = merit;
@@ -336,7 +363,7 @@ double FigureOfMeritM<Int>::computeMerit(IntLatticeExt<Int, Real> &lat,
     if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound)
         return 0;
 
-    m_b = new double[lat.getDim()];
+    m_sqlen = new double[lat.getDim()];
     merit = computeMeritSucc(lat, proj);
     if (merit < minmerit)
         minmerit = merit;
@@ -362,7 +389,7 @@ double FigureOfMeritM<Int>::computeMeritSucc(
             this->m_red->redBKZ(lat.getBasis(), this->m_delta,
                     this->m_blocksize);
         } else if (m_doingLLL) {
-            LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_b);
+            LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
         }
@@ -406,7 +433,7 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(
                     this->m_blocksize);
         } else if (m_doingLLL) {
             LLL_FPZZflex(proj->getBasis(), this->m_delta, coord.size(),
-                    coord.size(), this->m_b);
+                    coord.size(), this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
         }
