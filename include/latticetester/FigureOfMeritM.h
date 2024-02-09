@@ -244,9 +244,6 @@ protected:
     /*
      * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
      * after an LLL or BKZ pre-reduction via the static methods of `LLL_FPZZflex`.
-     *         I figured out what it is, updated the doc, and changed the name
-     *         to a more significant one, the same as in LLL_FPZZflex for better consistency.
-     *         But it seems to be used nowhere!    **********
      */
     double *m_sqlen;
 
