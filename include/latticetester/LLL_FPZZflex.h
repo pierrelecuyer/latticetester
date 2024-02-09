@@ -1339,7 +1339,6 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
    // long m = BB.NumRows();
    // long n = BB.NumCols();
    long m_orig = m;
-   long rows_orig = BB.NumRows();
    long i, j;
    ZZ MU;
 
@@ -1350,9 +1349,15 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
    init_red_fudge();
 
    mat_ZZ B;    // Will be a deep copy of BB, with one more row.   ********
-   B = BB;
-   // if (m_orig==rows_orig)
-     B.SetDims(rows_orig+1, rows_orig);   // Here we are reserving new space.
+   // Change it to smaller dimensions
+   B.SetDims(m+1, n);
+   for (i = 0; i < m+1; i++) {
+        for (j = 0; j < n; j++) {
+        	B[i][j] = BB[i][j];
+        }
+   }
+   //B = BB;
+   //B.setDims(m+1, n);
    
 
    Unique2DArray<double> B1_store;
@@ -1708,10 +1713,13 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
    }
    // In this version, we do not move the zero vectors to the top.
 
-   // if (m_orig==rows_orig)
-     B.SetDims(rows_orig, rows_orig);   // Here we are reserving new space.
    // B.SetDims(m_orig, n);
-   BB = B;      // Are we changing the dimensions of BB in the end ??????
+   //BB = B;      // Are we changing the dimensions of BB in the end ??????
+   for (i = 0; i < m_orig; i++) {
+        for (j = 0; j < n; j++) {
+        	BB[i][j] = B[i][j];
+        }
+   }
 
    if (U) {
       U->SetDims(m_orig, m_orig);
