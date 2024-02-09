@@ -84,6 +84,8 @@ namespace LatticeTester {
  * will be outside the interval `[low, high]`.  By default,
  * these two bounds are 0 and 1, but they can be changed via the function `setBounds`.
  *
+ * Note: The class works only for the case where  "PrecisionType == DOUBLE".   
+ * This is a limitation.
  */
 
 template<typename Int> class FigureOfMeritM {
@@ -238,6 +240,15 @@ protected:
      * Internal reducer object used for finding the shortest vector of a projection
      */
     Reducer<Int, Real> *m_red;
+    
+    /*
+     * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
+     * after an LLL or BKZ pre-reduction via the static methods of `LLL_FPZZflex`.
+     *         I figured out what it is, updated the doc, and changed the name
+     *         to a more significant one, the same as in LLL_FPZZflex for better consistency.
+     *         But it seems to be used nowhere!    **********
+     */
+    double *m_sqlen;
 
 };
 
@@ -309,18 +320,20 @@ double FigureOfMeritM<Int>::computeMerit(IntLatticeExt<Int, Real> &lat,
     double merit = 0;
     double minmerit = 1.0;
 
+    this->m_sqlen = new double[this->m_t.size() + 1];
     merit = computeMeritNonSucc(lat, proj);
     if (merit < minmerit)
         minmerit = merit;
     // In any of these cases the calculation is stopped
-    if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound)
+    if (minmerit == 0)
         return 0;
 
+    this->m_sqlen = new double[this->m_t[0]];
     merit = computeMeritSucc(lat, proj);
     if (merit < minmerit)
         minmerit = merit;
     // In any of these cases the calculation is stopped
-    if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound)
+    if (minmerit == 0 || merit > this->m_highbound)
         return 0;
 
     return minmerit;
@@ -338,20 +351,20 @@ double FigureOfMeritM<Int>::computeMeritSucc(
         lat.incDimBasis();
         if (m_doingBKZ) {
             BKZ_FPZZflex(lat.getBasis(), this->m_delta, this->m_blocksize, 
-                    j, j);
+                    j, j, this->m_sqlen);
         } else if (m_doingLLL) {
-            LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j);
+            LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
+            this->m_sqlen[0] = lat.getVecNorm(0);
         }
         if (!m_doingBB) {
-            lat.updateSingleVecNorm(0, j);
             if (lat.getNormType() == L2NORM) {
                 NTL::conv(merit,
-                        sqrt(lat.getVecNorm(0)) / this->m_norma->getBound(j));
+                        sqrt(this->m_sqlen[0]) / this->m_norma->getBound(j));
             } else {
                 NTL::conv(merit,
-                        lat.getVecNorm(0) / this->m_norma->getBound(j));
+                		this->m_sqlen[0] / this->m_norma->getBound(j));
             }
         } else {
             if (!m_red->shortestVector(lat))
@@ -361,7 +374,7 @@ double FigureOfMeritM<Int>::computeMeritSucc(
         }
         if (merit < minmerit)
             minmerit = merit;
-        if (minmerit <= this->m_lowbound || minmerit > this->m_highbound)
+        if (minmerit <= this->m_lowbound)
             return 0;
     }
     return minmerit;
@@ -377,37 +390,38 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(
 
     for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
         coord = *it;
-        lat.buildProjection(proj, *it, this->m_delta);  // Must have withDual = false   ***
+        lat.buildProjection(proj, coord, this->m_delta);  // Must have withDual = false   ***
         if (m_doingBKZ) {
-            BKZ_FPZZflex(lat.getBasis(), this->m_delta, this->m_blocksize, 
-                    coord.size(), coord.size());
+            BKZ_FPZZflex(proj->getBasis(), this->m_delta, this->m_blocksize, 
+                    coord.size(), coord.size(), this->m_sqlen);
         } else if (m_doingLLL) {
             LLL_FPZZflex(proj->getBasis(), this->m_delta, coord.size(),
-                    coord.size());
+                    coord.size(), this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
+            this->m_sqlen[0] = lat.getVecNorm(0);
         }
         if (!m_doingBB) {
-            proj->updateSingleVecNorm(0, coord.size());
             if (lat.getNormType() == L2NORM) {
                 NTL::conv(merit,
-                        sqrt(proj->getVecNorm(0))
-                                / this->m_norma->getBound(proj->getDim()));
+                        sqrt(this->m_sqlen[0])
+                                / this->m_norma->getBound(coord.size()));
+                std::cout << merit << "\n";
             } else {
                 NTL::conv(merit,
-                        proj->getVecNorm(0)
-                                / this->m_norma->getBound(proj->getDim()));
+                		this->m_sqlen[0]
+                                / this->m_norma->getBound(coord.size()));
             }
         } else {
             if (!m_red->shortestVector(*proj))
                 return 0;
             merit = NTL::conv<double>(
                     m_red->getMinLength()
-                            / this->m_norma->getBound(proj->getDim()));
+                            / this->m_norma->getBound(coord.size()));
         }
         if (merit < minmerit)
             minmerit = merit;
-        if (minmerit <= this->m_lowbound || minmerit > this->m_highbound)
+        if (minmerit <= this->m_lowbound)
             return 0;
     }
     return minmerit;
