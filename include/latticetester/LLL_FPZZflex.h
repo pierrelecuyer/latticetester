@@ -1108,9 +1108,16 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, double delta, long m, long n, double *sq
 
    new_m = ll_LLL_FP(B, U, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
 
-   if (sqlen)
-	   for (i = 0; i < new_m; i++)
-           sqlen[i] = b[i+1];
+   int imin = 0;
+   double minlen = b[1];
+   if (sqlen) {
+      for (i = 0; i < m; i++) {
+          sqlen[i] = b[i+1];
+          if (sqlen[i] < minlen) { minlen = sqlen[i]; imin = i; };
+      }
+   }
+   std::swap(sqlen[0],sqlen[imin]);
+   swap(B[0],B[imin]);
    // In this version, we leave the zero rows at the bottom.
    // The new_m independent basis vectors will be at the top of `B`.
    /*
@@ -1332,6 +1339,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
    // long m = BB.NumRows();
    // long n = BB.NumCols();
    long m_orig = m;
+   long rows_orig = BB.NumRows();
    long i, j;
    ZZ MU;
 
@@ -1343,7 +1351,9 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
 
    mat_ZZ B;    // Will be a deep copy of BB, with one more row.   ********
    B = BB;
-   B.SetDims(m+1, n);   // Here we are reserving new space.
+   // if (m_orig==rows_orig)
+     B.SetDims(rows_orig+1, rows_orig);   // Here we are reserving new space.
+   
 
    Unique2DArray<double> B1_store;
    B1_store.SetDimsFrom1(m+2, n+1);
@@ -1698,16 +1708,25 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
    }
    // In this version, we do not move the zero vectors to the top.
 
-   B.SetDims(m_orig, n);
+   // if (m_orig==rows_orig)
+     B.SetDims(rows_orig, rows_orig);   // Here we are reserving new space.
+   // B.SetDims(m_orig, n);
    BB = B;      // Are we changing the dimensions of BB in the end ??????
 
    if (U) {
       U->SetDims(m_orig, m_orig);
       *UU = *U;
    }
-   if (sqlen)
-	  for (i = 0; i < m; i++)
+   int imin = 0;
+   double minlen = b[1];
+   if (sqlen) {
+      for (i = 0; i < m; i++) {
           sqlen[i] = b[i+1];
+          if (sqlen[i] < minlen) { minlen = sqlen[i]; imin = i; };
+      }
+   }
+   std::swap(sqlen[0],sqlen[imin]);
+   swap(BB[0],BB[imin]);
    return m;
 }
 
