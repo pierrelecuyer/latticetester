@@ -51,6 +51,7 @@ namespace LatticeTester {
  * Euclidean norm.
  * Methods and attributes are offered to compute and store the norms of the basis and/or
  * the m-dual basis vectors, to permute these vectors, sort them by length, etc.
+ * The norms are for the vectors of the rescaled lattice and its m-dual.
  * An `IntLattice` object contains protected variables to store all these quantities.
  * For better efficiency, we should avoid creating many `IntLattice` objects, for example when
  * making searches for good lattices. We should try to reuse the same one as much as we can.
@@ -721,7 +722,7 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateVecNorm(const int64_t &d) {
     assert(d >= 0);
     for (int64_t i = d; i < this->m_dim; i++) {
-        NTL::matrix_row<IntMat> row(this->m_basis, i);
+        NTL::matrix_row<IntMat> row(this->m_basis, i);  // Is this making a copy of the row?  ******
         if (this->m_norm == L2NORM) {
             ProdScal<Int>(row, row, this->m_dim, this->m_vecNorm[i]);
         } else {

@@ -33,6 +33,10 @@ namespace LatticeTester {
  * These constants are based on upper bounds (or approximations) on the best possible length,
  * for given lattice density and dimension.
  * The various subclasses of this class implement specific bounds.
+ * The bounds computed and stored in this class and subclasses are for the primal lattice
+ * \f$ L_t \f$ NOT rescaled by a factor \f$ m\f$.
+ * The bounds for the rescaled lattice are the same for the \f$ m\f$-dual, but for the
+ * primal the density in \f$ t\f$ dimensions must be divided by \f$ m^t\f$.
  *
  * Given a lattice of density \f$ \eta \f$ in \f$t\f$ dimensions,
  * the Euclidean length \f$ d_t \f$ of a shortest nonzero lattice vector is upper-bounded as follows:
@@ -282,9 +286,8 @@ void Normalizer::computeBounds(double logDensity) {
 /*-------------------------------------------------------------------------*/
 
 void Normalizer::computeBounds(double logm, int64_t k) {
-	//  double logm =  NTL::log(m);
-	// 	 * The bounds \f$ d_t^*(\eta)\f$ (if `dualF=0`) or \f$ \ell_t^*(\eta)\f$ (if `dualF=1`)
-    // if (dualF)  logm = -logm;
+	// The bounds \f$ d_t^*(\eta_t)\f$ (for dual) or \f$ \ell_t^*(\eta_t)\f$ (for primal).
+    // These are the bounds for the primal lattice NOT rescaled by a factor m.
 	double x;
 	for (int64_t j = 1; j <= m_maxDim; j++) {
 		x = 0.5 * log(getGamma(j)) - (1.0 / j) * (min(k, j) * logm);
