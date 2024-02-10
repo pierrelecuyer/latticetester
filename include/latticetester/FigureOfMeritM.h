@@ -84,6 +84,8 @@ namespace LatticeTester {
  * will be outside the interval `[low, high]`.  By default,
  * these two bounds are 0 and 1, but they can be changed via the function `setBounds`.
  *
+ * Note: The class works only for the case where  "PrecisionType == DOUBLE".   
+ * This is a limitation.
  */
 
 template<typename Int> class FigureOfMeritM {
@@ -125,38 +127,12 @@ public:
     }
 
     /*
-     * Directly sets a new coordinate set.
-     *   Why do we want this??  It may be inconsistent with the definition of M.  ******
-     *   It would also require much more explanations!                  REMOVE  ********
-     */
-    void setCoordinateSets(CoordinateSets::FromRanges coordRange) {
-        m_coordRange = coordRange;
-    }
-
-    /*
      * Sets the low and the high bound for the FOM.
      * The FOM computation is stopped as soon as we know it is outside these bounds.
-     *                              ******    Is this correct ?   *********
      */
     void setBounds(double &low, double &high) {
         m_highbound = high;
         m_lowbound = low;
-    }
-
-    /* 
-     * Sets a boolean variable that indicates if the first coordinate will always
-     * be included in all the projections over the non-successive coordinates.
-     * If true, the FOM will @f$S^{(1)}(s,t_s)$@f  in Section 10 of the user's guide,
-     * otherwise it will use @f$S(s,t_s)$@f, which contains a larger number of projections.
-     * The default value is `false`.
-     *
-     * ******   Problem:  If we call this after the constructor,
-     *          m_coordRange  is no longer correct!   So this "set..." does not work.
-     *          This variable must be set in the constructor.
-     *                                                         REMOVE   **********
-     */
-    void setFirstCoordinateAlwaysIn(bool &includeFirst) {
-        m_firstCoordinateAlwaysIn = includeFirst;
     }
 
     /*
@@ -166,12 +142,8 @@ public:
      * The parameter `proj` points to an `IntLattice` object that is used to store the
      * projections when computing the FOM.  The `maxDim` in this object must be large
      * enough so it can store any of the projections: it must be at least \f$d$\f and
-     * at least \f$t_1$\f.                       Is that enough ???    *************
+     * at least \f$t_1$\f.
      * Re-using this object permits one to avoid creating new objects internally.
-     *
-     * In practice, we may also want to recover which projection gave the worst `merit`.  ********
-     * And in some cases, we will want to recover the merit for each of the projections.  ********
-     * I think this is done in LatMRG.                                                    ********
      */
     double computeMerit(IntLatticeExt<Int, Real> &lat,     IntLattice<Int, Real> *proj);
 
@@ -194,26 +166,6 @@ public:
      */
     double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
             IntLattice<Int, Real> *proj);
-
-    /*
-     * Internal `CoordinateSets` object used to store the set of projections
-     * that are considered for the non-successive coordinates.
-     * It is constructed and populated by the `setTVector` function.
-     * This object will contain a set of projections of each order.
-     *                                      Should we hide this ???     ***********
-     */
-    CoordinateSets::FromRanges m_coordRange;
-
-    /*
-     * Internal normalizer object for storing normalizing values in FiguresOfMeritM class
-     *                       Should we hide this and the next one ???     ***********
-     */
-    Normalizer *m_norma;
-
-    /*
-     * Internal reducer object used for finding the shortest vector of a projection
-     */
-    Reducer<Int, Real> *m_red;
 
 protected:
 
@@ -257,15 +209,6 @@ protected:
     double m_lowbound = 0.0;
 
     /*
-     * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
-     * after an LLL or BKZ pre-reduction via the static methods of `LLL_FPZZflex`.
-     *         I figured out what it is, updated the doc, and changed the name
-     *         to a more significant one, the same as in LLL_FPZZflex for better consistency.
-     *         But it seems to be used nowhere!    **********
-     */
-    double *m_sqlen;
-
-    /*
      * The next three variables below are introduced just to simplify the code.
      * This one indicates whether the BB algorithm will be performed or not.
      */
@@ -280,6 +223,29 @@ protected:
      * Indicates whether the BKZ algorithm is performed.
      */
     bool m_doingBKZ;
+    /*
+     * Internal `CoordinateSets` object used to store the set of projections
+     * that are considered for the non-successive coordinates.
+     * It is constructed and populated by the `setTVector` function.
+     * This object will contain a set of projections of each order.
+     */
+    CoordinateSets::FromRanges *m_coordRange;
+
+    /*
+     * Internal normalizer object for storing normalizing values in FiguresOfMeritM class
+     */
+    Normalizer *m_norma;
+
+    /*
+     * Internal reducer object used for finding the shortest vector of a projection
+     */
+    Reducer<Int, Real> *m_red;
+    
+    /*
+     * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
+     * after an LLL or BKZ pre-reduction via the static methods of `LLL_FPZZflex`.
+     */
+    double *m_sqlen;
 
 };
 
@@ -302,9 +268,7 @@ void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t, bool includeFirst
     m_t = t;
     m_firstCoordinateAlwaysIn = includeFirst;
     // Clear the CoordinateSets object.
-    //   We could also just create a new one here, this is simpler and be done only once.  **********
-    for (Coordinates::size_type i = 0; i < m_t.size(); i++)
-        m_coordRange.excludeOrder(i);
+    m_coordRange = new CoordinateSets::FromRanges;
     /* Defines the lower bound for the range of coordinates that belong to a projection.
      * It is 2 if the first coordinate belongs to all the projections, because we do
      * not have to consider coordinate 1. Otherwise it is 1.
@@ -316,8 +280,7 @@ void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t, bool includeFirst
     int64_t d = static_cast<int>(t.size()); // Number of orders for the projections.
     for (int64_t i = 1; i < d; i++)
         // Adds the set of projections of order i.
-        // I think we want orders from 2 to d.  So the first i below should be i+1.  *******
-        m_coordRange.includeOrder(i+1, min_dim, t[i], true);
+        m_coordRange->includeOrder(i+1, min_dim, t[i], true);
 }
 
 //=========================================================================
@@ -354,21 +317,20 @@ double FigureOfMeritM<Int>::computeMerit(IntLatticeExt<Int, Real> &lat,
     double merit = 0;
     double minmerit = 1.0;
 
-    m_sqlen = new double[m_t.size()];    // Why create this vector again each time ????  *******
-                         // Also, we do not see where it is used!  Is it really used??? ******
+    this->m_sqlen = new double[this->m_t.size() + 1];
     merit = computeMeritNonSucc(lat, proj);
     if (merit < minmerit)
         minmerit = merit;
     // In any of these cases the calculation is stopped
-    if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound)
+    if (minmerit == 0)
         return 0;
 
-    m_sqlen = new double[lat.getDim()];
+    this->m_sqlen = new double[this->m_t[0]];
     merit = computeMeritSucc(lat, proj);
     if (merit < minmerit)
         minmerit = merit;
     // In any of these cases the calculation is stopped
-    if (minmerit == 0 || minmerit < m_lowbound || minmerit > m_highbound)
+    if (minmerit == 0 || merit > this->m_highbound)
         return 0;
 
     return minmerit;
@@ -385,22 +347,21 @@ double FigureOfMeritM<Int>::computeMeritSucc(
     for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
         lat.incDimBasis();
         if (m_doingBKZ) {
-            //  ******   Why not use LLL_FPZZflex for this one as well?   *********
-            this->m_red->redBKZ(lat.getBasis(), this->m_delta,
-                    this->m_blocksize);
+            BKZ_FPZZflex(lat.getBasis(), this->m_delta, this->m_blocksize, 
+                    j, j, this->m_sqlen);
         } else if (m_doingLLL) {
             LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
+            this->m_sqlen[0] = lat.getVecNorm(0);
         }
         if (!m_doingBB) {
-            lat.updateSingleVecNorm(0, j);
             if (lat.getNormType() == L2NORM) {
                 NTL::conv(merit,
-                        sqrt(lat.getVecNorm(0)) / this->m_norma->getBound(j));
+                        sqrt(this->m_sqlen[0]) / this->m_norma->getBound(j));
             } else {
                 NTL::conv(merit,
-                        lat.getVecNorm(0) / this->m_norma->getBound(j));
+                		this->m_sqlen[0] / this->m_norma->getBound(j));
             }
         } else {
             if (!m_red->shortestVector(lat))
@@ -410,7 +371,7 @@ double FigureOfMeritM<Int>::computeMeritSucc(
         }
         if (merit < minmerit)
             minmerit = merit;
-        if (minmerit <= this->m_lowbound || minmerit > this->m_highbound)
+        if (minmerit <= this->m_lowbound)
             return 0;
     }
     return minmerit;
@@ -424,40 +385,40 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(
     double minmerit = 1.0;
     Coordinates coord;
 
-    for (auto it = m_coordRange.begin(); it != m_coordRange.end(); it++) {
+    for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
         coord = *it;
-        lat.buildProjection(proj, *it, this->m_delta);  // Must have withDual = false   ***
+        lat.buildProjection(proj, coord, this->m_delta);  // Must have withDual = false   ***
         if (m_doingBKZ) {
-            //  ******   Why not use LLL_FPZZflex for this one as well?   *********
-            this->m_red->redBKZ(proj->getBasis(), this->m_delta,
-                    this->m_blocksize);
+            BKZ_FPZZflex(proj->getBasis(), this->m_delta, this->m_blocksize, 
+                    coord.size(), coord.size(), this->m_sqlen);
         } else if (m_doingLLL) {
             LLL_FPZZflex(proj->getBasis(), this->m_delta, coord.size(),
                     coord.size(), this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
+            this->m_sqlen[0] = lat.getVecNorm(0);
         }
         if (!m_doingBB) {
-            proj->updateSingleVecNorm(0, coord.size());
             if (lat.getNormType() == L2NORM) {
                 NTL::conv(merit,
-                        sqrt(proj->getVecNorm(0))
-                                / this->m_norma->getBound(proj->getDim()));
+                        sqrt(this->m_sqlen[0])
+                                / this->m_norma->getBound(coord.size()));
+                std::cout << merit << "\n";
             } else {
                 NTL::conv(merit,
-                        proj->getVecNorm(0)
-                                / this->m_norma->getBound(proj->getDim()));
+                		this->m_sqlen[0]
+                                / this->m_norma->getBound(coord.size()));
             }
         } else {
             if (!m_red->shortestVector(*proj))
                 return 0;
             merit = NTL::conv<double>(
                     m_red->getMinLength()
-                            / this->m_norma->getBound(proj->getDim()));
+                            / this->m_norma->getBound(coord.size()));
         }
         if (merit < minmerit)
             minmerit = merit;
-        if (minmerit <= this->m_lowbound || minmerit > this->m_highbound)
+        if (minmerit <= this->m_lowbound)
             return 0;
     }
     return minmerit;
