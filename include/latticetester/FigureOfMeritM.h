@@ -51,7 +51,7 @@ namespace LatticeTester {
  *    \min_{2\le s\le d}\, \min_{I\in S(s,t_s)} \omega_I \ell_I/\ell_I^*(\eta_I) \right],
  * \f}
  * defined in Section 10 of the guide, for any given `IntLatticeExt` object.
- * The FOM is computed only for the primal lattice, the m-dual is never used.
+ * The FOM is computed only for the (rescaled) primal lattice, the m-dual is never used.
  * The projections in \f$S(t_1)$\f are those over successive coordinates in up to \f$t_1$\f
  * dimensions, while those is  @f$S(s,t_s)$@f are projections over \f$s$\f distinct coordinates
  * that are non necessarily successive and are all in the set \f$\{1,\dots,t_s\}$\f,
@@ -145,7 +145,7 @@ public:
      * at least \f$t_1$\f.
      * Re-using this object permits one to avoid creating new objects internally.
      */
-    double computeMerit(IntLatticeExt<Int, Real> &lat,     IntLattice<Int, Real> *proj);
+    double computeMerit(IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> *proj);
 
     /*
      * This function computes and returns the FOM for all projections
@@ -191,12 +191,35 @@ protected:
     int64_t m_blocksize = 10;
 
     /*
+     * Internal `CoordinateSets` object used to store the set of projections
+     * that are considered for the non-successive coordinates.
+     * It is constructed and populated by the `setTVector` function.
+     * This object will contain a set of projections of each order.
+     */
+    CoordinateSets::FromRanges *m_coordRange;
+
+    /*
+     * Internal normalizer object for storing normalizing values in FiguresOfMeritM class
+     */
+    Normalizer *m_norma;
+
+    /*
+     * Internal reducer object used for finding the shortest vector of a projection
+     */
+    Reducer<Int, Real> *m_red;
+
+    /*
+     * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
+     * after an LLL or BKZ pre-reduction via the static methods of `LLL_FPZZflex`.
+     */
+    double *m_sqlen;
+    /*
      * Indicates if the first coordinate will always be included in all the projections
      * over the non-successive coordinates.  If true, we use @f$S^{(1)}(s,t_s)$@f  in
      * Section 10 of the user's guide, otherwise we use @f$S(s,t_s)$@f and we therefore
      * have a larger set of projections.
      */
-    bool m_firstCoordinateAlwaysIn = false;
+    // bool m_firstCoordinateAlwaysIn = false;
 
     /*
      * As soon as we know the FOM is above this bound, its calculation stopped.
@@ -223,30 +246,7 @@ protected:
      * Indicates whether the BKZ algorithm is performed.
      */
     bool m_doingBKZ;
-    /*
-     * Internal `CoordinateSets` object used to store the set of projections
-     * that are considered for the non-successive coordinates.
-     * It is constructed and populated by the `setTVector` function.
-     * This object will contain a set of projections of each order.
-     */
-    CoordinateSets::FromRanges *m_coordRange;
-
-    /*
-     * Internal normalizer object for storing normalizing values in FiguresOfMeritM class
-     */
-    Normalizer *m_norma;
-
-    /*
-     * Internal reducer object used for finding the shortest vector of a projection
-     */
-    Reducer<Int, Real> *m_red;
     
-    /*
-     * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
-     * after an LLL or BKZ pre-reduction via the static methods of `LLL_FPZZflex`.
-     */
-    double *m_sqlen;
-
 };
 
 //============================================================================
@@ -266,7 +266,7 @@ FigureOfMeritM<Int>::FigureOfMeritM(const vector<int64_t> &t,
 template<typename Int>
 void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t, bool includeFirst) {
     m_t = t;
-    m_firstCoordinateAlwaysIn = includeFirst;
+    // m_firstCoordinateAlwaysIn = includeFirst;
     // Clear the CoordinateSets object.
     m_coordRange = new CoordinateSets::FromRanges;
     /* Defines the lower bound for the range of coordinates that belong to a projection.
@@ -280,7 +280,7 @@ void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t, bool includeFirst
     int64_t d = static_cast<int>(t.size()); // Number of orders for the projections.
     for (int64_t i = 1; i < d; i++)
         // Adds the set of projections of order i.
-        m_coordRange->includeOrder(i+1, min_dim, t[i], true);
+        m_coordRange->includeOrder(i+1, min_dim, t[i], includeFirst);  // Change here *****
 }
 
 //=========================================================================
