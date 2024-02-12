@@ -150,12 +150,12 @@ public:
      * To compute bounds for the m-dual, just pass `-logm` instead of `logm`.
      * The bounds can be retrieved via `getBounds()` or `getBound(j)`.
      */
-    void Normalizer::computeBounds(double logm, int64_t k);
+    void computeBounds(double logm, int64_t k);
 
     /**
      * Returns a string that describes this object.
      */
-    std::string ToString() const;
+    std::string toString() const;
 
     /**
      * Returns the norm associated with this object.
