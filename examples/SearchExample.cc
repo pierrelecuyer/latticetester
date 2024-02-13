@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <algorithm> // CW: new
 #include <vector> // CW: new
+#include <numeric> // CW: new
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
@@ -42,10 +43,10 @@ int main() {
   /*
    * The following settings may be changed by the user
    */
-  const int noBest = 50; // The number of best multipliers to keep for the BB algorithm
-  const int numRep = 1000; // Total number of multipliers to check 
-  int64_t max_dim = 32; // Dimension of the lattice
   Int m(1048573); // Modulus
+  const int noBest = 50; // The number of best multipliers to keep for the BB algorithm
+  const int numRep = 1048573; // Total number of multipliers to check 
+  int64_t max_dim = 32; // Dimension of the lattice
   double delta = 0.8; // Delta for the pre-reduction algorithm
   ReductionType meth = LLL; // Sets the reduction type
   //The t-vector of the FOM, here M_{16,32,16,12}
@@ -67,6 +68,7 @@ int main() {
   Int bestMultipliers[noBest]; // Array to store the multipliers corresponding to the best FoMs
   clock_t tmp, totalTime; // Variables for measuring time elapsed
   Int a; // Variable to store the current multiplier
+  Int g; // Variable to store the greatest common divisor
   bool with_primal = true; // Shall the primal lattice be calculated?
   bool with_dual = true; // Shall the dual lattice be calculated?
   double bestFom; // Variable to store the best FoM after BB
@@ -105,22 +107,25 @@ int main() {
   tmp = clock();
   fom.setReductionMethod(meth, delta);
   for (int j = 0; j < numRep; j++) {
-     lat->seta(a);
-     lat->buildBasis(max_dim);
-     fom.setBounds(low, high);
-     f = fom.computeMeritDual(*lat, proj);
-     if (f > bestFoms[index]) {
-         // Overwrite the current smallest FoM in the stored list
-         mini = std::min_element(bestFoms, bestFoms + noBest);
-         index = std::distance(std::begin(bestFoms), mini);
-         bestFoms[index] = f;
-         bestMultipliers[index] = a;
-         // Get the newst smallest number in the list
-         mini = std::min_element(bestFoms, bestFoms + noBest);
-         index = std::distance(std::begin(bestFoms), mini);
-         //*mini = f;
-         // Set the lower bound to the current smallest FoM of the stored ones
-         low = bestFoms[index];
+     g = std::__gcd(j+1, numRep - 1);
+     // Only look at the full period lattices
+     if (g==1) {
+         lat->seta(a);
+         lat->buildBasis(max_dim);
+         fom.setBounds(low, high);
+         f = fom.computeMeritDual(*lat, proj);
+         if (f > bestFoms[index]) {
+             // Overwrite the current smallest FoM in the stored list
+             mini = std::min_element(bestFoms, bestFoms + noBest);
+             index = std::distance(std::begin(bestFoms), mini);
+             bestFoms[index] = f;
+             bestMultipliers[index] = a;
+             // Get the newst smallest number in the list
+             mini = std::min_element(bestFoms, bestFoms + noBest);
+             index = std::distance(std::begin(bestFoms), mini);
+             // Set the lower bound to the current smallest FoM of the stored ones
+            low = bestFoms[index];
+         }
      }
      a = a * multipliers[0] % m;
     	 
