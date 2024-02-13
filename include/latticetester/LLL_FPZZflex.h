@@ -1108,6 +1108,7 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, double delta, long m, long n, double *sq
 
    new_m = ll_LLL_FP(B, U, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
 
+   
    int imin = 0;
    double minlen = b[1];
    if (sqlen) {
@@ -1116,8 +1117,11 @@ long LLL_FPZZflex(mat_ZZ& B, mat_ZZ* U, double delta, long m, long n, double *sq
           if (sqlen[i] < minlen) { minlen = sqlen[i]; imin = i; };
       }
    }
-   std::swap(sqlen[0],sqlen[imin]);
-   swap(B[0],B[imin]);
+   if (imin >0) {
+       std::swap(sqlen[0],sqlen[imin]);
+       swap(B[0],B[imin]);
+   }
+   
    // In this version, we leave the zero rows at the bottom.
    // The new_m independent basis vectors will be at the top of `B`.
    /*
@@ -1733,8 +1737,10 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
           if (sqlen[i] < minlen) { minlen = sqlen[i]; imin = i; };
       }
    }
-   std::swap(sqlen[0],sqlen[imin]);
-   swap(BB[0],BB[imin]);
+   if (imin > 0) {
+       std::swap(sqlen[0],sqlen[imin]);
+       swap(BB[0],BB[imin]);
+   }
    return m;
 }
 
