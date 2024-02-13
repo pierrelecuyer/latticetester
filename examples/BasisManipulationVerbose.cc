@@ -103,10 +103,10 @@ int main() {
     proj.insert(3);
     proj.insert(5);
     std::cout << "Lattice projection over coordinates " << proj << ".\n";
-    BasisConstruction<Int>::projectionConstructionLLL(basis2, basisProj, proj, m);
+    BasisConstruction<Int>::projectionConstructionLLL(basis2, basisProj, proj, m, 3);
     std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
     BasisConstruction<Int>::projectionConstructionUpperTri(basis2, basisProj,
-            proj, m);
+            proj, m, 3);
     std::cout << "Upper-triangular basis for this proj.: \n" << basisProj
             << "\n";
 
