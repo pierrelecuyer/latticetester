@@ -101,7 +101,8 @@ public:
      * then set the `ReductionType`, `Reducer`, and `Normalizer` to the given values.
      */
     FigureOfMeritM(const vector<int64_t> &t, ReductionType &meth,
-            Reducer<Int, Real> &red, Normalizer &norma, bool includeFirst = false);
+            Reducer<Int, Real> &red, Normalizer &norma, bool includeFirst =
+                    false);
 
     /*
      * Sets the vector @f$(t_1,..., t_d)$@f in the FOM definition to the vector `t`.
@@ -145,7 +146,8 @@ public:
      * at least \f$t_1$\f.
      * Re-using this object permits one to avoid creating new objects internally.
      */
-    double computeMerit(IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> *proj);
+    double computeMerit(IntLatticeExt<Int, Real> &lat,
+            IntLattice<Int, Real> *proj);
 
     /*
      * This function computes and returns the FOM for all projections
@@ -220,7 +222,6 @@ protected:
      * have a larger set of projections.
      */
     // bool m_firstCoordinateAlwaysIn = false;
-
     /*
      * As soon as we know the FOM is above this bound, its calculation stopped.
      */
@@ -254,7 +255,8 @@ protected:
 
 template<typename Int>
 FigureOfMeritM<Int>::FigureOfMeritM(const vector<int64_t> &t,
-        ReductionType &meth, Reducer<Int, Real> &red, Normalizer &norma, bool includeFirst) {
+        ReductionType &meth, Reducer<Int, Real> &red, Normalizer &norma,
+        bool includeFirst) {
     setTVector(t, includeFirst);
     setReductionMethod(meth);
     setNormalizer(norma);
@@ -264,7 +266,8 @@ FigureOfMeritM<Int>::FigureOfMeritM(const vector<int64_t> &t,
 //=========================================================================
 
 template<typename Int>
-void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t, bool includeFirst) {
+void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t,
+        bool includeFirst) {
     m_t = t;
     // m_firstCoordinateAlwaysIn = includeFirst;
     // Clear the CoordinateSets object.
@@ -276,11 +279,12 @@ void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t, bool includeFirst
      * See the doc of the class `FromRanges` in `CoordinateSets`.
      */
     int64_t min_dim = 1;
-    if (includeFirst) min_dim = 2;
+    if (includeFirst)
+        min_dim = 2;
     int64_t d = static_cast<int>(t.size()); // Number of orders for the projections.
     for (int64_t i = 1; i < d; i++)
         // Adds the set of projections of order i.
-        m_coordRange->includeOrder(i+1, min_dim, t[i], includeFirst);  // Change here *****
+        m_coordRange->includeOrder(i + 1, min_dim, t[i], includeFirst); // Change here *****
 }
 
 //=========================================================================
@@ -338,8 +342,8 @@ double FigureOfMeritM<Int>::computeMerit(IntLatticeExt<Int, Real> &lat,
 
 //=========================================================================
 template<typename Int>
-double FigureOfMeritM<Int>::computeMeritSucc(
-        IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> *proj) {
+double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
+        IntLattice<Int, Real> *proj) {
     double merit = 0;
     double minmerit = 1.0;
     int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
@@ -347,8 +351,8 @@ double FigureOfMeritM<Int>::computeMeritSucc(
     for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
         lat.incDimBasis();
         if (m_doingBKZ) {
-            BKZ_FPZZflex(lat.getBasis(), this->m_delta, this->m_blocksize, 
-                    j, j, this->m_sqlen);
+            BKZ_FPZZflex(lat.getBasis(), this->m_delta, this->m_blocksize, j, j,
+                    this->m_sqlen);
         } else if (m_doingLLL) {
             LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
@@ -360,8 +364,7 @@ double FigureOfMeritM<Int>::computeMeritSucc(
                 NTL::conv(merit,
                         sqrt(this->m_sqlen[0]) / this->m_norma->getBound(j));
             } else {
-                NTL::conv(merit,
-                		this->m_sqlen[0] / this->m_norma->getBound(j));
+                NTL::conv(merit, this->m_sqlen[0] / this->m_norma->getBound(j));
             }
         } else {
             if (!m_red->shortestVector(lat))
@@ -379,17 +382,17 @@ double FigureOfMeritM<Int>::computeMeritSucc(
 
 //=========================================================================
 template<typename Int>
-double FigureOfMeritM<Int>::computeMeritNonSucc(
-        IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> *proj) {
+double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
+        IntLattice<Int, Real> *proj) {
     double merit = 0;
     double minmerit = 1.0;
     Coordinates coord;
 
     for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
         coord = *it;
-        lat.buildProjection(proj, coord, this->m_delta);  // Must have withDual = false   ***
+        lat.buildProjection(proj, coord, this->m_delta); // Must have withDual = false   ***
         if (m_doingBKZ) {
-            BKZ_FPZZflex(proj->getBasis(), this->m_delta, this->m_blocksize, 
+            BKZ_FPZZflex(proj->getBasis(), this->m_delta, this->m_blocksize,
                     coord.size(), coord.size(), this->m_sqlen);
         } else if (m_doingLLL) {
             LLL_FPZZflex(proj->getBasis(), this->m_delta, coord.size(),
@@ -406,7 +409,7 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(
                 std::cout << merit << "\n";
             } else {
                 NTL::conv(merit,
-                		this->m_sqlen[0]
+                        this->m_sqlen[0]
                                 / this->m_norma->getBound(coord.size()));
             }
         } else {

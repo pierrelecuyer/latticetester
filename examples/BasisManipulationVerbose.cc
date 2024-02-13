@@ -45,86 +45,94 @@ Int a(33);       // The LCG multiplier
 const long dim = 5;  // Dimension
 
 int main() {
-	IntMat basis1, basis2, basis3, basisdual;
-	basis1.SetDims(dim, dim);
-	basis2.SetDims(dim, dim);
-	basis3.SetDims(dim, dim);
-	basisdual.SetDims(dim, dim);
+    IntMat basis1, basis2, basis3, basisdual;
+    basis1.SetDims(dim, dim);
+    basis2.SetDims(dim, dim);
+    basis3.SetDims(dim, dim);
+    basisdual.SetDims(dim, dim);
     Int sqlength;
 
-	std::cout << "Types: " << strFlexTypes << "\n";
+    std::cout << "Types: " << strFlexTypes << "\n";
 
-	// We construct a Korobov lattice.
-	Rank1Lattice<Int, double> *korlat;
-	korlat = new Rank1Lattice<Int, Real>(m, a, dim);
-	korlat->buildBasis(dim);
-	copy(korlat->getBasis(), basis1);  // This initial basis is triangular.
-	std::cout << "Initial Korobov lattice basis = \n" << basis1 << "\n";
-	ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
-	std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
+    // We construct a Korobov lattice.
+    Rank1Lattice<Int, double> *korlat;
+    korlat = new Rank1Lattice<Int, Real>(m, a, dim);
+    korlat->buildBasis(dim);
+    copy(korlat->getBasis(), basis1);  // This initial basis is triangular.
+    std::cout << "Initial Korobov lattice basis = \n" << basis1 << "\n";
+    ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
+    std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
 
-	// We apply LLL to change basis1.
-	BasisConstruction<Int>::LLLConstruction0(basis1, 0.5);
-	std::cout << "Basis after applying LLL with delta=0.5: \n" << basis1 << "\n";
-	ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
-	std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
+    // We apply LLL to change basis1.
+    BasisConstruction<Int>::LLLConstruction0(basis1, 0.5);
+    std::cout << "Basis after applying LLL with delta=0.5: \n" << basis1
+            << "\n";
+    ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
+    std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
 
-	copy(basis1, basis2);
-	BasisConstruction<Int>::upperTriangularBasis(basis2, basis3, m);
-	std::cout << "Conversion with `upperTriangularBasis`: \n" << basis3 << "\n\n";
+    copy(basis1, basis2);
+    BasisConstruction<Int>::upperTriangularBasis(basis2, basis3, m);
+    std::cout << "Conversion with `upperTriangularBasis`: \n" << basis3
+            << "\n\n";
 
-	copy(basis1, basis2);
-	// This one is in Util.h, it is the old method from 1996.
-	Triangularization(basis2, basis3, dim, dim, m);
-	std::cout << "Conversion with upperTriangular96: \n" << basis3 << "\n\n";
-	// This basis3 is upper triangular.
+    copy(basis1, basis2);
+    // This one is in Util.h, it is the old method from 1996.
+    Triangularization(basis2, basis3, dim, dim, m);
+    std::cout << "Conversion with upperTriangular96: \n" << basis3 << "\n\n";
+    // This basis3 is upper triangular.
 
-	copy(basis1, basis2);
-	BasisConstruction<Int>::LLLConstruction0(basis2, 0.5);
-	std::cout << "Basis after applying LLL with delta=0.5: \n" << basis2 << "\n";
-	ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
-	std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
+    copy(basis1, basis2);
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.5);
+    std::cout << "Basis after applying LLL with delta=0.5: \n" << basis2
+            << "\n";
+    ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
+    std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
 
-	BasisConstruction<Int>::LLLConstruction0(basis2, 0.8);
-	std::cout << "Basis after applying LLL with delta=0.8: \n" << basis2 << "\n";
-	ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
-	std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.8);
+    std::cout << "Basis after applying LLL with delta=0.8: \n" << basis2
+            << "\n";
+    ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
+    std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
 
-	BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999);
-	std::cout << "Basis after applying LLL with delta=0.99999: \n" << basis2 << "\n";
-	ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
-	std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999);
+    std::cout << "Basis after applying LLL with delta=0.99999: \n" << basis2
+            << "\n";
+    ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
+    std::cout << "Square length of shortest vector: " << sqlength << "\n\n";
 
-	copy(basis3, basis2);  // This one should be upper triangular.
-	BasisConstruction<Int>::mDualUpperTriangular(basis2, basisdual, m);
-	std::cout << "m-dual upperTriangular: \n" << basisdual << "\n\n";
+    copy(basis3, basis2);  // This one should be upper triangular.
+    BasisConstruction<Int>::mDualUpperTriangular(basis2, basisdual, m);
+    std::cout << "m-dual upperTriangular: \n" << basisdual << "\n\n";
 
-	copy(basis3, basis2);
-	BasisConstruction<Int>::mDualUpperTriangular96(basis2, basisdual, m);
-	std::cout << "m-dual upperTriangular96: \n" << basisdual << "\n\n";
+    copy(basis3, basis2);
+    BasisConstruction<Int>::mDualUpperTriangular96(basis2, basisdual, m);
+    std::cout << "m-dual upperTriangular96: \n" << basisdual << "\n\n";
 
-	// This mDualBasis works only for Int == ZZ.
-    #if TYPES_CODE  ==  ZD
-	BasisConstruction<Int>::mDualBasis(basis3, basisdual, m);
-	std::cout << "m-dual basis by general method: \n" << basisdual << "\n";
-    #endif
+    // This mDualBasis works only for Int == ZZ.
+#if TYPES_CODE  ==  ZD
+    BasisConstruction<Int>::mDualBasis(basis3, basisdual, m);
+    std::cout << "m-dual basis by general method: \n" << basisdual << "\n";
+#endif
 
-	Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
-	red->shortestVector();  // To call this method, we need to create a Reducer object.
-	std::cout << "Shortest vector: " << korlat->getBasis()[0] << "\n";
-	std::cout << "Shortest vector length: " << red->getMinLength() << "\n\n";
+    Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
+    red->shortestVector(); // To call this method, we need to create a Reducer object.
+    std::cout << "Shortest vector: " << korlat->getBasis()[0] << "\n";
+    std::cout << "Shortest vector length: " << red->getMinLength() << "\n\n";
 
     Coordinates proj;
     proj.insert(1);
     proj.insert(3);
     proj.insert(5);
-    std::cout << "Now looking at lattice projection over coordinates " << proj << ".\n";
-    BasisConstruction<Int>::projectionConstructionLLL (basis1, basis2, proj, m);
+    std::cout << "Now looking at lattice projection over coordinates " << proj
+            << ".\n";
+    BasisConstruction<Int>::projectionConstructionLLL(basis1, basis2, proj, m);
     std::cout << "Basis for this projection, with LLL: \n" << basis2 << "\n";
-
-    BasisConstruction<Int>::projectionConstructionUpperTri (basis1, basis2, basis3, proj, m);
-    std::cout << "Basis for this projection, with upper-triangular method: \n" << basis2 << "\n";
     
+    BasisConstruction<Int>::projectionConstructionUpperTri(basis1, basis2,
+            basis3, proj, m);
+    std::cout << "Basis for this projection, with upper-triangular method: \n"
+            << basis2 << "\n";
+
     //IntLattice<Int, Real> *projLat; // Another IntLattice to store the projection, needed for `red`.
     //projLat = new IntLattice<Int, Real>(basis2, m, 3);
     //red->shortestVector(*projLat);
@@ -132,10 +140,13 @@ int main() {
     //std::cout << "Shortest vector length: " << red->getMinLength() << "\n\n";
 
     BasisConstruction<Int>::mDualUpperTriangular(basis2, basisdual, m, 3);
-    std::cout << "Triangular basis for the m-dual lattice of this projection: \n" << basisdual << "\n";
+    std::cout
+            << "Triangular basis for the m-dual lattice of this projection: \n"
+            << basisdual << "\n";
 
     BasisConstruction<Int>::LLLConstruction0(basisdual, 0.99999, 3, 3);
-    std::cout << "m-dual basis after applying LLL with delta=0.99999: \n" << basisdual << "\n";
+    std::cout << "m-dual basis after applying LLL with delta=0.99999: \n"
+            << basisdual << "\n";
 
     //IntLattice<Int, Real> *projLatDual; // Another IntLattice to store the dual of projection.
     //projLatDual = new IntLattice<Int, Real>(basisdual, m, 3);
