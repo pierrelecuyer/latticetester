@@ -93,7 +93,7 @@ int main() {
     Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
     red->shortestVector(); // For this, we need to create a Reducer object.
     std::cout << "Shortest vector: " << korlat->getBasis()[0] << "\n";
-    std::cout << "Its square length: " << korlat->getVecNorm[0] << "\n\n";
+    std::cout << "Its square length: " << korlat->getVecNorm(0) << "\n\n";
 
     // We now investigate the projection over coordinates {1, 3, 5}.
     // We first insert those three coordinates one by one in `proj`.
@@ -103,10 +103,10 @@ int main() {
     proj.insert(3);
     proj.insert(5);
     std::cout << "Lattice projection over coordinates " << proj << ".\n";
-    BasisConstruction<Int>::projectionConstructionLLL(basis2, basisProj, proj,         m);
+    BasisConstruction<Int>::projectionConstructionLLL(basis2, basisProj, proj, m);
     std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
     BasisConstruction<Int>::projectionConstructionUpperTri(basis2, basisProj,
-            proj);
+            proj, m);
     std::cout << "Upper-triangular basis for this proj.: \n" << basisProj
             << "\n";
 
@@ -114,7 +114,7 @@ int main() {
     BasisConstruction<Int>::mDualUpperTriangular(basisProj, basisDual, m, 3);
     std::cout << "Triangular basis for m-dual of this projection: \n"
             << basisDual << "\n";
-    BasisConstruction<Int>::LLLConstruction0(basisdual, 0.99999, 3, 3);
+    BasisConstruction<Int>::LLLConstruction0(basisDual, 0.99999, 3, 3);
     std::cout << "m-dual basis after LLL with delta=0.99999: \n" << basisDual
             << "\n";
     return 0;
