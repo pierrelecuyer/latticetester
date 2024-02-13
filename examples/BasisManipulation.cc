@@ -86,7 +86,6 @@
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/Util.h"
 #include "latticetester/Chrono.h"
-// #include "latticetester/ParamReader.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Rank1LatticeFlex.h"
