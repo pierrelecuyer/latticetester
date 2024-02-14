@@ -357,7 +357,7 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
             LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
-            this->m_sqlen[0] = lat.getVecNorm(0);
+            this->m_sqlen[0] = NTL::conv<double>(lat.getVecNorm(0));
         }
         if (!m_doingBB) {
             if (lat.getNormType() == L2NORM) {
@@ -399,7 +399,7 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
                     coord.size(), this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
-            this->m_sqlen[0] = lat.getVecNorm(0);
+            this->m_sqlen[0] = NTL::conv<double>(lat.getVecNorm(0));
         }
         if (!m_doingBB) {
             if (lat.getNormType() == L2NORM) {
