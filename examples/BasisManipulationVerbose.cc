@@ -80,23 +80,23 @@ int main() {
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
+    // We finally compute the shortest vector in primal, with BB.
+    // For this, we need to create a Reducer object.
+    Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
+    red->shortestVector();
+    std::cout << "Shortest vector in primal, with BB: " << korlat->getBasis()[0] << "\n";
+    std::cout << "Its square length: " << korlat->getVecNorm(0) << "\n\n";
+
     // We now transform basis1 to the upper-triangular basis2.
     // Note that after this, basis1 contains only garbage.
     BasisConstruction<Int>::upperTriangularBasis(basis1, basis2, m);
     std::cout << "After `upperTriangularBasis`: \n" << basis2 << "\n\n";
-
     // Then we compute the m-dual of basis2 and put it in basisDual.
     BasisConstruction<Int>::mDualUpperTriangular(basis2, basisDual, m);
     std::cout << "m-dual upperTriangular basis: \n" << basisDual << "\n\n";
-
-    // We now compute the shortest vector in primal and in m-dual, with BB.
-    Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
-    red->shortestVector(); // For this, we need to create a Reducer object.
-    std::cout << "Shortest vector with BB: " << korlat->getBasis()[0] << "\n";
-    std::cout << "Its square length: " << korlat->getVecNorm(0) << "\n\n";
-
+    // We reduce this basisDual with LLL.
     BasisConstruction<Int>::LLLConstruction0(basisDual, 0.99999);
-    std::cout << "Dual basis after LLL with delta=0.99999: \n" << basisDual << "\n";
+    std::cout << "m-dual basis after LLL with delta=0.99999: \n" << basisDual << "\n";
     ProdScal<Int>(basisDual[0], basisDual[0], dim, sqlength);
     std::cout << "Square length of first dual basis vector: " << sqlength << "\n\n";
 
@@ -121,7 +121,7 @@ int main() {
     std::cout << "Triangular basis for m-dual of this projection: \n"
             << basisDual << "\n";
     BasisConstruction<Int>::LLLConstruction0(basisDual, 0.99999, 3, 3);
-    std::cout << "m-dual basis after LLL with delta=0.99999: \n" << basisDual
+    std::cout << "m-dual basis of proj after LLL with delta=0.99999: \n" << basisDual
             << "\n";
     return 0;
 }
