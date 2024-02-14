@@ -52,8 +52,8 @@ int main() {
     basis1.SetDims(dim, dim);
     basis2.SetDims(dim, dim);
     basisDual.SetDims(dim, dim);
-    basisProj.SetDims(dimProj, dimProj);
-    basisDualProj.SetDims(dimProj, dimProj);
+    basisProj.SetDims(dim, dim);
+    basisDualProj.SetDims(dim, dim);
     Int sqlength;
 
     // We construct a Korobov lattice in dim dimensions.
@@ -111,6 +111,8 @@ int main() {
     std::cout << "Lattice projection over coordinates " << proj << ".\n";
     BasisConstruction<Int>::projectionConstructionLLL(basis2, basisProj, proj,
             m, 0.99999, 3);
+    std::cout << "In the following basis matrices, only the first 3 rows \n";
+    std::cout << " and 3 columns are significant, the rest must be ignored.\n";
     std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
     BasisConstruction<Int>::projectionConstructionUpperTri(basis2, basisProj,
             proj, m, 3);
