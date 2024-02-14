@@ -51,8 +51,9 @@ int main() {
     IntMat basis1, basis2, basisProj, basisDual;
     basis1.SetDims(dim, dim);
     basis2.SetDims(dim, dim);
-    basisProj.SetDims(dim, dim);
     basisDual.SetDims(dim, dim);
+    basisProj.SetDims(dimProj, dimProj);
+    basisDualProj.SetDims(dimProj, dimProj);
     Int sqlength;
 
     // We construct a Korobov lattice in dim dimensions.
@@ -117,12 +118,14 @@ int main() {
             << "\n";
 
     // We use only three coordinates of these matrices for the projection.
-    BasisConstruction<Int>::mDualUpperTriangular(basisProj, basisDual, m, 3);
+    BasisConstruction<Int>::mDualUpperTriangular(basisProj, basisDualProj, m, 3);
     std::cout << "Triangular basis for m-dual of this projection: \n"
-            << basisDual << "\n";
-    BasisConstruction<Int>::LLLConstruction0(basisDual, 0.99999, 3, 3);
-    std::cout << "m-dual basis of proj after LLL with delta=0.99999: \n" << basisDual
+            << basisDualProj << "\n";
+    BasisConstruction<Int>::LLLConstruction0(basisDualProj, 0.99999, 3, 3);
+    std::cout << "m-dual basis of proj after LLL with delta=0.99999: \n" << basisDualProj
             << "\n";
+    ProdScal<Int>(basisDualProj[0], basisDualProj[0], dim, sqlength);
+    std::cout << "Square length of first m-dual basis vector: " << sqlength << "\n\n";
     return 0;
 }
 
