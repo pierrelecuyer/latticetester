@@ -48,7 +48,7 @@ int main() {
     std::cout << "Types: " << strFlexTypes << "\n";
 
     // All the IntMat objects are created in 5 dimensions, but we may use less.
-    IntMat basis1, basis2, basisProj, basisDual;
+    IntMat basis1, basis2, basisProj, basisDual, basisDualProj;
     basis1.SetDims(dim, dim);
     basis2.SetDims(dim, dim);
     basisDual.SetDims(dim, dim);
