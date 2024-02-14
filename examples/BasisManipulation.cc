@@ -3,6 +3,15 @@
  *
  * TO REWRITE:   *****
  *
+ * GOALS:
+ *
+ * -- perform speed comparisons between the methods to construct a basis or m-dual basis
+ *    for a general lattice, given a set of generating vectors for the primal.
+ *    We want to do this for various numbers of dimensions, as done below.
+ * -- comparing the speed with ZZ vs int64, with double vs RR, etc.
+ * -- Show how much overhead there is when we resize the IntMat objects frequently.
+ *
+ *  ================
  * This reads matrices from files and builds a basis and a dual for an `IntLattice`
  * object. The files this is set to use are in the `bench.zip` archive. To
  * execute the program, the archive should be unziped and the `bench` folder
