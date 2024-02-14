@@ -151,7 +151,7 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
           LLL_FPZZflex(lat.getDualBasis(), this->m_delta, j, j, this->m_sqlen);
        } else if (this->m_reductionMethod == PAIRBB) {
           this->m_red->redDieter(0);
-          this->m_sqlen[0] = lat.getDualVecNorm(0);
+          this->m_sqlen[0] = NTL::conv<double>(lat.getDualVecNorm(0));
        }
        if (!this->m_doingBB) {
            if (lat.getNormType() == L2NORM) {
@@ -191,7 +191,7 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
                    coord.size(), this->m_sqlen);
          } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
-            this->m_sqlen[0] = proj->getDualVecNorm(0);
+            this->m_sqlen[0] = NTL::conv<double>(proj->getDualVecNorm(0));
         }
         if (!this->m_doingBB) {
             //proj->updateSingleDualVecNorm(0,coord.size());
