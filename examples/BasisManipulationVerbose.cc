@@ -57,7 +57,7 @@ int main() {
 
     // We construct a Korobov lattice in dim dimensions.
     Rank1Lattice<Int, double> *korlat;
-    korlat = new Rank1Lattice<Int, Real>(m, a, dim);
+    korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, true);
     korlat->buildBasis(dim);
     copy(korlat->getBasis(), basis1);  // This initial basis is triangular.
     std::cout << "Initial Korobov lattice basis = \n" << basis1 << "\n";
@@ -94,11 +94,11 @@ int main() {
     red->shortestVector(); // For this, we need to create a Reducer object.
     std::cout << "Shortest vector with BB: " << korlat->getBasis()[0] << "\n";
     std::cout << "Its square length: " << korlat->getVecNorm(0) << "\n\n";
-    korlat.dualize();
-    red->shortestVector(); // Shortest vector in m-dual basis.
-    std::cout << "Shortest m-dual vector with BB: " << korlat->getBasis()[0]
-            << "\n";
-    std::cout << "Its square length: " << korlat->getVecNorm(0) << "\n\n";
+
+    BasisConstruction<Int>::LLLConstruction0(basisDual, 0.99999);
+    std::cout << "Dual basis after LLL with delta=0.99999: \n" << basisDual << "\n";
+    ProdScal<Int>(basisDual[0], basisDual[0], dim, sqlength);
+    std::cout << "Square length of first dual basis vector: " << sqlength << "\n\n";
 
     // We now investigate the projection over coordinates {1, 3, 5}.
     // We first insert those three coordinates one by one in `proj`.
