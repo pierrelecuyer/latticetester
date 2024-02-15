@@ -53,12 +53,12 @@ namespace LatticeTester {
  * defined in Section 10 of the guide, for any given `IntLatticeExt` object.
  * The FOM is computed only for the (rescaled) primal lattice, the m-dual is never used.
  * The projections in \f$S(t_1)$\f are those over successive coordinates in up to \f$t_1$\f
- * dimensions, while those is  @f$S(s,t_s)$@f are projections over \f$s$\f distinct coordinates
+ * dimensions, while those is  @f$S(s,t_s)@f$ are projections over \f$s$\f distinct coordinates
  * that are non necessarily successive and are all in the set \f$\{1,\dots,t_s\}$\f,
- * for each order @f$s > 1$@f.
+ * for each order @f$s > 1@f$.
  * There are two variants for the latter: the first (default) variant takes
- * @f$S(s,t_s)$@f as just defined (also defined in the guide), and the other considers
- * only the set @f$S^{(1)}(s,t_s)$@f of projections that contain coordinate 1.
+ * @f$S(s,t_s)@f$ as just defined (also defined in the guide), and the other considers
+ * only the set @f$S^{(1)}(s,t_s)@f$ of projections that contain coordinate 1.
  * The parameter `includeFirst` in the constructor determines which variant is taken.
  *
  * The lengths of the shortest vectors in the projections can be calculated exactly by using the
@@ -69,12 +69,12 @@ namespace LatticeTester {
  * Note that we need a `Reducer` object only when BB is applied.
  * I other cases, we just use static methods for the reduction.
  *
- * The constructor requires the vector @f$(t_1,\dots,t_d)$@f, the type of reduction
+ * The constructor requires the vector @f$(t_1,\dots,t_d)@f$, the type of reduction
  * that will be used to compute or approximate the vector lengths,
  * a `Reducer` object used for the reduction in case the reduction method includes BB,
  * a `Normalizer` object used to normalize the merit values, and the optional
  * `includeFirst` parameter in case we want to put it to `true`.
- * The function `setTVector` permits one to set (or reset) the vector  @f$(t_1,\dots,t_d)$@f.
+ * The function `setTVector` permits one to set (or reset) the vector  @f$(t_1,\dots,t_d)@f$.
  * One can use `setReductionMethod` to reset the type of reduction or change its parameters
  * `delta` and `blocksize` from their default values of 0.99999 and 10.
  * The `Normalizer` can be changed via `setNormalizer`.
@@ -105,8 +105,8 @@ public:
                     false);
 
     /*
-     * Sets the vector @f$(t_1,..., t_d)$@f in the FOM definition to the vector `t`.
-     * Note that the values of @f$t_1,..., t_d$@f are taken from `t[0],...,t[d-1]`,
+     * Sets the vector @f$(t_1,..., t_d)@f$ in the FOM definition to the vector `t`.
+     * Note that the values of @f$t_1,..., t_d@f$ are taken from `t[0],...,t[d-1]`,
      * respectively.  When `includeFirst` is `true`, we consider only the non-successive
      * projections that contain coordinate 1.
      * See the doc of the class `FromRanges` in `CoordinateSets` for more details.
@@ -162,7 +162,7 @@ public:
     /*
      * This function computes and returns the FOM for all projections
      * over sets on non-successive coordinates determined by
-     *  @f$S(s,t_s)$@f or  @f$S^{(1)}(s,t_s)$@f.
+     *  @f$S(s,t_s)@f$ or  @f$S^{(1)}(s,t_s)@f$.
      * It returns 0 if the computation was not completed for some reason.
      * The parameter `proj` is like for `computeMerit`.
      */
@@ -217,8 +217,8 @@ protected:
     double *m_sqlen;
     /*
      * Indicates if the first coordinate will always be included in all the projections
-     * over the non-successive coordinates.  If true, we use @f$S^{(1)}(s,t_s)$@f  in
-     * Section 10 of the user's guide, otherwise we use @f$S(s,t_s)$@f and we therefore
+     * over the non-successive coordinates.  If true, we use @f$S^{(1)}(s,t_s)@f$  in
+     * Section 10 of the user's guide, otherwise we use @f$S(s,t_s)@f$ and we therefore
      * have a larger set of projections.
      */
     // bool m_firstCoordinateAlwaysIn = false;
