@@ -34,7 +34,8 @@ namespace LatticeTester {
  * for given lattice density and dimension.
  * The constructors in the various subclasses compute the specific bounds,
  * as explained in Section 9 of the user's guide.
- * The main constructor assumes that the rescaled primal lattice has scaling factor \f$m\f$
+ *
+ * The preferred constructor assumes that the rescaled primal lattice has scaling factor \f$m\f$
  * and order \f$k\f$, so its density is \f$\min(1, m^{k-t})\f$ in \f$t\geq 1\f$ dimensions,
  * and cannot exceed 1 for projections in \f$s < k\f$ dimensions.
  * This constructor take \f$ \log m \f$ and  \f$k\f$ as inputs.
@@ -92,7 +93,19 @@ public:
     static const int64_t MAX_DIM = 48;
 
     /**
-     * This legacy constructor assumes no rescaling.
+     * This is the preferred constructor in all the subclasses.
+     * It assumes that the rescaled primal lattice has scaling factor \f$m\f$
+     * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
+     * exceed 1 for projections in \f$s < k\f$ dimensions.
+     * The bounds \f$ d_t^*(\eta)\f$ will then be computed by assuming those densities.
+     * To compute bounds for the m-dual, pass `-logm` instead of `logm`.
+     * The values of \f$\log m\f$ (in natural basis) and \f$k\f$ must be given as inputs.
+     */
+    Normalizer(double logm, int64_t k, int64_t maxDim, std::string name,
+            NormType norm = L2NORM);
+
+    /**
+     * This old (legacy) constructor assumes that the lattice is not rescaled.
      * It creates a `Normalizer` by assuming that the density is
      * \f$\eta=\exp(\text{logDensity})\f$ in all dimensions.
      * This is (probably) never true when there is rescaling.
@@ -103,17 +116,6 @@ public:
      * The `norm` parameter is the `NormType` used by this object.
      */
     Normalizer(double logDensity, int64_t maxDim, std::string name,
-            NormType norm = L2NORM);
-
-    /**
-     * This constructor assumes that the rescaled primal lattice has scaling factor \f$m\f$
-     * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
-     * exceed 1 for projections in \f$s < k\f$ dimensions.
-     * The bounds \f$ d_t^*(\eta)\f$ will then be computed by assuming those densities.
-     * To compute bounds for the m-dual, pass `-logm` instead of `logm`.
-     * The values of \f$\log m\f$ (in natural basis) and \f$k\f$ must be given as inputs.
-     */
-    Normalizer(double logm, int64_t k, int64_t maxDim, std::string name,
             NormType norm = L2NORM);
 
     /**
