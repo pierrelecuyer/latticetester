@@ -296,7 +296,7 @@ void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t,
     int64_t d = static_cast<int>(t.size()); // Number of orders for the projections.
     for (int64_t i = 1; i < d; i++)
         // Adds the set of projections of order i.
-        m_coordRange->includeOrder(i + 1, min_dim, t[i], includeFirst); // Change here *****
+        m_coordRange->includeOrder(i + 1 - includeFirst, min_dim, t[i], includeFirst); // Change here *****
 }
 
 //=========================================================================
