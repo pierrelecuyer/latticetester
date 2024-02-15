@@ -42,17 +42,17 @@ class NormaMinkL1: public Normalizer {
 public:
 
     /**
-     * Constructs a `NormaMinkL1` for up to `maxDim` dimensions, by assuming that the
-     * log density is `logDensity` in all dimensions.
-     */
-    NormaMinkL1(double logDensity, int64_t maxDim);
-
-    /**
      * This constructor assumes that the rescaled primal lattice has scaling factor \f$m\f$
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
     NormaMinkL1(double logm, int64_t k, int64_t maxDim);
+
+    /**
+     * Constructs a `NormaMinkL1` for up to `maxDim` dimensions, by assuming that the
+     * log density is `logDensity` in all dimensions and the lattice was not rescaled.
+     */
+    NormaMinkL1(double logDensity, int64_t maxDim);
 
     /**
      * Constructs a `NormaMinkL1` for up to `maxDim` dimensions, without computing the bounds.

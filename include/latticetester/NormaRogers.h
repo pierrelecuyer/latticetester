@@ -39,17 +39,17 @@ class NormaRogers: public Normalizer {
 public:
 
     /**
-     * Constructs a `NormaRogers` for up to `maxDim` dimensions, by assuming that the
-     * log density is `logDensity` in all dimensions.
-     */
-    NormaRogers(double logDensity, int64_t maxDim);
-
-    /**
      * This constructor assumes that the rescaled primal lattice has scaling factor \f$m\f$
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
     NormaRogers(double logm, int64_t k, int64_t maxDim);
+
+    /**
+     * Constructs a `NormaRogers` for up to `maxDim` dimensions, by assuming that the
+     * log density is `logDensity` in all dimensions and the lattice was not rescaled.
+     */
+    NormaRogers(double logDensity, int64_t maxDim);
 
     /**
      * Destructor.

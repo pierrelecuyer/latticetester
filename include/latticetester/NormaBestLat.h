@@ -42,18 +42,18 @@ class NormaBestLat: public Normalizer {
 public:
 
     /**
-     * Constructs a `NormaBestLat` for up to `maxDim` dimensions, by assuming that the
-     * log density is `logDensity` in all dimensions.
-     * Restriction: `maxDim`\f$ \le 48\f$.
-     */
-    NormaBestLat(double logDensity, int64_t maxDim);
-
-    /**
      * This constructor assumes that the rescaled primal lattice has scaling factor \f$m\f$
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
     NormaBestLat(double logm, int64_t k, int64_t maxDim);
+
+    /**
+     * Constructs a `NormaBestLat` for up to `maxDim` dimensions, by assuming that the
+     * log density is `logDensity` in all dimensions and the lattice was not rescaled.
+     * Restriction: `maxDim`\f$ \le 48\f$.
+     */
+    NormaBestLat(double logDensity, int64_t maxDim);
 
     /**
      * Constructs a `NormaBestLat` for up to `maxDim` dimensions, without computing the bounds.
