@@ -419,7 +419,6 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
                 NTL::conv(merit,
                         sqrt(this->m_sqlen[0])
                                 / this->m_norma->getBound(coord.size()));
-                std::cout << merit << "\n";
             } else {
                 NTL::conv(merit,
                         this->m_sqlen[0]
