@@ -103,8 +103,7 @@ public:
     ;
 
     /**
-     * Similar to `buildBasis`, but for the m-dual only.
-     * This virtual method builds only the m-dual basis for the lattice in `dim` dimensions.
+     * Similar to `buildBasis`, but builds only the m-dual basis, in `dim` dimensions.
      * This `dim` must not exceed `maxDim`. The flag  `withDual` is assumed to be true.
      */
     virtual void buildDualBasis(int64_t dim) {

@@ -32,6 +32,9 @@
  * which is not always an array of `double`, and the norm is not always the Euclidean one.
  * One has to be careful about that.
  *
+ * In this class, some inner products are computed in RR, others in double. Check this.
+ * This class does not use the Real type.                                 ***********
+ *
  * Each function returns the dimension of the computed basis (number of independent rows).
  * Important: This basis is always returned in the upper-left corner of the matrix `B`.
  * This differs from the `LLL_FP` functions, which returns the zero vectors at the top.
@@ -437,7 +440,7 @@ void ComputeGS(mat_ZZ& B, double **B1, double **mu, double *b,
    }
 
    for (j = st; j <= k-1; j++) {
-      s = InnerProduct(B1[k], B1[j], n);
+      s = InnerProduct(B1[k], B1[j], n);  // Returns a double.
       // std::cout << "ComputeGS, j = " << j << " Inner product s = " << s << "\n";
 
       // test = b[k]*b[j] >= NTL_FDOUBLE_PRECISION^2
@@ -460,7 +463,7 @@ void ComputeGS(mat_ZZ& B, double **B1, double **mu, double *b,
       }
 
       if (test) {
-         InnerProduct(T1, B(k), B(j), n);
+         InnerProduct(T1, B(k), B(j), n);  // all in ZZ.
          conv(s, T1);
          // std::cout << "ComputeGS, T1 = s = " << s << "\n";
       }
@@ -531,7 +534,7 @@ static void LLLStatus(long max_k, double t, long m, long n, const mat_ZZ& B)
    double prodlen = 0;
 
    for (i = 1; i <= m; i++) {
-      InnerProduct(t1, B(i), B(i), n);
+      InnerProduct(t1, B(i), B(i), n);   // all in ZZ.
       if (!IsZero(t1))
          prodlen += log(t1);
    }
@@ -592,6 +595,8 @@ static void print_mus(double **mu, long k)
 
 #endif
 
+// The following functions always use RR.
+
 void ComputeGS(const mat_ZZ& B, mat_RR& B1, 
                mat_RR& mu, vec_RR& b,
                vec_RR& c, long k, const RR& bound, long st,
@@ -642,7 +647,7 @@ static void RR_GS(mat_ZZ& B, double **B1, double **mu,
          conv(rr_B1(i, j), B(i, j));
 
    for (i = rr_st; i <= k; i++)
-      InnerProduct(rr_b(i), rr_B1(i), rr_B1(i), n);
+      InnerProduct(rr_b(i), rr_B1(i), rr_B1(i), n);   // all in RR.
 
    RR bound;
    power2(bound, 2*long(0.15*RR::precision()));

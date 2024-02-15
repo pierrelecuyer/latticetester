@@ -37,7 +37,7 @@ namespace LatticeTester {
  *   \mathbf{v}_1 & = \mathbf{a} \\
  *   \mathbf{v}_2 & = m \mathbf{e}_2 \\
  *   \vdots & \\
- *   \mathbf{v}_d & = m \mathbf{e}_vÂ \\
+ *   \mathbf{v}_d & = m \mathbf{e}_d \\
  * \f}
  * where \f$\mathbf{e}_i\f$ is the \f$i^\text{th}\f$ unit vector.
  *
@@ -49,7 +49,7 @@ namespace LatticeTester {
  * without loss of generality generality that \f$a_1 = 1\f$.
  * Under that condition, it is straightforward to construct a basis for a projection that
  * contains the first coordinate, and also its m-dual basis.
- * In this class, we do assume that \f$a_1 = 1\f$ and \f$\gcd(a_j, m) = 1\f$ for all \f$j\f$.
+ * In this class, we assume that \f$a_1 = 1\f$ and \f$\gcd(a_j, m) = 1\f$ for all \f$j\f$.
  * We exploit these conditions when building bases for the lattice, the projections,
  * and their m-duals.
  *
@@ -72,7 +72,9 @@ public:
      * This constructor takes as input the modulus `m`, the generating vector `aa`,
      * and the norm used to measure the vector lengths.
      * The maximal dimension `maxDim` will be the length `d` of the vector `aa`.
-     * Note that the coefficient @f$a_j$@f will be `aa[j-1]`.
+     * The coefficient @f$a_j@f$ will be `aa[j-1]`.
+     * The variable `withPrimal` indicates if the primal basis will be maintained or not,
+     * and `withDual` indicates if the dual basis will be maintained or not.
      * This constructor does not build the basis, to leave
      * more flexibility in the dimension when doing so.
      */
@@ -81,8 +83,8 @@ public:
 
     /**
      * Constructor for the special case of a Korobov lattice.
-     * Here the generating vector has the form aa = (1, a, a^2 mod m, a^3 mod m, ...)
-     * where a is an integer such that 1 < a < m.
+     * Here the generating vector has the form @f$\ba = (1, a, a^2 mod m, a^3 mod m, ...)@f$
+     * where @f$a@f$ is an integer such that @f$1 < a < m@f$.
      */
     Rank1Lattice(const Int &m, const Int &a, int64_t maxDim, bool withPrimal =
             false, bool withDual = false, NormType norm = L2NORM);
@@ -121,7 +123,9 @@ public:
 
     /**
      * Builds a basis in `dim` dimensions. This `dim` must not exceed `this->maxDim()`.
-     * This initial basis will be upper triangular.
+     * This initial primal basis will be upper triangular.
+     * This function can be called only when `withPrimal` is set to true.
+     * If `withDual` is true, it also builds an m-dual lower-triangular basis.
      */
     void buildBasis(int64_t dim);
 
@@ -133,7 +137,8 @@ public:
 
     /**
      * Increases the current dimension of the primal basis by 1 and updates the basis.
-     * If `withDual`, it also increases the m-dual basis.
+     * This function can be called only when `withPrimal` is set to true.
+     * If `withDual`, it also increases the m-dual basis and makes it the m-dual of the primal basis.
      * The new increased dimension must not exceed `maxDim`.
      */
     void incDimBasis();
@@ -143,7 +148,7 @@ public:
      * The primal basis is left unchanged (not updated).
      * The new increased dimension must not exceed `maxDim`.
      * This method uses the simplified method given in the lattice tester guide:
-     * the new m-dual basis vector is simply  w_d = (-a_d, 0, ..., 0, 1).
+     * the new m-dual basis vector is simply  @f$\bw_d = (-a_d, 0, ..., 0, 1)@f$.
      */
     void incDimDualBasis();
 
@@ -268,7 +273,6 @@ void Rank1Lattice<Int, Real>::seta(const Int &a) {
 // An upper-triangular basis is built directly, as explained in the guide of Lattice Tester.
 // The dimension `maxDim` of the `IntMat` array is unchanged.
 // In case `withDual` is true, the m-dual basis is also constructed directly.
-
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::buildBasis(int64_t d) {
     assert(d <= this->m_maxDim);
@@ -335,13 +339,14 @@ void Rank1Lattice<Int, Real>::buildDualBasis(int64_t d) {
 
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::incDimBasis() {
+    assert(this->m_withPrimal);      // m_withPrimal must be true.
     int64_t d = 1 + this->getDim();  // New current dimension.
     assert(d <= this->m_maxDim);
     this->setDim(d);
     int64_t i, j;
     Int m_add;
 
-    // Update new row and new column of the primal basis.
+    // Add new row and new column of the primal basis.
     for (j = 0; j < d - 1; j++)
         this->m_basis[d - 1][j] = 0;
     this->m_basis[d - 1][d - 1] = this->m_modulo;
@@ -364,7 +369,7 @@ void Rank1Lattice<Int, Real>::incDimBasis() {
         this->m_dualbasis[d - 1][d - 1] = 1;
         for (j = 0; j < d - 1; j++) {
             m_add = 0;
-            for (int i = 0; i < d - 1; i++) {
+            for (int64_t i = 0; i < d - 1; i++) {
                 m_add = m_add
                         - this->m_basis[i][d - 1] * this->m_dualbasis[i][j];
             }
