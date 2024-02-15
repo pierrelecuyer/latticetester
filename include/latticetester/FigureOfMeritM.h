@@ -126,7 +126,6 @@ public:
     void setNormalizer(Normalizer &norma) {
         m_norma = &norma;
     }
-
     /*
      * Sets the low and the high bound for the FOM.
      * The FOM computation is stopped as soon as we know it is outside these bounds.
@@ -135,6 +134,14 @@ public:
         m_highbound = high;
         m_lowbound = low;
     }
+    
+    /*
+     * Sets if details of FoM shall be printed on the screen
+     */
+    void setPrintDetails(bool print) {
+        m_printDetails = print;
+    }
+
 
     /*
      * This function computes and returns the value of the FOM for the given lattice 'lat'.
@@ -247,6 +254,11 @@ protected:
      * Indicates whether the BKZ algorithm is performed.
      */
     bool m_doingBKZ;
+    
+    /*
+     * Indicates if details of FoM calculation are printed on the screen
+     */
+    bool m_printDetails = false;
     
 };
 
@@ -372,6 +384,7 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
             NTL::conv(merit,
                     m_red->getMinLength() / this->m_norma->getBound(j));
         }
+        if (m_printDetails) std::cout << "Coordinates: {1,... " << j << "}, FoM: " << merit << "\n";
         if (merit < minmerit)
             minmerit = merit;
         if (minmerit <= this->m_lowbound)
@@ -419,6 +432,7 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
                     m_red->getMinLength()
                             / this->m_norma->getBound(coord.size()));
         }
+        if (m_printDetails) std::cout << "Coordinates: " << coord << ", FoM: " << merit << "\n";
         if (merit < minmerit)
             minmerit = merit;
         if (minmerit <= this->m_lowbound)
