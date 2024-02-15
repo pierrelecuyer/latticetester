@@ -166,6 +166,7 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
            NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(j));
            lat.dualize();
        }
+       if (this->m_printDetails) std::cout << "Coordinates: {1,... " << j << "}, FoM: " << merit << "\n";
        if (merit < minmerit) minmerit = merit;
        if (minmerit <= this->m_lowbound) return 0;
    }
@@ -205,6 +206,7 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
             if (!this->m_red->shortestVector(*proj)) return 0;
             NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(coord.size()));
         }
+        if (this->m_printDetails) std::cout << "Coordinates: " << coord << ", FoM: " << merit << "\n";
         if (merit < minmerit) minmerit = merit;
         if (minmerit <= this->m_lowbound) return 0;
     }
