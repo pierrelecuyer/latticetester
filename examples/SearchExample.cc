@@ -10,9 +10,9 @@
 #define TYPES_CODE  ZD
 #include <iostream>
 #include <cstdint>
-#include <algorithm> // CW: new
-#include <vector> // CW: new
-#include <numeric> // CW: new
+#include <algorithm>
+#include <vector>
+#include <numeric>
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
@@ -44,23 +44,23 @@ int main() {
    * The following settings may be changed by the user
    */
   Int m(1048573); // Modulus
-  const int noBest = 50; // The number of best multipliers to keep for the BB algorithm
+  //Int m(1073741827); // Prime modulus near 2^{30}
+  //Int m(1099511627791);  // Prime modulus near 2^{40}
+  const int noBest = 1; // The number of best multipliers to keep for the BB algorithm
   const int numRep = 1048573; // Total number of multipliers to check 
   int64_t max_dim = 32; // Dimension of the lattice
-  double delta = 0.8; // Delta for the pre-reduction algorithm
+  double delta = 0.9999; // Delta for the pre-reduction algorithm
   ReductionType meth = LLL; // Sets the reduction type
   //The t-vector of the FOM, here M_{16,32,16,12}
-  vector<int64_t> t(4); // length of the t-vector
+  vector<int64_t> t(2); // length of the t-vector
   t[0] = 16;
-  t[1] = 32;
-  t[2] = 16;
-  t[3] = 12;
+  t[1] = 10;
 
   /*
    * The following variables are technical and shall not be changed by the user
    */
   const long numMult = 10; // Number of stored primitive elements
-  const long multipliers[numMult] = { 91, 93, 94, 96, 98, 102, 105, 115, 117, 118}; // These ar all primitive elements mod 1048573
+  const long multipliers[numMult] = { 91, 93, 94, 96, 98, 102, 105, 115, 117, 118}; // These are all primitive elements mod 1048573
   double high = 1; // Higher bound when a multiplier is rejected (stays constant)
   double low = 0; // Lower bound when a multiplier is rejected (dynamically changes in the code)
   double f; // Variable for calculation current figure of merit
@@ -106,8 +106,10 @@ int main() {
   // At first find the noBest best multipliers when only applying LLL
   tmp = clock();
   fom.setReductionMethod(meth, delta);
-  for (int j = 0; j < numRep; j++) {
-     g = std::__gcd(j+1, numRep - 1);
+  fom.setPrintDetails(false);
+  index = 0;
+  for (int64_t j = 0; j < numRep; j++) {
+     g = NTL::GCD(NTL::conv<Int>(j+1), m - 1);
      // Only look at the full period lattices
      if (g==1) {
          lat->seta(a);
@@ -140,6 +142,8 @@ int main() {
   std::cout << noBest <<"-th Best FoM: " << *mini << "\n";
   
   // Now switch the reduction type to LLL + BB, i.e. we perform the BB algorithm too
+  lat = new Rank1Lattice<Int, Real>(m, a, max_dim, true, with_dual);
+  proj = new IntLattice<Int, Real> (m, lat->getBasis().NumCols(), true, with_dual);
   meth = LLLBB;
   fom.setReductionMethod(meth, delta);
   low = 0;

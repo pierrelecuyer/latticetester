@@ -97,7 +97,7 @@
 #include "latticetester/Chrono.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
-#include "latticetester/Rank1LatticeFlex.h"
+//#include "latticetester/Rank1LatticeFlex.h"
 //
 #include "latticetester/LLL_FPZZflex.h"
 
@@ -202,7 +202,7 @@ static void testLoop1(long numRep) {
     IntMat basis1, basis2, basis3, basisdual;
     //long maxdim = dimensions[numSizes-1];   // Maximum dimension
     // double *b;   b = new double[maxdim];
-    Rank1LatticeFlex<Int, Real> *korlat;    // Will be a Korobov lattice.
+    Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
     // Chrono totTime;  	totTime.init();
     for (d = 0; d < numSizes; d++)   // Each matrix size
         for (int64_t meth = 0; meth < numMeth; meth++)
@@ -216,7 +216,7 @@ static void testLoop1(long numRep) {
         basisdual.SetDims(dim, dim);  // m-dual basis.
         for (int64_t r = 0; r < numRep; r++) {
             a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
-            korlat = new Rank1LatticeFlex<Int, Real>(m, a, dim);
+            korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, true);
             korlat->buildBasis(dim);
             copy(korlat->getBasis(), basis1); // This initial basis is triangular.
             //transformBases(d, dim, basis1, basis2, basis3, basisdual);
@@ -270,8 +270,8 @@ static void testLoop3(long numRep) {
     basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
     basis3.SetDims(maxdim, maxdim);
     basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
-    Rank1LatticeFlex<Int, Real> *korlat;    // Will be a Korobov lattice.
-    korlat = new Rank1LatticeFlex<Int, Real>(m, maxdim);
+    Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
+    korlat = new Rank1Lattice<Int, Real>(m, maxdim, true, true);
     // Chrono totTime;  	totTime.init();
     // double *b;   b = new double[maxdim];
     for (d = 0; d < numSizes; d++)   // Each matrix size
@@ -283,7 +283,7 @@ static void testLoop3(long numRep) {
         // korlat->seta(a);
         for (d = 0; d < numSizes; d++) {  // Each matrix size
             long dim = dimensions[d]; // The corresponding dimension.
-            korlat = new Rank1LatticeFlex<Int, Real>(m, a, dim);
+            korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, true);
             korlat->buildBasis(dim);
             copy(korlat->getBasis(), basis1); // This initial basis is triangular.
             // Here, this basis is a maxDim x maxDim IntMat object.

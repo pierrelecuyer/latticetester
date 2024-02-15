@@ -151,7 +151,7 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
           LLL_FPZZflex(lat.getDualBasis(), this->m_delta, j, j, this->m_sqlen);
        } else if (this->m_reductionMethod == PAIRBB) {
           this->m_red->redDieter(0);
-          this->m_sqlen[0] = lat.getDualVecNorm(0);
+          this->m_sqlen[0] = NTL::conv<double>(lat.getDualVecNorm(0));
        }
        if (!this->m_doingBB) {
            if (lat.getNormType() == L2NORM) {
@@ -166,6 +166,7 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
            NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(j));
            lat.dualize();
        }
+       if (this->m_printDetails) std::cout << "Coordinates: {1,... " << j << "}, FoM: " << merit << "\n";
        if (merit < minmerit) minmerit = merit;
        if (minmerit <= this->m_lowbound) return 0;
    }
@@ -191,7 +192,7 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
                    coord.size(), this->m_sqlen);
          } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
-            this->m_sqlen[0] = proj->getDualVecNorm(0);
+            this->m_sqlen[0] = NTL::conv<double>(proj->getDualVecNorm(0));
         }
         if (!this->m_doingBB) {
             //proj->updateSingleDualVecNorm(0,coord.size());
@@ -205,6 +206,7 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
             if (!this->m_red->shortestVector(*proj)) return 0;
             NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(coord.size()));
         }
+        if (this->m_printDetails) std::cout << "Coordinates: " << coord << ", FoM: " << merit << "\n";
         if (merit < minmerit) minmerit = merit;
         if (minmerit <= this->m_lowbound) return 0;
     }

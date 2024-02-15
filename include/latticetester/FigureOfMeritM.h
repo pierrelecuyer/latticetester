@@ -126,7 +126,6 @@ public:
     void setNormalizer(Normalizer &norma) {
         m_norma = &norma;
     }
-
     /*
      * Sets the low and the high bound for the FOM.
      * The FOM computation is stopped as soon as we know it is outside these bounds.
@@ -135,6 +134,14 @@ public:
         m_highbound = high;
         m_lowbound = low;
     }
+    
+    /*
+     * Sets if details of FoM shall be printed on the screen
+     */
+    void setPrintDetails(bool print) {
+        m_printDetails = print;
+    }
+
 
     /*
      * This function computes and returns the value of the FOM for the given lattice 'lat'.
@@ -248,6 +255,11 @@ protected:
      */
     bool m_doingBKZ;
     
+    /*
+     * Indicates if details of FoM calculation are printed on the screen
+     */
+    bool m_printDetails = false;
+    
 };
 
 //============================================================================
@@ -284,7 +296,7 @@ void FigureOfMeritM<Int>::setTVector(const vector<int64_t> &t,
     int64_t d = static_cast<int>(t.size()); // Number of orders for the projections.
     for (int64_t i = 1; i < d; i++)
         // Adds the set of projections of order i.
-        m_coordRange->includeOrder(i + 1, min_dim, t[i], includeFirst); // Change here *****
+        m_coordRange->includeOrder(i + 1 - includeFirst, min_dim, t[i], includeFirst); // Change here *****
 }
 
 //=========================================================================
@@ -357,7 +369,7 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
             LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
-            this->m_sqlen[0] = lat.getVecNorm(0);
+            this->m_sqlen[0] = NTL::conv<double>(lat.getVecNorm(0));
         }
         if (!m_doingBB) {
             if (lat.getNormType() == L2NORM) {
@@ -372,6 +384,7 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
             NTL::conv(merit,
                     m_red->getMinLength() / this->m_norma->getBound(j));
         }
+        if (m_printDetails) std::cout << "Coordinates: {1,... " << j << "}, FoM: " << merit << "\n";
         if (merit < minmerit)
             minmerit = merit;
         if (minmerit <= this->m_lowbound)
@@ -399,14 +412,13 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
                     coord.size(), this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
-            this->m_sqlen[0] = lat.getVecNorm(0);
+            this->m_sqlen[0] = NTL::conv<double>(lat.getVecNorm(0));
         }
         if (!m_doingBB) {
             if (lat.getNormType() == L2NORM) {
                 NTL::conv(merit,
                         sqrt(this->m_sqlen[0])
                                 / this->m_norma->getBound(coord.size()));
-                std::cout << merit << "\n";
             } else {
                 NTL::conv(merit,
                         this->m_sqlen[0]
@@ -419,6 +431,7 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
                     m_red->getMinLength()
                             / this->m_norma->getBound(coord.size()));
         }
+        if (m_printDetails) std::cout << "Coordinates: " << coord << ", FoM: " << merit << "\n";
         if (merit < minmerit)
             minmerit = merit;
         if (minmerit <= this->m_lowbound)
