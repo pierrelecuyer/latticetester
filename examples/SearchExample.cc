@@ -46,15 +46,17 @@ int main() {
   Int m(1048573); // Modulus
   //Int m(1073741827); // Prime modulus near 2^{30}
   //Int m(1099511627791);  // Prime modulus near 2^{40}
-  const int noBest = 1; // The number of best multipliers to keep for the BB algorithm
+  const int noBest = 50; // The number of best multipliers to keep for the BB algorithm
   const int numRep = 1048573; // Total number of multipliers to check 
   int64_t max_dim = 32; // Dimension of the lattice
   double delta = 0.9999; // Delta for the pre-reduction algorithm
   ReductionType meth = LLL; // Sets the reduction type
   //The t-vector of the FOM, here M_{16,32,16,12}
-  vector<int64_t> t(2); // length of the t-vector
+  vector<int64_t> t(4); // length of the t-vector
   t[0] = 16;
-  t[1] = 10;
+  t[1] = 32;
+  t[2] = 16;
+  t[3] = 12
 
   /*
    * The following variables are technical and shall not be changed by the user
