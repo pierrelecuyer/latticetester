@@ -56,7 +56,7 @@ int main() {
   t[0] = 16;
   t[1] = 32;
   t[2] = 16;
-  t[3] = 12
+  t[3] = 12;
 
   /*
    * The following variables are technical and shall not be changed by the user
