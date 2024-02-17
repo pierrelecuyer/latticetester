@@ -89,7 +89,7 @@ public:
     /**
      * The maximum dimension of the lattices for which this class can give
      * an upper bound.
-     * */
+     */
     static const int64_t MAX_DIM = 48;
 
     /**
