@@ -52,8 +52,8 @@ int main() {
     basis1.SetDims(dim, dim);
     basis2.SetDims(dim, dim);
     basisDual.SetDims(dim, dim);
-    basisProj.SetDims(dim, dim);
-    basisDualProj.SetDims(dim, dim);
+    basisProj.SetDims(dim, dimProj);
+    basisDualProj.SetDims(dim, dimProj);
     Int sqlength;
 
     // We construct a Korobov lattice in dim dimensions.
@@ -68,11 +68,6 @@ int main() {
     // We apply LLL to reduce basis1.
     BasisConstruction<Int>::LLLConstruction0(basis1, 0.5);
     std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
-    ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
-    std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
-
-    BasisConstruction<Int>::LLLConstruction0(basis1, 0.8);
-    std::cout << "Basis after LLL with delta=0.8: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
@@ -109,17 +104,23 @@ int main() {
     proj.insert(3);
     proj.insert(5);
     std::cout << "Lattice projection over coordinates " << proj << ".\n";
-    BasisConstruction<Int>::projectionConstructionLLL(basis2, basisProj, proj,
-            m, 0.99999, 3);
-    std::cout << "In the following basis matrices, only the first 3 rows \n";
-    std::cout << " and 3 columns are significant, the rest must be ignored.\n";
+    std::cout << "In the following basisProj matrices, we need 5 rows and 3 columns\n";
+    std::cout << " to make the projection, then 3 rows and 3 columns for the basis.\n";
+    std::cout << " Part of the matrix is not used and must be ignored.\n\n";
+
+    // Basis construction with LLL.
+    BasisConstruction<Int>::projectMatrix(basis2, basisProj, proj, dim);
+    std::cout << "basisProj after projectMatrix (generating vectors): \n" << basisProj << "\n";
+    BasisConstruction<Int>::LLLBasisConstruction(basisProj, m, 0.5, dim);
     std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
+
+    // Basis construction with upper-triangular method.
     BasisConstruction<Int>::projectionConstructionUpperTri(basis2, basisProj,
-            proj, m, 3);
+            proj, m, 5);
     std::cout << "Upper-triangular basis for this proj.: \n" << basisProj
             << "\n";
 
-    // We use only three coordinates of these matrices for the projection.
+    // Here we use only three rows of the `basisProj` matrix to construct an m-dual basis.
     BasisConstruction<Int>::mDualUpperTriangular(basisProj, basisDualProj, m, 3);
     std::cout << "Triangular basis for m-dual of this projection: \n"
             << basisDualProj << "\n";

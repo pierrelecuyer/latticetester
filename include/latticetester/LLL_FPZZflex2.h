@@ -1091,18 +1091,11 @@ long LLL_FPZZflex(IntMat &B, double delta, long m, long n, double *sqlen,
 
     long imin = 0;
     double minlen = b[1];
-    for (i = 1; i <= m; i++)
-        if (b[i] < minlen) {
-            minlen = b[i];
-            imin = i - 1;
-        };
-    if (imin > 0) {
-        swap(B[0], B[imin]);
-        std::swap(b[1], b[imin + 1]);
-    }
+    for (i = 2; i <= new_m; i++)
+       if (b[i] < minlen) { minlen = b[i];  imin = i-1; };
+    if (imin > 0) { swap(B[0], B[imin]);  std::swap(b[1], b[imin+1]); }
     if (sqlen)
-        for (i = 0; i < m; i++)
-            sqlen[i] = b[i + 1];
+        for (i = 0; i < new_m; i++)  sqlen[i] = b[i+1];
 
     // In this version, we leave the zero rows at the bottom.
     // The new_m independent basis vectors will be at the top of `B`.
@@ -1610,7 +1603,7 @@ long BKZ_FPZZflex(IntMat &BB, double delta, long beta, long m, long n,
     }
     long imin = 0;
     double minlen = b[1];
-    for (i = 1; i <= m; i++)
+    for (i = 2; i <= m; i++)
        if (b[i] < minlen) { minlen = b[i];  imin = i-1; };
     if (imin > 0) { swap(BB[0], BB[imin]);  std::swap(b[1], b[imin+1]); }
     if (sqlen)

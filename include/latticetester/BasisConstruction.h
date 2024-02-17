@@ -232,11 +232,13 @@ public:
 
     /**
      * Constructs a basis for the projection `proj` of the lattice with basis `inBasis`,
-     * using `LLLBasisConstruction`, and puts it in `projBasis`.
-     * This basis is not triangular in general.
-     * This will overwrite the matrix `projBasis`, or part of it.
-     * It does not compute the dual.
-     * When `r > 0`, only the first `r` rows of the matrix `inBasis` are actually used.
+     * using `LLLBasisConstruction`, and returns it in `projBasis`.
+     * This returned basis is not triangular in general.
+     * Its dimension will be the number of coordinates in `proj`.
+     * The matrix `projBasis` must have enough columns to hold it and at least as many
+     * rows as the number of rows that we use from `inBasis`.
+     * When `r > 0`, only the first `r` rows of the matrix `inBasis` are used,
+     * otherwise we use all rows of that matrix.
      * This `r` should normally be the true dimension `dim` of that basis, which is often
      * smaller than the size `maxDim` of the `IntMat` object that contains the basis.
      * The square Euclidean lengths of the basis vectors are returned in the array `sqlen` when
@@ -249,9 +251,14 @@ public:
     /**
      * Same as `projectionConstructionLLL`, but the construction is made using
      * `upperTriangularBasis`, so the returned basis is upper triangular.
+     * When `r > 0`, only the first `r` rows of the matrix `inBasis` are actually used,
+     * otherwise we use all rows of that matrix.
      * In the first version, we pass a matrix `genTemp` that will be used to store the
      * generating vectors of the projection before making the triangularization.
-     * We pass it as a parameter to avoid the internal creation of a new matrix each time.
+     * The two matrices `projBasis` and `genTemp` must have enough columns to hold the
+     * projection and at least as many rows as the number of rows that we use from `inBasis`.
+     * We pass `genTemp` as a parameter to avoid the internal creation of a new matrix each time,
+     * in case we call this method several times.  Its contents will be modified.
      * In the second version, this matrix is not passed and a temporary one is created internally,
      * which may add a bit of overhead.
      */
@@ -760,7 +767,7 @@ void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
     if (!r)
         r = in.NumRows();   // In case r=0.
     // We assume without testing that `out` is large enough for proj.size().
-    long j = 0; //CW
+    long j = 0;
     for (auto it = proj.begin(); it != proj.end(); it++, j++)
     {
         for (long i = 0; i < r; i++)
@@ -783,7 +790,6 @@ template<typename Int>
 void BasisConstruction<Int>::projectionConstructionUpperTri(
         const IntMat &inBasis, IntMat &projBasis, IntMat &genTemp,
         const Coordinates &proj, const Int &m, long r) {
-    //  if (!r) r = inBasis.NumRows();
     projectMatrix(inBasis, genTemp, proj, r);
     upperTriangularBasis(genTemp, projBasis, m, r, proj.size());
 }
@@ -793,8 +799,9 @@ void BasisConstruction<Int>::projectionConstructionUpperTri(
         const IntMat &inBasis, IntMat &projBasis, const Coordinates &proj,
         const Int &m, long r) {
     long dim = proj.size();      // Dimension of projection
+    if (!r) r = inBasis.NumRows();
     IntMat genTemp;
-    genTemp.SetDims(dim, dim); // Here an internal object is created and resized!
+    genTemp.SetDims(r, dim); // Here an internal object is created and resized!
     projectMatrix(inBasis, genTemp, proj, r);
     upperTriangularBasis(genTemp, projBasis, m, r, dim);
 }
