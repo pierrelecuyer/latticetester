@@ -4,13 +4,31 @@
 // It was modified because we wanted extra flexibility in the functions to improve
 // the performance of our tools that use these functions.
 
-#ifndef NTL_LLL_FPZZflex__H
-#define NTL_LLL_FPZZflex__H
+#ifndef NTL_LLL_FPInt__H
+#define NTL_LLL_FPInt__H
 
-#include <NTL/LLL.h>
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <array>
+#include <set>
+#include <map>
+#include <cmath>
+#include <cstdlib>
+#include <cstdint>
+#include <type_traits>
+
+#include "NTL/tools.h"
 #include <NTL/fileio.h>
+#include <NTL/vector.h>
+#include <NTL/matrix.h>
 #include <NTL/vec_double.h>
+#include <NTL/ZZ.h>
+#include <NTL/LLL.h>
 
+#include <latticetester/NTLWrap.h>
 /**
  * This module contains a  modified version of the `LLL_FP` module of NTL.
  * With the modified functions, we can apply LLL or BKZ to a submatrix
@@ -57,15 +75,15 @@ NTL_OPEN_NNS
  * The function returns the dimension of the computed basis (the number of independent rows).
  */
 static
-long LLL_FPZZflex(IntMat &B, double delta = 0.99, long r = 0, long c = 0,
+long LLL_FPInt(IntMat &B, double delta = 0.99, long r = 0, long c = 0,
         double *sqlen = 0);
 
 /**
  * This function is similar to `BKZ_FP` in NTL, with the same modifications
- * as in LLL_FPZZflex above.
+ * as in LLL_FPInt above.
  */
 static
-long BKZ_FPZZflex(IntMat &BB, double delta = 0.99, long blocksize = 10, long r =
+long BKZ_FPInt(IntMat &BB, double delta = 0.99, long blocksize = 10, long r =
         0, long c = 0, double *sqlen = 0);
 
 NTL_CLOSE_NNS
@@ -104,7 +122,6 @@ static void InnerProduct(Int &xx, const IntVec &a, const IntVec &b, long n) {
 static void InnerProduct(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
     RR t1, x;
     long i;
-
     clear(x);
     for (i = 1; i <= n; i++) {
         mul(t1, a(i), b(i));
@@ -123,9 +140,7 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n) {
 
     // long n = A.length();
     long i;
-
     MU = MU1;
-
     if (MU == 1) {
         for (i = 1; i <= n; i++)
             sub(A(i), A(i), B(i));
@@ -186,7 +201,7 @@ static double max_abs(double *v, long n) {
     return res;
 }
 
-// Returns 1 in in_float iff all the coefficients a[i] are within the bounds.
+// Returns 1 in `in_float` iff all the coefficients `a[i]` are within the bounds.
 static void RowTransformStart(double *a, long *in_a, long &in_float, long n) {
     long i;
     long inf = 1;
@@ -1052,7 +1067,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
 }
 
 static
-long LLL_FPZZflex(IntMat &B, double delta, long m, long n, double *sqlen,
+long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
         long deep, LLLCheckFct check) {
     long i, j;
     long new_m, quit;
@@ -1103,7 +1118,7 @@ long LLL_FPZZflex(IntMat &B, double delta, long m, long n, double *sqlen,
 }
 
 static
-long LLL_FPZZflex(IntMat &B, double delta, long m, long n, double *sqlen) {
+long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     if (m == 0)
         m = B.NumRows();
     if (n == 0)
@@ -1112,7 +1127,7 @@ long LLL_FPZZflex(IntMat &B, double delta, long m, long n, double *sqlen) {
     NumSwaps = 0;
     if (delta < 0.50 || delta >= 1)
         LogicError("LLL_FP: bad delta");
-    return LLL_FPZZflex(B, 0, delta, m, n, sqlen, 0, 0);
+    return LLL_FPInt(B, 0, delta, m, n, sqlen, 0, 0);
 }
 
 // =======================================================
@@ -1215,7 +1230,7 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
 }
 
 static
-long BKZ_FPZZflex(IntMat &BB, double delta, long beta, long m, long n,
+long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         double *sqlen, long prune, LLLCheckFct check) {
     // long m = BB.NumRows();
     // long n = BB.NumCols();
@@ -1613,7 +1628,7 @@ long BKZ_FPZZflex(IntMat &BB, double delta, long beta, long m, long n,
 }
 
 static
-long BKZ_FPZZflex(IntMat &BB, double delta, long beta, long m, long n,
+long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         double *sqlen) {
     if (m == 0)
         m = BB.NumRows();
@@ -1625,7 +1640,7 @@ long BKZ_FPZZflex(IntMat &BB, double delta, long beta, long m, long n,
         LogicError("BKZ_FPZZ: bad delta");
     if (beta < 2)
         LogicError("BKZ_FPZZ: bad block size");
-    return BKZ_FPZZflex(BB, 0, delta, beta, m, n, sqlen, 0, 0);
+    return BKZ_FPInt(BB, 0, delta, beta, m, n, sqlen, 0, 0);
 }
 
 NTL_END_IMPL

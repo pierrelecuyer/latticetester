@@ -293,7 +293,7 @@ long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
     int64_t rank = 0;
     if ((precision == DOUBLE) & (c == 0) & (r == 0) & (sqlen == 0))
         rank = LLL64_FP(gen, delta);
-    // rank = LLL_FP64flex(gen, delta, r, c, sqlen);    //  TO DO !!!!
+        // rank = LLL_FPInt(gen, delta, r, c, sqlen);    //  TO DO !!!!
     else
         std::cerr
                 << "LLLConstruction0 for int64_t: implemented only for precision=DOUBLE and c=r=0.\n";

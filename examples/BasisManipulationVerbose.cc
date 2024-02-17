@@ -41,8 +41,8 @@ Int m(101);      // Modulus m = 101
 //Int m(1021);     // Modulus m = 1021
 //Int m(1048573);  // Modulus m = 1048573 (prime number near 2^{20})
 Int a(33);       // The LCG multiplier
-const long dim = 5;  // Dimension
-const long dimProj = 3;  // Dimension
+const long dim = 5;  // Dimension of lattice.
+const long dimProj = 3;  // Dimension of projection.
 
 int main() {
     std::cout << "Types: " << strFlexTypes << "\n";
@@ -53,7 +53,7 @@ int main() {
     basis2.SetDims(dim, dim);
     basisDual.SetDims(dim, dim);
     basisProj.SetDims(dim, dimProj);
-    basisDualProj.SetDims(dim, dimProj);
+    basisDualProj.SetDims(dimProj, dimProj);
     Int sqlength;
 
     // We construct a Korobov lattice in dim dimensions.
@@ -120,7 +120,7 @@ int main() {
     std::cout << "Upper-triangular basis for this proj.: \n" << basisProj
             << "\n";
 
-    // Here we use only three rows of the `basisProj` matrix to construct an m-dual basis.
+    // Use first three rows of `basisProj` basis matrix to construct an m-dual basis.
     BasisConstruction<Int>::mDualUpperTriangular(basisProj, basisDualProj, m, 3);
     std::cout << "Triangular basis for m-dual of this projection: \n"
             << basisDualProj << "\n";
