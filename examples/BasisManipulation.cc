@@ -111,11 +111,12 @@ Int m(1048573);  // Prime modulus near 2^{20}
 Int a;       // The LCG multiplier
 
 const long numSizes = 10;    // Number of matrix sizes (choices of dimension).
-const long dimensions[numSizes] = { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
+// const long dimensions[numSizes] = { 10, 15, 20, 25, 30, 35 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
-const long numMeth = 5;    // Number of methods, and their names.
+const long numMeth = 6;    // Number of methods, and their names.
 std::string names[numMeth] = { "LLL5     ", "LLL8     ", "LLL99999 ",
-        "UppTri   ", "mDualUT  "};
+        "LLL99999(new) ", "UppTri   ", "mDualUT  "};
 
 // Here we use ctime directly for the timings, to minimize overhead.
 clock_t totalTime;  // Global timer for total time.
@@ -125,31 +126,38 @@ clock_t tmp;
 // Run speed test for dim = dimensions[d], with given matrices.
 static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
         IntMat &basisdual) {
-    // We apply LLL to basis1 with different values of `delta`.
+    // We apply LLL to basis1 with different values of `delta`, incrementally.
     copy(basis1, basis2, dim, dim);
     tmp = clock();
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.5, dim, dim);
     timer[0][d] += clock() - tmp;
 
-    copy(basis1, basis2, dim, dim);
+    // We continue the LLL process with a larger `delta`.
+    // copy(basis1, basis2, dim, dim);
     tmp = clock();
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim);
     timer[1][d] += clock() - tmp;
 
-    copy(basis1, basis2, dim, dim);
+    // copy(basis1, basis2, dim, dim);
     tmp = clock();
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim);
     timer[2][d] += clock() - tmp;
 
+    // Here we restart LLL from the initial triangular basis.
+    copy(basis1, basis2, dim, dim);
+    tmp = clock();
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim);
+    timer[3][d] += clock() - tmp;
+
     // We now construct an upper-triangular basis from basis2 into basis1.
     tmp = clock();
     BasisConstruction<Int>::upperTriangularBasis(basis2, basis1, m, dim, dim);
-    timer[3][d] += clock() - tmp;
+    timer[4][d] += clock() - tmp;
 
     // We compute an m-dual basis to basis1.
     tmp = clock();
     BasisConstruction<Int>::mDualUpperTriangular(basis1, basisdual, m, dim);
-    timer[4][d] += clock() - tmp;
+    timer[5][d] += clock() - tmp;
 
     // mDualBasis is currently implemented only for Int = ZZ and dim = maxDim.
     // BasisConstruction<Int>::mDualBasis(basis2, basisdual, m);
@@ -211,9 +219,6 @@ static void testLoopNoResize(long numRep) {
 
 static void printResults() {
     long d;
-    std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
-    std::cout << "Types: " << strFlexTypes << "\n";
-    std::cout << "Timings for different methods, in basic clock units \n";
     std::cout << " dim:    ";
     for (d = 0; d < numSizes; d++)
         std::cout << std::setw(8) << dimensions[d] << " ";
@@ -232,11 +237,16 @@ static void printResults() {
 
 int main() {
     long numRep = 1000;  // Number of replications (multipliers) for each case.
+    std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
+    std::cout << "Types: " << strFlexTypes << "\n";
+    std::cout << "Timings for different methods, in basic clock units \n";
 #if TYPES_CODE  ==  ZD
     testLoopResize(numRep);  // Works only for ZZ.
+    std::cout << "Results for `testLoopResize` (many objects are created or resized).\n";
     printResults();
 #endif
     testLoopNoResize(numRep);
+    std::cout << "Results for `testLoopNoResize`.\n";
     printResults();
 }
 
