@@ -103,7 +103,6 @@
 
 using namespace LatticeTester;
 
-//Int m(101);      // Modulus m = 101
 //Int m(1021);     // Modulus m = 1021
 Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1073741827);  // Prime modulus near 2^{30}
@@ -112,12 +111,11 @@ Int m(1048573);  // Prime modulus near 2^{20}
 Int a;       // The LCG multiplier
 
 const long numSizes = 10;    // Number of matrix sizes (choices of dimension).
-const long dimensions[numSizes] = { 11, 12, 13, 14, 15, 16, 17, 18,  19, 20 };
-// const long dimensions[numSizes] = { 10, 20, 30, 40, 50 };
-//const long dimensions[numSizes] = {5};
-const long numMeth = 8;    // Number of methods, and their names.
+const long dimensions[numSizes] = { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+long maxdim = dimensions[numSizes - 1];   // Maximum dimension
+const long numMeth = 5;    // Number of methods, and their names.
 std::string names[numMeth] = { "LLL5     ", "LLL8     ", "LLL99999 ",
-        "UppTri   ", "Tri96    ", "mDualUT  ", "mDualUT96", "mDual    " };
+        "UppTri   ", "mDualUT  "};
 
 // Here we use ctime directly for the timings, to minimize overhead.
 clock_t totalTime;  // Global timer for total time.
@@ -127,86 +125,46 @@ clock_t tmp;
 // Run speed test for dim = dimensions[d], with given matrices.
 static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
         IntMat &basisdual) {
-    // We apply LLL to basis1.
-    // copy(basis1, basis2);
+    // We apply LLL to basis1 with different values of `delta`.
+    copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis1, 0.5, dim, dim);
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.5, dim, dim);
     timer[0][d] += clock() - tmp;
 
-    // copy(basis1, basis2);
+    copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis1, 0.9, dim, dim);
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim);
     timer[1][d] += clock() - tmp;
 
-    // copy(basis1, basis2);
+    copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis1, 0.99999, dim, dim);
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim);
     timer[2][d] += clock() - tmp;
-    //std::cout << " LLL done \n";
-
-//	return;
 
     // We now construct an upper-triangular basis from basis2 into basis1.
-    // We copy basis2 into basis3, because it will be modified.
-    // copy(basis2, basis3);
     tmp = clock();
-    BasisConstruction<Int>::upperTriangularBasis(basis1, basis2, m, dim, dim);
+    BasisConstruction<Int>::upperTriangularBasis(basis2, basis1, m, dim, dim);
     timer[3][d] += clock() - tmp;
-    //std::cout << " UppTri done \n";
 
-    // Again. This function is in Util.h, it is the old method from 1996.  ???
-    //copy(basis2, basis3);
+    // We compute an m-dual basis to basis1.
     tmp = clock();
-    // Triangularization(basis3, basis1, dim, dim, m);
-    //timer[4][d] += clock() - tmp;
-    //std::cout << " Triang done \n";
-    // This basis1 is upper triangular.
+    BasisConstruction<Int>::mDualUpperTriangular(basis1, basisdual, m, dim);
+    timer[4][d] += clock() - tmp;
 
-    // Now we compute an m-dual basis.
-    tmp = clock();
-    BasisConstruction<Int>::mDualUpperTriangular(basis2, basisdual, m, dim);
-    timer[5][d] += clock() - tmp;
-    //std::cout << " mDualTri done \n";
-
-    tmp = clock();
-    // BasisConstruction<Int>::mDualUpperTriangular96(basis1, basisdual, m);
-    // timer[6][d] += clock() - tmp;
-    //std::cout << " mDualTri96 done \n";
-
-    // return;
-#if TYPES_CODE  ==  ZD
-    // mDualBasis is currently implemented only for Int = ZZ.
-    tmp = clock();
-    // BasisConstruction<Int>::mDualBasis(basis2, basisdual, m, dim);
-    // timer[7][d] += clock() - tmp;
-    //std::cout << " mDualB done \n";
-#endif
+    // mDualBasis is currently implemented only for Int = ZZ and dim = maxDim.
+    // BasisConstruction<Int>::mDualBasis(basis2, basisdual, m);
 }
 
-static void transformBasisLLL(long d, long dim, IntMat &basis1, double *b) {
-    // We apply LLL to basis1.
-    // double *b;   b = new double[dim];
-    tmp = clock();
-    BasisConstruction<Int>::LLLBasisConstruction(basis1, m, 0.5, dim, dim, b);
-    // BasisConstruction<Int>::LLLConstruction0(basis1, 0.5, dim, dim, b);
-    // BasisConstruction<Int>::LLLConstruction0(basis1, 0.5);
-    timer[0][d] += clock() - tmp;
-    // std::cout << " dim = " << dim << ", b[0] = " << b[0] << " \n ";
-}
-
+// In this testing loop, new `Rank1Lattice` objects are created
+// and the  `IntMat` matrices are resized inside the loop.
 static void testLoopResize(long numRep) {
     long d;
     IntMat basis1, basis2, basisdual;
-    //long maxdim = dimensions[numSizes-1];   // Maximum dimension
-    // double *b;   b = new double[maxdim];
-    Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
-
-    // Chrono totTime;  	totTime.init();
-    for (d = 0; d < numSizes; d++)   // Each matrix size
+    Rank1Lattice<Int, Real> *korlat;    // We create a single Korobov lattice.
+    for (d = 0; d < numSizes; d++)      // Reset timers.
         for (int64_t meth = 0; meth < numMeth; meth++)
             timer[meth][d] = 0;
     totalTime = clock();
-
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
         for (d = 0; d < numSizes; d++) {  // Each matrix size
@@ -222,22 +180,20 @@ static void testLoopResize(long numRep) {
             delete korlat;
         }
     }
-
 }
 
+// In this testing loop, we try to minimize the creation of objects.
+// The `IntMat` and `Rank1Lattice` objects are created only once.
 static void testLoopNoResize(long numRep) {
     long d;
-    long maxdim = dimensions[numSizes - 1];   // Maximum dimension
-    IntMat basis1, basis2, basis3, basisdual;
+    IntMat basis1, basis2, basisdual;
     basis1.SetDims(maxdim, maxdim); // Will be initial triangular basis.
     basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
     basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
     Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
     korlat = new Rank1Lattice<Int, Real>(m, maxdim, true);
 
-    // Chrono totTime;  	totTime.init();
-    // double *b;   b = new double[maxdim];
-    for (d = 0; d < numSizes; d++)   // Each matrix size
+    for (d = 0; d < numSizes; d++)   // Reset timers.
         for (int64_t meth = 0; meth < numMeth; meth++)
             timer[meth][d] = 0;
     totalTime = clock();
@@ -247,12 +203,8 @@ static void testLoopNoResize(long numRep) {
         for (d = 0; d < numSizes; d++) {  // Each matrix size
             long dim = dimensions[d]; // The corresponding dimension.
             korlat->buildBasis(dim);
-            copy(korlat->getBasis(), basis1, dim, dim); // This initial basis is triangular.
-
+            copy(korlat->getBasis(), basis1, dim, dim); // Triangular basis.
             transformBases(d, dim, basis1, basis2, basisdual);
-            // transformBasisLLL(d, dim, basis1, 0);
-            // Doing the following turns out to be much slower!
-            // transformBasisLLL(d, dim, korlat->getBasis(), 0);
         }
     }
 }
@@ -281,7 +233,7 @@ static void printResults() {
 int main() {
     long numRep = 1000;  // Number of replications (multipliers) for each case.
 #if TYPES_CODE  ==  ZD
-    testLoopResize(numRep);
+    testLoopResize(numRep);  // Works only for ZZ.
     printResults();
 #endif
     testLoopNoResize(numRep);
