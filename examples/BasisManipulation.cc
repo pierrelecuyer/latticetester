@@ -111,12 +111,12 @@ Int m(1048573);  // Prime modulus near 2^{20}
 Int a;       // The LCG multiplier
 
 const long numSizes = 6;    // Number of matrix sizes (choices of dimension).
-//const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
-const long dimensions[numSizes] = { 10, 15, 20, 25, 30, 35 };
+const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
+//const long dimensions[numSizes] = { 10, 15, 20, 25, 30, 35 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 const long numMeth = 6;    // Number of methods, and their names.
-std::string names[numMeth] = { "LLL5       ", "LLL8       ", "LLL99999   ",
-        "LLL99999-R ", "UppTri     ", "mDualUT    "};
+std::string names[numMeth] = { "LLL5      ", "LLL9      ", "LLL99999  ",
+        "LLL99999-R", "UppTri    ", "mDualUT   "};
 
 // Here we use ctime directly for the timings, to minimize overhead.
 clock_t totalTime;  // Global timer for total time.
@@ -172,7 +172,6 @@ static void testLoopResize(long numRep) {
     for (d = 0; d < numSizes; d++)      // Reset timers.
         for (int64_t meth = 0; meth < numMeth; meth++)
             timer[meth][d] = 0;
-    std::cout << " after reset timers \n";
     totalTime = clock();
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
@@ -241,14 +240,14 @@ int main() {
     long numRep = 1000;  // Number of replications (multipliers) for each case.
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Types: " << strFlexTypes << "\n";
-    std::cout << "Timings for different methods, in basic clock units \n";
+    std::cout << "Timings for different methods, in basic clock units \n\n";
 #if TYPES_CODE  ==  ZD
     testLoopResize(numRep);  // Works only for ZZ.
-    std::cout << "Results for `testLoopResize` (many objects are created or resized).\n";
+    std::cout << "Results for `testLoop-Resize` (many objects are created or resized)\n";
     printResults();
 #endif
     testLoopNoResize(numRep);
-    std::cout << "Results for `testLoopNoResize`.\n";
+    std::cout << "Results for `testLoop-NoResize`\n";
     printResults();
 }
 
