@@ -111,12 +111,12 @@ Int m(1048573);  // Prime modulus near 2^{20}
 Int a;       // The LCG multiplier
 
 const long numSizes = 6;    // Number of matrix sizes (choices of dimension).
-const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
-// const long dimensions[numSizes] = { 10, 15, 20, 25, 30, 35 };
+//const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
+const long dimensions[numSizes] = { 10, 15, 20, 25, 30, 35 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 const long numMeth = 6;    // Number of methods, and their names.
-std::string names[numMeth] = { "LLL5     ", "LLL8     ", "LLL99999 ",
-        "LLL99999(new) ", "UppTri   ", "mDualUT  "};
+std::string names[numMeth] = { "LLL5       ", "LLL8       ", "LLL99999   ",
+        "LLL99999-R ", "UppTri     ", "mDualUT    "};
 
 // Here we use ctime directly for the timings, to minimize overhead.
 clock_t totalTime;  // Global timer for total time.
