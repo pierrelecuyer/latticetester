@@ -177,8 +177,8 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
 #if TYPES_CODE  ==  ZD
     // mDualBasis is currently implemented only for Int = ZZ.
     tmp = clock();
-    BasisConstruction<Int>::mDualBasis(basis2, basisdual, m, dim);
-    timer[7][d] += clock() - tmp;
+    // BasisConstruction<Int>::mDualBasis(basis2, basisdual, m, dim);
+    // timer[7][d] += clock() - tmp;
     //std::cout << " mDualB done \n";
 #endif
 }
@@ -280,8 +280,10 @@ static void printResults() {
 
 int main() {
     long numRep = 1000;  // Number of replications (multipliers) for each case.
-    testLoop2Resize(numRep);
+#if TYPES_CODE  ==  ZD
+    testLoopResize(numRep);
     printResults();
+#endif
     testLoopNoResize(numRep);
     printResults();
 }

@@ -1244,7 +1244,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
 
     init_red_fudge();
 
-    IntMat B;    // Will be a deep copy of BB, with one more row.   ********
+    IntMat B;    // Will be a copy of BB, with one more row.   ********
     // Change it to smaller dimensions.
     B.SetDims(m + 1, n);
     for (i = 0; i < m + 1; i++) {
@@ -1300,18 +1300,6 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
     UniqueArray<long> deltavec_store;
     deltavec_store.SetLength(m + 2);
     long *deltavec = deltavec_store.get();
-    ;
-
-    IntMat Ulocal;
-    IntMat *U;
-
-    if (UU) {
-        Ulocal.SetDims(m + 1, m);
-        for (i = 1; i <= m; i++)
-            conv(Ulocal(i, i), 1);
-        U = &Ulocal;
-    } else
-        U = 0;
 
     long quit;
     long new_m;
