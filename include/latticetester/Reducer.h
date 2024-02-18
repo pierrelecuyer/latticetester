@@ -1149,6 +1149,18 @@ void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
     redLLLNTL(red.getLattice().getBasis(), delta, precision);
 }
 
+// Static version: a specialization for the case where Int = int64_t.
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
+        long dim, double *sqlen, PrecisionType precision) {
+    if (precision == DOUBLE) {
+        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
+        NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
+        return;
+    }
+    MyExit(1, "redLLLNTL: Int = int64_t with precision != DOUBLE.\n");
+}
+
 // Static version: a specialization for the case where Int = ZZ.
 // See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
 // about the `PrecisionType` choices.
@@ -1222,13 +1234,25 @@ void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta, std::int64_t blocksize,
     redBKZ(red.getLattice().getBasis(), delta, blocksize, precision);
 }
 
+
+// Static version: a specialization for the case where Int = int64_t.
+template<>
+void Reducer<Int, Real>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
+        std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
+    if (precision == DOUBLE) {
+        NTL::BKZ_FPInt(basis, delta, blocksize, dim, dim, sqlen);
+        return;
+    }
+    MyExit(1, "redBKZ: Int = int64_t with precision != DOUBLE.\n");
+}
+
 // Static version, for Int = ZZ.
 template<>
 void Reducer<Int, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
         std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
     switch (precision) {
     case DOUBLE:
-        NTL::BKZ_FPInt(basis, delta, dim, dim, sqlen);
+        NTL::BKZ_FPInt(basis, delta, blocksize, dim, dim, sqlen);
         // NTL::BKZ_FP(basis, delta, blocksize);
         break;
     case QUADRUPLE:
