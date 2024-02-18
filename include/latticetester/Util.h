@@ -960,6 +960,27 @@ inline void CalcNorm(const Vect &V, int64_t n, Scal &S, NormType norm) {
 	}
 }
 
+
+/**
+ * Copies the first `c` components of vector `fromVec` into vector `toVec`.
+ */
+template<typename Vect>
+inline void CopyPartVec(Vect &toVec, const Vect &fromVec, int64_t c) {
+    for (int64_t k = 0; k < c; k++)
+        toVec[k] = fromVec[k];
+}
+
+/**
+ * Copies the first `r` rows and `c` columns of matrix `fromMat` into matrix `toMat`.
+ */
+template<typename Matr>
+inline void CopyPartMat(Matr &toMat, const Matr &fromMat, int64_t r, int64_t c) {
+    for (int64_t i = 0; i < r; i++)
+        for (int64_t j = 0; j < c; j++)
+           toMat[i, j] = fromMat[i, j];
+}
+
+
 /**
  * Copies the first `n` components of vector `B` into vector `A`.
  */
@@ -1506,7 +1527,7 @@ void printBase2(IntMat bas_mat) {
 	}
 }
 
-// The two matrices must already have the same dimensions!
+// Copies b1 into b2. The two matrices must already have the same dimensions!
 template<typename IntMat>
 void copy(IntMat &b1, IntMat &b2) {
 	for (int64_t i = 0; i < b1.NumRows(); i++) {
@@ -1514,6 +1535,17 @@ void copy(IntMat &b1, IntMat &b2) {
 			b2[i][j] = b1[i][j];
 		}
 	}
+}
+
+// Copies the first r rows and c columns of b1 into b2, which is assumed to be large enough.
+// The two matrices must already have the same dimensions!
+template<typename IntMat>
+void copy(IntMat &b1, IntMat &b2, int64_t r, int64_t c) {
+    for (int64_t i = 0; i < r; i++) {
+        for (int64_t j = 0; j < c; j++) {
+            b2[i][j] = b1[i][j];
+        }
+    }
 }
 
 inline int64_t getWidth(clock_t time[], int64_t dim, std::string message,
