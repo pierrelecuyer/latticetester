@@ -22,8 +22,6 @@
  * for thousands or millions of lattices that we want to analyze, even if the bases
  * have different dimensions.
  *
- * QUESTION: Check if the dimensions of BB are changed in BKZ functions.  *************
- *
  * Another change is the possibility to recover an array `sqlen` that gives the square
  * Euclidean lengths of the basis vectors, in `double`.
  * This array is maintained in the LLL functions of NTL,
@@ -57,12 +55,6 @@ NTL_OPEN_NNS
  */
 static
 long LLL_FPZZflex(mat_ZZ& B, double delta = 0.99, long r = 0, long c = 0, double *sqlen = 0);
-
-
-/**
- * This one is the same as `LLL_FP`, it takes `r` and `c` equal to the numbers
- * of rows and columns in the object `B`.
- */
 
 /**
  * This function is similar to `BKZ_FP` in NTL, with the same modifications
