@@ -28,6 +28,7 @@
 #include "latticetester/IntLattice.h"
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/NTLWrap.h"
+#include "latticetester/LLL_FPInt.h"
 
 #include <fstream>
 #include <sstream>
@@ -285,13 +286,13 @@ public:
      * There is also a static version that takes the lattice as input.
      */
     void redBKZ(double delta = 0.999999, int64_t blocksize = 10,
-            PrecisionType prec = DOUBLE);
+            long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
 
     /**
      * A static version of the previous method.  The lattice basis is passed as a parameter.
      */
     static void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta = 0.999999,
-            int64_t blocksize = 10, PrecisionType prec = DOUBLE);
+            int64_t blocksize = 10, long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
 
     /**
      * Returns the length of the current shortest basis vector in the lattice,
@@ -1156,7 +1157,8 @@ void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
         long dim, double *sqlen, PrecisionType precision) {
     // long rank;
     if (precision == DOUBLE) {
-        NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
+        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
+        NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
         return;
     }
     // If precision is not DOUBLE, we are not allowed to specify dim;
@@ -1209,24 +1211,25 @@ void Reducer<Int, Real>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
 // This is the general implementation, for anything else than ZZ.
 template<typename Int, typename Real>
 void Reducer<Int, Real>::redBKZ(double delta, std::int64_t blocksize,
-        PrecisionType precision) {
+        long dim, double *sqlen, PrecisionType precision) {
     MyExit(1, "redBKZ cannot be used with int64_t integers.");
 }
 
 // A specialization for the case where Int = ZZ.
 template<typename Real>
 void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta, std::int64_t blocksize,
-        PrecisionType precision) {
+        long dim, double *sqlen, PrecisionType precision) {
     redBKZ(red.getLattice().getBasis(), delta, blocksize, precision);
 }
 
 // Static version, for Int = ZZ.
 template<>
 void Reducer<Int, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
-        std::int64_t blocksize, PrecisionType precision) {
+        std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
     switch (precision) {
     case DOUBLE:
-        NTL::BKZ_FP(basis, delta, blocksize);
+        NTL::BKZ_FPInt(basis, delta, dim, dim, sqlen);
+        // NTL::BKZ_FP(basis, delta, blocksize);
         break;
     case QUADRUPLE:
         NTL::BKZ_QP(basis, delta, blocksize);

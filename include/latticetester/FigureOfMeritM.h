@@ -36,7 +36,7 @@
 #include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/IntLatticeExt.h"
-#include "latticetester/LLL_FPZZflex.h"
+#include "latticetester/LLL_FPInt.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
 #include "latticetester/Normalizer.h"
@@ -363,10 +363,10 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
     for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
         lat.incDimBasis();
         if (m_doingBKZ) {
-            BKZ_FPZZflex(lat.getBasis(), this->m_delta, this->m_blocksize, j, j,
+            BKZ_FPInt(lat.getBasis(), this->m_delta, this->m_blocksize, j, j,
                     this->m_sqlen);
         } else if (m_doingLLL) {
-            LLL_FPZZflex(lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
+            LLL_FPInt (lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
             this->m_sqlen[0] = NTL::conv<double>(lat.getVecNorm(0));
@@ -405,10 +405,10 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
         coord = *it;
         lat.buildProjection(proj, coord, this->m_delta); // Must have withDual = false   ***
         if (m_doingBKZ) {
-            BKZ_FPZZflex(proj->getBasis(), this->m_delta, this->m_blocksize,
+            BKZ_FPInt(proj->getBasis(), this->m_delta, this->m_blocksize,
                     coord.size(), coord.size(), this->m_sqlen);
         } else if (m_doingLLL) {
-            LLL_FPZZflex(proj->getBasis(), this->m_delta, coord.size(),
+            LLL_FPInt(proj->getBasis(), this->m_delta, coord.size(),
                     coord.size(), this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);

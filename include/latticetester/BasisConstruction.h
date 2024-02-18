@@ -42,8 +42,9 @@
 #include "latticetester/IntLattice.h"
 #include "latticetester/Util.h"
 #include "latticetester/Coordinates.h"
-#include "latticetester/LLL64.h"
-#include "latticetester/LLL_FPZZflex.h"
+// #include "latticetester/LLL64.h"
+// #include "latticetester/LLL_FPZZflex.h"
+#include "latticetester/LLL_FPInt.h"
 
 namespace LatticeTester {
 
@@ -291,9 +292,9 @@ long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
         double delta, long r, long c, double *sqlen, PrecisionType precision) {
     long num = gen.NumRows();   // Number of generating vectors.
     int64_t rank = 0;
-    if ((precision == DOUBLE) & (c == 0) & (r == 0) & (sqlen == 0))
-        rank = LLL64_FP(gen, delta);
-        // rank = LLL_FPInt(gen, delta, r, c, sqlen);    //  TO DO !!!!
+    if ((precision == DOUBLE)  // & (c == 0) & (r == 0) & (sqlen == 0))
+        // rank = LLL64_FP(gen, delta);
+        rank = LLL_FPInt(gen, delta, r, c, sqlen);    //  TO DO !!!!
     else
         std::cerr
                 << "LLLConstruction0 for int64_t: implemented only for precision=DOUBLE and c=r=0.\n";
@@ -313,7 +314,8 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
     if (precision == DOUBLE) {
         // This function returns the nonzero vectors in the top rows of `gen`.
         // It never resizes the matrix `gen`.                                    ***
-        return rank = NTL::LLL_FPZZflex(gen, delta, r, c, sqlen); // We are done!
+        // return rank = NTL::LLL_FPZZflex(gen, delta, r, c, sqlen); // We are done!
+        return rank = NTL::LLL_FPInt(gen, delta, r, c, sqlen); // We are done!
     }
     // In other cases, we cannot use the flex version:
     // If precision is not DOUBLE, we are not allowed to specify r or c

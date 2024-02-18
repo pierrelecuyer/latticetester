@@ -110,9 +110,9 @@ Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1125899906842597);  // Prime modulus near 2^{50}
 Int a;       // The LCG multiplier
 
-const long numSizes = 6;    // Number of matrix sizes (choices of dimension).
-const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
-//const long dimensions[numSizes] = { 10, 15, 20, 25, 30, 35 };
+const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
+//const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
+const long dimensions[numSizes] = { 4, 6, 10, 20, 30 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 const long numMeth = 6;    // Number of methods, and their names.
 std::string names[numMeth] = { "LLL5      ", "LLL9      ", "LLL99999  ",
