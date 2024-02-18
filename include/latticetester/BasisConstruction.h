@@ -292,7 +292,7 @@ long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
         double delta, long r, long c, double *sqlen, PrecisionType precision) {
     long num = gen.NumRows();   // Number of generating vectors.
     int64_t rank = 0;
-    if ((precision == DOUBLE)  // & (c == 0) & (r == 0) & (sqlen == 0))
+    if (precision == DOUBLE)    // & (c == 0) & (r == 0) & (sqlen == 0))
         // rank = LLL64_FP(gen, delta);
         rank = LLL_FPInt(gen, delta, r, c, sqlen);    //  TO DO !!!!
     else

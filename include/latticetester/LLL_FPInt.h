@@ -133,9 +133,12 @@ static void InnerProduct(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
 // A = A - B*MU   for the first n vector entries only.
 template<typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n) {
-    // NTL_ZZRegister (T);
-    // NTL_ZZRegister (MU);
+#if TYPES_CODE  ==  ZD
+    NTL_ZZRegister (T);
+    NTL_ZZRegister (MU);
+#else
     Int T, MU;
+#endif
     long k;
 
     // long n = A.length();
@@ -229,9 +232,12 @@ static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
         long &in_float) {
-    // NTL_ZZRegister (T);
-    // NTL_ZZRegister (MU);
-    Int T, Mu;
+#if TYPES_CODE  ==  ZD
+    NTL_ZZRegister (T);
+    NTL_ZZRegister (MU);
+#else
+    Int T, MU;
+#endif
     long k;
     double mu;
 
@@ -367,9 +373,13 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
 
 // A = A + B*MU  for the first n vector entries only.
 static void RowTransform2(IntVec &A, IntVec &B, const Int &MU1, long n) {
-    // NTL_ZZRegister (T);
-    // NTL_ZZRegister (MU);
+#if TYPES_CODE  ==  ZD
+    NTL_ZZRegister (T);
+    NTL_ZZRegister (MU);
+#else
     Int T, MU;
+#endif
+
     long k;
     // long n = A.length();
     long i;

@@ -158,18 +158,19 @@ public:
     }
 
     /**
-     * DEPRECATED !!!
+     * DEPRECATED !!!    We do not want this!
      *
      * Change in the indexation reference for () operator to start from 0.
      * In `NTL::Vec<T>` the () operator starts from 1 which is not compatible
      * with boost.               ** ALSO DANGEROUS.  USE [] instead. **
-     */
+
     const T& operator()(size_type i) const {
         return (*this)[i];
     }
     T& operator()(size_type i) {
         return (*this)[i];
     }
+     */
 
 };
 // End class vector
