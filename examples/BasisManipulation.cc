@@ -110,7 +110,7 @@ Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1125899906842597);  // Prime modulus near 2^{50}
 Int a;       // The LCG multiplier
 
-const long numSizes = 10;    // Number of matrix sizes (choices of dimension).
+const long numSizes = 6;    // Number of matrix sizes (choices of dimension).
 const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
 // const long dimensions[numSizes] = { 10, 15, 20, 25, 30, 35 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
@@ -168,10 +168,11 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
 static void testLoopResize(long numRep) {
     long d;
     IntMat basis1, basis2, basisdual;
-    Rank1Lattice<Int, Real> *korlat;    // We create a single Korobov lattice.
+    Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
     for (d = 0; d < numSizes; d++)      // Reset timers.
         for (int64_t meth = 0; meth < numMeth; meth++)
             timer[meth][d] = 0;
+    std::cout << " after reset timers \n";
     totalTime = clock();
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
@@ -184,6 +185,7 @@ static void testLoopResize(long numRep) {
             korlat->buildBasis(dim);
             copy(korlat->getBasis(), basis1); // This initial basis is triangular.
             // Here this basis is a dim x dim IntMat object.
+            // std::cout << " before transform \n ";
             transformBases(d, dim, basis1, basis2, basisdual);
             delete korlat;
         }
@@ -198,7 +200,7 @@ static void testLoopNoResize(long numRep) {
     basis1.SetDims(maxdim, maxdim); // Will be initial triangular basis.
     basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
     basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
-    Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
+    Rank1Lattice<Int, Real> *korlat;    // We create a single Korobov lattice.
     korlat = new Rank1Lattice<Int, Real>(m, maxdim, true);
 
     for (d = 0; d < numSizes; d++)   // Reset timers.
