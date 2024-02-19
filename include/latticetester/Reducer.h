@@ -251,7 +251,7 @@ public:
      * and their description is done in the module `LLL` of NTL.
      * The reduction is always applied to the entire basis (all vectors and coordinates).
      */
-    void redLLLNTL(double delta = 0.999999, PrecisionType precision = DOUBLE);
+    // void redLLLNTL(double delta = 0.999999, PrecisionType precision = DOUBLE);
 
     /**
      * A static version of the same function for which the basis is passed as a parameter.
@@ -271,7 +271,7 @@ public:
      * This is slower than `redLLLNTL`, but more accurate.
      * There is also a static version which takes the basis as input.
      */
-    void redLLLNTLExact(double delta = 0.999999);
+    // void redLLLNTLExact(double delta = 0.999999);
 
     static void redLLLNTLExact(IntMat &basis, double delta =
             0.999999);
@@ -293,8 +293,8 @@ public:
     /**
      * A static version of the previous method.  The lattice basis is passed as a parameter.
      */
-//    static void redBKZ(IntMat &basis, double delta = 0.999999,
-//            int64_t blocksize = 10, long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
+    static void redBKZ(IntMat &basis, double delta = 0.999999,
+            int64_t blocksize = 10, long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
 
     /**
      * Returns the length of the current shortest basis vector in the lattice,
@@ -1993,6 +1993,7 @@ void Reducer<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
 
 //=========================================================================
 
+/*
 // This is the general implementation.
 template<typename Int, typename Real>
 void Reducer<Int, Real>::redLLLNTL(double delta, PrecisionType precision) {
@@ -2008,9 +2009,10 @@ void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
     IntLattice<NTL::ZZ>* lat = red.getIntLattice();
     redLLLNTL(lat->getBasis(), delta, lat->getDim(), 0, precision);
 }
+*/
 
 // Static version: a specialization for the case where Int = int64_t.
-template<Real>
+template<typename Real>
 void Reducer<int64_t, Real>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
         long dim, double *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
@@ -2024,7 +2026,7 @@ void Reducer<int64_t, Real>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta
 // Static version: a specialization for the case where Int = ZZ.
 // See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
 // about the `PrecisionType` choices.
-template<Real>
+template<typename Real>
 void Reducer<NTL::ZZ, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
         long dim, double *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
