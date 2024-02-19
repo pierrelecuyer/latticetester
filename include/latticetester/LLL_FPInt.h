@@ -661,7 +661,6 @@ void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
 
 template<typename IntMat>
 static
-// ll_LLL_FP(B, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
 long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         double **B1, double **mu, double *b, double *c, long m, long n,
         long init_k, long &quit) {
