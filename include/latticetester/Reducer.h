@@ -1994,8 +1994,8 @@ void Reducer<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
 // This is the general implementation.
 template<typename Int, typename Real>
 void Reducer<Int, Real>::redLLLNTL(double delta, PrecisionType precision) {
-    redLLLNTL(m_lat.getBasis(), delta, m_lat->getDim(),
-              m_lat->m_vecNorm, precision);
+    redLLLNTL(m_lat->getBasis(), delta, m_lat->getDim(), 0, precision);
+    //        m_lat->getVecNorm(), precision);
     // MyExit(1, "redLLLNTL only works with integers.");
 }
 
@@ -2004,8 +2004,7 @@ template<typename Real>
 void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
         PrecisionType precision) {
     IntLattice* lat = red.getIntLattice();
-    redLLLNTL(lat->getBasis(), delta, lat->getDim(),
-            lat->m_vecNorm, precision);
+    redLLLNTL(lat->getBasis(), delta, lat->getDim(), 0, precision);
 }
 
 // Static version: a specialization for the case where Int = int64_t.
@@ -2034,11 +2033,11 @@ void Reducer<NTL::ZZ, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta
     // If precision is not DOUBLE, we are not allowed to specify dim;
     // it is taken as the dimension of basis.
     NTL::matrix<NTL::ZZ> cpbasis;
-    if ((dim > 0) & (dim != basis.NumRows())) {
+    // if ((dim > 0) & (dim != basis.NumRows())) {
         cpbasis.SetDims (dim, dim);
         copy (basis, cpbasis, dim, dim);  // From Util
-    } else
-        cpbasis = &basis;
+    //} else
+    //    cpbasis = &basis;
     switch (precision) {
     case QUADRUPLE:
         NTL::LLL_QP(cpbasis, delta);
@@ -2093,8 +2092,8 @@ void Reducer<Int, Real>::redBKZ(double delta, std::int64_t blocksize,
 template<typename Real>
 void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta, std::int64_t blocksize,
         PrecisionType precision) {
-    IntLattice* lat = red.getIntLattice();
-    redBKZ(lat.getBasis(), delta, blocksize, lat.getDim(), lat.getVecNorm(), precision);
+    IntLattice* lat = red->getIntLattice();
+    redBKZ(lat->getBasis(), delta, blocksize, lat->getDim(), 0, precision);
 }
 
 // Static version: specialization for Int = int64_t.
@@ -2119,11 +2118,11 @@ void Reducer<NTL::ZZ, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
     }
     // If precision is not DOUBLE, dim is taken as the dimension of basis.
     NTL::matrix<NTL::ZZ> cpbasis;
-    if ((dim > 0) & (dim != basis.NumRows())) {
+    // if ((dim > 0) & (dim != basis.NumRows())) {
         cpbasis.SetDims (dim, dim);
-        copy (basis, cpbasis, dim, dim);  // From Util
-    } else
-        cpbasis = &basis;
+        Util::copy (basis, cpbasis, dim, dim);  // From Util
+    //} else
+    //    cpbasis = &basis;
     switch (precision) {
     case QUADRUPLE:
         NTL::BKZ_QP(cpbasis, delta, blocksize);
