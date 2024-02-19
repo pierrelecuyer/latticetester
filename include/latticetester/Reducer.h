@@ -2122,7 +2122,7 @@ void Reducer<NTL::ZZ, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
     NTL::matrix<NTL::ZZ> cpbasis;
     // if ((dim > 0) & (dim != basis.NumRows())) {
         cpbasis.SetDims (dim, dim);
-        latticetester::copy (basis, cpbasis, dim, dim);  // From Util
+        LatticeTester::copy (basis, cpbasis, dim, dim);  // From Util
     //} else
     //    cpbasis = &basis;
     switch (precision) {
@@ -2138,7 +2138,7 @@ void Reducer<NTL::ZZ, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
     default:
         MyExit(1, "Undefined precision type for redBKZ");
     }
-    copy (cpbasis, basis);
+    LatticeTester::copy (cpbasis, basis);
 }
 
 //=========================================================================
