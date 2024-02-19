@@ -41,7 +41,7 @@
 #include "NTL/tools.h"
 #include "NTL/ZZ.h"
 #include "NTL/RR.h"
-#include <NTL/mat_GF2.h>
+// #include <NTL/mat_GF2.h>
 
 #include "latticetester/EnumTypes.h"
 #include "latticetester/NTLWrap.h"

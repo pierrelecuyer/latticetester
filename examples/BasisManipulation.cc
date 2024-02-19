@@ -93,7 +93,7 @@
 #include "latticetester/FlexTypes.h"    // This defines Int and Real
 #include "latticetester/EnumTypes.h"
 #include "latticetester/BasisConstruction.h"
-#include "latticetester/Util.h"
+// #include "latticetester/Util.h"
 #include "latticetester/Chrono.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
