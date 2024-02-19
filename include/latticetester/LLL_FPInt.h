@@ -56,7 +56,6 @@
  * This differs from the `LLL_FP` functions, which returns the zero vectors at the top.
  */
 
-template<typename Int, typename Real>
 typedef NTL::vector<Int> IntVec;
 typedef NTL::matrix<Int> IntMat;
 
@@ -147,25 +146,20 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n) {
             sub(A[i], A[i], B[i]);
         return;
     }
-
     if (MU == -1) {
         for (i = 0; i < n; i++)
             add(A[i], A[i], B[i]);
         return;
     }
-
     if (MU == 0)
         return;
-
     if (NumTwos(MU) >= NTL_ZZ_NBITS)
         k = MakeOdd(MU);
     else
         k = 0;
-
     if (MU.WideSinglePrecision()) {
         long mu1;
         conv(mu1, MU);
-
         if (k > 0) {
             for (i = 0; i < n; i++) {
                 mul(T, B[i], mu1);
@@ -227,7 +221,7 @@ static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
 }
 
 // A = A - B*MU1  for the first n vector entries only.
-static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
+static void RowTransform(IntVec &A, IntVec &B, const ZZ &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
         long &in_float) {
 #if TYPES_CODE  ==  ZD
@@ -238,7 +232,6 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
 #endif
     long k;
     double mu;
-
     conv(mu, MU1);
     CheckFinite(&mu);
 
@@ -668,8 +661,8 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
     // long n = B.NumCols();
 
     long i, j, k, Fc1;
-    Int MU;
-    Int T1;
+    ZZ MU;
+    ZZ T1;
     double mu1;
     double t1;
     double *tp;
@@ -979,7 +972,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
 
     Unique2DArray<double> B1_store;
     B1_store.SetDimsFrom1(m + 1, n + 1);
-    double **B1 = B1_store.get();  // approximates B
+    double **B1 = B1_store.get();  // approximates B by a matrix of `double`
 
     Unique2DArray<double> mu_store;
     mu_store.SetDimsFrom1(m + 1, m + 1);
