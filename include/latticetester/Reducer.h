@@ -45,8 +45,6 @@
 #include <cstdlib>
 #include <type_traits>
 
-using namespace LatticeTester;
-
 namespace LatticeTester {
 
 /**
@@ -105,6 +103,8 @@ namespace LatticeTester {
 
 template<typename Int, typename Real>
 class Reducer {
+
+using namespace LatticeTester;
 
 private:
     // Local typedefs for matrix and vector types needed in the class.
