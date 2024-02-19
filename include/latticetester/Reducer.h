@@ -261,7 +261,7 @@ public:
      * When `dim = 0`, the number of columns of `gen` is used for the dimension.
      * Here, the precision type is always `DOUBLE`.
      */
-    static void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta = 0.999999,
+    static void redLLLNTL(IntMat &basis, double delta = 0.999999,
             long dim = 0, double *sqlen = 0, PrecisionType precision = DOUBLE);
 
     /**
@@ -271,7 +271,7 @@ public:
      */
     void redLLLNTLExact(double delta = 0.999999);
 
-    static void redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis, double delta =
+    static void redLLLNTLExact(IntMat &basis, double delta =
             0.999999);
 
     /**
@@ -291,7 +291,7 @@ public:
     /**
      * A static version of the previous method.  The lattice basis is passed as a parameter.
      */
-    static void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta = 0.999999,
+    static void redBKZ(IntMat &basis, double delta = 0.999999,
             int64_t blocksize = 10, long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
 
     /**
@@ -307,7 +307,7 @@ public:
     }
 
     /**
-     * Returns the length of the current longest basis vector in the lattice.
+     * Returns the length of the current *last* basis vector in the lattice.
      */
     Real getMaxLength() {
         if (m_lat->getNormType() == L2NORM)
@@ -600,7 +600,7 @@ template<typename Int, typename Real>
 void Reducer<Int, Real>::init(int64_t maxDim) {
     m_maxDim = maxDim;
     int64_t dim1 = maxDim;
-    int64_t dim2 = dim1;
+    int64_t dim2 = maxDim;
     if (dim2 <= 2)
         dim2++;
     m_c0.resize(dim1, dim1);
@@ -1132,241 +1132,6 @@ void Reducer<Int, Real>::reductionFaible(int64_t i, int64_t j) {
     //}
     miseAJourGramVD(j);
     calculCholesky2LLL(i, j);
-}
-
-//=========================================================================
-
-// This is the general implementation, for anything else than ZZ.
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLNTL(double delta, PrecisionType precision) {
-    MyExit(1, "redLLLNTL cannot be used with int64_t integers.");
-}
-
-// A specialization for the case where Int = ZZ.
-template<typename Real>
-void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
-        PrecisionType precision) {
-    redLLLNTL(red.getLattice().getBasis(), delta, precision);
-}
-
-// Static version: a specialization for the case where Int = int64_t.
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
-        long dim, double *sqlen, PrecisionType precision) {
-    if (precision == DOUBLE) {
-        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
-        NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
-        return;
-    }
-    MyExit(1, "redLLLNTL: Int = int64_t with precision != DOUBLE.\n");
-}
-
-// Static version: a specialization for the case where Int = ZZ.
-// See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
-// about the `PrecisionType` choices.
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
-        long dim, double *sqlen, PrecisionType precision) {
-    // long rank;
-    if (precision == DOUBLE) {
-        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
-        NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
-        return;
-    }
-    // If precision is not DOUBLE, we are not allowed to specify dim;
-    // it is taken as the dimension of basis.
-    if ((dim > 0) & (dim != basis.NumRows()))
-        std::cerr
-                << "redLLLNTL: dim param not allowed when precision != DOUBLE.\n";
-
-    switch (precision) {
-    case QUADRUPLE:
-        NTL::LLL_QP(basis, delta);
-        break;
-    case XDOUBLE:
-        NTL::LLL_XD(basis, delta);
-        break;
-    case RR:
-        NTL::LLL_RR(basis, delta);
-        break;
-    default:
-        MyExit(1, "redLLLNTL: undefined PrecisionType.");
-    }
-}
-
-//=========================================================================
-
-// This one is for the case where Int != ZZ.
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLNTLExact(double delta) {
-    MyExit(1, "redLLLNTLExact cannot be used with std::int64_t");
-}
-
-// A specialization for the case where Int = ZZ.
-template<typename Real>
-void redLLLNTLExact(Reducer<NTL::ZZ, Real> &red, double delta) {
-    redLLLNTLExact(red.getLattice().getBasis(), delta);
-}
-
-// Static version, for Int = ZZ.
-template<>
-void Reducer<Int, Real>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
-        double delta) {
-    NTL::ZZ det(0);
-    int64_t denum;
-    denum = round(1.0 / (1.0 - delta)); // We want (denum-1)/denum \approx delta.
-    NTL::LLL(det, basis, denum - 1, denum);
-}
-
-//=========================================================================
-
-// This is the general implementation, for anything else than ZZ.
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redBKZ(double delta, std::int64_t blocksize,
-        long dim, double *sqlen, PrecisionType precision) {
-    MyExit(1, "redBKZ cannot be used with int64_t integers.");
-}
-
-// A specialization for the case where Int = ZZ.
-template<typename Real>
-void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta, std::int64_t blocksize,
-        long dim, double *sqlen, PrecisionType precision) {
-    redBKZ(red.getLattice().getBasis(), delta, blocksize, precision);
-}
-
-
-// Static version: a specialization for the case where Int = int64_t.
-template<>
-void Reducer<Int, Real>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
-        std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
-    if (precision == DOUBLE) {
-        NTL::BKZ_FPInt(basis, delta, blocksize, dim, dim, sqlen);
-        return;
-    }
-    MyExit(1, "redBKZ: Int = int64_t with precision != DOUBLE.\n");
-}
-
-// Static version, for Int = ZZ.
-template<>
-void Reducer<Int, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
-        std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
-    switch (precision) {
-    case DOUBLE:
-        NTL::BKZ_FPInt(basis, delta, blocksize, dim, dim, sqlen);
-        // NTL::BKZ_FP(basis, delta, blocksize);
-        break;
-    case QUADRUPLE:
-        NTL::BKZ_QP(basis, delta, blocksize);
-        break;
-    case XDOUBLE:
-        NTL::BKZ_XD(basis, delta, blocksize);
-        break;
-    case RR:
-        NTL::BKZ_RR(basis, delta, blocksize);
-        break;
-    default:
-        MyExit(1, "Undefined precision type for redBKZ");
-    }
-}
-
-//=========================================================================
-
-// Translation of our old LLL implementation from Modula-2 to C++. Rather slow.
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
-        int64_t Max) {
-    // This is a C translation of the old implementation by R. Couture.
-    // Effectue la pre-reduction de B au sens de Lenstra-Lenstra-Lovasz. N'utilise
-    // pas les vecteurs m_lat->getBasis().vecNorm et  Wm_lat->getDualBasis().
-
-    //bool withDual = m_lat->withDual();
-    const int64_t REDBAS_e = 40;
-    int64_t i, j, k, h;
-    Real Cho0ij;
-    Real limite;
-    std::int64_t cpt;
-
-    const int64_t dim = m_lat->getDim();
-    if (Max == 0)
-        Max = dim;
-    cpt = 0;
-    calculGramVD();
-    limite = 1.0;
-    for (k = 1; k <= REDBAS_e; k++)
-        limite *= 2.0;
-    limite *= dim;
-    m_cho2[0][0] = m_gramVD[0][0];
-    m_cho2[0][1] = m_gramVD[0][1];
-    m_IC[0] = 1;
-    m_cho2[1][1] = m_gramVD[1][1]
-            - m_cho2[0][1] * (m_cho2[0][1] / m_cho2[0][0]);
-    m_IC[1] = 1;
-    for (i = 2; i < dim; i++)
-        m_IC[i] = -1;
-    h = 0;
-
-    while (h < Max - 1 && cpt < maxcpt) {
-        if (m_gramVD[h + 1][h + 1] > limite) {
-            for (i = h; i >= 0; i--)
-                reductionFaible(i, h + 1);
-        } else
-            reductionFaible(h, h + 1);
-
-        calculCholesky2Ele(h + 1, h + 1);
-        if (m_IC[h + 1] == -1)
-            m_IC[h + 1] = h + 1;
-        if (m_cho2[h + 1][h + 1] / m_cho2[h][h]
-                + (m_cho2[h][h + 1]) / m_cho2[h][h]
-                        * (m_cho2[h][h + 1] / m_cho2[h][h]) < delta) {
-            ++cpt;
-            m_lat->permutePrimal(h, h + 1);
-            permuteGramVD(h, h + 1, dim);
-            m_cho2[h][h] = m_gramVD[h][h];
-            for (i = 0; i < h; i++) {
-                std::swap(m_cho2[i][h], m_cho2[i][h + 1]);
-                m_cho2[h][h] -= m_cho2[i][h] * (m_cho2[i][h] / m_cho2[i][i]);
-            }
-            if (h == 0) {
-                Cho0ij = m_cho2[0][1] / m_cho2[0][0];
-                if (abs(Cho0ij) > 0.5) {
-                    m_IC[0] = 1;
-                    m_IC[1] = -1;
-                    h = 0;
-                } else {
-                    m_cho2[1][1] = m_gramVD[1][1]
-                            - m_cho2[0][1] * m_cho2[0][1] / m_cho2[0][0];
-                    calculCholesky2LLL(2, 2);
-                    m_IC[0] = 2;
-                    m_IC[1] = 2;
-                    m_IC[2] = 2;
-                    h = 1;
-                }
-            } else {
-                m_IC[h] = h + 1;
-                m_IC[h + 1] = -1;
-                --h;
-            }
-        } else {
-            for (i = 0; i <= h + 2; i++) {
-                if (h + 2 > m_IC[i]) {
-                    if (h + 2 < dim)
-                        calculCholesky2Ele(i, h + 2);
-                    m_IC[i] = h + 2;
-                }
-            }
-            ++h;
-        }
-    }
-
-    if (cpt == maxcpt) {
-        std::cout << "***** in redLLLOld cpt > maxcpt = " << maxcpt
-                << std::endl;
-    }
-    for (j = 2; j < Max; j++) {
-        for (i = j - 2; i >= 0; i--)
-            reductionFaible(i, j);
-    }
-    m_lat->setNegativeNorm();
 }
 
 // =========================================================================
@@ -2109,6 +1874,274 @@ bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
     return true;
 }
 
+//=========================================================================
+
+template<typename Int, typename Real>
+void Reducer<Int, Real>::tracePrintBases(char *message) {
+    std::cout << std::endl << "================================= " << message
+            << std::endl;
+    //std::cout << "dim = " << m_lat->getDim () << std::endl;
+    m_lat->setNegativeNorm();
+    //m_lat->setDualNegativeNorm();
+    m_lat->updateVecNorm();
+    //m_lat->updateDualVecNorm();
+    m_lat->sortBasis(0);
+    m_lat->write();
+}
+
+//=========================================================================
+
+// Translation of our old LLL implementation from Modula-2 to C++. Rather slow.
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
+        int64_t Max) {
+    // This is a C translation of the old implementation by R. Couture.
+    // Effectue la pre-reduction de B au sens de Lenstra-Lenstra-Lovasz. N'utilise
+    // pas les vecteurs m_lat->getBasis().vecNorm et  Wm_lat->getDualBasis().
+
+    //bool withDual = m_lat->withDual();
+    const int64_t REDBAS_e = 40;
+    int64_t i, j, k, h;
+    Real Cho0ij;
+    Real limite;
+    std::int64_t cpt;
+
+    const int64_t dim = m_lat->getDim();
+    if (Max == 0)
+        Max = dim;
+    cpt = 0;
+    calculGramVD();
+    limite = 1.0;
+    for (k = 1; k <= REDBAS_e; k++)
+        limite *= 2.0;
+    limite *= dim;
+    m_cho2[0][0] = m_gramVD[0][0];
+    m_cho2[0][1] = m_gramVD[0][1];
+    m_IC[0] = 1;
+    m_cho2[1][1] = m_gramVD[1][1]
+            - m_cho2[0][1] * (m_cho2[0][1] / m_cho2[0][0]);
+    m_IC[1] = 1;
+    for (i = 2; i < dim; i++)
+        m_IC[i] = -1;
+    h = 0;
+
+    while (h < Max - 1 && cpt < maxcpt) {
+        if (m_gramVD[h + 1][h + 1] > limite) {
+            for (i = h; i >= 0; i--)
+                reductionFaible(i, h + 1);
+        } else
+            reductionFaible(h, h + 1);
+
+        calculCholesky2Ele(h + 1, h + 1);
+        if (m_IC[h + 1] == -1)
+            m_IC[h + 1] = h + 1;
+        if (m_cho2[h + 1][h + 1] / m_cho2[h][h]
+                + (m_cho2[h][h + 1]) / m_cho2[h][h]
+                        * (m_cho2[h][h + 1] / m_cho2[h][h]) < delta) {
+            ++cpt;
+            m_lat->permutePrimal(h, h + 1);
+            permuteGramVD(h, h + 1, dim);
+            m_cho2[h][h] = m_gramVD[h][h];
+            for (i = 0; i < h; i++) {
+                std::swap(m_cho2[i][h], m_cho2[i][h + 1]);
+                m_cho2[h][h] -= m_cho2[i][h] * (m_cho2[i][h] / m_cho2[i][i]);
+            }
+            if (h == 0) {
+                Cho0ij = m_cho2[0][1] / m_cho2[0][0];
+                if (abs(Cho0ij) > 0.5) {
+                    m_IC[0] = 1;
+                    m_IC[1] = -1;
+                    h = 0;
+                } else {
+                    m_cho2[1][1] = m_gramVD[1][1]
+                            - m_cho2[0][1] * m_cho2[0][1] / m_cho2[0][0];
+                    calculCholesky2LLL(2, 2);
+                    m_IC[0] = 2;
+                    m_IC[1] = 2;
+                    m_IC[2] = 2;
+                    h = 1;
+                }
+            } else {
+                m_IC[h] = h + 1;
+                m_IC[h + 1] = -1;
+                --h;
+            }
+        } else {
+            for (i = 0; i <= h + 2; i++) {
+                if (h + 2 > m_IC[i]) {
+                    if (h + 2 < dim)
+                        calculCholesky2Ele(i, h + 2);
+                    m_IC[i] = h + 2;
+                }
+            }
+            ++h;
+        }
+    }
+
+    if (cpt == maxcpt) {
+        std::cout << "***** in redLLLOld cpt > maxcpt = " << maxcpt
+                << std::endl;
+    }
+    for (j = 2; j < Max; j++) {
+        for (i = j - 2; i >= 0; i--)
+            reductionFaible(i, j);
+    }
+    m_lat->setNegativeNorm();
+}
+
+//=========================================================================
+
+// This is the general implementation.
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redLLLNTL(double delta, PrecisionType precision) {
+    redLLLNTL(m_lat.getBasis(), delta, m_lat->getDim(),
+              m_lat->m_vecNorm, precision);
+    // MyExit(1, "redLLLNTL only works with integers.");
+}
+
+// A specialization for the case where Int = ZZ.
+template<typename Real>
+void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
+        PrecisionType precision) {
+    IntLattice* lat = red.getIntLattice();
+    redLLLNTL(lat->getBasis(), delta, lat->getDim(),
+            lat->m_vecNorm, precision);
+}
+
+// Static version: a specialization for the case where Int = int64_t.
+template<Real>
+void Reducer<int64_t, Real>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
+        long dim, double *sqlen, PrecisionType precision) {
+    if (precision == DOUBLE) {
+        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
+        NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
+        return;
+    }
+    MyExit(1, "redLLLNTL: Int = int64_t with precision != DOUBLE.\n");
+}
+
+// Static version: a specialization for the case where Int = ZZ.
+// See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
+// about the `PrecisionType` choices.
+template<Real>
+void Reducer<NTL::ZZ, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
+        long dim, double *sqlen, PrecisionType precision) {
+    if (precision == DOUBLE) {
+        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
+        NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
+        return;
+    }
+    // If precision is not DOUBLE, we are not allowed to specify dim;
+    // it is taken as the dimension of basis.
+    NTL::matrix<NTL::ZZ> cpbasis;
+    if ((dim > 0) & (dim != basis.NumRows())) {
+        cpbasis.SetDims (dim, dim);
+        copy (basis, cpbasis, dim, dim);  // From Util
+    } else
+        cpbasis = &basis;
+    switch (precision) {
+    case QUADRUPLE:
+        NTL::LLL_QP(cpbasis, delta);
+        break;
+    case XDOUBLE:
+        NTL::LLL_XD(cpbasis, delta);
+        break;
+    case RR:
+        NTL::LLL_RR(cpbasis, delta);
+        break;
+    default:
+        MyExit(1, "redLLLNTL: undefined PrecisionType.");
+    }
+    copy (cpbasis, basis, dim, dim);
+}
+
+//=========================================================================
+
+// This one is for the case where Int != ZZ.
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redLLLNTLExact(double delta) {
+    MyExit(1, "redLLLNTLExact cannot be used with std::int64_t");
+}
+
+// A specialization for the case where Int = ZZ.
+template<typename Real>
+void redLLLNTLExact(Reducer<NTL::ZZ, Real> &red, double delta) {
+    redLLLNTLExact(red.getIntLattice().getBasis(), delta);
+}
+
+// Static version, for Int = ZZ.
+template<>
+void Reducer<Int, Real>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
+        double delta) {
+    NTL::ZZ det(0);
+    int64_t denum;
+    denum = round(1.0 / (1.0 - delta)); // We want (denum-1)/denum \approx delta.
+    NTL::LLL(det, basis, denum - 1, denum);
+}
+
+//=========================================================================
+
+// This is the general implementation, for anything else than ZZ.
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redBKZ(double delta, std::int64_t blocksize,
+        long dim, double *sqlen, PrecisionType precision) {
+    redBKZ(red.getIntLattice().getBasis(), delta, blocksize, dim, sqlen, precision);
+    MyExit(1, "redBKZ cannot be used with int64_t integers.");
+}
+
+// A specialization for the case where Int = ZZ.
+template<typename Real>
+void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta, std::int64_t blocksize,
+        PrecisionType precision) {
+    IntLattice* lat = red.getIntLattice();
+    redBKZ(lat.getBasis(), delta, blocksize, lat.getDim(), lat.getVecNorm(), precision);
+}
+
+// Static version: specialization for Int = int64_t.
+template<>
+void Reducer<int64_t, Real>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
+        std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
+    if (precision == DOUBLE) {
+        NTL::BKZ_FPInt(basis, delta, blocksize, dim, dim, sqlen);
+        return;
+    }
+    MyExit(1, "redBKZ: Int = int64_t with precision != DOUBLE.\n");
+}
+
+// Static version, for Int = ZZ.
+template<>
+void Reducer<NTL::ZZ, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
+        std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
+    if (precision == DOUBLE) {
+        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
+        NTL::BKZ_FPInt(basis, delta, blocksize, dim, dim, sqlen);
+        return;
+    }
+    // If precision is not DOUBLE, dim is taken as the dimension of basis.
+    NTL::matrix<NTL::ZZ> cpbasis;
+    if ((dim > 0) & (dim != basis.NumRows())) {
+        cpbasis.SetDims (dim, dim);
+        copy (basis, cpbasis, dim, dim);  // From Util
+    } else
+        cpbasis = &basis;
+    switch (precision) {
+    case QUADRUPLE:
+        NTL::BKZ_QP(cpbasis, delta, blocksize);
+        break;
+    case XDOUBLE:
+        NTL::BKZ_XD(cpbasis, delta, blocksize);
+        break;
+    case RR:
+        NTL::BKZ_RR(cpbasis, delta, blocksize);
+        break;
+    default:
+        MyExit(1, "Undefined precision type for redBKZ");
+    }
+    copy (cpbasis, basis, dim, dim);
+}
+
+//=========================================================================
+
 template<typename Int, typename Real>
 bool Reducer<Int, Real>::reductMinkowski(IntLattice<Int, Real> &lat,
         int64_t d) {
@@ -2127,21 +2160,6 @@ template<typename Int, typename Real>
 bool Reducer<Int, Real>::shortestVector(IntLattice<Int, Real> &lat) {
     setIntLattice(lat);
     return Reducer<Int, Real>::redBBShortVec();
-}
-
-//=========================================================================
-
-template<typename Int, typename Real>
-void Reducer<Int, Real>::tracePrintBases(char *message) {
-    std::cout << std::endl << "================================= " << message
-            << std::endl;
-    //std::cout << "dim = " << m_lat->getDim () << std::endl;
-    m_lat->setNegativeNorm();
-    //m_lat->setDualNegativeNorm();
-    m_lat->updateVecNorm();
-    //m_lat->updateDualVecNorm();
-    m_lat->sortBasis(0);
-    m_lat->write();
 }
 
 //============================================================================

@@ -222,6 +222,7 @@ protected:
      * after an LLL or BKZ pre-reduction via the static methods of `LLL_FPZZflex`.
      */
     double *m_sqlen;
+
     /*
      * Indicates if the first coordinate will always be included in all the projections
      * over the non-successive coordinates.  If true, we use @f$S^{(1)}(s,t_s)@f$  in
