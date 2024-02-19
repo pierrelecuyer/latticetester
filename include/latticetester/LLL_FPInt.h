@@ -221,15 +221,16 @@ static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
 }
 
 // A = A - B*MU1  for the first n vector entries only.
+template<typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const ZZ &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
         long &in_float) {
-#if TYPES_CODE  ==  ZD
+//#if TYPES_CODE  ==  ZD
     NTL_ZZRegister (T);
     NTL_ZZRegister (MU);
-#else
-    Int T, MU;
-#endif
+//#else
+//    Int T, MU;
+//#endif
     long k;
     double mu;
     conv(mu, MU1);
@@ -654,6 +655,7 @@ void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
         ComputeGS(B, B1, mu, b, c, i, n, bound, 1, buf, bound2);
 }
 
+template<typename Int>
 static
 long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         double **B1, double **mu, double *b, double *c, long m, long n,
@@ -961,6 +963,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
     return m;
 }
 
+template<typename Int>
 static
 long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
         long deep, LLLCheckFct check) {
