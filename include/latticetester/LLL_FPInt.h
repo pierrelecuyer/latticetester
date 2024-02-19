@@ -1028,6 +1028,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
 
 // =========================================================================
 
+/*
 static vec_double BKZConstant;
 
 static
@@ -1479,6 +1480,8 @@ long LLL_FPInt<Int>::BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long
         LogicError("BKZ_FPZZ: bad block size");
     return BKZ_FPInt(BB, 0, delta, beta, m, n, sqlen, 0, 0);
 }
+*/
+
 
 NTL_END_IMPL
 

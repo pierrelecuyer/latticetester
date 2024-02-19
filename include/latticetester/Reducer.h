@@ -287,14 +287,14 @@ public:
      * A `blocksize` of 2 is equivalent to LLL reduction.
      * There is also a static version that takes the lattice as input.
      */
-    void redBKZ(double delta = 0.999999, int64_t blocksize = 10,
-            long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
+//    void redBKZ(double delta = 0.999999, int64_t blocksize = 10,
+//            long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
 
     /**
      * A static version of the previous method.  The lattice basis is passed as a parameter.
      */
-    static void redBKZ(IntMat &basis, double delta = 0.999999,
-            int64_t blocksize = 10, long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
+//    static void redBKZ(IntMat &basis, double delta = 0.999999,
+//            int64_t blocksize = 10, long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
 
     /**
      * Returns the length of the current shortest basis vector in the lattice,
@@ -2082,6 +2082,7 @@ void Reducer<Int, Real>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
 
 //=========================================================================
 
+/*
 // This is the general implementation, for anything else than ZZ.
 template<typename Int, typename Real>
 void Reducer<Int, Real>::redBKZ(double delta, std::int64_t blocksize,
@@ -2140,6 +2141,7 @@ void Reducer<NTL::ZZ, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
     }
     LatticeTester::copy (cpbasis, basis);
 }
+*/
 
 //=========================================================================
 
