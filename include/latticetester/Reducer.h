@@ -45,6 +45,8 @@
 #include <cstdlib>
 #include <type_traits>
 
+using namespace LatticeTester;
+
 namespace LatticeTester {
 
 /**
@@ -2120,7 +2122,7 @@ void Reducer<NTL::ZZ, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
     NTL::matrix<NTL::ZZ> cpbasis;
     // if ((dim > 0) & (dim != basis.NumRows())) {
         cpbasis.SetDims (dim, dim);
-        Util::copy (basis, cpbasis, dim, dim);  // From Util
+        latticetester::copy (basis, cpbasis, dim, dim);  // From Util
     //} else
     //    cpbasis = &basis;
     switch (precision) {
@@ -2136,7 +2138,7 @@ void Reducer<NTL::ZZ, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
     default:
         MyExit(1, "Undefined precision type for redBKZ");
     }
-    copy (cpbasis, basis, dim, dim);
+    copy (cpbasis, basis);
 }
 
 //=========================================================================
