@@ -1594,7 +1594,7 @@ long BKZ_FPZZflex(mat_ZZ& BB, mat_ZZ* UU, double delta, long beta,
                }
             }
    
-            if (s == 0) LogicError("BKZ_FPZZ: internal error");
+            if (s == 0) LogicError("BKZ_FPZZ: internal error, s==0.");
    
             if (s > 0) {
                // special case

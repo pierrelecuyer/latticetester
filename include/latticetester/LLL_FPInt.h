@@ -112,8 +112,8 @@ static void InnerProduct(Int &xx, const IntVec &a, const IntVec &b, long n) {
     Int t1, x;
     long i;
     clear(x);
-    for (i = 1; i <= n; i++) {
-        mul(t1, a(i), b(i));
+    for (i = 0; i < n; i++) {
+        mul(t1, a[i], b[i]);
         add(x, x, t1);
     }
     xx = x;
@@ -123,8 +123,8 @@ static void InnerProduct(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
     RR t1, x;
     long i;
     clear(x);
-    for (i = 1; i <= n; i++) {
-        mul(t1, a(i), b(i));
+    for (i = 0; i < n; i++) {
+        mul(t1, a[i], b[i]);
         add(x, x, t1);
     }
     xx = x;
@@ -140,19 +140,17 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n) {
     Int T, MU;
 #endif
     long k;
-
-    // long n = A.length();
     long i;
     MU = MU1;
     if (MU == 1) {
-        for (i = 1; i <= n; i++)
-            sub(A(i), A(i), B(i));
+        for (i = 0; i < n; i++)
+            sub(A[i], A[i], B[i]);
         return;
     }
 
     if (MU == -1) {
-        for (i = 1; i <= n; i++)
-            add(A(i), A(i), B(i));
+        for (i = 0; i < n; i++)
+            add(A[i], A[i], B[i]);
         return;
     }
 
@@ -169,22 +167,22 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n) {
         conv(mu1, MU);
 
         if (k > 0) {
-            for (i = 1; i <= n; i++) {
-                mul(T, B(i), mu1);
+            for (i = 0; i < n; i++) {
+                mul(T, B[i], mu1);
                 LeftShift(T, T, k);
-                sub(A(i), A(i), T);
+                sub(A[i], A[i], T);
             }
         } else {
-            for (i = 1; i <= n; i++) {
-                MulSubFrom(A(i), B(i), mu1);
+            for (i = 0; i < n; i++) {
+                MulSubFrom(A[i], B[i], mu1);
             }
         }
     } else {
-        for (i = 1; i <= n; i++) {
-            mul(T, B(i), MU);
+        for (i = 0; i < n; i++) {
+            mul(T, B[i], MU);
             if (k > 0)
                 LeftShift(T, T, k);
-            sub(A(i), A(i), T);
+            sub(A[i], A[i], T);
         }
     }
 }
@@ -220,9 +218,9 @@ static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
     long i;
     for (i = 1; i <= n; i++) {
         if (in_a[i]) {
-            conv(A(i), a[i]);
+            conv(A[i-1], a[i]);
         } else {
-            conv(a[i], A(i));
+            conv(a[i], A[i-1]);
             CheckFinite(&a[i]);
         }
     }
@@ -246,7 +244,6 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
 
     // long n = A.length();
     long i;
-
     if (in_float) {
         double mu_abs = fabs(mu);
         if (mu_abs > 0 && max_b > 0 && (mu_abs >= TR_BND || max_b >= TR_BND)) {
@@ -257,44 +254,39 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
                 in_float = 0;
         }
     }
-
     if (in_float) {
         if (mu == 1) {
             for (i = 1; i <= n; i++)
                 a[i] -= b[i];
             return;
         }
-
         if (mu == -1) {
             for (i = 1; i <= n; i++)
                 a[i] += b[i];
             return;
         }
-
         if (mu == 0)
             return;
-
         for (i = 1; i <= n; i++)
             a[i] -= mu * b[i];
         return;
     }
 
     // in_float == 1 (true) iff all coefficients are in [-TR_BND, TR_BND].
-    std::cout << "RowTransform, not in_float! \n";
+    // std::cout << "RowTransform, not in_float! \n";
 
     MU = MU1;
     if (MU == 1) {
         for (i = 1; i <= n; i++) {
             if (in_a[i] && a[i] < TR_BND && a[i] > -TR_BND && b[i] < TR_BND
                     && b[i] > -TR_BND) {
-
                 a[i] -= b[i];
             } else {
                 if (in_a[i]) {
-                    conv(A(i), a[i]);
+                    conv(A[i-1], a[i]);
                     in_a[i] = 0;
                 }
-                sub(A(i), A(i), B(i));
+                sub(A[i-1], A[i-1], B[i-1]);
             }
         }
         return;
@@ -307,18 +299,16 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
                 a[i] += b[i];
             } else {
                 if (in_a[i]) {
-                    conv(A(i), a[i]);
+                    conv(A[i-1], a[i]);
                     in_a[i] = 0;
                 }
-                add(A(i), A(i), B(i));
+                add(A[i-1], A[i-1], B[i-1]);
             }
         }
         return;
     }
-
     if (MU == 0)
         return;
-
     double b_bnd = fabs(TR_BND / mu) - 1;
     if (b_bnd < 0)
         b_bnd = 0;
@@ -335,12 +325,12 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
         if (k > 0) {
             for (i = 1; i <= n; i++) {
                 if (in_a[i]) {
-                    conv(A(i), a[i]);
+                    conv(A[i-1], a[i]);
                     in_a[i] = 0;
                 }
-                mul(T, B(i), mu1);
+                mul(T, B[i-1], mu1);
                 LeftShift(T, T, k);
-                sub(A(i), A(i), T);
+                sub(A[i-1], A[i-1], T);
             }
         } else {
             for (i = 1; i <= n; i++) {
@@ -350,23 +340,23 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
                     a[i] -= b[i] * mu;
                 } else {
                     if (in_a[i]) {
-                        conv(A(i), a[i]);
+                        conv(A[i-1], a[i]);
                         in_a[i] = 0;
                     }
-                    MulSubFrom(A(i), B(i), mu1);
+                    MulSubFrom(A[i-1], B[i-1], mu1);
                 }
             }
         }
     } else {
         for (i = 1; i <= n; i++) {
             if (in_a[i]) {
-                conv(A(i), a[i]);
+                conv(A[i-1], a[i]);
                 in_a[i] = 0;
             }
-            mul(T, B(i), MU);
+            mul(T, B[i-1], MU);
             if (k > 0)
                 LeftShift(T, T, k);
-            sub(A(i), A(i), T);
+            sub(A[i-1], A[i-1], T);
         }
     }
 }
@@ -383,47 +373,40 @@ static void RowTransform2(IntVec &A, IntVec &B, const Int &MU1, long n) {
     long k;
     // long n = A.length();
     long i;
-
     MU = MU1;
-
     if (MU == 1) {
-        for (i = 1; i <= n; i++)
-            add(A(i), A(i), B(i));
+        for (i = 0; i < n; i++)
+            add(A[i], A[i], B[i]);
 
         return;
     }
-
     if (MU == -1) {
-        for (i = 1; i <= n; i++)
-            sub(A(i), A(i), B(i));
-
+        for (i = 0; i < n; i++)
+            sub(A[i], A[i], B[i]);
         return;
     }
-
     if (MU == 0)
         return;
-
     if (NumTwos(MU) >= NTL_ZZ_NBITS)
         k = MakeOdd(MU);
     else
         k = 0;
-
     if (MU.WideSinglePrecision()) {
         long mu1;
         conv(mu1, MU);
 
-        for (i = 1; i <= n; i++) {
-            mul(T, B(i), mu1);
+        for (i = 0; i < n; i++) {
+            mul(T, B[i], mu1);
             if (k > 0)
                 LeftShift(T, T, k);
-            add(A(i), A(i), T);
+            add(A[i], A[i], T);
         }
     } else {
-        for (i = 1; i <= n; i++) {
-            mul(T, B(i), MU);
+        for (i = 0; i < n; i++) {
+            mul(T, B[i], MU);
             if (k > 0)
                 LeftShift(T, T, k);
-            add(A(i), A(i), T);
+            add(A[i], A[i], T);
         }
     }
 }
@@ -445,7 +428,6 @@ void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
         for (i = 1; i < st; i++)
             buf[i] = mu_k[i] * c[i];
     }
-
     for (j = st; j <= k - 1; j++) {
         s = InnerProduct(B1[k], B1[j], n);  // Returns a double.
         // std::cout << "ComputeGS, j = " << j << " Inner product s = " << s << "\n";
@@ -468,30 +450,24 @@ void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
             else
                 test = 0;
         }
-
         if (test) {
-            InnerProduct(T1, B(k), B(j), n);  // all in Int.
+            InnerProduct(T1, B[k-1], B[j-1], n);  // all in Int.
             conv(s, T1);
             // std::cout << "ComputeGS, T1 = s = " << s << "\n";
         }
 
         double *mu_j = mu[j];
-
         t1 = 0;
         for (i = 1; i <= j - 1; i++) {
             t1 += mu_j[i] * buf[i];
         }
-
         mu_k[j] = (buf[j] = (s - t1)) / c[j];
         // std::cout << "ComputeGS, mu_k[j] = " << mu_k[j] << "\n";
     }
 
 #if (!NTL_EXT_DOUBLE)
-
     // Kahan summation
-
     double c1;
-
     s = c1 = 0;
     for (j = 1; j <= k - 1; j++) {
         y = mu_k[j] * buf[j] - c1;
@@ -500,17 +476,15 @@ void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
         c1 = c1 - y;
         s = t;
     }
-
 #else
-
    s = 0;
    for (j = 1; j <= k-1; j++)
       s += mu_k[j]*buf[j];
-
 #endif
 
     c[k] = b[k] - s;
 }
+
 
 NTL_CHEAP_THREAD_LOCAL double LLLStatusInterval = 900.0;
 NTL_CHEAP_THREAD_LOCAL char *LLLDumpFile = 0;
@@ -535,27 +509,21 @@ static void LLLStatus(long max_k, double t, long m, long n, const IntMat &B) {
     Int t1;
     long i;
     double prodlen = 0;
-
-    for (i = 1; i <= m; i++) {
-        InnerProduct(t1, B(i), B(i), n);   // all in Int.
+    for (i = 0; i < m; i++) {
+        InnerProduct(t1, B[i], B[i], n);   // all in Int.
         if (!IsZero(t1))
             prodlen += log(t1);
     }
-
     cerr << "log of prod of lengths: " << prodlen / (2.0 * log(2.0)) << "\n";
-
     if (LLLDumpFile) {
         cerr << "dumping to " << LLLDumpFile << "...";
-
         ofstream f;
         OpenWrite(f, LLLDumpFile);
-
         f << "[";
-        for (i = 1; i <= m; i++) {
-            f << B(i) << "\n";
+        for (i = 0; i < m; i++) {
+            f << B[i] << "\n";
         }
         f << "]\n";
-
         f.close();
         cerr << "\n";
     }
@@ -564,10 +532,8 @@ static void LLLStatus(long max_k, double t, long m, long n, const IntMat &B) {
 
 static void init_red_fudge() {
     long i;
-
     log_red = long(0.50 * NTL_DOUBLE_PRECISION);
     red_fudge = 1;
-
     for (i = log_red; i > 0; i--)
         red_fudge = red_fudge * 0.5;
 }
@@ -575,9 +541,7 @@ static void init_red_fudge() {
 static void inc_red_fudge() {
     red_fudge = red_fudge * 2;
     log_red--;
-
     cerr << "LLL_FP: warning--relaxing reduction (" << log_red << ")\n";
-
     if (log_red < 4)
         ResourceError("LLL_FP: too much loss of precision...stop!");
 }
@@ -614,15 +578,12 @@ static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
 
     cerr << "LLL_FP: RR refresh " << rr_st << "..." << k << "...";
     tt = GetTime();
-
     if (rr_st > k)
         ResourceError("LLL_FP: rr_st > k, cannot continue!!!");
-
     RRPush push;
     RR::SetPrecision(prec);
 
     // long n = B.NumCols();
-
     // Here we reserve space for large matrices !!!
     rr_B1.SetDims(k, n);
     rr_mu.SetDims(k, m_orig);
@@ -631,46 +592,36 @@ static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
 
     vec_RR rr_buf;
     rr_buf.SetLength(k);
-
     long i, j;
-
-    for (i = rr_st; i <= k; i++)
-        for (j = 1; j <= n; j++)
-            conv(rr_B1(i, j), B(i, j));
-
-    for (i = rr_st; i <= k; i++)
-        InnerProduct(rr_b(i), rr_B1(i), rr_B1(i), n);   // all in RR.
-
+    for (i = rr_st-1; i < k; i++)
+        for (j = 0; j < n; j++)
+            conv(rr_B1[i][j], B[i][j]);
+    for (i = rr_st-1; i < k; i++)
+        InnerProduct(rr_b[i], rr_B1[i], rr_B1[i], n);   // all in RR.
     RR bound;
     power2(bound, 2 * long(0.15 * RR::precision()));
-
     RR bound2;
     power2(bound2, 2 * RR::precision());
 
     for (i = rr_st; i <= k; i++)
         ComputeGS(B, rr_B1, rr_mu, rr_b, rr_c, i, n, bound, 1, rr_buf, bound2);
-
     for (i = rr_st; i <= k; i++)
         for (j = 1; j <= n; j++) {
-            conv(B1[i][j], rr_B1(i, j));
+            conv(B1[i][j], rr_B1[i-1][j-1]);
             CheckFinite(&B1[i][j]);
         }
-
     for (i = rr_st; i <= k; i++)
         for (j = 1; j <= i - 1; j++) {
-            conv(mu[i][j], rr_mu(i, j));
+            conv(mu[i][j], rr_mu[i-1][j-1]);
         }
-
     for (i = rr_st; i <= k; i++) {
-        conv(b[i], rr_b(i));
+        conv(b[i], rr_b[i-1]);
         CheckFinite(&b[i]);
     }
-
     for (i = rr_st; i <= k; i++) {
-        conv(c[i], rr_c(i));
+        conv(c[i], rr_c[i-1]);
         CheckFinite(&c[i]);
     }
-
     for (i = 1; i <= k - 1; i++) {
         conv(buf[i], rr_buf[i]);
     }
@@ -696,13 +647,11 @@ void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
     buf.SetLength(k);
 
     long i, j;
-
-    for (i = 1; i <= k; i++)
-        for (j = 1; j <= n; j++)
-            conv(B1(i, j), B(i, j));
-
-    for (i = 1; i <= k; i++)
-        InnerProduct(b(i), B1(i), B1(i), n);
+    for (i = 0; i < k; i++)
+        for (j = 0; j < n; j++)
+            conv(B1[i][j], B[i][j]);
+    for (i = 0; i < k; i++)
+        InnerProduct(b[i], B1[i], B1[i], n);
     RR bound;
     power2(bound, 2 * long(0.15 * RR::precision()));
 
@@ -720,14 +669,11 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
 
     long i, j, k, Fc1;
     Int MU;
-    double mu1;
-
-    double t1;
     Int T1;
+    double mu1;
+    double t1;
     double *tp;
-
     static double bound = 0;
-
     if (bound == 0) {
         // we tolerate a 15% loss of precision in computing
         // inner products in ComputeGS.
@@ -735,19 +681,15 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         for (i = 2 * long(0.15 * NTL_DOUBLE_PRECISION); i > 0; i--)
             bound = bound * 2;
     }
-
     double half_plus_fudge = 0.5 + red_fudge;
-
     quit = 0;
     k = init_k;
-
     vec_long st_mem;
     st_mem.SetLength(m + 2);
     long *st = st_mem.elts();
 
     for (i = 1; i < k; i++)
         st[i] = i;
-
     for (i = k; i <= m + 1; i++)
         st[i] = 1;
 
@@ -767,11 +709,9 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         max_b[i] = max_abs(B1[i], n);
 
     long in_float;
-
     long rst;
     long counter;
     long start_over;
-
     long trigger_index;
     long small_trigger;
     long cnt;
@@ -782,38 +722,27 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
     vec_RR rr_b;
 
     long m_orig = m;
-
     long rr_st = 1;
-
     long max_k = 0;
-
     long prec = RR::precision();
-
     double tt;
-
     long swap_cnt = 0;
-
     while (k <= m) {
-
         if (k > max_k) {
             max_k = k;
             swap_cnt = 0;
         }
-
         if (verbose) {
             tt = GetTime();
             if (tt > LastTime + LLLStatusInterval)
                 LLLStatus(max_k, tt, m, n, B);
         }
-
         if (k < rr_st)
             rr_st = k;
-
         if (st[k] == k)
             rst = 1;
         else
             rst = k;
-
         if (st[k] < st[k + 1])
             st[k + 1] = st[k];
         // std::cout << "LLL64: before ComputeGS, B1[k][1] = " << B1[k][1] << "\n";
@@ -838,35 +767,26 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         trigger_index = k;
         small_trigger = 0;
         cnt = 0;
-
         long thresh = 10;
         long sz = 0, new_sz;
-
         long did_rr_gs = 0;
-
         do {
             // size reduction
-
             counter++;
             // std::cout << "(k  counter) =  " <<  k << "  " << counter << "  \n";
             // std::cout <<  B << "  \n";
-
             if ((counter & 127) == 0) {
-
                 new_sz = 0;
-                for (j = 1; j <= n; j++)
-                    new_sz += NumBits(B(k, j));
-
+                for (j = 0; j < n; j++)
+                    new_sz += NumBits(B[k-1][j]);
                 if ((counter >> 7) == 1 || new_sz < sz) {
                     sz = new_sz;
                 } else {
                     cerr << "LLL_FP: warning--infinite loop?\n";
                 }
             }
-
             Fc1 = 0;
             start_over = 0;
-
             // std::cout << "rst = " << rst << "\n";
             for (j = rst - 1; j >= 1; j--) {
                 t1 = fabs(mu[k][j]);
@@ -874,21 +794,15 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                 // std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
                 if (t1 > half_plus_fudge) {
                     // std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << "  \n";
-
                     if (!Fc1) {
                         if (j > trigger_index
                                 || (j == trigger_index && small_trigger)) {
-
                             cnt++;
-
                             if (cnt > thresh) {
                                 if (log_red <= 15) {
-
                                     while (log_red > 10)
                                         inc_red_fudge();
-
                                     half_plus_fudge = 0.5 + red_fudge;
-
                                     if (!did_rr_gs) {
                                         RR_GS(B, B1, mu, b, c, buf, prec, rr_st,
                                                 k, m_orig, n, rr_B1, rr_mu,
@@ -910,26 +824,21 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                                 }
                             }
                         }
-
                         trigger_index = j;
                         small_trigger = (t1 < 4);
-
                         Fc1 = 1;
                         if (k < rr_st)
                             rr_st = k;
                         RowTransformStart(B1[k], in_vec, in_float, n);
                         // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
                     }
-
                     mu1 = mu[k][j];
                     if (mu1 >= 0)
                         mu1 = ceil(mu1 - 0.5);
                     else
                         mu1 = floor(mu1 + 0.5);
-
                     double *mu_k = mu[k];
                     double *mu_j = mu[j];
-
                     if (mu1 == 1) {
                         for (i = 1; i <= j - 1; i++)
                             mu_k[i] -= mu_j[i];
@@ -941,26 +850,21 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                             mu_k[i] -= mu1 * mu_j[i];
                     }
                     mu_k[j] -= mu1;
-
                     conv(MU, mu1);
                     // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
-
                     // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
-                    RowTransform(B(k), B(j), MU, n, B1[k], B1[j], in_vec,
+                    RowTransform(B[k-1], B[j-1], MU, n, B1[k], B1[j], in_vec,
                             max_b[k], max_b[j], in_float);
                     // std::cout << "After row transform, MU = " << MU << " \n";
                     // std::cout <<  B << "  \n";
                 }
             }
-
             if (Fc1) {
-                RowTransformFinish(B(k), B1[k], in_vec, n);
+                RowTransformFinish(B[k-1], B1[k], in_vec, n);
                 max_b[k] = max_abs(B1[k], n);
-
                 if (!did_rr_gs) {
                     b[k] = InnerProduct(B1[k], B1[k], n);
                     CheckFinite(&b[k]);
-
                     ComputeGS(B, B1, mu, b, c, k, n, bound, 1, buf);
                     CheckFinite(&c[k]);
                 } else {
@@ -968,19 +872,16 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                             rr_B1, rr_mu, rr_b, rr_c);
                     rr_st = k + 1;
                 }
-
                 rst = k;
             }
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // end do loop
-
-        if (check && (*check)(B(k)))
+        if (check && (*check)(B[k-1]))
             quit = 1;
-
         if (b[k] == 0) {
             for (i = k; i < m; i++) {
                 // swap i, i+1
-                swap(B(i), B(i + 1));
+                swap(B[i-1], B[i]);
                 tp = B1[i];
                 B1[i] = B1[i + 1];
                 B1[i + 1] = tp;
@@ -991,37 +892,30 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                 max_b[i] = max_b[i + 1];
                 max_b[i + 1] = t1;
             }
-
             for (i = k; i <= m + 1; i++)
                 st[i] = 1;
             if (k < rr_st)
                 rr_st = k;
-
             m--;
             if (quit)
                 break;
             continue;
         }
-
         if (quit)
             break;
-
         if (deep > 0) {
             // deep insertions
-
             double cc = b[k];
             long l = 1;
             while (l <= k - 1 && delta * c[l] <= cc) {
                 cc = cc - mu[k][l] * mu[k][l] * c[l];
                 l++;
             }
-
             if (l <= k - 1 && (l <= deep || k - l <= deep)) {
                 // deep insertion at position l
-
                 for (i = k; i > l; i--) {
                     // swap rows i, i-1
-                    swap(B(i), B(i - 1));
+                    swap(B[i-1], B[i-2]);
                     tp = B1[i];
                     B1[i] = B1[i - 1];
                     B1[i - 1] = tp;
@@ -1035,7 +929,6 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                     max_b[i] = max_b[i - 1];
                     max_b[i - 1] = t1;
                 }
-
                 k = l;
                 NumSwaps++;
                 swap_cnt++;
@@ -1044,11 +937,10 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         } // end deep insertions
 
         // test LLL reduction condition
-        if (k > 1
-                && delta * c[k - 1]
+        if (k > 1  && delta * c[k - 1]
                         > c[k] + mu[k][k - 1] * mu[k][k - 1] * c[k - 1]) {
             // swap rows k, k-1
-            swap(B(k), B(k - 1));
+            swap(B[k-1], B[k-2]);
             tp = B1[k];
             B1[k] = B1[k - 1];
             B1[k - 1] = tp;
@@ -1103,17 +995,18 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
 
     for (i = 1; i <= m; i++)
         for (j = 1; j <= n; j++) {
-            conv(B1[i][j], B(i, j));
+            conv(B1[i][j], B[i-1][j-1]);
             CheckFinite(&B1[i][j]);
         }
-
     for (i = 1; i <= m; i++) {
         b[i] = InnerProduct(B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
-
     new_m = ll_LLL_FP(B, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
 
+    // In this version, we leave the zero rows at the bottom.
+    // The new_m independent basis vectors will be at the top of `B`.
+    // Put shortest nonzero vector in first place.
     long imin = 0;
     double minlen = b[1];
     for (i = 2; i <= new_m; i++)
@@ -1121,9 +1014,6 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
     if (imin > 0) { swap(B[0], B[imin]);  std::swap(b[1], b[imin+1]); }
     if (sqlen)
         for (i = 0; i < new_m; i++)  sqlen[i] = b[i+1];
-
-    // In this version, we leave the zero rows at the bottom.
-    // The new_m independent basis vectors will be at the top of `B`.
     return new_m;
 }
 
@@ -1140,7 +1030,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     return LLL_FPInt(B, 0, delta, m, n, sqlen, 0, 0);
 }
 
-// =======================================================
+// =========================================================================
 
 static vec_double BKZConstant;
 
@@ -1149,38 +1039,35 @@ void ComputeBKZConstant(long beta, long p) {
     const double c_PI = 3.14159265358979323846264338328;
     const double LogPI = 1.14472988584940017414342735135;
 
-    BKZConstant.SetLength(beta - 1);
+    BKZConstant.SetLength(beta - 1);   // Index starts at 0.
     vec_double Log;
     Log.SetLength(beta);
     long i, j, k;
     double x, y;
 
-    for (j = 1; j <= beta; j++)
-        Log(j) = log(double(j));
-
+    for (i = 1; i <= beta; i++)
+        Log[i-1] = log(double(i));
     for (i = 1; i <= beta - 1; i++) {
         // First, we compute x = gamma(i/2)^{2/i}
         k = i / 2;
         if ((i & 1) == 0) { // i even
             x = 0;
             for (j = 1; j <= k; j++)
-                x = x + Log(j);
+                x = x + Log[j-1];
             x = x * (1 / double(k));
             x = exp(x);
         } else { // i odd
             x = 0;
             for (j = k + 2; j <= 2 * k + 2; j++)
-                x = x + Log(j);
-
-            x = 0.5 * LogPI + x - 2 * (k + 1) * Log(2);
+                x = x + Log[j-1];
+            x = 0.5 * LogPI + x - 2 * (k + 1) * Log[1];  // ln 2
             x = x * (2.0 / double(i));
             x = exp(x);
         }
-
         // Second, we compute y = 2^{2*p/i}
-        y = -(2 * p / double(i)) * Log(2);
+        y = -(2 * p / double(i)) * Log[1];
         y = exp(y);
-        BKZConstant(i) = x * y / c_PI;
+        BKZConstant[i-1] = x * y / c_PI;
     }
 }
 
@@ -1192,11 +1079,10 @@ void ComputeBKZThresh(double *c, long beta) {
     long i;
     double x;
     x = 0;
-    for (i = 1; i <= beta - 1; i++) {
-        x += log(c[i - 1]);
-        BKZThresh(i) = exp(x / double(i)) * BKZConstant(i);
-        if (!IsFinite(&BKZThresh(i)))
-            BKZThresh(i) = 0;
+    for (i = 0; i < beta - 1; i++) {
+        x += log(c[i]);
+        BKZThresh[i] = exp(x / double(i+1)) * BKZConstant[i];
+        if (!IsFinite(&BKZThresh[i]))   BKZThresh[i] = 0;
     }
 }
 
@@ -1218,8 +1104,8 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
     Int t1;
     long i;
     double prodlen = 0;
-    for (i = 1; i <= m; i++) {
-        InnerProduct(t1, B(i), B(i), n);
+    for (i = 0; i < m; i++) {
+        InnerProduct(t1, B[i], B[i], n);
         if (!IsZero(t1))
             prodlen += log(t1);
     }
@@ -1229,8 +1115,8 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
         ofstream f;
         OpenWrite(f, LLLDumpFile);
         f << "[";
-        for (i = 1; i <= m; i++) {
-            f << B(i) << "\n";
+        for (i = 0; i < m; i++) {
+            f << B[i] << "\n";
         }
         f << "]\n";
         f.close();
@@ -1247,11 +1133,9 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
     long m_orig = m;
     long i, j;
     Int MU;
-
-    double t1;
     Int T1;
+    double t1;
     double *tp;
-
     init_red_fudge();
 
     IntMat B;    // Will be a copy of BB, with one more row.   ********
@@ -1262,9 +1146,6 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
             B[i][j] = BB[i][j];
         }
     }
-    //B = BB;
-    //B.setDims(m+1, n);
-
     Unique2DArray<double> B1_store;
     B1_store.SetDimsFrom1(m + 2, n + 1);
     double **B1 = B1_store.get();  // approximates B
@@ -1320,10 +1201,9 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
 
     for (i = 1; i <= m; i++)
         for (j = 1; j <= n; j++) {
-            conv(B1[i][j], B(i, j));
+            conv(B1[i][j], B[i-1][j-1]);
             CheckFinite(&B1[i][j]);
         }
-
     for (i = 1; i <= m; i++) {
         b[i] = InnerProduct(B1[i], B1[i], n);
         CheckFinite(&b[i]);
@@ -1336,17 +1216,13 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
     unsigned long NumTrivial = 0;
     unsigned long NumNonTrivial = 0;
     unsigned long NumNoOps = 0;
-
-    long verb = verbose;
-
-    verbose = 0;
-
+    long verb = verbose = 0;
     long clean = 1;
 
     if (m < m_orig) {
         for (i = m_orig + 1; i >= m + 2; i--) {
             // swap i, i-1
-            swap(B(i), B(i - 1));
+            swap(B[i-1], B[i-2]);
         }
     }
     if (!quit && m > 1) {
@@ -1356,52 +1232,40 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
             ComputeBKZConstant(beta, prune);
         z = 0;
         jj = 0;
-
         while (z < m - 1) {
             jj++;
             kk = min(jj + beta - 1, m);
-
             if (jj == m) {
                 jj = 1;
                 kk = beta;
                 clean = 1;
             }
-
             if (verb) {
                 tt = GetTime();
                 if (tt > LastTime + LLLStatusInterval)
                     BKZStatus(tt, enum_time, NumIterations, NumTrivial,
                             NumNonTrivial, NumNoOps, m, n, B);
             }
-
             // ENUM
             double tt1 = 0.0;
-
             if (verb) {
                 tt1 = GetTime();
             }
-
             if (prune > 0)
                 ComputeBKZThresh(&c[jj], kk - jj + 1);
-
             cbar = c[jj];
             utildavec[jj] = uvec[jj] = 1;
-
             yvec[jj] = vvec[jj] = 0;
             Deltavec[jj] = 0;
-
             s = t = jj;
             deltavec[jj] = 1;
-
             for (i = jj + 1; i <= kk + 1; i++) {
                 ctilda[i] = uvec[i] = utildavec[i] = yvec[i] = 0;
                 Deltavec[i] = 0;
                 vvec[i] = 0;
                 deltavec[i] = 1;
             }
-
             long enum_cnt = 0;
-
             while (t <= kk) {
                 if (verb) {
                     enum_cnt++;
@@ -1416,18 +1280,14 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         }
                     }
                 }
-
                 ctilda[t] = ctilda[t + 1]
                         + (yvec[t] + utildavec[t]) * (yvec[t] + utildavec[t])
                                 * c[t];
-
                 ForceToMem(&ctilda[t]);  // prevents an infinite loop
-
                 if (prune > 0 && t > jj) {
-                    eta = BKZThresh(t - jj);
+                    eta = BKZThresh[t-jj-1]);
                 } else
                     eta = 0;
-
                 if (ctilda[t] < cbar - eta) {
                     if (t > jj) {
                         t--;
@@ -1462,20 +1322,14 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                     utildavec[t] = vvec[t] + Deltavec[t];
                 }
             }
-
             if (verb) {
                 tt1 = GetTime() - tt1;
                 enum_time += tt1;
             }
-
             NumIterations++;
-
             h = min(kk + 1, m);
-
             if ((delta - 8 * red_fudge) * c[jj] > cbar) {
-
                 clean = 0;
-
                 // we treat the case that the new vector is b_s (jj < s <= kk)
                 // as a special case that appears to occur most of the time.
                 s = 0;
@@ -1487,16 +1341,14 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                             s = -1;
                     }
                 }
-
                 if (s == 0)
                     LogicError("BKZ_FPZZ: internal error, s==0.");
-
                 if (s > 0) {
                     // special case
                     NumTrivial++;
                     for (i = s; i > jj; i--) {
                         // swap i, i-1
-                        swap(B(i - 1), B(i));
+                        swap(B[i-2], B[i-1]);
                         tp = B1[i - 1];
                         B1[i - 1] = B1[i];
                         B1[i] = tp;
@@ -1505,28 +1357,25 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         b[i] = t1;
                     }
                     // cerr << "special case\n";
-                    new_m = ll_LLL_FP(B, delta, 0, check, B1, mu, b, c, h, n,
-                            jj, quit);
+                    new_m = ll_LLL_FP(B, delta, 0, check, B1, mu, b, c, h, n,  jj, quit);
                     if (new_m != h)
                         LogicError("BKZ_FPZZ: internal error");
                     if (quit)
                         break;
                 } else {
                     // the general case
-
                     NumNonTrivial++;
-                    for (i = 1; i <= n; i++)
-                        conv(B(m + 1, i), 0);
+                    for (i = 0; i < n; i++)
+                        conv(B[m][i], 0);
                     for (i = jj; i <= kk; i++) {
                         if (uvec[i] == 0)
                             continue;
                         conv(MU, uvec[i]);
-                        RowTransform2(B(m + 1), B(i), MU, n);
+                        RowTransform2(B[m], B[i-1], MU, n);
                     }
-
                     for (i = m + 1; i >= jj + 1; i--) {
                         // swap i, i-1
-                        swap(B(i - 1), B(i));
+                        swap(B[i-2], B[i-1]);
                         tp = B1[i - 1];
                         B1[i - 1] = B1[i];
                         B1[i] = tp;
@@ -1534,31 +1383,25 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         b[i - 1] = b[i];
                         b[i] = t1;
                     }
-
                     for (i = 1; i <= n; i++) {
-                        conv(B1[jj][i], B(jj, i));
+                        conv(B1[jj][i], B[jj-1][i-1]);
                         CheckFinite(&B1[jj][i]);
                     }
-
                     b[jj] = InnerProduct(B1[jj], B1[jj], n);
                     CheckFinite(&b[jj]);
-
                     if (b[jj] == 0)
                         LogicError("BKZ_FZZP: internal error, b[jj]==0");
 
                     // remove linear dependencies
-
                     // cerr << "general case\n";
                     new_m = ll_LLL_FP(B, delta, 0, 0, B1, mu, b, c, kk + 1, n,
                             jj, quit);
-
                     if (new_m != kk)
                         LogicError("BKZ_FPZZ: internal error, new_m != kk");
-
-                    // remove zero vector
+                    // remove zero vectors
                     for (i = kk + 2; i <= m + 1; i++) {
                         // swap i, i-1
-                        swap(B(i - 1), B(i));
+                        swap(B[i-2], B[i-1]);
                         tp = B1[i - 1];
                         B1[i - 1] = B1[i];
                         B1[i] = tp;
@@ -1566,11 +1409,10 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         b[i - 1] = b[i];
                         b[i] = t1;
                     }
-
                     quit = 0;
                     if (check) {
                         for (i = 1; i <= kk; i++)
-                            if ((*check)(B(i))) {
+                            if ((*check)(B[i-1])) {
                                 quit = 1;
                                 break;
                             }
@@ -1607,13 +1449,13 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                 NumNonTrivial, NumNoOps, m, n, B);
     }
     // In this version, we do not move the zero vectors to the top.
-    // B.SetDims(m_orig, n);
-    //BB = B;      // We do not change the dimensions of BB.
+    // We also do not change the dimensions of BB.
     for (i = 0; i < m_orig; i++) {
         for (j = 0; j < n; j++) {
             BB[i][j] = B[i][j];
         }
     }
+    // Put the shortest nonzero vector in first place.
     long imin = 0;
     double minlen = b[1];
     for (i = 2; i <= m; i++)
@@ -1621,8 +1463,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
     if (imin > 0) { swap(BB[0], BB[imin]);  std::swap(b[1], b[imin+1]); }
     if (sqlen)
         for (i = 0; i < m; i++)  sqlen[i] = b[i+1];
-
-    return m;
+    return m;    // Number of rows in basis.
 }
 
 static
