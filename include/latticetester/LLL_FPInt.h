@@ -223,21 +223,19 @@ static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
 
 // A = A - B*MU1  for the first n vector entries only.
 template<typename IntVec, typename Int>
-static void RowTransform(IntVec &A, IntVec &B, const ZZ &MU1, long n,
+static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
         long &in_float) {
-//#if TYPES_CODE  ==  ZD
+#if TYPES_CODE  ==  ZD
     NTL_ZZRegister (T);
     NTL_ZZRegister (MU);
-//#else
-//    Int T, MU;
-//#endif
+#else
+    Int T, MU;
+#endif
     long k;
     double mu;
     conv(mu, MU1);
     CheckFinite(&mu);
-
-    // long n = A.length();
     long i;
     if (in_float) {
         double mu_abs = fabs(mu);
@@ -269,7 +267,6 @@ static void RowTransform(IntVec &A, IntVec &B, const ZZ &MU1, long n,
 
     // in_float == 1 (true) iff all coefficients are in [-TR_BND, TR_BND].
     // std::cout << "RowTransform, not in_float! \n";
-
     MU = MU1;
     if (MU == 1) {
         for (i = 1; i <= n; i++) {
@@ -286,7 +283,6 @@ static void RowTransform(IntVec &A, IntVec &B, const ZZ &MU1, long n,
         }
         return;
     }
-
     if (MU == -1) {
         for (i = 1; i <= n; i++) {
             if (in_a[i] && a[i] < TR_BND && a[i] > -TR_BND && b[i] < TR_BND
@@ -495,7 +491,7 @@ static NTL_CHEAP_THREAD_LOCAL double RR_GS_time = 0;
 static NTL_CHEAP_THREAD_LOCAL double StartTime = 0;
 static NTL_CHEAP_THREAD_LOCAL double LastTime = 0;
 
-template<typename IntVec, typename Int>
+template<typename IntMat>
 static void LLLStatus(long max_k, double t, long m, long n, const IntMat &B) {
     cerr << "---- LLL_FP status ----\n";
     cerr << "elapsed time: ";
@@ -663,7 +659,7 @@ void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
         ComputeGS(B, B1, mu, b, c, i, n, bound, 1, buf, bound2);
 }
 
-template<typename IntMat>
+template<typename IntMat, typename Int>
 static
 long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         double **B1, double **mu, double *b, double *c, long m, long n,
@@ -671,8 +667,8 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
     // long n = B.NumCols();
 
     long i, j, k, Fc1;
-    ZZ MU;
-    ZZ T1;
+    Int MU;
+    Int T1;
     double mu1;
     double t1;
     double *tp;
