@@ -73,6 +73,7 @@ NTL_OPEN_NNS
  * `double` vector `sqlen`,  in `sqlen[0],..., sqlen[d-1]`, if this vector given.
  * The function returns the dimension of the computed basis (the number of independent rows).
  */
+template<typename IntMat>
 static
 long LLL_FPInt(IntMat &B, double delta = 0.99, long r = 0, long c = 0,
         double *sqlen = 0);

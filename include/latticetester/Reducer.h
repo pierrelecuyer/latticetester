@@ -2011,6 +2011,13 @@ void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
 }
 */
 
+// Static version: general.
+template<typename Real>
+void Reducer<int64_t, Real>::redLLLNTL(IntMat &basis, double delta,
+        long dim, double *sqlen, PrecisionType precision) {
+    MyExit(1, "redLLLNTL: General version not implemented.\n");
+}
+
 // Static version: a specialization for the case where Int = int64_t.
 template<typename Real>
 void Reducer<int64_t, Real>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
