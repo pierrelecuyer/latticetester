@@ -2005,7 +2005,7 @@ void Reducer<Int, Real>::redLLLNTL(double delta, PrecisionType precision) {
 template<typename Real>
 void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
         PrecisionType precision) {
-    IntLattice* lat = red.getIntLattice();
+    IntLattice<NTL::ZZ>* lat = red.getIntLattice();
     redLLLNTL(lat->getBasis(), delta, lat->getDim(), 0, precision);
 }
 
@@ -2086,20 +2086,20 @@ void Reducer<Int, Real>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
 template<typename Int, typename Real>
 void Reducer<Int, Real>::redBKZ(double delta, std::int64_t blocksize,
         long dim, double *sqlen, PrecisionType precision) {
-    redBKZ(red.getIntLattice().getBasis(), delta, blocksize, dim, sqlen, precision);
-    MyExit(1, "redBKZ cannot be used with int64_t integers.");
+    redBKZ(m_lat.getBasis(), delta, blocksize, dim, sqlen, precision);
+    // MyExit(1, "redBKZ cannot be used with int64_t integers.");
 }
 
 // A specialization for the case where Int = ZZ.
 template<typename Real>
 void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta, std::int64_t blocksize,
         PrecisionType precision) {
-    IntLattice* lat = red->getIntLattice();
+    IntLattice<NTL::ZZ>* lat = red->getIntLattice();
     redBKZ(lat->getBasis(), delta, blocksize, lat->getDim(), 0, precision);
 }
 
 // Static version: specialization for Int = int64_t.
-template<>
+template<typename Real>
 void Reducer<int64_t, Real>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
         std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
@@ -2110,7 +2110,7 @@ void Reducer<int64_t, Real>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
 }
 
 // Static version, for Int = ZZ.
-template<>
+template<typename Real>
 void Reducer<NTL::ZZ, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
         std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
