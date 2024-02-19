@@ -495,6 +495,7 @@ static NTL_CHEAP_THREAD_LOCAL double RR_GS_time = 0;
 static NTL_CHEAP_THREAD_LOCAL double StartTime = 0;
 static NTL_CHEAP_THREAD_LOCAL double LastTime = 0;
 
+template<typename IntVec, typename Int>
 static void LLLStatus(long max_k, double t, long m, long n, const IntMat &B) {
     cerr << "---- LLL_FP status ----\n";
     cerr << "elapsed time: ";
