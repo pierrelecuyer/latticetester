@@ -130,7 +130,7 @@ static void InnerProduct(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
 }
 
 // A = A - B*MU   for the first n vector entries only.
-template<typename Int>
+template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n) {
 #if TYPES_CODE  ==  ZD
     NTL_ZZRegister (T);
@@ -207,6 +207,7 @@ static void RowTransformStart(double *a, long *in_a, long &in_float, long n) {
     in_float = inf;
 }
 
+template<typename IntVec>
 static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
     // long n = A.length();
     long i;
@@ -221,7 +222,7 @@ static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
 }
 
 // A = A - B*MU1  for the first n vector entries only.
-template<typename IntVec>
+template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const ZZ &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
         long &in_float) {
@@ -356,6 +357,7 @@ static void RowTransform(IntVec &A, IntVec &B, const ZZ &MU1, long n,
 }
 
 // A = A + B*MU  for the first n vector entries only.
+template<typename IntVec, typename Int>
 static void RowTransform2(IntVec &A, IntVec &B, const Int &MU1, long n) {
 #if TYPES_CODE  ==  ZD
     NTL_ZZRegister (T);
@@ -405,6 +407,7 @@ static void RowTransform2(IntVec &A, IntVec &B, const Int &MU1, long n) {
     }
 }
 
+template<typename IntMat>
 static
 void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
         long k, long n, double bound, long st, double *buf) {
@@ -555,9 +558,11 @@ static void print_mus(double **mu, long k)
 
 // The following functions always use RR.
 
+template<typename IntMat>
 void ComputeGS(const IntMat &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
         long k, const RR &bound, long st, vec_RR &buf, const RR &bound2);
 
+template<typename IntMat>
 void ComputeGS(const IntMat &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
         long k, long n, const RR &bound, long st, vec_RR &buf,
         const RR &bound2) {
@@ -565,6 +570,7 @@ void ComputeGS(const IntMat &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
     ComputeGS(B, B1, mu, b, c, k, bound, st, buf, bound2);
 }
 
+template<typename IntMat>
 static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
@@ -624,6 +630,7 @@ static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
     cerr << tt << " (" << RR_GS_time << ")\n";
 }
 
+template<typename IntMat>
 void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
     // long n = B.NumCols();
     // long k = B.NumRows();
@@ -1013,6 +1020,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
     return new_m;
 }
 
+template<typename IntMat>
 static
 long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     if (m == 0)
@@ -1023,7 +1031,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     NumSwaps = 0;
     if (delta < 0.50 || delta >= 1)
         LogicError("LLL_FP: bad delta");
-    return LLL_FPInt(B, 0, delta, m, n, sqlen, 0, 0);
+    return LLL_FPInt(B, delta, m, n, sqlen, 0, 0);
 }
 
 // =========================================================================
@@ -1122,7 +1130,7 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
     LastTime = tt;
 }
 
-template<typename Int>
+template<typename IntMat>
 static
 long BKZ_FPInt<Int>(IntMat &BB, double delta, long beta, long m, long n,
         double *sqlen, long prune, LLLCheckFct check) {
@@ -1464,7 +1472,7 @@ long BKZ_FPInt<Int>(IntMat &BB, double delta, long beta, long m, long n,
     return m;    // Number of rows in basis.
 }
 
-template<typename Int>
+template<typename IntMat>
 static
 long LLL_FPInt<Int>::BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         double *sqlen) {
