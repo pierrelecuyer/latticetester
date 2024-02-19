@@ -97,9 +97,7 @@
 #include "latticetester/Chrono.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
-//#include "latticetester/Rank1LatticeFlex.h"
-//
-#include "latticetester/LLL_FPZZflex.h"
+#include "latticetester/LLL_FPInt.h"
 
 using namespace LatticeTester;
 

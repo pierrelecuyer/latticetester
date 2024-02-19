@@ -31,7 +31,7 @@
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
-#include "latticetester/LLL_FPZZflex.h"
+#include "latticetester/LLL_FPInt.h"
 
 // Application specific headers
 #include "latticetester/NormaBestLat.h"
@@ -39,6 +39,7 @@
 #include "latticetester/CoordinateSets.h"
 #include "latticetester/WeightsUniform.h"
 #include "latticetester/BasisConstruction.h"
+
 
 const long numMult = 10;    // Number of multipliers
 const long multipliers[numMult] = { 1597, 19021, 49109, 71904, 90941, 1090942, 809519, 371915, 1824915, 577841};

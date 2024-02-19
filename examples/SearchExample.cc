@@ -27,7 +27,7 @@
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
-#include "latticetester/LLL_FPZZflex.h"
+#include "latticetester/LLL_FPInt.h"
 
 // Application specific headers
 #include "latticetester/NormaBestLat.h"
