@@ -71,7 +71,7 @@ static inline void CheckFinite64(double *p) {
 }
 
 // Returns the inner product of two arrays of double of size n.
-static double InnerProductD(double *a, double *b, int64_t n) {
+static double InnerProductDD(double *a, double *b, int64_t n) {
    double s = 0;
    int64_t i;
    for (i = 0; i < n; i++)
@@ -80,7 +80,7 @@ static double InnerProductD(double *a, double *b, int64_t n) {
 }
 
 // Inner product of two vectors of integers a and b, returned in prod.
-static void InnerProductV(int64_t &prod, const vector64& a, const vector64& b) {
+static void InnerProductVV(int64_t &prod, const vector64& a, const vector64& b) {
    int64_t x = 0;
    int64_t n = min(a.length(), b.length());
    int64_t i;
@@ -336,7 +336,7 @@ static void ComputeGS(matrix64& B, double **B1, double **mu, double *b,
    // std::cout << "ComputeGS, st = " << st << " k = " << k << "\n";
 
    for (j = st; j < k; j++) {
-      s = InnerProductD(B1[k], B1[j], n);
+      s = InnerProductDD(B1[k], B1[j], n);
       // std::cout << "ComputeGS, j = " << j << " Inner product s = " << s << "\n";
 
       // test = b[k]*b[j] >= NTL_FDOUBLE_PRECISION^2
@@ -357,7 +357,7 @@ static void ComputeGS(matrix64& B, double **B1, double **mu, double *b,
       }
 
       if (test) {
-         InnerProductV (T1, B[k], B[j]);
+         InnerProductVV (T1, B[k], B[j]);
          conv(s, T1);
          // std::cout << "ComputeGS, T1 = s = " << s << "\n";
       }
@@ -603,7 +603,7 @@ static int64_t ll_LLL_FP64(matrix64& B, double delta,
             RowTransformFinish64(temp, B1[k], in_vec);
             B[k] = temp;
             max_b[k] = max_abs64(B1[k], n);
-            b[k] = InnerProductD (B1[k], B1[k], n);
+            b[k] = InnerProductDD (B1[k], B1[k], n);
             CheckFinite64(&b[k]);
             ComputeGS (B, B1, mu, b, c, k, bound, 0, buf);
             CheckFinite64(&c[k]);
@@ -694,7 +694,7 @@ static int64_t LLL64_FP (matrix64& B, double delta) {
          CheckFinite64(&B1[i][j]);
       }
    for (i = 0; i < m; i++) {
-      b[i] = InnerProductD (B1[i], B1[i], n);
+      b[i] = InnerProductDD (B1[i], B1[i], n);
       CheckFinite64(&b[i]);
    }
 
@@ -801,7 +801,7 @@ static int64_t BKZ64_FP (matrix64& BB, double delta, int64_t blockSize) {
       }
 
    for (i = 0; i < m; i++) {
-      b[i] = InnerProductD(B1[i], B1[i], n);
+      b[i] = InnerProductDD(B1[i], B1[i], n);
       CheckFinite64(&b[i]);
    }
    m = ll_LLL_FP64(B, delta, B1, mu, b, c, m, 0, quit);
@@ -953,7 +953,7 @@ static int64_t BKZ64_FP (matrix64& BB, double delta, int64_t blockSize) {
                   CheckFinite64(&B1[jj][i]);
                }
 
-               b[jj] = InnerProductD(B1[jj], B1[jj], n);
+               b[jj] = InnerProductDD(B1[jj], B1[jj], n);
                CheckFinite64(&b[jj]);
 
                if (b[jj] == 0) LogicError("BKZ_FP: internal error, b[jj]==0");
