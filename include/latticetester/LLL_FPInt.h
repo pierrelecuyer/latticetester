@@ -876,7 +876,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                 max_b[k] = max_abs(B1[k], n);
 #if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
                 if (!did_rr_gs) {
-                    b[k] = InnerProductR (B1[k], B1[k], n);
+                    b[k] = InnerProductD (B1[k], B1[k], n);
                     CheckFinite(&b[k]);
                     // This one uses large RR matrices !
                     ComputeGS(B, B1, mu, b, c, k, n, bound, 1, buf);
