@@ -126,8 +126,8 @@ static void InnerProduct(ZZ &xx, const vec_ZZ &a, const vec_ZZ &b, long n) {
 }
 
 // Inner product of two vectors of integers a and b, returned in prod.
-static void InnerProduct(int64_t &prod, const vector<int64_t> &a,
-        const vector<int64_t> &b, long n) {
+static void InnerProduct(long &prod, const vec_long &a,
+        const vec_long &b, long n) {
     int64_t x = 0;
     for (long i = 0; i < n; i++) {
         x += a[i] * b[i];
