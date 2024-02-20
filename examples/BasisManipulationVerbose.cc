@@ -32,7 +32,7 @@
 #include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
-// #include "latticetester/Reducer.h"
+//#include "latticetester/Reducer.h"
 #include "latticetester/Coordinates.h"
 
 using namespace LatticeTester;
