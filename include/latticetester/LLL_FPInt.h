@@ -1128,7 +1128,7 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
 
 template<typename IntMat>
 static
-long BKZ_FPInt<Int>(IntMat &BB, double delta, long beta, long m, long n,
+long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         double *sqlen, long prune, LLLCheckFct check) {
     // long m = BB.NumRows();
     // long n = BB.NumCols();
@@ -1470,7 +1470,7 @@ long BKZ_FPInt<Int>(IntMat &BB, double delta, long beta, long m, long n,
 
 template<typename IntMat>
 static
-long LLL_FPInt<Int>::BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
+long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         double *sqlen) {
     if (m == 0)
         m = BB.NumRows();
