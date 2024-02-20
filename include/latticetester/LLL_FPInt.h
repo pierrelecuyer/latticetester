@@ -550,21 +550,19 @@ static void print_mus(double **mu, long k)
 #endif
 
 // The following functions always use RR matrices.  ***
+// Therefore we do not use this when Int = int64_t.
 
-template<typename IntMat>
-void ComputeGS(const IntMat &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
+void ComputeGS(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
         long k, const RR &bound, long st, vec_RR &buf, const RR &bound2);
 
-template<typename IntMat>
-void ComputeGS(const IntMat &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
+void ComputeGS(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
         long k, long n, const RR &bound, long st, vec_RR &buf,
         const RR &bound2) {
     std::cout << "We are now in this ComputeGS with RR vectors!!! \n";
     ComputeGS(B, B1, mu, b, c, k, bound, st, buf, bound2);
 }
 
-template<typename IntMat>
-static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
+static void RR_GS(mat_ZZ& B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     double tt;
@@ -622,8 +620,7 @@ static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
     cerr << tt << " (" << RR_GS_time << ")\n";
 }
 
-template<typename IntMat>
-void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
+void ComputeGS(const mat_ZZ& B, mat_RR &mu, vec_RR &c, long k, long n) {
     // long n = B.NumCols();
     // long k = B.NumRows();
     mat_RR B1;
@@ -813,8 +810,8 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                                         small_trigger = 0;
                                         start_over = 1;
                                         break;
-#endif
                                     }
+#endif
                                 } else {
                                     inc_red_fudge();
                                     half_plus_fudge = 0.5 + red_fudge;
@@ -860,6 +857,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
             if (Fc1) {
                 RowTransformFinish(B[k-1], B1[k], in_vec, n);
                 max_b[k] = max_abs(B1[k], n);
+#if ((TYPES_CODE  ==  ZD) && (TYPES_CODE  ==  ZR))
                 if (!did_rr_gs) {
                     b[k] = InnerProduct(B1[k], B1[k], n);
                     CheckFinite(&b[k]);
@@ -872,6 +870,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                             rr_B1, rr_mu, rr_b, rr_c);
                     rr_st = k + 1;
                 }
+#endif
                 rst = k;
             }
             // std::cout << "End of loop, B = " <<  B << "  \n";
