@@ -28,7 +28,7 @@
 #include <NTL/ZZ.h>
 #include <NTL/LLL.h>
 
-// #include <latticetester/NTLWrap.h>
+#include <latticetester/NTLWrap.h>
 
 /**
  * This module contains a  modified version of the `LLL_FP` module of NTL.
@@ -100,7 +100,7 @@ void CheckFinite(double *p) {
 }
 
 // Returns the inner product of two arrays of double of size n.
-static double InnerProduct(double *a, double *b, long n) {
+static double InnerProductD(double *a, double *b, long n) {
     double s;
     long i;
     s = 0.0;
@@ -110,7 +110,7 @@ static double InnerProduct(double *a, double *b, long n) {
 }
 
 // Inner product of two vectors of integers a and b, returned in prod.
-static void InnerProduct(ZZ &xx, const vec_ZZ &a, const vec_ZZ &b, long n) {
+static void InnerProductV(ZZ &xx, const vec_ZZ &a, const vec_ZZ &b, long n) {
     ZZ t1, x;
     clear(x);
     for (long i = 0; i < n; i++) {
@@ -120,19 +120,17 @@ static void InnerProduct(ZZ &xx, const vec_ZZ &a, const vec_ZZ &b, long n) {
     xx = x;
 }
 
-/*
 // Inner product of two vectors of integers a and b, returned in prod.
-static void InnerProduct(long &prod, const vec_long &a,
-        const vec_long &b, long n) {
+static void InnerProductV(long &prod, const NTL::vector<long> &a,
+        const NTL::vector<long> &b, long n) {
     int64_t x = 0;
     for (long i = 0; i < n; i++) {
         x += a[i] * b[i];
     }
     prod = x;
 }
-*/
 
-static void InnerProduct(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
+static void InnerProductR(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
     RR t1, x;
     long i;
     clear(x);
@@ -435,7 +433,7 @@ void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
             buf[i] = mu_k[i] * c[i];
     }
     for (j = st; j <= k - 1; j++) {
-        s = InnerProduct(B1[k], B1[j], n);  // Returns a double.
+        s = InnerProductD(B1[k], B1[j], n);  // Returns a double.
         // std::cout << "ComputeGS, j = " << j << " Inner product s = " << s << "\n";
 
         // test = b[k]*b[j] >= NTL_FDOUBLE_PRECISION^2
@@ -454,7 +452,7 @@ void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
                 test = 0;
         }
         if (test) {
-            InnerProduct(T1, B[k - 1], B[j - 1], n);  // all in Int.
+            InnerProductV(T1, B[k - 1], B[j - 1], n);  // all in Int.
             conv(s, T1);
             // std::cout << "ComputeGS, T1 = s = " << s << "\n";
         }
@@ -512,7 +510,7 @@ static void LLLStatus(long max_k, double t, long m, long n, const IntMat &B) {
     long i;
     double prodlen = 0;
     for (i = 0; i < m; i++) {
-        InnerProduct(t1, B[i], B[i], n);   // all in Int.
+        InnerProductV (t1, B[i], B[i], n);   // all in Int.
         if (!IsZero(t1))
             prodlen += log(t1);
     }
@@ -603,7 +601,7 @@ static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
         for (j = 0; j < n; j++)
             conv(rr_B1[i][j], B[i][j]);
     for (i = rr_st - 1; i < k; i++)
-        InnerProduct(rr_b[i], rr_B1[i], rr_B1[i], n);   // all in RR.
+        InnerProductR (rr_b[i], rr_B1[i], rr_B1[i], n);   // all in RR.
     RR bound;
     power2(bound, 2 * long(0.15 * RR::precision()));
     RR bound2;
@@ -656,7 +654,7 @@ void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
         for (j = 0; j < n; j++)
             conv(B1[i][j], B[i][j]);
     for (i = 0; i < k; i++)
-        InnerProduct(b[i], B1[i], B1[i], n);
+        InnerProductR (b[i], B1[i], B1[i], n);
     RR bound;
     power2(bound, 2 * long(0.15 * RR::precision()));
 
@@ -878,7 +876,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                 max_b[k] = max_abs(B1[k], n);
 #if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
                 if (!did_rr_gs) {
-                    b[k] = InnerProduct(B1[k], B1[k], n);
+                    b[k] = InnerProductR (B1[k], B1[k], n);
                     CheckFinite(&b[k]);
                     // This one uses large RR matrices !
                     ComputeGS(B, B1, mu, b, c, k, n, bound, 1, buf);
@@ -1019,7 +1017,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
             CheckFinite(&B1[i][j]);
         }
     for (i = 1; i <= m; i++) {
-        b[i] = InnerProduct(B1[i], B1[i], n);
+        b[i] = InnerProductD (B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
     new_m = ll_LLL_FP(B, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
@@ -1135,7 +1133,7 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
     long i;
     double prodlen = 0;
     for (i = 0; i < m; i++) {
-        InnerProduct(t1, B[i], B[i], n);
+        InnerProductV (t1, B[i], B[i], n);
         if (!IsZero(t1))
             prodlen += log(t1);
     }
@@ -1236,7 +1234,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
             CheckFinite(&B1[i][j]);
         }
     for (i = 1; i <= m; i++) {
-        b[i] = InnerProduct(B1[i], B1[i], n);
+        b[i] = InnerProductD (B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
     m = ll_LLL_FP(B, delta, 0, check, B1, mu, b, c, m, n, 1, quit);
@@ -1419,7 +1417,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         conv(B1[jj][i], B[jj - 1][i - 1]);
                         CheckFinite(&B1[jj][i]);
                     }
-                    b[jj] = InnerProduct(B1[jj], B1[jj], n);
+                    b[jj] = InnerProductD (B1[jj], B1[jj], n);
                     CheckFinite(&b[jj]);
                     if (b[jj] == 0)
                         LogicError("BKZ_FZZP: internal error, b[jj]==0");
