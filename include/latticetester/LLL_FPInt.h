@@ -28,7 +28,7 @@
 #include <NTL/ZZ.h>
 #include <NTL/LLL.h>
 
-#include <latticetester/NTLWrap.h>
+// #include <latticetester/NTLWrap.h>
 
 /**
  * This module contains a  modified version of the `LLL_FP` module of NTL.
