@@ -133,7 +133,7 @@ static void InnerProduct(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
 // A = A - B*MU   for the first n vector entries only.
 template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n) {
-#if ((TYPES_CODE  ==  ZD) && (TYPES_CODE  ==  ZR))
+#if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
     NTL_ZZRegister (T);
     NTL_ZZRegister (MU);
 #else
@@ -227,7 +227,7 @@ template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
         long &in_float) {
-#if TYPES_CODE  ==  ZD
+#if TYPES_CODE == ZD
     NTL_ZZRegister (T);
     NTL_ZZRegister (MU);
 #else
@@ -356,7 +356,7 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
 // A = A + B*MU  for the first n vector entries only.
 template<typename IntVec, typename Int>
 static void RowTransform2(IntVec &A, IntVec &B, const Int &MU1, long n) {
-#if TYPES_CODE  ==  ZD
+#if TYPES_CODE == ZD
     NTL_ZZRegister (T);
     NTL_ZZRegister (MU);
 #else
@@ -745,7 +745,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         if (swap_cnt > 200000) {
             cerr << "LLL_FP: swap loop?\n";
             // This one uses large RR matrices rr_* !
-#if ((TYPES_CODE  ==  ZD) && (TYPES_CODE  ==  ZR))
+#if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
             RR_GS(B, B1, mu, b, c, buf, prec, rr_st, k, m_orig, n, rr_B1, rr_mu,
                     rr_b, rr_c);
             if (rr_st < st[k + 1])
@@ -795,7 +795,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                                     while (log_red > 10)
                                         inc_red_fudge();
                                     half_plus_fudge = 0.5 + red_fudge;
-#if ((TYPES_CODE  ==  ZD) && (TYPES_CODE  ==  ZR))
+#if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
                                     if (!did_rr_gs) {
                                         // This one uses large RR matrices rr_* !
                                         RR_GS(B, B1, mu, b, c, buf, prec, rr_st,
@@ -857,7 +857,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
             if (Fc1) {
                 RowTransformFinish(B[k-1], B1[k], in_vec, n);
                 max_b[k] = max_abs(B1[k], n);
-#if ((TYPES_CODE  ==  ZD) && (TYPES_CODE  ==  ZR))
+#if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
                 if (!did_rr_gs) {
                     b[k] = InnerProduct(B1[k], B1[k], n);
                     CheckFinite(&b[k]);
