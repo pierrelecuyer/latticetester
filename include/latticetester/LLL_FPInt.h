@@ -115,7 +115,7 @@ static void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n);
 
 // Inner product of two vectors of integers a and b, returned in prod.
 template<>
-static void InnerProductV(ZZ &prod, const vec_ZZ &a, const vec_ZZ &b, long n) {
+void InnerProductV(ZZ &prod, const vec_ZZ &a, const vec_ZZ &b, long n) {
     ZZ t1, x;
     // clear(x);
     x = 0;
@@ -128,7 +128,7 @@ static void InnerProductV(ZZ &prod, const vec_ZZ &a, const vec_ZZ &b, long n) {
 
 // Inner product of two vectors of integers a and b, returned in prod.
 template<>
-static void InnerProductV(long &prod, const NTL::vector<long> &a,
+void InnerProductV(long &prod, const NTL::vector<long> &a,
         const NTL::vector<long> &b, long n) {
     long x = 0;
     for (long i = 0; i < n; i++) {

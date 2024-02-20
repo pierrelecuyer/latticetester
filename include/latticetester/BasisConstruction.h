@@ -42,7 +42,7 @@
 #include "latticetester/IntLattice.h"
 #include "latticetester/Util.h"
 #include "latticetester/Coordinates.h"
-// #include "latticetester/LLL64.h"
+#include "latticetester/LLL64.h"
 // #include "latticetester/LLL_FPZZflex.h"
 #include "latticetester/LLL_FPInt.h"
 
