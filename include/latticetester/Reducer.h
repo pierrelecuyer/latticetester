@@ -2012,8 +2012,8 @@ void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
 */
 
 // Static version: general.
-template<typename Real>
-void Reducer<int64_t, Real>::redLLLNTL(IntMat &basis, double delta,
+template<typename Int, typename Real>
+void Reducer<Int, Real>::redLLLNTL(IntMat &basis, double delta,
         long dim, double *sqlen, PrecisionType precision) {
     MyExit(1, "redLLLNTL: General version not implemented.\n");
 }
@@ -2067,16 +2067,10 @@ void Reducer<NTL::ZZ, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta
 
 //=========================================================================
 
-// This one is for the case where Int != ZZ.
+// Static version for the general case.
 template<typename Int, typename Real>
 void Reducer<Int, Real>::redLLLNTLExact(double delta) {
-    MyExit(1, "redLLLNTLExact cannot be used with std::int64_t");
-}
-
-// A specialization for the case where Int = ZZ.
-template<typename Real>
-void redLLLNTLExact(Reducer<NTL::ZZ, Real> &red, double delta) {
-    redLLLNTLExact(red.getIntLattice().getBasis(), delta);
+    MyExit(1, "redLLLNTLExact works only for Int = ZZ");
 }
 
 // Static version, for Int = ZZ.
