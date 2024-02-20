@@ -133,7 +133,7 @@ static void InnerProduct(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
 // A = A - B*MU   for the first n vector entries only.
 template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n) {
-#if TYPES_CODE  ==  ZD
+#if ((TYPES_CODE  ==  ZD) && (TYPES_CODE  ==  ZR))
     NTL_ZZRegister (T);
     NTL_ZZRegister (MU);
 #else
@@ -404,6 +404,7 @@ static void RowTransform2(IntVec &A, IntVec &B, const Int &MU1, long n) {
     }
 }
 
+// This one works with arrays of `double`.
 template<typename IntMat>
 static
 void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
@@ -411,10 +412,8 @@ void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
     // long n = B.NumCols();
     long i, j;
     double s, t1, y, t;
-
     Int T1;
     long test;
-
     double *mu_k = mu[k];
 
     // std::cout << "ComputeGS, st = " << st << " k = " << k << "\n";
@@ -427,12 +426,9 @@ void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
         // std::cout << "ComputeGS, j = " << j << " Inner product s = " << s << "\n";
 
         // test = b[k]*b[j] >= NTL_FDOUBLE_PRECISION^2
-
         test = (b[k] / NTL_FDOUBLE_PRECISION >= NTL_FDOUBLE_PRECISION / b[j]);
-
         // test = test && s^2 <= b[k]*b[j]/bound,
         // but we compute it in a strange way to avoid overflow
-
         if (test && (y = fabs(s)) != 0) {
             t = y / b[j];
             t1 = b[k] / y;
@@ -449,7 +445,6 @@ void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
             conv(s, T1);
             // std::cout << "ComputeGS, T1 = s = " << s << "\n";
         }
-
         double *mu_j = mu[j];
         t1 = 0;
         for (i = 1; i <= j - 1; i++) {
@@ -554,7 +549,7 @@ static void print_mus(double **mu, long k)
 
 #endif
 
-// The following functions always use RR.
+// The following functions always use RR matrices.  ***
 
 template<typename IntMat>
 void ComputeGS(const IntMat &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
@@ -573,7 +568,6 @@ static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     double tt;
-
     cerr << "LLL_FP: RR refresh " << rr_st << "..." << k << "...";
     tt = GetTime();
     if (rr_st > k)
@@ -632,7 +626,6 @@ template<typename IntMat>
 void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
     // long n = B.NumCols();
     // long k = B.NumRows();
-
     mat_RR B1;
     vec_RR b;
 
@@ -644,7 +637,6 @@ void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
 
     vec_RR buf;
     buf.SetLength(k);
-
     long i, j;
     for (i = 0; i < k; i++)
         for (j = 0; j < n; j++)
@@ -656,7 +648,7 @@ void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
 
     RR bound2;
     power2(bound2, 2 * RR::precision());
-    for (i = 1; i <= k; i++)
+    for (i = 1; i <= k; i++)   // Uses RR matrices.
         ComputeGS(B, B1, mu, b, c, i, n, bound, 1, buf, bound2);
 }
 
@@ -714,6 +706,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
     long small_trigger;
     long cnt;
 
+    // These are RR matrices!  Not created yet.
     mat_RR rr_B1;
     mat_RR rr_mu;
     vec_RR rr_c;
@@ -744,14 +737,18 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         if (st[k] < st[k + 1])
             st[k + 1] = st[k];
         // std::cout << "LLL64: before ComputeGS, B1[k][1] = " << B1[k][1] << "\n";
+
+        // This one uses only matrices of `double`.
         ComputeGS(B, B1, mu, b, c, k, n, bound, st[k], buf);
         CheckFinite(&c[k]);
         st[k] = k;
         // std::cout << "LLL64: after ComputeGS, mu[k][1] = " << mu[k][1] << "\n";
 
-        // The following should happen very rarely.
+        // The following should happen very rarely.  We switch to RR.
         if (swap_cnt > 200000) {
             cerr << "LLL_FP: swap loop?\n";
+            // This one uses large RR matrices rr_* !
+#if ((TYPES_CODE  ==  ZD) && (TYPES_CODE  ==  ZR))
             RR_GS(B, B1, mu, b, c, buf, prec, rr_st, k, m_orig, n, rr_B1, rr_mu,
                     rr_b, rr_c);
             if (rr_st < st[k + 1])
@@ -759,8 +756,8 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
             rr_st = k + 1;
             rst = k;
             swap_cnt = 0;
-        }
-
+#endif
+            }
         counter = 0;
         trigger_index = k;
         small_trigger = 0;
@@ -801,7 +798,9 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                                     while (log_red > 10)
                                         inc_red_fudge();
                                     half_plus_fudge = 0.5 + red_fudge;
+#if ((TYPES_CODE  ==  ZD) && (TYPES_CODE  ==  ZR))
                                     if (!did_rr_gs) {
+                                        // This one uses large RR matrices rr_* !
                                         RR_GS(B, B1, mu, b, c, buf, prec, rr_st,
                                                 k, m_orig, n, rr_B1, rr_mu,
                                                 rr_b, rr_c);
@@ -814,6 +813,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                                         small_trigger = 0;
                                         start_over = 1;
                                         break;
+#endif
                                     }
                                 } else {
                                     inc_red_fudge();
@@ -863,9 +863,11 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                 if (!did_rr_gs) {
                     b[k] = InnerProduct(B1[k], B1[k], n);
                     CheckFinite(&b[k]);
+                    // This one uses large RR matrices !
                     ComputeGS(B, B1, mu, b, c, k, n, bound, 1, buf);
                     CheckFinite(&c[k]);
                 } else {
+                    // This one uses large RR matrices !
                     RR_GS(B, B1, mu, b, c, buf, prec, rr_st, k, m_orig, n,
                             rr_B1, rr_mu, rr_b, rr_c);
                     rr_st = k + 1;
