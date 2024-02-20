@@ -99,11 +99,6 @@ void CheckFinite(double *p) {
         ResourceError("LLL_FP: numbers too big...use LLL_XD");
 }
 
-static inline void CheckFinite64(double *p) {
-    if (!IsFinite(p))
-        ResourceError("LLL64_FP: numbers too big...use LLL_XD");
-}
-
 // Returns the inner product of two arrays of double of size n.
 static double InnerProduct(double *a, double *b, long n) {
     double s;
@@ -125,6 +120,7 @@ static void InnerProduct(ZZ &xx, const vec_ZZ &a, const vec_ZZ &b, long n) {
     xx = x;
 }
 
+/*
 // Inner product of two vectors of integers a and b, returned in prod.
 static void InnerProduct(long &prod, const vec_long &a,
         const vec_long &b, long n) {
@@ -134,6 +130,7 @@ static void InnerProduct(long &prod, const vec_long &a,
     }
     prod = x;
 }
+*/
 
 static void InnerProduct(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
     RR t1, x;
