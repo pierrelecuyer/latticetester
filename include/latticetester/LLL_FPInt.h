@@ -111,18 +111,19 @@ static double InnerProductD(double *a, double *b, long n) {
 
 // Inner product of two vectors of integers a and b, returned in prod.
 template<typename IntVec, typename Int>
-static void InnerProductV(Int &xx, const IntVec &a, const IntVec &b, long n);
+static void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n);
 
 // Inner product of two vectors of integers a and b, returned in prod.
 template<>
-static void InnerProductV(ZZ &xx, const vec_ZZ &a, const vec_ZZ &b, long n) {
+static void InnerProductV(ZZ &prod, const vec_ZZ &a, const vec_ZZ &b, long n) {
     ZZ t1, x;
-    clear(x);
+    // clear(x);
+    x = 0;
     for (long i = 0; i < n; i++) {
         mul(t1, a[i], b[i]);
         add(x, x, t1);
     }
-    xx = x;
+    prod = x;
 }
 
 // Inner product of two vectors of integers a and b, returned in prod.
