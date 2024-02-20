@@ -2020,7 +2020,7 @@ void Reducer<Int, Real>::redLLLNTL(IntMat &basis, double delta,
 
 // Static version: a specialization for the case where Int = int64_t.
 template<typename Real>
-void Reducer<NTL::matrix<int64_t>, Real>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
+void Reducer<Int, Real>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
         long dim, double *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
         // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
@@ -2034,7 +2034,7 @@ void Reducer<NTL::matrix<int64_t>, Real>::redLLLNTL(NTL::matrix<int64_t> &basis,
 // See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
 // about the `PrecisionType` choices.
 template<typename Real>
-void Reducer<NTL::ZZ, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
+void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
         long dim, double *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
         // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);

@@ -106,7 +106,8 @@ namespace LatticeTester {
  * illustrate how to use these functions and make speed comparisons.
  */
 
-template<typename Int> class BasisConstruction {
+template<typename Int>
+class BasisConstruction {
 
 private:
     typedef NTL::vector<Int> IntVec;
