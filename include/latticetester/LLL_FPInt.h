@@ -549,6 +549,9 @@ static void print_mus(double **mu, long k)
 
 #endif
 
+
+#if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
+
 // The following functions always use RR matrices.  ***
 // Therefore we do not use this when Int = int64_t.
 
@@ -648,6 +651,9 @@ void ComputeGS(const mat_ZZ& B, mat_RR &mu, vec_RR &c, long k, long n) {
     for (i = 1; i <= k; i++)   // Uses RR matrices.
         ComputeGS(B, B1, mu, b, c, i, n, bound, 1, buf, bound2);
 }
+
+#endif
+
 
 template<typename IntMat>
 static
