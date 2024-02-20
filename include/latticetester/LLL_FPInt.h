@@ -576,7 +576,9 @@ void ComputeGS(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
     ComputeGS(B, B1, mu, b, c, k, bound, st, buf, bound2);
 }
 
-static void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
+
+template<typename IntMat>
+static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     double tt;
@@ -634,7 +636,8 @@ static void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
     cerr << tt << " (" << RR_GS_time << ")\n";
 }
 
-void ComputeGS(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long k, long n) {
+template<typename IntMat>
+void ComputeGS(const IntMat &B, mat_RR &mu, vec_RR &c, long k, long n) {
 // long n = B.NumCols();
 // long k = B.NumRows();
     mat_RR B1;
