@@ -663,6 +663,13 @@ void ComputeGS(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long k, long n) {
         ComputeGS(B, B1, mu, b, c, i, n, bound, 1, buf, bound2);
 }
 
+// template<typename IntMat>
+static void RR_GS(NTL::matrix<long> &B, double **B1, double **mu, double *b, double *c,
+        double *buf, long prec, long rr_st, long k, long m_orig, long n,
+        mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
+    cerr << "This RS_GS for long does nothing. \n";
+}
+
 #endif
 
 template<typename IntMat>
