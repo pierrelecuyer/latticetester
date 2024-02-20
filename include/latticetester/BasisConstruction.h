@@ -294,6 +294,8 @@ long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
     long num = gen.NumRows();   // Number of generating vectors.
     int64_t rank = 0;
     if (precision == DOUBLE)    // & (c == 0) & (r == 0) & (sqlen == 0))
+        // *************
+        // This one needs to be replaced by FPInt, but there are still conflicts!!! ********
         rank = LLL64_FP(gen, delta);
         // rank = NTL::LLL_FPInt(gen, delta, r, c, sqlen);    //  TO DO !!!!
     else
