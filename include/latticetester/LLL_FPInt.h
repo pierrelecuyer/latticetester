@@ -1287,7 +1287,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                                 * c[t];
                 ForceToMem(&ctilda[t]);  // prevents an infinite loop
                 if (prune > 0 && t > jj) {
-                    eta = BKZThresh[t-jj-1]);
+                    eta = BKZThresh[t-jj-1];
                 } else
                     eta = 0;
                 if (ctilda[t] < cbar - eta) {
