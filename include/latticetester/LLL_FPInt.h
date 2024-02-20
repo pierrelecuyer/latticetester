@@ -28,7 +28,8 @@
 #include <NTL/ZZ.h>
 #include <NTL/LLL.h>
 
-// #include <latticetester/NTLWrap.h>
+#include <latticetester/NTLWrap.h>
+
 /**
  * This module contains a  modified version of the `LLL_FP` module of NTL.
  * With the modified functions, we can apply LLL or BKZ to a submatrix
@@ -98,6 +99,11 @@ void CheckFinite(double *p) {
         ResourceError("LLL_FP: numbers too big...use LLL_XD");
 }
 
+static inline void CheckFinite64(double *p) {
+   if (!IsFinite(p)) ResourceError("LLL64_FP: numbers too big...use LLL_XD");
+}
+
+// Returns the inner product of two arrays of double of size n.
 static double InnerProduct(double *a, double *b, long n) {
     double s;
     long i;
@@ -107,16 +113,24 @@ static double InnerProduct(double *a, double *b, long n) {
     return s;
 }
 
-template<typename Int>
-static void InnerProduct(Int &xx, const IntVec &a, const IntVec &b, long n) {
-    Int t1, x;
-    long i;
+// Inner product of two vectors of integers a and b, returned in prod.
+static void InnerProduct(ZZ& xx, const vec_ZZ& a, const vec_ZZ& b, long n)
+    ZZ t1, x;
     clear(x);
-    for (i = 0; i < n; i++) {
+    for (long i = 0; i < n; i++) {
         mul(t1, a[i], b[i]);
         add(x, x, t1);
     }
     xx = x;
+}
+
+// Inner product of two vectors of integers a and b, returned in prod.
+static void InnerProduct(int64_t &prod, const vector<int64_t>& a, const vector<int64_t>& b, long n) {
+   int64_t x = 0;
+   for (long i = 0; i < n; i++) {
+      x += a[i] * b[i];
+   }
+   prod = x;
 }
 
 static void InnerProduct(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
