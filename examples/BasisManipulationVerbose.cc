@@ -78,10 +78,10 @@ int main() {
 
     // We finally compute the shortest vector in primal, with BB.
     // For this, we need to create a Reducer object.
-    Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
-    red->shortestVector();
-    std::cout << "Shortest vector in primal, with BB: " << korlat->getBasis()[0] << "\n";
-    std::cout << "Its square length: " << korlat->getVecNorm(0) << "\n\n";
+//    Reducer<Int, Real> *red = new Reducer<Int, Real>(*korlat);
+//    red->shortestVector();
+//    std::cout << "Shortest vector in primal, with BB: " << korlat->getBasis()[0] << "\n";
+//    std::cout << "Its square length: " << korlat->getVecNorm(0) << "\n\n";
 
     // We now transform basis1 to the upper-triangular basis2.
     // Note that after this, basis1 contains only garbage.
