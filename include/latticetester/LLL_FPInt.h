@@ -517,7 +517,7 @@ static void LLLStatus(long max_k, double t, long m, long n, const IntMat &B) {
     long i;
     double prodlen = 0;
     for (i = 0; i < m; i++) {
-        InnerProductV (t1, B[i], B[i], n);   // all in Int.
+        InnerProductV(t1, B[i], B[i], n);   // all in Int.
         if (!IsZero(t1))
             prodlen += log(t1);
     }
@@ -581,7 +581,22 @@ void ComputeGS(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
     ComputeGS(B, B1, mu, b, c, k, bound, st, buf, bound2);
 }
 
-// template<typename IntMat>
+// The general case.
+template<typename IntMat>
+static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
+        double *buf, long prec, long rr_st, long k, long m_orig, long n,
+        mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
+    cerr << "RS_GS is implemented only for `Int = ZZ`.\n";
+}
+
+// Specialization for `Int = int64_t`.
+template<>
+static void RR_GS(NTL::matrix<long> &B, double **B1, double **mu, double *b,
+        double *c, double *buf, long prec, long rr_st, long k, long m_orig,
+        long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
+    cerr << "This RS_GS for `long` does nothing. \n";
+}
+
 static void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
@@ -593,8 +608,8 @@ static void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
     RRPush push;
     RR::SetPrecision(prec);
 
-// long n = B.NumCols();
-// Here we reserve space for large matrices !!!
+    // long n = B.NumCols();
+    // Here we reserve space for large RR matrices !!!
     rr_B1.SetDims(k, n);
     rr_mu.SetDims(k, m_orig);
     rr_b.SetLength(k);
@@ -607,7 +622,7 @@ static void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
         for (j = 0; j < n; j++)
             conv(rr_B1[i][j], B[i][j]);
     for (i = rr_st - 1; i < k; i++)
-        InnerProductR (rr_b[i], rr_B1[i], rr_B1[i], n);   // all in RR.
+        InnerProductR(rr_b[i], rr_B1[i], rr_B1[i], n);   // all in RR.
     RR bound;
     power2(bound, 2 * long(0.15 * RR::precision()));
     RR bound2;
@@ -640,14 +655,13 @@ static void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
     cerr << tt << " (" << RR_GS_time << ")\n";
 }
 
-// template<typename IntMat>
 void ComputeGS(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long k, long n) {
 // long n = B.NumCols();
 // long k = B.NumRows();
     mat_RR B1;
     vec_RR b;
 
-// We reserve space for temporary RR matrices !!!
+    // We reserve space for temporary RR matrices !!!
     B1.SetDims(k, n);
     mu.SetDims(k, k);
     b.SetLength(k);
@@ -660,7 +674,7 @@ void ComputeGS(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long k, long n) {
         for (j = 0; j < n; j++)
             conv(B1[i][j], B[i][j]);
     for (i = 0; i < k; i++)
-        InnerProductR (b[i], B1[i], B1[i], n);
+        InnerProductR(b[i], B1[i], B1[i], n);
     RR bound;
     power2(bound, 2 * long(0.15 * RR::precision()));
 
@@ -668,13 +682,6 @@ void ComputeGS(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long k, long n) {
     power2(bound2, 2 * RR::precision());
     for (i = 1; i <= k; i++)   // Uses RR matrices.
         ComputeGS(B, B1, mu, b, c, i, n, bound, 1, buf, bound2);
-}
-
-// template<typename IntMat>
-static void RR_GS(NTL::matrix<long> &B, double **B1, double **mu, double *b, double *c,
-        double *buf, long prec, long rr_st, long k, long m_orig, long n,
-        mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
-    cerr << "This RS_GS for long does nothing. \n";
 }
 
 #endif
@@ -733,7 +740,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
     long small_trigger;
     long cnt;
 
-// These are RR matrices!  Not created yet.
+    // These RR matrices are declared here but not created yet.
     mat_RR rr_B1;
     mat_RR rr_mu;
     vec_RR rr_c;
@@ -889,7 +896,7 @@ long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
                 max_b[k] = max_abs(B1[k], n);
 #if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
                 if (!did_rr_gs) {
-                    b[k] = InnerProductD (B1[k], B1[k], n);
+                    b[k] = InnerProductD(B1[k], B1[k], n);
                     CheckFinite(&b[k]);
                     // This one uses large RR matrices !
                     ComputeGS(B, B1, mu, b, c, k, n, bound, 1, buf);
@@ -1030,7 +1037,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
             CheckFinite(&B1[i][j]);
         }
     for (i = 1; i <= m; i++) {
-        b[i] = InnerProductD (B1[i], B1[i], n);
+        b[i] = InnerProductD(B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
     new_m = ll_LLL_FP(B, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
@@ -1146,7 +1153,7 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
     long i;
     double prodlen = 0;
     for (i = 0; i < m; i++) {
-        InnerProductV (t1, B[i], B[i], n);
+        InnerProductV(t1, B[i], B[i], n);
         if (!IsZero(t1))
             prodlen += log(t1);
     }
@@ -1247,7 +1254,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
             CheckFinite(&B1[i][j]);
         }
     for (i = 1; i <= m; i++) {
-        b[i] = InnerProductD (B1[i], B1[i], n);
+        b[i] = InnerProductD(B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
     m = ll_LLL_FP(B, delta, 0, check, B1, mu, b, c, m, n, 1, quit);
@@ -1430,7 +1437,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         conv(B1[jj][i], B[jj - 1][i - 1]);
                         CheckFinite(&B1[jj][i]);
                     }
-                    b[jj] = InnerProductD (B1[jj], B1[jj], n);
+                    b[jj] = InnerProductD(B1[jj], B1[jj], n);
                     CheckFinite(&b[jj]);
                     if (b[jj] == 0)
                         LogicError("BKZ_FZZP: internal error, b[jj]==0");
