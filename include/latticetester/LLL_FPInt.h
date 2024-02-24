@@ -136,12 +136,12 @@ void InnerProductV(long &prod, const NTL::vector<ZZ> &a, const NTL::vector<ZZ> &
         mul(t1, a[i], b[i]);
         add(x, x, t1);
     }
-    prod = x;
+    conv (prod, x);
 }
 
 // Inner product of two vectors of integers a and b, returned in prod.
 template<>
-void InnerProductV<NTL::vector<long>, long>>(long &prod, const NTL::vector<long> &a,
+void InnerProductV(long &prod, const NTL::vector<long> &a,
         const NTL::vector<long> &b, long n) {
     long x = 0;
     for (long i = 0; i < n; i++) {
