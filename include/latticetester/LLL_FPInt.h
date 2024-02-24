@@ -260,12 +260,12 @@ template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
         long &in_float) {
-//#if TYPES_CODE == ZD
+#if TYPES_CODE == ZD
     NTL_ZZRegister (T);
     NTL_ZZRegister (MU);
-//#else
-//    Int T, MU;
-//#endif
+#else
+    Int T, MU;
+#endif
     long k;
     double mu;
     conv(mu, MU1);
@@ -702,7 +702,7 @@ void ComputeGS(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long k, long n) {
 // #endif
 
 template<typename IntMat>
-static long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
+static long ll_LLL_FP(IntMat &B, double delta, long deep,
         double **B1, double **mu, double *b, double *c, long m, long n,
         long init_k, long &quit) {
     long i, j, k, Fc1;
@@ -926,8 +926,6 @@ static long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
             }
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // end do loop
-        if (check && (*check)(B[k - 1]))
-            quit = 1;
         if (b[k] == 0) {
             for (i = k; i < m; i++) {
                 // swap i, i+1
@@ -1020,9 +1018,7 @@ static long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
 }
 
 template<typename IntMat>
-static
-long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
-        long deep, LLLCheckFct check) {
+static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     long i, j;
     long new_m, quit;
     // Int MU;
@@ -1054,7 +1050,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
         b[i] = InnerProductD(B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
-    new_m = ll_LLL_FP(B, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
+    new_m = ll_LLL_FP(B, delta, deep, B1, mu, b, c, m, n, 1, quit);
 
    // In this version, we leave the zero rows at the bottom.
    // The new_m independent basis vectors will be at the top of `B`.
@@ -1087,15 +1083,14 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     NumSwaps = 0;
     if (delta < 0.50 || delta >= 1)
         LogicError("LLL_FP: bad delta");
-    return LLL_FPInt(B, delta, m, n, sqlen, 0, 0);
+    return LLL_FPInt(B, delta, m, n, sqlen);
 }
 
 // =========================================================================
 
 static vec_double BKZConstant;
 
-static
-void ComputeBKZConstant(long beta, long p) {
+static void ComputeBKZConstant(long beta, long p) {
     const double c_PI = 3.14159265358979323846264338328;
     const double LogPI = 1.14472988584940017414342735135;
 
@@ -1188,9 +1183,8 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
 }
 
 template<typename IntMat>
-static
-long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
-        double *sqlen, long prune, LLLCheckFct check) {
+static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
+        double *sqlen) {
 // long m = BB.NumRows();
 // long n = BB.NumCols();
     long m_orig = m;
@@ -1271,7 +1265,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         b[i] = InnerProductD(B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
-    m = ll_LLL_FP(B, delta, 0, check, B1, mu, b, c, m, n, 1, quit);
+    m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, m, n, 1, quit);
 
     double tt;
     double enum_time = 0;
@@ -1420,7 +1414,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         b[i] = t1;
                     }
                     // cerr << "special case\n";
-                    new_m = ll_LLL_FP(B, delta, 0, check, B1, mu, b, c, h, n,
+                    new_m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, h, n,
                             jj, quit);
                     if (new_m != h)
                         LogicError("BKZ_FPZZ: internal error");
@@ -1474,18 +1468,9 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         b[i] = t1;
                     }
                     quit = 0;
-                    if (check) {
-                        for (i = 1; i <= kk; i++)
-                            if ((*check)(B[i - 1])) {
-                                quit = 1;
-                                break;
-                            }
-                    }
-                    if (quit)
-                        break;
                     if (h > kk) {
                         // extend reduced basis
-                        new_m = ll_LLL_FP(B, delta, 0, check, B1, mu, b, c, h,
+                        new_m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, h,
                                 n, h, quit);
                         if (new_m != h)
                             LogicError("BKZ_FPZZ: internal error, new_m != h");
@@ -1497,7 +1482,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
             } else {
                 NumNoOps++;
                 if (!clean) {
-                    new_m = ll_LLL_FP(B, delta, 0, check, B1, mu, b, c, h, n, h,
+                    new_m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, h, n, h,
                             quit);
                     if (new_m != h)
                         LogicError("BKZ_FPZZ: internal error, new_m != h");
@@ -1551,7 +1536,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         LogicError("BKZ_FPZZ: bad delta");
     if (beta < 2)
         LogicError("BKZ_FPZZ: bad block size");
-    return BKZ_FPInt(BB, delta, beta, m, n, sqlen, 0, 0);
+    return BKZ_FPInt(BB, delta, beta, m, n, sqlen);
 }
 
 NTL_END_IMPL
