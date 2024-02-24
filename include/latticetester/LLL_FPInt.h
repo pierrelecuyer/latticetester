@@ -115,7 +115,7 @@ static void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n);
 
 // Inner product of two vectors of integers a and b, returned in prod.
 template<>
-void InnerProductV(ZZ &prod, const vec_ZZ &a, const vec_ZZ &b, long n) {
+void InnerProductV(ZZ &prod, const NTL::vector<ZZ> &a, const NTL::vector<ZZ> &b, long n) {
     ZZ t1, x;
     // clear(x);
     x = 0;
@@ -691,7 +691,7 @@ static long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         long init_k, long &quit) {
     long i, j, k, Fc1;
     Int MU;
-    Int T1;
+    // Int T1;
     double mu1;
     double t1;
     double *tp;
@@ -1009,8 +1009,8 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
         long deep, LLLCheckFct check) {
     long i, j;
     long new_m, quit;
-    Int MU;
-    Int T1;
+    // Int MU;
+    // Int T1;
     init_red_fudge();
 
     Unique2DArray<double> B1_store;
