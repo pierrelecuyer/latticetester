@@ -589,14 +589,14 @@ static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
 
 // Specialization for `Int = int64_t`.
 template<>
-static void RR_GS<NTL::matrix<long>>(NTL::matrix<long> &B, double **B1, double **mu, double *b,
+void RR_GS<NTL::matrix<long>>(NTL::matrix<long> &B, double **B1, double **mu, double *b,
         double *c, double *buf, long prec, long rr_st, long k, long m_orig,
         long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     cerr << "This RS_GS for `long` does nothing. \n";
 }
 
 template<>
-static void RR_GS<NTL::mat_ZZ>(NTL::mat_ZZ &B, double **B1, double **mu, double *b, double *c,
+void RR_GS<NTL::mat_ZZ>(NTL::mat_ZZ &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     double tt;
