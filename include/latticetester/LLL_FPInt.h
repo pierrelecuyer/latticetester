@@ -166,12 +166,12 @@ static void InnerProductR(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
 // A = A - B*MU   for the first n vector entries only.
 template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n) {
-//#if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
+#if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
     NTL_ZZRegister (T);
     NTL_ZZRegister (MU);
-//#else
-//    Int T, MU;
-//#endif
+#else
+    Int T, MU;
+#endif
     long k;
     long i;
     MU = MU1;
@@ -389,12 +389,12 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
 // A = A + B*MU  for the first n vector entries only.
 template<typename IntVec, typename Int>
 static void RowTransform2(IntVec &A, IntVec &B, const Int &MU1, long n) {
-//#if TYPES_CODE == ZD
+#if TYPES_CODE == ZD
     NTL_ZZRegister (T);
     NTL_ZZRegister (MU);
-//#else
-//    Int T, MU;
-//#endif
+#else
+    Int T, MU;
+#endif
 
     long k;
 // long n = A.length();
@@ -985,6 +985,14 @@ static long ll_LLL_FP(IntMat &B, double delta,
 
 template<typename IntMat>
 static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
+    if (m == 0)
+        m = B.NumRows();
+    if (n == 0)
+        n = B.NumCols();
+    RR_GS_time = 0;
+    NumSwaps = 0;
+    if (delta < 0.50 || delta >= 1)
+        LogicError("LLL_FP: bad delta");
     long i, j;
     long new_m, quit;
     // Int MU;
@@ -1036,20 +1044,6 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
         for (i = 0; i < new_m; i++)
             sqlen[i] = b[i + 1];
     return new_m;
-}
-
-template<typename IntMat>
-static
-long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
-    if (m == 0)
-        m = B.NumRows();
-    if (n == 0)
-        n = B.NumCols();
-    RR_GS_time = 0;
-    NumSwaps = 0;
-    if (delta < 0.50 || delta >= 1)
-        LogicError("LLL_FP: bad delta");
-    return LLL_FPInt(B, delta, m, n, sqlen);
 }
 
 // =========================================================================
@@ -1151,8 +1145,16 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
 template<typename IntMat>
 static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         double *sqlen) {
-// long m = BB.NumRows();
-// long n = BB.NumCols();
+    if (m == 0)
+        m = BB.NumRows();
+    if (n == 0)
+        n = BB.NumCols();
+    RR_GS_time = 0;
+    NumSwaps = 0;
+    if (delta < 0.50 || delta >= 1)
+        LogicError("BKZ_FPZZ: bad delta");
+    if (beta < 2)
+        LogicError("BKZ_FPZZ: bad block size");
     long m_orig = m;
     long i, j;
     Int MU;
@@ -1251,8 +1253,6 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
     if (!quit && m > 1) {
         if (beta > m)
             beta = m;
-        if (prune > 0)
-            ComputeBKZConstant(beta, prune);
         z = 0;
         jj = 0;
         while (z < m - 1) {
@@ -1274,8 +1274,6 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
             if (verb) {
                 tt1 = GetTime();
             }
-            if (prune > 0)
-                ComputeBKZThresh(&c[jj], kk - jj + 1);
             cbar = c[jj];
             utildavec[jj] = uvec[jj] = 1;
             yvec[jj] = vvec[jj] = 0;
@@ -1307,11 +1305,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         + (yvec[t] + utildavec[t]) * (yvec[t] + utildavec[t])
                                 * c[t];
                 ForceToMem(&ctilda[t]);  // prevents an infinite loop
-                if (prune > 0 && t > jj) {
-                    eta = BKZThresh[t - jj - 1];
-                } else
-                    eta = 0;
-                if (ctilda[t] < cbar - eta) {
+                if (ctilda[t] < cbar) {
                     if (t > jj) {
                         t--;
                         t1 = 0;
@@ -1486,23 +1480,6 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         for (i = 0; i < m; i++)
             sqlen[i] = b[i + 1];
     return m;    // Number of rows in basis.
-}
-
-template<typename IntMat>
-static
-long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
-        double *sqlen) {
-    if (m == 0)
-        m = BB.NumRows();
-    if (n == 0)
-        n = BB.NumCols();
-    RR_GS_time = 0;
-    NumSwaps = 0;
-    if (delta < 0.50 || delta >= 1)
-        LogicError("BKZ_FPZZ: bad delta");
-    if (beta < 2)
-        LogicError("BKZ_FPZZ: bad block size");
-    return BKZ_FPInt(BB, delta, beta, m, n, sqlen);
 }
 
 NTL_END_IMPL
