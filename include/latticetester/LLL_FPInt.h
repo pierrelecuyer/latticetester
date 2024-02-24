@@ -117,7 +117,7 @@ static void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n);
 template<>
 void InnerProductV(ZZ &prod, const NTL::vector<ZZ> &a, const NTL::vector<ZZ> &b, long n) {
     ZZ t1, x;
-    // clear(x);
+    clear(x);
     x = 0;
     for (long i = 0; i < n; i++) {
         mul(t1, a[i], b[i]);
@@ -130,7 +130,7 @@ void InnerProductV(ZZ &prod, const NTL::vector<ZZ> &a, const NTL::vector<ZZ> &b,
 template<>
 void InnerProductV(long &prod, const NTL::vector<ZZ> &a, const NTL::vector<ZZ> &b, long n) {
     ZZ t1, x;
-    // clear(x);
+    clear(x);
     x = 0;
     for (long i = 0; i < n; i++) {
         mul(t1, a[i], b[i]);
@@ -1164,7 +1164,7 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
     long i;
     double prodlen = 0;
     for (i = 0; i < m; i++) {
-        InnerProductV(t1, B[i], B[i], n);
+        InnerProductV(t1, B[i], B[i], n);   // All in Int
         if (!IsZero(t1))
             prodlen += log(t1);
     }
