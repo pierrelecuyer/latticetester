@@ -115,7 +115,8 @@ static void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n);
 
 // Inner product of two vectors of integers a and b, returned in prod.
 template<>
-void InnerProductV(ZZ &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b, long n) {
+void InnerProductV(ZZ &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b,
+        long n) {
     ZZ t1, x;
     clear(x);
     x = 0;
@@ -128,7 +129,8 @@ void InnerProductV(ZZ &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b, long 
 
 // Inner product of two vectors of integers a and b, returned in prod.
 template<>
-void InnerProductV(long &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b, long n) {
+void InnerProductV(long &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b,
+        long n) {
     ZZ t1, x;
     clear(x);
     x = 0;
@@ -136,13 +138,13 @@ void InnerProductV(long &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b, lon
         mul(t1, a[i], b[i]);
         add(x, x, t1);
     }
-    conv (prod, x);
+    conv(prod, x);
 }
 
 // Inner product of two vectors of integers a and b, returned in prod.
 template<>
-void InnerProductV(long &prod, const NTL::Vec<long> &a,
-        const NTL::Vec<long> &b, long n) {
+void InnerProductV(long &prod, const NTL::Vec<long> &a, const NTL::Vec<long> &b,
+        long n) {
     long x = 0;
     for (long i = 0; i < n; i++) {
         x += a[i] * b[i];
@@ -602,9 +604,10 @@ static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
 
 // Specialization for `Int = int64_t`.
 template<>
-void RR_GS<NTL::matrix<long>>(NTL::matrix<long> &B, double **B1, double **mu, double *b,
-        double *c, double *buf, long prec, long rr_st, long k, long m_orig,
-        long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
+void RR_GS<NTL::matrix<long>>(NTL::matrix<long> &B, double **B1, double **mu,
+        double *b, double *c, double *buf, long prec, long rr_st, long k,
+        long m_orig, long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b,
+        vec_RR &rr_c) {
     cerr << "This RS_GS for `long` does nothing. \n";
 }
 
@@ -1053,9 +1056,9 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
     }
     new_m = ll_LLL_FP(B, delta, deep, check, B1, mu, b, c, m, n, 1, quit);
 
-// In this version, we leave the zero rows at the bottom.
-// The new_m independent basis vectors will be at the top of `B`.
-// Put shortest nonzero vector in first place.
+   // In this version, we leave the zero rows at the bottom.
+   // The new_m independent basis vectors will be at the top of `B`.
+   // Put shortest nonzero vector in first place.
     long imin = 0;
     double minlen = b[1];
     for (i = 2; i <= new_m; i++)
@@ -1064,7 +1067,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen,
             imin = i - 1;
         };
     if (imin > 0) {
-        swap(B[0], B[imin]);
+        NTL::swap(B[0], B[imin]);
         std::swap(b[1], b[imin + 1]);
     }
     if (sqlen)
