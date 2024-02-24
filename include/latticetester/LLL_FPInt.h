@@ -581,23 +581,21 @@ void ComputeGS(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
     ComputeGS(B, B1, mu, b, c, k, bound, st, buf, bound2);
 }
 
-// The general case.
+// The general case, only a declaration.
 template<typename IntMat>
 static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
-        mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
-    cerr << "RS_GS is implemented only for `Int = ZZ`.\n";
-}
+        mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c);
 
 // Specialization for `Int = int64_t`.
-template<>
-static void RR_GS(NTL::matrix<long> &B, double **B1, double **mu, double *b,
+// template<>
+void RR_GS(NTL::matrix<long> &B, double **B1, double **mu, double *b,
         double *c, double *buf, long prec, long rr_st, long k, long m_orig,
         long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     cerr << "This RS_GS for `long` does nothing. \n";
 }
 
-static void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
+void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     double tt;
