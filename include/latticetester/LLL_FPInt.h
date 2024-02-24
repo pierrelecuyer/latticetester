@@ -99,12 +99,6 @@ void CheckFinite(double *p) {
         ResourceError("LLL_FP: numbers too big...use LLL_XD");
 }
 
-inline void swap(long &x, long &y) {
-    long t = x;
-    x = y;
-    y = t;
-}
-
 // Returns the inner product of two arrays of double of size n.
 static double InnerProductD(double *a, double *b, long n) {
     double s;
