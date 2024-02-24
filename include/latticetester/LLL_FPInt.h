@@ -702,7 +702,7 @@ void ComputeGS(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long k, long n) {
 // #endif
 
 template<typename IntMat>
-static long ll_LLL_FP(IntMat &B, double delta, long deep,
+static long ll_LLL_FP(IntMat &B, double delta,
         double **B1, double **mu, double *b, double *c, long m, long n,
         long init_k, long &quit) {
     long i, j, k, Fc1;
@@ -951,42 +951,8 @@ static long ll_LLL_FP(IntMat &B, double delta, long deep,
         }
         if (quit)
             break;
-        if (deep > 0) {
-            // deep insertions
-            double cc = b[k];
-            long l = 1;
-            while (l <= k - 1 && delta * c[l] <= cc) {
-                cc = cc - mu[k][l] * mu[k][l] * c[l];
-                l++;
-            }
-            if (l <= k - 1 && (l <= deep || k - l <= deep)) {
-                // deep insertion at position l
-                for (i = k; i > l; i--) {
-                    // swap rows i, i-1
-                    swap(B[i - 1], B[i - 2]);
-                    tp = B1[i];
-                    B1[i] = B1[i - 1];
-                    B1[i - 1] = tp;
-                    tp = mu[i];
-                    mu[i] = mu[i - 1];
-                    mu[i - 1] = tp;
-                    t1 = b[i];
-                    b[i] = b[i - 1];
-                    b[i - 1] = t1;
-                    t1 = max_b[i];
-                    max_b[i] = max_b[i - 1];
-                    max_b[i - 1] = t1;
-                }
-                k = l;
-                NumSwaps++;
-                swap_cnt++;
-                continue;
-            }
-        } // end deep insertions
-
-        // test LLL reduction condition
-        if (k > 1
-                && delta * c[k - 1]
+         // test LLL reduction condition
+        if (k > 1  && delta * c[k - 1]
                         > c[k] + mu[k][k - 1] * mu[k][k - 1] * c[k - 1]) {
             // swap rows k, k-1
             swap(B[k - 1], B[k - 2]);
@@ -1050,7 +1016,7 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
         b[i] = InnerProductD(B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
-    new_m = ll_LLL_FP(B, delta, deep, B1, mu, b, c, m, n, 1, quit);
+    new_m = ll_LLL_FP(B, delta, B1, mu, b, c, m, n, 1, quit);
 
    // In this version, we leave the zero rows at the bottom.
    // The new_m independent basis vectors will be at the top of `B`.
@@ -1265,7 +1231,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         b[i] = InnerProductD(B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
-    m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, m, n, 1, quit);
+    m = ll_LLL_FP(B, delta, B1, mu, b, c, m, n, 1, quit);
 
     double tt;
     double enum_time = 0;
@@ -1414,7 +1380,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         b[i] = t1;
                     }
                     // cerr << "special case\n";
-                    new_m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, h, n,
+                    new_m = ll_LLL_FP(B, delta, B1, mu, b, c, h, n,
                             jj, quit);
                     if (new_m != h)
                         LogicError("BKZ_FPZZ: internal error");
@@ -1452,7 +1418,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
 
                     // remove linear dependencies
                     // cerr << "general case\n";
-                    new_m = ll_LLL_FP(B, delta, 0, 0, B1, mu, b, c, kk + 1, n,
+                    new_m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, kk + 1, n,
                             jj, quit);
                     if (new_m != kk)
                         LogicError("BKZ_FPZZ: internal error, new_m != kk");
@@ -1470,7 +1436,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                     quit = 0;
                     if (h > kk) {
                         // extend reduced basis
-                        new_m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, h,
+                        new_m = ll_LLL_FP(B, delta, B1, mu, b, c, h,
                                 n, h, quit);
                         if (new_m != h)
                             LogicError("BKZ_FPZZ: internal error, new_m != h");
@@ -1482,7 +1448,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
             } else {
                 NumNoOps++;
                 if (!clean) {
-                    new_m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, h, n, h,
+                    new_m = ll_LLL_FP(B, delta, B1, mu, b, c, h, n, h,
                             quit);
                     if (new_m != h)
                         LogicError("BKZ_FPZZ: internal error, new_m != h");
