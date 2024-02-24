@@ -566,7 +566,7 @@ static void print_mus(double **mu, long k)
 
 #endif
 
-#if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
+// #if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
 
 // The following functions always use RR matrices.  ***
 // Therefore we do not use this when Int = int64_t.
@@ -589,13 +589,13 @@ static void RR_GS(IntMat &B, double **B1, double **mu, double *b, double *c,
 
 // Specialization for `Int = int64_t`.
 // template<>
-void RR_GS(NTL::matrix<long> &B, double **B1, double **mu, double *b,
+static void RR_GS(NTL::matrix<long> &B, double **B1, double **mu, double *b,
         double *c, double *buf, long prec, long rr_st, long k, long m_orig,
         long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     cerr << "This RS_GS for `long` does nothing. \n";
 }
 
-void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
+static void RR_GS(mat_ZZ &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     double tt;
@@ -682,11 +682,10 @@ void ComputeGS(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long k, long n) {
         ComputeGS(B, B1, mu, b, c, i, n, bound, 1, buf, bound2);
 }
 
-#endif
+// #endif
 
 template<typename IntMat>
-static
-long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
+static long ll_LLL_FP(IntMat &B, double delta, long deep, LLLCheckFct check,
         double **B1, double **mu, double *b, double *c, long m, long n,
         long init_k, long &quit) {
     long i, j, k, Fc1;
