@@ -596,7 +596,7 @@ void RR_GS<NTL::matrix<long>>(NTL::matrix<long> &B, double **B1, double **mu, do
 }
 
 template<>
-void RR_GS<NTL::mat_ZZ>(NTL::mat_ZZ &B, double **B1, double **mu, double *b, double *c,
+void RR_GS(NTL::matrix<ZZ> &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
     double tt;
