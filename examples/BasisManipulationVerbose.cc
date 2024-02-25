@@ -17,8 +17,8 @@
  * line below), and with various choices of the modulus `m` and multiplier `a`.
  **/
 
-#define TYPES_CODE  LD     // int64_t
-// #define TYPES_CODE  ZD     // ZZ
+//#define TYPES_CODE  LD     // int64_t
+#define TYPES_CODE  ZD     // ZZ
 
 #include <iostream>
 #include <cstdint>
