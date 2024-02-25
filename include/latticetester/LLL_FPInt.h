@@ -817,7 +817,7 @@ int64_t ll_LLL_FP(matrix64& B, double delta,
    static double bound = 1;
    for (i = 2*int64_t(0.15*NTL_DOUBLE_PRECISION); i > 0; i--)
          bound = bound * 2;
-   double half_plus_fudge = 0.5 + red_fudge64;
+   double half_plus_fudge = 0.5 + red_fudge;
    k = init_k;
 
    vector64 st_mem;
@@ -840,10 +840,10 @@ int64_t ll_LLL_FP(matrix64& B, double delta,
    UniqueArray<double> max_b_store;
    max_b_store.SetLength(m);
    double *max_b = max_b_store.get();
-   // cerr << "LLL64: after creating UniqueArray's \n";
+   // cerr << "LLL: after creating UniqueArray's \n";
 
    for (i = 0; i < m; i++)
-      max_b[i] = max_abs64(B1[i], n);
+      max_b[i] = max_abs(B1[i], n);
 
    int64_t in_float;
    int64_t rst;
@@ -877,7 +877,7 @@ int64_t ll_LLL_FP(matrix64& B, double delta,
       // std::cout << "LLL64: after ComputeGS, mu[k][0] = " << mu[k][0] << "\n";
 
       if (swap_cnt > 200000) {
-         cerr << "LLL64: swap loop?\n";
+         cerr << "LLL_FPInt: swap loop?\n";
          // In NTL, there is more stuff here...
       }
       counter = 0;
@@ -901,7 +901,7 @@ int64_t ll_LLL_FP(matrix64& B, double delta,
                sz = new_sz;
             }
             else {
-               cerr << "LLL64: sz not smaller; warning--infinite loop? \n";
+               cerr << "LLL: _FPInt sz not smaller; warning--infinite loop? \n";
                abort();
             }
          }
@@ -920,14 +920,14 @@ int64_t ll_LLL_FP(matrix64& B, double delta,
                         (j == trigger_index && small_trigger)) {
                      cnt++;
                      if (cnt > thresh) {
-                        if (log_red64 <= 15) {
-                           while (log_red64 > 10)
-                              inc_red_fudge64();
-                           half_plus_fudge = 0.5 + red_fudge64;
+                        if (log_red <= 15) {
+                           while (log_red > 10)
+                              inc_red_fudge();
+                           half_plus_fudge = 0.5 + red_fudge;
                         }
                         else {
-                           inc_red_fudge64();
-                           half_plus_fudge = 0.5 + red_fudge64;
+                           inc_red_fudge();
+                           half_plus_fudge = 0.5 + red_fudge;
                            cnt = 0;
                         }
                      }
@@ -936,7 +936,7 @@ int64_t ll_LLL_FP(matrix64& B, double delta,
                   small_trigger = (t1 < 4);
                   Fc1 = 1;
                   if (k < rr_st) rr_st = k;
-                  RowTransformStart64(B1[k], in_vec, in_float, n);
+                  RowTransformStart(B1[k], in_vec, in_float, n);
                }
                mu1 = mu[k][j];
                if (mu1 >= 0)
@@ -1057,7 +1057,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
     max_b_store.SetLength(m);
     double *max_b = max_b_store.get();
 
-    std::cout << "ll_LLL FPInt after Unique Arrays  \n";
+    // std::cout << "ll_LLL FPInt after Unique Arrays  \n";
     for (i = 0; i < m; i++)
         max_b[i] = max_abs(B1[i], n);
     long in_float;
@@ -1095,12 +1095,12 @@ long ll_LLL_FP(matrixZZ &B, double delta,
         if (st[k] < st[k + 1])
             st[k + 1] = st[k];
 
-        std::cout << "ll_LLL FPInt before computeGS \n";
+        // std::cout << "ll_LLL FPInt before computeGS \n";
         // This one uses only matrices of `double`.
         ComputeGS(B, B1, mu, b, c, k, n, bound, st[k], buf);
         CheckFinite(&c[k]);
         st[k] = k;
-        std::cout << "ll_LLL FPInt after computeGS \n";
+        //std::cout << "ll_LLL FPInt after computeGS \n";
 
         // The following should happen very rarely.  We switch to RR.
         if (swap_cnt > 200000) {
@@ -1210,7 +1210,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
                     // std::cout <<  B << "  \n";
                 }
             }
-            std::cout << "ll_LLL FPInt before if Fc1 \n";
+            //std::cout << "ll_LLL FPInt before if Fc1 \n";
             if (Fc1) {
                 RowTransformFinish(B[k], B1[k], in_vec, n);
                 max_b[k] = max_abs(B1[k], n);
