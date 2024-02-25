@@ -138,7 +138,7 @@ void InnerProductV(int64_t &prod, const vector64 &a, const vector64 &b,  long n)
 
 // The ZZ specialization.
 template<>
-void InnerProductV(ZZ &prod, const vectorZZ &a, const vectorZZ &b,  long n) {
+void InnerProductV(ZZ &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b,  long n) {
     ZZ t1, x;
     clear (x);
     for (long i = 0; i < n; i++) {
@@ -146,6 +146,18 @@ void InnerProductV(ZZ &prod, const vectorZZ &a, const vectorZZ &b,  long n) {
         add(x, x, t1);
     }
     prod = x;
+}
+
+// The mixed case.
+template<>
+void InnerProductV(long &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b,  long n) {
+    ZZ t1, x;
+    clear (x);
+    for (long i = 0; i < n; i++) {
+        mul(t1, a[i], b[i]);
+        add(x, x, t1);
+    }
+    conv(prod, x);
 }
 
 // A version for RR.
