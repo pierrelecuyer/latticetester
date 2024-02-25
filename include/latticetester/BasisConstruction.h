@@ -326,7 +326,6 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
     if (((r > 0) & (r != gen.NumRows())) | (((c > 0) & (c != gen.NumCols()))))
         std::cerr
                 << "LLLConstruction0: r and c params not allowed when precision != DOUBLE.\n";
-
     switch (precision) {
     case QUADRUPLE:
         rank = NTL::LLL_QP(gen, delta);

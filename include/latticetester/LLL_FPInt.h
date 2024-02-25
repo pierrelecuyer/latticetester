@@ -1057,6 +1057,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
     max_b_store.SetLength(m);
     double *max_b = max_b_store.get();
 
+    std::cout << "ll_LLL FPInt after Unique Arrays  \n";
     for (i = 0; i < m; i++)
         max_b[i] = max_abs(B1[i], n);
     long in_float;
@@ -1073,6 +1074,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
     vec_RR rr_c;
     vec_RR rr_b;
 
+    std::cout << "ll_LLL FPInt before while k < m \n";
     long m_orig = m;
     long rr_st = 0;   // One less than in NTL.
     long max_k = 0;
@@ -1093,10 +1095,12 @@ long ll_LLL_FP(matrixZZ &B, double delta,
         if (st[k] < st[k + 1])
             st[k + 1] = st[k];
 
+        std::cout << "ll_LLL FPInt before computeGS \n";
         // This one uses only matrices of `double`.
         ComputeGS(B, B1, mu, b, c, k, n, bound, st[k], buf);
         CheckFinite(&c[k]);
         st[k] = k;
+        std::cout << "ll_LLL FPInt after computeGS \n";
 
         // The following should happen very rarely.  We switch to RR.
         if (swap_cnt > 200000) {
@@ -1117,6 +1121,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
         long thresh = 10;
         long sz = 0, new_sz;
         long did_rr_gs = 0;
+        std::cout << "ll_LLL FPInt before size reduction \n";
         do {
             // size reduction
             counter++;
@@ -1205,6 +1210,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
                     // std::cout <<  B << "  \n";
                 }
             }
+            std::cout << "ll_LLL FPInt before if Fc1 \n";
             if (Fc1) {
                 RowTransformFinish(B[k], B1[k], in_vec, n);
                 max_b[k] = max_abs(B1[k], n);
@@ -1225,6 +1231,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // end do loop
 
+        std::cout << "ll_LLL FPInt after while Fc1 \n";
         if (b[k] == 0) {
             for (i = k; i < m-1; i++) {
                 // swap i, i+1
@@ -1246,6 +1253,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
             m--;
             continue;
         }
+        std::cout << "ll_LLL FPInt before test LLL condition \n";
          // test LLL reduction condition
         if (k > 0  && delta * c[k - 1]
                         > c[k] + mu[k][k - 1] * mu[k][k - 1] * c[k - 1]) {
@@ -1305,6 +1313,7 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     b_store.SetLength(m);
     double *b = b_store.get(); // squared lengths of basis vectors
 
+    std::cout << "LLL FPInt after Unique Arrays  \n";
     for (i = 0; i < m; i++)
         for (j = 0; j < n; j++) {
             conv(B1[i][j], B[i][j]);
@@ -1314,8 +1323,10 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
         b[i] = InnerProductD(B1[i], B1[i], n);
         CheckFinite(&b[i]);
     }
+    std::cout << "LLL FPInt before ll_LLL  \n";
     // Indices in b and B1 start at 0, which is 1 less than in NTL.
     new_m = ll_LLL_FP(B, delta, B1, mu, b, c, m, n, 0);
+    std::cout << "LLL FPInt after ll_LLL  \n";
 
    // In this version, we leave the zero rows at the bottom.
    // The new_m independent basis vectors will be at the top of `B`.
@@ -1334,10 +1345,11 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     if (sqlen)
         for (i = 0; i < new_m; i++)
             sqlen[i] = b[i];
+    std::cout << "LLL FPInt after swaps  \n";
     return new_m;
 }
 
-// =========================================================================
+//  BKZ   =====================================================================
 
 static vec_double BKZConstant;
 
