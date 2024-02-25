@@ -347,7 +347,7 @@ void RowTransform(vector64& A, vector64& B, const int64_t& MU1, long n,
 }
 
 template<>
-void RowTransform(vectorZZ &A, vectorZZ &B, const ZZ &MU1, long n,
+void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
             double *a, double *b, long *in_a, double &max_a, double max_b,
             long &in_float) {
     NTL_ZZRegister (T);
@@ -791,7 +791,7 @@ static long ll_LLL_FP(IntMat &B, double delta,
 
 // The int64_t version.
 template<>
-static int64_t ll_LLL_FP64(matrix64& B, double delta,
+int64_t ll_LLL_FP(matrix64& B, double delta,
            double **B1, double **mu,  double *b, double *c,
            int64_t m, int64_t n, int64_t init_k) {
     // init_k and k are one less compared with NTL.
@@ -1024,7 +1024,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
     double half_plus_fudge = 0.5 + red_fudge;
     // quit = 0;  // This seems to be always 0, never changed!
     k = init_k;
-    vectorZZ st_mem;
+    vector64 st_mem;
     st_mem.SetLength(m + 2);
     long *st = st_mem.elts();
 
@@ -1037,7 +1037,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
     buf_store.SetLength(m);
     double *buf = buf_store.get();
 
-    vectorZZ in_vec_mem;
+    vector64 in_vec_mem;
     in_vec_mem.SetLength(n);
     long *in_vec = in_vec_mem.elts();
 
@@ -1061,11 +1061,11 @@ long ll_LLL_FP(matrixZZ &B, double delta,
     vec_RR rr_c;
     vec_RR rr_b;
 
-    // long m_orig = m;
+    long m_orig = m;
     long rr_st = 0;   // One less than in NTL.
     long max_k = 0;
     long prec = RR::precision();
-    double tt;
+    // double tt;
     long swap_cnt = 0;
     while (k < m) {
         if (k > max_k) {
