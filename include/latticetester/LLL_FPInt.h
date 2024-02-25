@@ -189,7 +189,7 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n);
 
 // The int64_t case.
 template<>
-void RowTransform (vector64& A, vector64& B, int64_t& MU1, long n) {
+void RowTransform (vector64& A, vector64& B, const int64_t& MU1, long n) {
    register int64_t MU = MU1;
    int64_t i;
    if (MU == 1) {
@@ -347,7 +347,7 @@ void RowTransform(vector64& A, vector64& B, const int64_t& MU1, long n,
 }
 
 template<>
-static void RowTransform(vectorZZ &A, vectorZZ &B, const ZZ &MU1, long n,
+void RowTransform(vectorZZ &A, vectorZZ &B, const ZZ &MU1, long n,
             double *a, double *b, long *in_a, double &max_a, double max_b,
             long &in_float) {
     NTL_ZZRegister (T);
@@ -473,7 +473,7 @@ template<typename IntVec, typename Int>
 static void RowTransformAdd(IntVec &A, IntVec &B, const Int &MU1, long n);
 
 template<>
-static void RowTransformAdd (vector64& A, vector64& B, const int64_t& MU1, long n) {
+void RowTransformAdd (vector64& A, vector64& B, const int64_t& MU1, long n) {
    register int64_t T, MU = MU1;
    int64_t i;
    if (MU == 1) {
