@@ -911,7 +911,7 @@ static int64_t BKZ64_FP (matrix64& BB, double delta, int64_t blockSize) {
                      s = -1;
                }
             }
-            if (s == 0) LogicError("BKZ_FP: internal error");
+            if (s == 0) LogicError("BKZ_FP: internal error, s==0.");
 
             if (s > 0) {
                // special case
@@ -949,7 +949,7 @@ static int64_t BKZ64_FP (matrix64& BB, double delta, int64_t blockSize) {
                }
 
                for (i = 0; i < n; i++) {
-                  conv(B1[jj][i], B[jj-1][i]);
+                  conv(B1[jj][i], B[jj-1][i]);   //  ????
                   CheckFinite64(&B1[jj][i]);
                }
 
