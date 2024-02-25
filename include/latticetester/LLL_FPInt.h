@@ -1298,11 +1298,11 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     init_red_fudge();
 
     Unique2DArray<double> B1_store;
-    B1_store.SetDimsFrom1(m, n);
+    B1_store.SetDims(m, n);
     double **B1 = B1_store.get();  // approximates B by a matrix of `double`
 
     Unique2DArray<double> mu_store;
-    mu_store.SetDimsFrom1(m, m);
+    mu_store.SetDims(m, m);
     double **mu = mu_store.get();
 
     UniqueArray<double> c_store;
@@ -1319,6 +1319,7 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
             conv(B1[i][j], B[i][j]);
             CheckFinite(&B1[i][j]);
         }
+    std::cout << "LLL FPInt after first loop  \n";
     for (i = 0; i < m; i++) {
         b[i] = InnerProductD(B1[i], B1[i], n);
         CheckFinite(&b[i]);
@@ -1474,11 +1475,11 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         }
     }
     Unique2DArray<double> B1_store;
-    B1_store.SetDimsFrom1(m + 1, n);
+    B1_store.SetDims(m + 1, n);
     double **B1 = B1_store.get();  // approximates B
 
     Unique2DArray<double> mu_store;
-    mu_store.SetDimsFrom1(m + 1, m);
+    mu_store.SetDims(m + 1, m);
     double **mu = mu_store.get();
 
     UniqueArray<double> c_store;
