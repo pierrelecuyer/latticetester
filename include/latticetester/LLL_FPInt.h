@@ -1038,7 +1038,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
     k = init_k;
     vector64 st_mem;
     st_mem.SetLength(m + 2);
-    long *st = st_mem.elts();
+    long *st = st_mem.elts(); // An array of integers.
 
     for (i = 0; i < k; i++)
         st[i] = i;
@@ -1074,13 +1074,13 @@ long ll_LLL_FP(matrixZZ &B, double delta,
     vec_RR rr_c;
     vec_RR rr_b;
 
-    std::cout << "ll_LLL FPInt before while k < m \n";
     long m_orig = m;
     long rr_st = 0;   // One less than in NTL.
     long max_k = 0;
-    long prec = RR::precision();
-    // double tt;
     long swap_cnt = 0;
+    long prec = RR::precision();
+
+    std::cout << "ll_LLL FPInt before while k < m \n";
     while (k < m) {
         if (k > max_k) {
             max_k = k;
@@ -1104,7 +1104,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
 
         // The following should happen very rarely.  We switch to RR.
         if (swap_cnt > 200000) {
-            cerr << "LLL_FP: swap loop?\n";
+            cerr << "LLL_FPInt: swap loop?\n";
             // This one uses large RR matrices rr_* !
             RR_GS(B, B1, mu, b, c, buf, prec, rr_st, k, m_orig, n, rr_B1, rr_mu,
                     rr_b, rr_c);
@@ -1121,6 +1121,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
         long thresh = 10;
         long sz = 0, new_sz;
         long did_rr_gs = 0;
+
         std::cout << "ll_LLL FPInt before size reduction \n";
         do {
             // size reduction
@@ -1132,7 +1133,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
                 if ((counter >> 7) == 1 || new_sz < sz) {
                     sz = new_sz;
                 } else {
-                    cerr << "LLL_FP: warning--infinite loop?\n";
+                    cerr << "LLL_FPInt: warning--infinite loop?\n";
                 }
             }
             Fc1 = 0;
@@ -1149,6 +1150,8 @@ long ll_LLL_FP(matrixZZ &B, double delta,
                                 || (j == trigger_index && small_trigger)) {
                             cnt++;
                             if (cnt > thresh) {
+                                std::cout << "ll_LLL FPInt cnt > thresh \n";
+
                                 if (log_red <= 15) {
                                     while (log_red > 10)
                                         inc_red_fudge();
@@ -1180,6 +1183,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
                         Fc1 = 1;
                         if (k < rr_st)
                             rr_st = k;
+                        std::cout << "ll_LLL FPInt calling RowTransformStart \n";
                         RowTransformStart(B1[k], in_vec, in_float, n);
                         // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
                     }
@@ -1206,7 +1210,8 @@ long ll_LLL_FP(matrixZZ &B, double delta,
                     // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
                     RowTransform(B[k], B[j], MU, n, B1[k], B1[j],
                             in_vec, max_b[k], max_b[j], in_float);
-                    // std::cout << "After row transform, MU = " << MU << " \n";
+                    std::cout << "After row transform, MU = " << MU << " \n";
+                    std::cout << "Basis after row transform: \n" << B << "\n";
                     // std::cout <<  B << "  \n";
                 }
             }
@@ -1232,6 +1237,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
         } while (Fc1 || start_over);  // end do loop
 
         std::cout << "ll_LLL FPInt after while Fc1 \n";
+        std::cout << "Basis after while Fc1 \n" << B << "\n";
         if (b[k] == 0) {
             for (i = k; i < m-1; i++) {
                 // swap i, i+1
