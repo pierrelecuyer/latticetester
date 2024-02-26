@@ -939,6 +939,7 @@ int64_t ll_LLL_FP(matrix64& B, double delta,
                   RowTransformStart(B1[k], in_vec, in_float, n);
                }
                mu1 = mu[k][j];
+               std::cout << "Before row transform, mu1 = " << mu1 << " \n";
                if (mu1 >= 0)
                   mu1 = ceil(mu1-0.5);
                else
@@ -961,7 +962,7 @@ int64_t ll_LLL_FP(matrix64& B, double delta,
                }
                mu_k[j] -= mu1;
                conv(MU, mu1);
-               // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
+               std::cout << "Before row transform, mu1 = " << mu1 << " \n";
 
                register int64_t T, MU2 = MU;
                for (i = 0; i < n; i++) {
@@ -1126,6 +1127,8 @@ long ll_LLL_FP(matrixZZ &B, double delta,
         do {
             // size reduction
             counter++;
+            if (counter > 8)
+                cerr << "LLL_FPInt: counter > 8 \n";
             if ((counter & 127) == 0) {    // Should be 127
                 new_sz = 0;
                 for (j = 0; j < n; j++)
@@ -1188,6 +1191,7 @@ long ll_LLL_FP(matrixZZ &B, double delta,
                         // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
                     }
                     mu1 = mu[k][j];
+                    std::cout << "Before row transform, mu1 = " << mu1 << " \n";
                     if (mu1 >= 0)
                         mu1 = ceil(mu1 - 0.5);
                     else
@@ -1206,13 +1210,12 @@ long ll_LLL_FP(matrixZZ &B, double delta,
                     }
                     mu_k[j] -= mu1;
                     conv(MU, mu1);
-                    // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
+                    std::cout << "Before row transform, mu1 = " << mu1 << " \n";
                     // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
                     RowTransform(B[k], B[j], MU, n, B1[k], B1[j],
                             in_vec, max_b[k], max_b[j], in_float);
                     std::cout << "After row transform, MU = " << MU << " \n";
                     std::cout << "Basis after row transform: \n" << B << "\n";
-                    // std::cout <<  B << "  \n";
                 }
             }
             //std::cout << "ll_LLL FPInt before if Fc1 \n";
