@@ -1317,10 +1317,11 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     c_store.SetLength(m);
     double *c = c_store.get(); // squared lengths of Gramm-Schmidt basis vectors
 
-    // UniqueArray<double> b_store;
-    // b_store.SetLength(m);
-    // double *b = b_store.get(); // squared lengths of basis vectors
-    //  if (sqlen == 0) (*sqlen).SetLength(m);
+    if (sqlen.getDim() < m) {
+       UniqueArray<double> b_store;
+       b_store.SetLength(m);
+       *sqlen = *b_store;   // squared lengths of basis vectors
+    }
 
     std::cout << "LLL FPInt after Unique Arrays  \n";
     for (i = 0; i < m; i++)
