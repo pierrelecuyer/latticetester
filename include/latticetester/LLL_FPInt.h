@@ -369,6 +369,7 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
     conv(mu, MU1);
     CheckFinite(&mu);
     long i;
+    // in_float == 1 (true) iff all coefficients are in [-TR_BND, TR_BND].
     if (in_float) {
         double mu_abs = fabs(mu);
         if (mu_abs > 0 && max_b > 0 && (mu_abs >= TR_BND || max_b >= TR_BND)) {
@@ -396,8 +397,6 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
             a[i] -= mu * b[i];
         return;
     }
-    // in_float == 1 (true) iff all coefficients are in [-TR_BND, TR_BND].
-    // std::cout << "RowTransform, not in_float! \n";
     MU = MU1;
     if (MU == 1) {
         for (i = 0; i < n; i++) {
@@ -1318,43 +1317,41 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     c_store.SetLength(m);
     double *c = c_store.get(); // squared lengths of Gramm-Schmidt basis vectors
 
-    UniqueArray<double> b_store;
-    b_store.SetLength(m);
-    double *b = b_store.get(); // squared lengths of basis vectors
+    // UniqueArray<double> b_store;
+    // b_store.SetLength(m);
+    // double *b = b_store.get(); // squared lengths of basis vectors
+    if (!sqlen) sqlen->SetLength(m);
 
     std::cout << "LLL FPInt after Unique Arrays  \n";
     for (i = 0; i < m; i++)
         for (j = 0; j < n; j++) {
-            conv(B1[i][j], B[i][j]);
+            conv(B1[i][j], B[i][j]);  // Converts from Int to double
             CheckFinite(&B1[i][j]);
         }
     std::cout << "LLL FPInt after first loop  \n";
     for (i = 0; i < m; i++) {
-        b[i] = InnerProductD(B1[i], B1[i], n);
-        CheckFinite(&b[i]);
+        sqlen[i] = InnerProductD(B1[i], B1[i], n);  // Square norms in double.
+        CheckFinite(&sqlen[i]);
     }
     std::cout << "LLL FPInt before ll_LLL  \n";
-    // Indices in b and B1 start at 0, which is 1 less than in NTL.
-    new_m = ll_LLL_FP(B, delta, B1, mu, b, c, m, n, 0);
+    // Indices in sqlen and B1 start at 0, which is 1 less than in NTL.
+    new_m = ll_LLL_FP(B, delta, B1, mu, sqlen, c, m, n, 0);
     std::cout << "LLL FPInt after ll_LLL  \n";
 
    // In this version, we leave the zero rows at the bottom.
    // The new_m independent basis vectors will be at the top of `B`.
    // Put shortest nonzero vector in first place.
     long imin = 0;
-    double minlen = b[0];
+    double minSqlen = sqlen[0];
     for (i = 1; i < new_m; i++)
-        if (b[i] < minlen) {
-            minlen = b[i];
+        if (sqlen[i] < minSqlen) {
+            minSqlen = sqlen[i];
             imin = i;
         };
     if (imin > 0) {
         NTL::swap(B[0], B[imin]);
-        std::swap(b[0], b[imin]);
+        std::swap(sqlen[0], sqlen[imin]);
     }
-    if (sqlen)
-        for (i = 0; i < new_m; i++)
-            sqlen[i] = b[i];
     std::cout << "LLL FPInt after swaps  \n";
     return new_m;
 }
