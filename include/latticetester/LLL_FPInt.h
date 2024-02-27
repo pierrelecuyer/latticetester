@@ -1320,7 +1320,7 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     if (sqlen.getDim() < m) {
        UniqueArray<double> b_store;
        b_store.SetLength(m);
-       *sqlen = *b_store;   // squared lengths of basis vectors
+       *sqlen = b_store;   // squared lengths of basis vectors
     }
 
     std::cout << "LLL FPInt after Unique Arrays  \n";
