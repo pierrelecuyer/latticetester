@@ -919,7 +919,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
             Fc1 = 0;
             start_over = 0;
 
-            // std::cout << "rst = " << rst << "\n";
+            std::cout << "rst = " << rst << "\n";
             for (j = rst - 1; j >= 0; j--) { // both j and rst are 1 less than in NTL.
                 t1 = fabs(mu[k][j]);
                 std::cout << "entered for loop: j =  " <<  j << "  \n";
@@ -1176,7 +1176,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
             }
             Fc1 = 0;
             start_over = 0;
-            // std::cout << "rst = " << rst << "\n";
+            std::cout << "rst = " << rst << "\n";
             for (j = rst - 1; j >= 0; j--) { // both j and rst are 1 less than in NTL.
                 t1 = fabs(mu[k][j]);
                 std::cout << "entered for loop: j =  " <<  j << "  \n";
