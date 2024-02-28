@@ -865,8 +865,8 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
     int64_t max_k = 0;
     int64_t swap_cnt = 0;
 
-    // cerr << "LLL64: before first `while` on k. \n";
     while (k < m) {
+        std::cout << "ll_LLL FPInt enter while k < m with k = " << k "\n";
         if (k > max_k) {
             max_k = k;
             swap_cnt = 0;
@@ -898,10 +898,10 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
         int64_t sz = 0, new_sz;
         do { // size reduction
             counter++;
-            // std::cout << "do loop: (k  counter) =  " <<  k << "  " << counter << "  \n";
+            std::cout << "do loop: (k  counter) =  " <<  k << "  " << counter << "  \n";
             // std::cout <<  B << "  \n";
             // cerr << " vector b = " << b[0] << "  " << b[1] << "  " << b[2] << "\n";
-            if (counter > 3)
+            if (counter > 8)
                 LatticeTester::MyExit(1, "LLL_FPInt: counter > 3 \n");
 
             if ((counter & 127) == 0) {   // Should be 127
@@ -922,8 +922,8 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
             // std::cout << "rst = " << rst << "\n";
             for (j = rst - 1; j >= 0; j--) { // both j and rst are 1 less than in NTL.
                 t1 = fabs(mu[k][j]);
-                // std::cout << "entered for loop: j =  " <<  j << "  \n";
-                // std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
+                std::cout << "entered for loop: j =  " <<  j << "  \n";
+                std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
                 if (t1 > half_plus_fudge) {
                     // std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << "  \n";
                     if (!Fc1) {
@@ -971,7 +971,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                     }
                     mu_k[j] -= mu1;
                     conv(MU, mu1);
-                    std::cout << "Before row transform, mu1 = " << mu1 << " \n";
+                    // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
 
                     //register int64_t T, MU2 = MU;
                     //for (i = 0; i < n; i++) {
@@ -1113,8 +1113,8 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
     long swap_cnt = 0;
     long prec = RR::precision();
 
-    std::cout << "ll_LLL FPInt before while k < m \n";
     while (k < m) {
+        std::cout << "ll_LLL FPInt enter while k < m with k = " << k "\n";
         if (k > max_k) {
             max_k = k;
             swap_cnt = 0;
@@ -1158,8 +1158,9 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
         std::cout << "ll_LLL FPInt before size reduction \n";
         do {
             // size reduction
+            std::cout << "do loop: (k  counter) =  " <<  k << "  " << counter << "  \n";
             counter++;
-            if (counter > 3)
+            if (counter > 8)
                 LatticeTester::MyExit(1, "LLL_FPInt: counter > 3 \n");
             if ((counter & 127) == 0) {    // Should be 127
                 new_sz = 0;
@@ -1176,10 +1177,10 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
             // std::cout << "rst = " << rst << "\n";
             for (j = rst - 1; j >= 0; j--) { // both j and rst are 1 less than in NTL.
                 t1 = fabs(mu[k][j]);
-                // std::cout << "entered for loop: j =  " <<  j << "  \n";
-                // std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
+                std::cout << "entered for loop: j =  " <<  j << "  \n";
+                std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
                 if (t1 > half_plus_fudge) {
-                    // std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << "  \n";
+                    std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << "  \n";
                     if (!Fc1) {
                         if (j > trigger_index
                                 || (j == trigger_index && small_trigger)) {
@@ -1273,7 +1274,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // end do loop
 
-        std::cout << "ll_LLL FPInt after while Fc1 \n";
+        std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "b[k] = " << b[k] << "\n";
         std::cout << "Basis after while Fc1 \n" << B << "\n";
         if (b[k] == 0) {
             for (i = k; i < m - 1; i++) {
