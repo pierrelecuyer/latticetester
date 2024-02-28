@@ -902,7 +902,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
             // std::cout <<  B << "  \n";
             // cerr << " vector b = " << b[0] << "  " << b[1] << "  " << b[2] << "\n";
             if (counter > 8)
-                LatticeTester::MyExit(1, "LLL_FPInt: counter > 3 \n");
+                LatticeTester::MyExit(1, "LLL_FPInt: counter > 8 \n");
 
             if ((counter & 127) == 0) {   // Should be 127
                 new_sz = 0;
