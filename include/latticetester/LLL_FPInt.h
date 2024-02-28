@@ -853,7 +853,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
     for (i = 0; i < m; i++)
         max_b[i] = max_abs(B1[i], n);
 
-    int64_t in_float;
+    int64_t in_float = 1;
     int64_t rst;
     int64_t counter;
     int64_t start_over;
@@ -1093,7 +1093,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
     // std::cout << "ll_LLL FPInt after Unique Arrays  \n";
     for (i = 0; i < m; i++)
         max_b[i] = max_abs(B1[i], n);
-    long in_float;
+    long in_float = 1;
     long rst;
     long counter;
     long start_over;
