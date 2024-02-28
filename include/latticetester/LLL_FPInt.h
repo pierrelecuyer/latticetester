@@ -1161,7 +1161,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
             std::cout << "do loop: (k  counter) =  " <<  k << "  " << counter << "  \n";
             counter++;
             if (counter > 8)
-                LatticeTester::MyExit(1, "LLL_FPInt: counter > 3 \n");
+                LatticeTester::MyExit(1, "LLL_FPInt: counter > 8 \n");
             if ((counter & 127) == 0) {    // Should be 127
                 new_sz = 0;
                 for (j = 0; j < n; j++)
