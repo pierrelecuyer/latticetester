@@ -28,6 +28,7 @@
 #include <NTL/ZZ.h>
 #include <NTL/LLL.h>
 
+#include <latticetester/Util.h>
 // #include <latticetester/NTLWrap.h>
 
 /**
@@ -283,7 +284,7 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
 
 // The change is on the vector A.
 template<>
-void RowTransform(vector64 &A, vector64 &B, const int64_t &MU1, long n,
+void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
         int64_t &in_float) {
     register int64_t T, MU;
@@ -901,7 +902,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
             // std::cout <<  B << "  \n";
             // cerr << " vector b = " << b[0] << "  " << b[1] << "  " << b[2] << "\n";
             if (counter > 3)
-                MyExit(1, "LLL_FPInt: counter > 3 \n");
+                LatticeTester::MyExit(1, "LLL_FPInt: counter > 3 \n");
 
             if ((counter & 127) == 0) {   // Should be 127
                 new_sz = 0;
@@ -1053,7 +1054,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
 
 // The ZZ version.
 template<>
-long ll_LLL_FP(mat_ZZ &B, double delta, double **B1, double **mu, double *b,
+long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
         double *c, long m, long n, long init_k) {
     long i, j, k, Fc1;
     ZZ MU;
@@ -1159,7 +1160,7 @@ long ll_LLL_FP(mat_ZZ &B, double delta, double **B1, double **mu, double *b,
             // size reduction
             counter++;
             if (counter > 3)
-                MyExit(1, "LLL_FPInt: counter > 3 \n");
+                LatticeTester::MyExit(1, "LLL_FPInt: counter > 3 \n");
             if ((counter & 127) == 0) {    // Should be 127
                 new_sz = 0;
                 for (j = 0; j < n; j++)
