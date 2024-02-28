@@ -897,8 +897,8 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
         int64_t thresh = 10;
         int64_t sz = 0, new_sz;
         do { // size reduction
-            counter++;
             std::cout << "do loop: (k  counter) =  " <<  k << "  " << counter << "  \n";
+            counter++;
             // std::cout <<  B << "  \n";
             // cerr << " vector b = " << b[0] << "  " << b[1] << "  " << b[2] << "\n";
             if (counter > 8)
@@ -1001,6 +1001,8 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
             }
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // End of `do` loop.
+        std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "  b[k] = " << b[k] << "\n";
+        std::cout << "Basis after while Fc1 \n" << B << "\n";
 
         if (b[k] == 0) {
             for (i = k; i < m - 1; i++) {
@@ -1274,7 +1276,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // end do loop
 
-        std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "b[k] = " << b[k] << "\n";
+        std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "  b[k] = " << b[k] << "\n";
         std::cout << "Basis after while Fc1 \n" << B << "\n";
         if (b[k] == 0) {
             for (i = k; i < m - 1; i++) {
