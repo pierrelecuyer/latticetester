@@ -866,7 +866,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
     int64_t swap_cnt = 0;
 
     while (k < m) {
-        std::cout << "ll_LLL FPInt enter while k < m with k = " << k "\n";
+        std::cout << "ll_LLL FPInt enter while k < m with k = " << k << "\n";
         if (k > max_k) {
             max_k = k;
             swap_cnt = 0;
@@ -1114,7 +1114,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
     long prec = RR::precision();
 
     while (k < m) {
-        std::cout << "ll_LLL FPInt enter while k < m with k = " << k "\n";
+        std::cout << "ll_LLL FPInt enter while k < m with k = " << k << "\n";
         if (k > max_k) {
             max_k = k;
             swap_cnt = 0;
