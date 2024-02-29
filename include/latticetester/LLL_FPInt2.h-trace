@@ -875,7 +875,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
     int64_t swap_cnt = 0;
 
     while (k < m) {
-        // std::cout << "ll_LLL FPInt enter while k < m with k = " << k << "\n";
+        std::cout << "ll_LLL FPInt enter while k < m with k = " << k << "\n";
         if (k > max_k) {
             max_k = k;
             swap_cnt = 0;
@@ -893,7 +893,8 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
         ComputeGS(B, B1, mu, b, c, k, n, bound, st[k], buf);
         CheckFinite(&c[k]);
         st[k] = k;
-        // std::cout << "After ComputeGS, mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
+        // std::cout << "After ComputeGS, mu[k] = " << mu[k] << "\n";
+        std::cout << "After ComputeGS, mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
 
         if (swap_cnt > 200000) {
             cerr << "LLL_FPInt: swap loop?\n";
@@ -906,8 +907,13 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
         int64_t thresh = 10;
         int64_t sz = 0, new_sz;
         do { // size reduction
-            // std::cout << "do loop: k = " <<  k << ",  counter = " << counter << "\n";
+            std::cout << "do loop: k = " <<  k << ",  counter = " << counter << "\n";
             counter++;
+            // std::cout <<  B << "  \n";
+            // cerr << " vector b = " << b[0] << "  " << b[1] << "  " << b[2] << "\n";
+            if (counter > 16)
+                LatticeTester::MyExit(1, "LLL_FPInt: counter > 8 \n");
+
             if ((counter & 127) == 0) {   // Should be 127
                 new_sz = 0;
                 for (j = 0; j < n; j++)
@@ -923,13 +929,13 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
             Fc1 = 0;
             start_over = 0;
 
-            // std::cout << "rst = " << rst << "\n";
+            std::cout << "rst = " << rst << "\n";
             for (j = rst - 1; j >= 0; j--) { // both j and rst are 1 less than in NTL.
                 t1 = fabs(mu[k][j]);
-                // std::cout << "entered for loop: j =  " <<  j << "  \n";
-                // std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
+                std::cout << "entered for loop: j =  " <<  j << "  \n";
+                std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
                 if (t1 > half_plus_fudge) {
-                    // std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << ",  Fc1 = " << Fc1 << "\n";
+                    std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << ",  Fc1 = " << Fc1 << "\n";
                     if (!Fc1) {
                         if (j > trigger_index
                                 || (j == trigger_index && small_trigger)) {
@@ -951,7 +957,8 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                         Fc1 = 1;
                         if (k < rr_st)
                             rr_st = k;
-                        // std::cout                            << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
+                        std::cout
+                                << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
                         RowTransformStart(B1[k], in_vec, in_float, n);
                     }
                     mu1 = mu[k][j];
@@ -983,18 +990,18 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                     //    T = MU2 * B1[j][i];
                     //    B1[k][i] -= T;
                     //}
-                    // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
+                    std::cout << "Before row transform, mu1 = " << mu1 << " \n";
                     // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
                     // The change must be on vector B[k].
                     RowTransform(B[k], B[j], MU, n, B1[k], B1[j], in_vec,
                             max_b[k], max_b[j], in_float);
-                    // std::cout << "After row transform, MU = " << MU << " \n";
-                    // std::cout << "Basis after row transform: \n" << B << "\n";
+                    std::cout << "After row transform, MU = " << MU << " \n";
+                    std::cout << "Basis after row transform: \n" << B << "\n";
                 }
             }
         //std::cout << "ll_LLL FPInt before if Fc1 \n";
         if (Fc1) {
-            // std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
+            std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
                 vector64 temp = B[k];
                 RowTransformFinish(temp, B1[k], in_vec, n);
                 B[k] = temp;
@@ -1004,14 +1011,14 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                 ComputeGS(B, B1, mu, b, c, k, n, bound, 0, buf);
                 CheckFinite(&c[k]);
                 rst = k;
-                // std::cout << "After ComputeGS in (Fc1), rst = " << rst << ",  max_b[k]= "
-                //     << max_b[k] << ", did_rr_gs=  " << ", b[k]=  " << b[k] << "\n";
-                // std::cout << "After ComputeGS in (Fc1), mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
+                std::cout << "After ComputeGS in (Fc1), rst = " << rst << ",  max_b[k]= "
+                     << max_b[k] << ", did_rr_gs=  " << ", b[k]=  " << b[k] << "\n";
+                std::cout << "After ComputeGS in (Fc1), mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
             }
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // End of `do` loop.
-        // std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "  b[k] = " << b[k] << "\n";
-        // std::cout << "Basis after while Fc1 \n" << B << "\n";
+        std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "  b[k] = " << b[k] << "\n";
+        std::cout << "Basis after while Fc1 \n" << B << "\n";
 
         if (b[k] == 0) {
             for (i = k; i < m - 1; i++) {
@@ -1125,7 +1132,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
     long prec = RR::precision();
 
     while (k < m) {
-        // std::cout << "ll_LLL FPInt enter while k < m with k = " << k << "\n";
+        std::cout << "ll_LLL FPInt enter while k < m with k = " << k << "\n";
         if (k > max_k) {
             max_k = k;
             swap_cnt = 0;
@@ -1144,7 +1151,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
         ComputeGS(B, B1, mu, b, c, k, n, bound, st[k], buf);
         CheckFinite(&c[k]);
         st[k] = k;
-        // std::cout << "After ComputeGS, mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
+        std::cout << "After ComputeGS, mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
 //std::cout << "ll_LLL FPInt after computeGS \n";
 
 // The following should happen very rarely.  We switch to RR.
@@ -1167,9 +1174,13 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
         long sz = 0, new_sz;
         long did_rr_gs = 0;
 
+        std::cout << "ll_LLL FPInt before size reduction \n";
         do {
             // size reduction
+            std::cout << "do loop: k = " <<  k << ",  counter = " << counter << "\n";
             counter++;
+            if (counter > 16)
+                LatticeTester::MyExit(1, "LLL_FPInt: counter > 8 \n");
             if ((counter & 127) == 0) {    // Should be 127
                 new_sz = 0;
                 for (j = 0; j < n; j++)
@@ -1182,19 +1193,19 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
             }
             Fc1 = 0;
             start_over = 0;
-            // std::cout << "rst = " << rst << "\n";
+            std::cout << "rst = " << rst << "\n";
             for (j = rst - 1; j >= 0; j--) { // both j and rst are 1 less than in NTL.
                 t1 = fabs(mu[k][j]);
-                // std::cout << "entered for loop: j =  " <<  j << "  \n";
-                // std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
+                std::cout << "entered for loop: j =  " <<  j << "  \n";
+                std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
                 if (t1 > half_plus_fudge) {
-                    // std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << ",  Fc1 = " << Fc1 << "\n";
+                    std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << ",  Fc1 = " << Fc1 << "\n";
                     if (!Fc1) {
                         if (j > trigger_index
                                 || (j == trigger_index && small_trigger)) {
                             cnt++;
                             if (cnt > thresh) {
-                                // std::cout << "ll_LLL FPInt cnt > thresh *** \n";
+                                std::cout << "ll_LLL FPInt cnt > thresh *** \n";
 
                                 if (log_red <= 15) {
                                     while (log_red > 10)
@@ -1227,8 +1238,8 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                         Fc1 = 1;
                         if (k < rr_st)
                             rr_st = k;
-                        // std::cout
-                        //       << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
+                        std::cout
+                                << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
                         RowTransformStart(B1[k], in_vec, in_float, n);
                         // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
                     }
@@ -1252,18 +1263,18 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                     }
                     mu_k[j] -= mu1;
                     conv(MU, mu1);
-                    // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
+                    std::cout << "Before row transform, mu1 = " << mu1 << " \n";
                     // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
                     // The change must be on vector B[k].
                     RowTransform(B[k], B[j], MU, n, B1[k], B1[j], in_vec,
                             max_b[k], max_b[j], in_float);
-                    // std::cout << "After row transform, MU = " << MU << " \n";
-                    // std::cout << "Basis after row transform: \n" << B << "\n";
+                    std::cout << "After row transform, MU = " << MU << " \n";
+                    std::cout << "Basis after row transform: \n" << B << "\n";
                 }
             }
             //std::cout << "ll_LLL FPInt before if Fc1 \n";
             if (Fc1) {
-                // std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
+                std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
                 RowTransformFinish(B[k], B1[k], in_vec, n);
                 max_b[k] = max_abs(B1[k], n);
                 if (!did_rr_gs) {
@@ -1278,15 +1289,15 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                     rr_st = k + 1;
                 }
                 rst = k;
-                // std::cout << "After ComputeGS in (Fc1), rst = " << rst << ",  max_b[k]= "
-                //     << max_b[k] << ", did_rr_gs=  " << did_rr_gs << ", b[k]=  " << b[k] << "\n";
-                // std::cout << "After ComputeGS in (Fc1), mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
+                std::cout << "After ComputeGS in (Fc1), rst = " << rst << ",  max_b[k]= "
+                     << max_b[k] << ", did_rr_gs=  " << did_rr_gs << ", b[k]=  " << b[k] << "\n";
+                std::cout << "After ComputeGS in (Fc1), mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
             }
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // end do loop
 
-        // std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "  b[k] = " << b[k] << "\n";
-        // std::cout << "Basis after while Fc1 \n" << B << "\n";
+        std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "  b[k] = " << b[k] << "\n";
+        std::cout << "Basis after while Fc1 \n" << B << "\n";
         if (b[k] == 0) {
             for (i = k; i < m - 1; i++) {
                 // swap i, i+1
@@ -1308,7 +1319,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
             m--;
             continue;
         }
-        // std::cout << "ll_LLL FPInt before test LLL condition \n";
+        std::cout << "ll_LLL FPInt before test LLL condition \n";
 // test LLL reduction condition
         if (k > 0
                 && delta * c[k - 1]
@@ -1382,10 +1393,10 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
         sqlen[i] = InnerProductD(B1[i], B1[i], n);  // Square norms in double.
         CheckFinite(&sqlen[i]);
     }
-    // std::cout << "LLL FPInt before ll_LLL  \n";
+    std::cout << "LLL FPInt before ll_LLL  \n";
     // Indices in sqlen and B1 start at 0, which is 1 less than in NTL.
     new_m = ll_LLL_FP(B, delta, B1, mu, sqlen, c, m, n, 0);
-    // std::cout << "LLL FPInt after ll_LLL  \n";
+    std::cout << "LLL FPInt after ll_LLL  \n";
 
     // In this version, we leave the zero rows at the bottom.
     // The new_m independent basis vectors will be at the top of `B`.
@@ -1401,8 +1412,8 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
         NTL::swap(B[0], B[imin]);
         std::swap(sqlen[0], sqlen[imin]);
     }
-    // std::cout << "LLL FPInt after swaps  \n";
-    // std::cout << "sqlen = " << sqlen << "\n";
+    std::cout << "LLL FPInt after swaps  \n";
+    std::cout << "sqlen = " << sqlen << "\n";
     return new_m;
 }
 
