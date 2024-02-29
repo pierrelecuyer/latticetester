@@ -124,9 +124,15 @@ static double InnerProductD(double *a, double *b, long n) {
     return s;
 }
 
-// Inner product of two vectors of integers a and b, returned in prod.
+// Inner product of two vectors of integers a and b is returned in prod.
 template<typename IntVec, typename Int>
 static void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n);
+
+// The general case.
+template<typename IntVec, typename Int>
+void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n) {
+    MyExit (1, "InnerProductV with types that do not match");
+}
 
 // The int64_t specialization.
 template<>
@@ -152,7 +158,7 @@ void InnerProductV(ZZ &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b,
     prod = x;
 }
 
-// The mixed case.
+/* // The mixed case.  Never used.
 template<>
 void InnerProductV(long &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b,
         long n) {
@@ -164,6 +170,7 @@ void InnerProductV(long &prod, const NTL::Vec<ZZ> &a, const NTL::Vec<ZZ> &b,
     }
     conv(prod, x);
 }
+*/
 
 // A version for RR.
 static void InnerProductR(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
