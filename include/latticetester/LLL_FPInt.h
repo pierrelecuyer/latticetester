@@ -885,7 +885,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
         CheckFinite(&c[k]);
         st[k] = k;
         // std::cout << "After ComputeGS, mu[k] = " << mu[k] << "\n";
-        std::cout << "After ComputeGS, mu[k] = " << mu[k,0] << mu[k,1] << mu[k,2] << mu[k,3] << "\n";
+        std::cout << "After ComputeGS, mu[k] = " << mu[k][0] << mu[k][1] << mu[k][2] << mu[k][3] << "\n";
 
         if (swap_cnt > 200000) {
             cerr << "LLL_FPInt: swap loop?\n";
@@ -1140,7 +1140,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
         ComputeGS(B, B1, mu, b, c, k, n, bound, st[k], buf);
         CheckFinite(&c[k]);
         st[k] = k;
-        std::cout << "After ComputeGS, mu[k] = " << mu[k,0] << mu[k,1] << mu[k,2] << mu[k,3] << "\n";
+        std::cout << "After ComputeGS, mu[k] = " << mu[k][0] << mu[k][1] << mu[k][2] << mu[k][3] << "\n";
 //std::cout << "ll_LLL FPInt after computeGS \n";
 
 // The following should happen very rarely.  We switch to RR.
