@@ -78,8 +78,8 @@
 
  **/
 
-// #define TYPES_CODE  LD     // Int == int64_t
-#define TYPES_CODE  ZD     // Int == ZZ
+#define TYPES_CODE  LD     // Int == int64_t
+// #define TYPES_CODE  ZD     // Int == ZZ
 
 #include <iostream>
 #include <cstdint>
@@ -236,14 +236,14 @@ static void printResults() {
 
 int main() {
     long numRep = 1000;  // Number of replications (multipliers) for each case.
+    std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
-    std::cout << "Types: " << strFlexTypes << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
-#if TYPES_CODE  ==  ZD
+// #if TYPES_CODE  ==  ZD
     testLoopResize(numRep);  // Works only for ZZ.
     std::cout << "Results for `testLoop-Resize` (many objects are created or resized)\n";
     printResults();
-#endif
+// #endif
     testLoopNoResize(numRep);
     std::cout << "Results for `testLoop-NoResize`\n";
     printResults();
