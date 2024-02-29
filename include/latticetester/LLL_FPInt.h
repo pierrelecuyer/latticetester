@@ -690,7 +690,8 @@ static void inc_red_fudge() {
 // #if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
 
 // The following functions always use RR matrices.  ***
-// Therefore we do not use this when Int = int64_t.
+// We do not use them when Int = int64_t.
+// k and st are both reduced by 1 compared with NTL version
 
 void ComputeGS(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
         long k, const RR &bound, long st, vec_RR &buf, const RR &bound2);
@@ -721,6 +722,7 @@ template<>
 void RR_GS(NTL::matrix<ZZ> &B, double **B1, double **mu, double *b, double *c,
         double *buf, long prec, long rr_st, long k, long m_orig, long n,
         mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c) {
+    // k and rr_st are both reduced by 1 compared with NTL version
     double tt;
     cerr << "LLL_FP: RR refresh " << rr_st << "..." << k << "...";
     tt = GetTime();
@@ -750,7 +752,7 @@ void RR_GS(NTL::matrix<ZZ> &B, double **B1, double **mu, double *b, double *c,
     power2(bound2, 2 * RR::precision());
 
     for (i = rr_st; i <= k; i++)
-        ComputeGS(B, rr_B1, rr_mu, rr_b, rr_c, i, n, bound, 1, rr_buf, bound2);
+        ComputeGS(B, rr_B1, rr_mu, rr_b, rr_c, i, n, bound, 0, rr_buf, bound2);
     for (i = rr_st; i <= k; i++)
         for (j = 1; j <= n; j++) {
             conv(B1[i][j], rr_B1[i - 1][j - 1]);
@@ -798,8 +800,8 @@ void ComputeGS(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long k, long n) {
 
     RR bound2;
     power2(bound2, 2 * RR::precision());
-    for (i = 1; i <= k; i++)   // Uses RR matrices.
-        ComputeGS(B, B1, mu, b, c, i, n, bound, 1, buf, bound2);
+    for (i = 0; i < k; i++)   // Uses RR matrices.
+        ComputeGS(B, B1, mu, b, c, i, n, bound, 0, buf, bound2);
 }
 
 // #endif
@@ -881,7 +883,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
             st[k + 1] = st[k];
 
         // std::cout << "LLL64: before ComputeGS, B1[k][1] = " << B1[k][1] << "\n";
-        ComputeGS(B, B1, mu, b, c, k, bound, st[k], buf);
+        ComputeGS(B, B1, mu, b, c, k, n, bound, st[k], buf);
         CheckFinite(&c[k]);
         st[k] = k;
         // std::cout << "After ComputeGS, mu[k] = " << mu[k] << "\n";
@@ -949,7 +951,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                         if (k < rr_st)
                             rr_st = k;
                         std::cout
-                                << "ll_LLL FPInt calling RowTransformStart, k = " << k << "rr_st = " << rr_st << "\n";
+                                << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
                         RowTransformStart(B1[k], in_vec, in_float, n);
                     }
                     mu1 = mu[k][j];
@@ -999,7 +1001,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                 max_b[k] = max_abs(B1[k], n);
                 b[k] = InnerProductD(B1[k], B1[k], n);
                 CheckFinite(&b[k]);
-                ComputeGS(B, B1, mu, b, c, k, bound, 0, buf);
+                ComputeGS(B, B1, mu, b, c, k, n, bound, 0, buf);
                 CheckFinite(&c[k]);
                 rst = k;
                 std::cout << "After ComputeGS in (Fc1), rst = " << rst << ",  max_b[k]= "
@@ -1230,7 +1232,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                         if (k < rr_st)
                             rr_st = k;
                         std::cout
-                                << "ll_LLL FPInt calling RowTransformStart, k = " << k << "rr_st = " << rr_st << "\n";
+                                << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
                         RowTransformStart(B1[k], in_vec, in_float, n);
                         // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
                     }
@@ -1271,8 +1273,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                 if (!did_rr_gs) {
                     b[k] = InnerProductD(B1[k], B1[k], n);
                     CheckFinite(&b[k]);
-                    // This one uses large RR matrices !
-                    ComputeGS(B, B1, mu, b, c, k, n, bound, 1, buf);
+                    ComputeGS(B, B1, mu, b, c, k, n, bound, 0, buf);
                     CheckFinite(&c[k]);
                 } else {
                     // This one uses large RR matrices !
