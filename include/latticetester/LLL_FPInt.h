@@ -1010,7 +1010,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                 CheckFinite(&c[k]);
                 rst = k;
                 // std::cout << "After ComputeGS in (Fc1), rst = " << rst << ",  max_b[k]= "
-                     << max_b[k] << ", did_rr_gs=  " << ", b[k]=  " << b[k] << "\n";
+                //     << max_b[k] << ", did_rr_gs=  " << ", b[k]=  " << b[k] << "\n";
                 // std::cout << "After ComputeGS in (Fc1), mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
             }
             // std::cout << "End of loop, B = " <<  B << "  \n";
