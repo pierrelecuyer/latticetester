@@ -130,7 +130,7 @@ static void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n);
 
 // The int64_t specialization.
 template<>
-void InnerProductV(int64_t &prod, const NTL::Vec<long> &a, const NTL::Vec<long> &b,
+void InnerProductV(int64_t &prod, const NTL::Vec<int64_t> &a, const NTL::Vec<int64_t> &b,
         long n) {
     long x = 0;
     for (long i = 0; i < n; i++) {
