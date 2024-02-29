@@ -17,8 +17,8 @@
  * line below), and with various choices of the modulus `m` and multiplier `a`.
  **/
 
-#define TYPES_CODE  LD     // int64_t
-// #define TYPES_CODE  ZD     // ZZ
+// #define TYPES_CODE  LD     // int64_t
+#define TYPES_CODE  ZD     // ZZ
 
 #include <iostream>
 #include <cstdint>
@@ -45,7 +45,8 @@ const long dim = 5;  // Dimension of lattice.
 const long dimProj = 3;  // Dimension of projection.
 
 int main() {
-    std::cout << "Types: " << strFlexTypes << "\n";
+    std::cout << "BasisManipulationVerbose"\n";
+    std::cout << "Types: " << strFlexTypes << "\n\n";
 
     // All the IntMat objects are created in 5 dimensions, but we may use less.
     IntMat basis1, basis2, basisProj, basisDual, basisDualProj;
