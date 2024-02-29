@@ -131,7 +131,7 @@ static void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n);
 // The general case.
 template<typename IntVec, typename Int>
 void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n) {
-    MyExit (1, "InnerProductV with types that do not match");
+    LatticeTester::MyExit (1, "InnerProductV with types that do not match");
 }
 
 // The int64_t specialization.
