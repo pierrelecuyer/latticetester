@@ -45,7 +45,7 @@ const long dim = 5;  // Dimension of lattice.
 const long dimProj = 3;  // Dimension of projection.
 
 int main() {
-    std::cout << "BasisManipulationVerbose"\n";
+    std::cout << "BasisManipulationVerbose \n";
     std::cout << "Types: " << strFlexTypes << "\n\n";
 
     // All the IntMat objects are created in 5 dimensions, but we may use less.
