@@ -1001,7 +1001,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                 ComputeGS(B, B1, mu, b, c, k, bound, 0, buf);
                 CheckFinite(&c[k]);
                 rst = k;
-                std::cout << "After ComputeGS in (Fc1), mu = " << *mu << "\n";
+                std::cout << "After ComputeGS in (Fc1), mu[k] = " << mu[k] << "\n";
             }
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // End of `do` loop.
@@ -1278,7 +1278,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                     rr_st = k + 1;
                 }
                 rst = k;
-                std::cout << "After ComputeGS in (Fc1), mu = " << mu << "\n";
+                std::cout << "After ComputeGS in (Fc1), mu[k] = " << mu[k] << "\n";
             }
             // std::cout << "End of loop, B = " <<  B << "  \n";
         } while (Fc1 || start_over);  // end do loop
