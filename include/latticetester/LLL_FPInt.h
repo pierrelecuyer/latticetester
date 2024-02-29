@@ -897,11 +897,11 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
         int64_t thresh = 10;
         int64_t sz = 0, new_sz;
         do { // size reduction
-            std::cout << "do loop: (k  counter) =  " <<  k << "  " << counter << "  \n";
+            std::cout << "do loop: k = " <<  k << ",  counter = " << counter << "\n";
             counter++;
             // std::cout <<  B << "  \n";
             // cerr << " vector b = " << b[0] << "  " << b[1] << "  " << b[2] << "\n";
-            if (counter > 8)
+            if (counter > 16)
                 LatticeTester::MyExit(1, "LLL_FPInt: counter > 8 \n");
 
             if ((counter & 127) == 0) {   // Should be 127
@@ -925,7 +925,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                 std::cout << "entered for loop: j =  " <<  j << "  \n";
                 std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
                 if (t1 > half_plus_fudge) {
-                    // std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << "  \n";
+                    std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << ",  Fc1 = " << Fc1 << "\n";
                     if (!Fc1) {
                         if (j > trigger_index
                                 || (j == trigger_index && small_trigger)) {
@@ -947,6 +947,8 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                         Fc1 = 1;
                         if (k < rr_st)
                             rr_st = k;
+                        std::cout
+                                << "ll_LLL FPInt calling RowTransformStart, k = " << k << "rr_st = " << rr_st << "\n";
                         RowTransformStart(B1[k], in_vec, in_float, n);
                     }
                     mu1 = mu[k][j];
@@ -1160,9 +1162,9 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
         std::cout << "ll_LLL FPInt before size reduction \n";
         do {
             // size reduction
-            std::cout << "do loop: (k  counter) =  " <<  k << "  " << counter << "  \n";
+            std::cout << "do loop: k = " <<  k << ",  counter = " << counter << "\n";
             counter++;
-            if (counter > 8)
+            if (counter > 16)
                 LatticeTester::MyExit(1, "LLL_FPInt: counter > 8 \n");
             if ((counter & 127) == 0) {    // Should be 127
                 new_sz = 0;
@@ -1182,7 +1184,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                 std::cout << "entered for loop: j =  " <<  j << "  \n";
                 std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
                 if (t1 > half_plus_fudge) {
-                    std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << "  \n";
+                    std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << ",  Fc1 = " << Fc1 << "\n";
                     if (!Fc1) {
                         if (j > trigger_index
                                 || (j == trigger_index && small_trigger)) {
@@ -1222,7 +1224,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                         if (k < rr_st)
                             rr_st = k;
                         std::cout
-                                << "ll_LLL FPInt calling RowTransformStart \n";
+                                << "ll_LLL FPInt calling RowTransformStart, k = " << k << "rr_st = " << rr_st << "\n";
                         RowTransformStart(B1[k], in_vec, in_float, n);
                         // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
                     }
@@ -1393,6 +1395,7 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
         std::swap(sqlen[0], sqlen[imin]);
     }
     std::cout << "LLL FPInt after swaps  \n";
+    std::cout << "sqlen = " << sqlen << "\n";
     return new_m;
 }
 
