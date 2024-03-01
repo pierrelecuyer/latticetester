@@ -80,8 +80,8 @@
 
  **/
 
-//#define TYPES_CODE  LD     // Int == int64_t
-#define TYPES_CODE  ZD     // Int == ZZ
+#define TYPES_CODE  LD     // Int == int64_t
+//#define TYPES_CODE  ZD     // Int == ZZ
 
 #include <iostream>
 #include <cstdint>
