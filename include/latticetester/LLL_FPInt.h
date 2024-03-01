@@ -65,6 +65,8 @@ typedef NTL::vector<int64_t> vector64;
 //typedef NTL::matrix<NTL::ZZ> matrixZZ;
 //typedef NTL::vector<NTL::ZZ> vectorZZ;
 
+long modulus(1048573);
+
 NTL_OPEN_NNS
 
 /**
