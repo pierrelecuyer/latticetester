@@ -65,7 +65,7 @@ typedef NTL::vector<int64_t> vector64;
 //typedef NTL::matrix<NTL::ZZ> matrixZZ;
 //typedef NTL::vector<NTL::ZZ> vectorZZ;
 
-long modulus(1048573);
+long modulus64(1048573);
 
 NTL_OPEN_NNS
 
@@ -234,7 +234,7 @@ void RowTransform(vector64 &A, vector64 &B, const int64_t &MU1, long n) {
         return;
     for (i = 0; i < n; i++) {
         A[i] -= MU * B[i];
-        if ((A[i] > modulus) ||  (A[i] < -modulus))
+        if ((A[i] > modulus64) ||  (A[i] < -modulus64))
            std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
     }
     long maxc =
@@ -378,7 +378,7 @@ void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1, long
         }
         mul(T, B[i], MU);
         sub(A[i], A[i], T);
-        if ((A[i] > modulus) ||  (A[i] < -modulus))
+        if ((A[i] > modulus64) ||  (A[i] < -modulus64))
             std::cout << "RowTransform-FP-64: A[i] = " << A[i] << "\n";
     }
 }
