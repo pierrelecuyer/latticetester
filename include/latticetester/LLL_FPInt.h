@@ -65,7 +65,7 @@ typedef NTL::vector<int64_t> vector64;
 //typedef NTL::matrix<NTL::ZZ> matrixZZ;
 //typedef NTL::vector<NTL::ZZ> vectorZZ;
 
-long modulus64(1048573);
+Int modulus64(1048573);
 
 NTL_OPEN_NNS
 
@@ -274,6 +274,8 @@ void RowTransform(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
         } else {
             for (i = 0; i < n; i++) {
                 MulSubFrom(A[i], B[i], mu1);
+                if ((A[i] > modulus64) ||  (A[i] < -modulus64))
+                   std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
             }
         }
     } else {
@@ -282,6 +284,8 @@ void RowTransform(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
             if (k > 0)
                 LeftShift(T, T, k);
             sub(A[i], A[i], T);
+            if ((A[i] > modulus64) ||  (A[i] < -modulus64))
+               std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
         }
     }
 }
@@ -485,6 +489,8 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
                         in_a[i] = 0;
                     }
                     MulSubFrom(A[i], B[i], mu1);
+                    if ((A[i] > modulus64) ||  (A[i] < -modulus64))
+                       std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
                 }
             }
         }
@@ -498,6 +504,8 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
             if (k > 0)
                 LeftShift(T, T, k);
             sub(A[i], A[i], T);
+            if ((A[i] > modulus64) ||  (A[i] < -modulus64))
+               std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
         }
     }
 }
