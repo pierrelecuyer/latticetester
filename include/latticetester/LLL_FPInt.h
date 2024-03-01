@@ -379,9 +379,9 @@ void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1, long
             conv(A[i], a[i]);
             in_a[i] = 0;
         }
-        A[i] = A[i] - B[i] * MU;
-        // mul(T, B[i], MU);
-        // sub(A[i], A[i], T);
+        // A[i] = A[i] - B[i] * MU;
+        mul(T, B[i], MU);
+        sub(A[i], A[i], T);
         if ((A[i] > modulus64) ||  (A[i] < -modulus64))
             std::cout << "RowTransform-FP-64: i = " << i << ",  A[i] = " << A[i] << "\n";
     }
@@ -491,7 +491,7 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
                     }
                     MulSubFrom(A[i], B[i], mu1);
                     if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-                       std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
+                       std::cout << "RowTransform: A[i] = " << A[i] << "\n";
                 }
             }
         }
@@ -506,7 +506,7 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
                 LeftShift(T, T, k);
             sub(A[i], A[i], T);
             if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-               std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
+               std::cout << "RowTransform: A[i] = " << A[i] << "\n";
         }
     }
 }
