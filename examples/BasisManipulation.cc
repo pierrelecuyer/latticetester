@@ -212,7 +212,7 @@ static void testLoopNoResize(long numRep) {
         for (d = 0; d < numSizes; d++) {  // Each matrix size
             long dim = dimensions[d]; // The corresponding dimension.
             korlat->buildBasis(dim);
-            std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
+            // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
             copy(korlat->getBasis(), basis1, dim, dim); // Triangular basis.
             transformBases(d, dim, basis1, basis2, basisdual);
         }
