@@ -217,7 +217,7 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n);
 
 // The int64_t case.
 template<>
-void RowTransform(vector64 &A, vector64 &B, const int64_t &MU1, long n) {
+void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const long &MU1, long n) {
     register int64_t MU = MU1;
     int64_t i;
     if (MU == 1) {
