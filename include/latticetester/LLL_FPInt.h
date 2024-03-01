@@ -916,7 +916,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                     sz = new_sz;
                 } else {
                     cerr
-                            << "LLL: _FPInt sz not smaller; warning--infinite loop? \n";
+                            << "LLL: _FPInt sz = " << sz << " not smaller; warning--infinite loop? \n";
                     abort();
                 }
             }
@@ -935,6 +935,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                                 || (j == trigger_index && small_trigger)) {
                             cnt++;
                             if (cnt > thresh) {
+                                // std::cout << "inc_red_fudge():  cnt= " << cnt << ",  dim= " << n << ", B = " << B << " \n";
                                 if (log_red <= 15) {
                                     while (log_red > 10)
                                         inc_red_fudge();
