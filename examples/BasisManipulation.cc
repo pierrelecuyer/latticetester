@@ -235,7 +235,7 @@ static void printResults() {
 }
 
 int main() {
-    long numRep = 100;  // Number of replications (multipliers) for each case.
+    long numRep = 500;  // Number of replications (multipliers) for each case.
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
