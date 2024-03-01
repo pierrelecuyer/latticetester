@@ -110,7 +110,7 @@ Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1125899906842597);  // Prime modulus near 2^{50}
 Int a;       // The LCG multiplier
 
-const long numSizes = 2;    // Number of matrix sizes (choices of dimension).
+const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
 //const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
 const long dimensions[numSizes] = { 4, 6, 10, 20, 30 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
@@ -209,7 +209,7 @@ static void testLoopNoResize(long numRep) {
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
         korlat->seta(a);
-        for (d = 0; d < numSizes; d++) {  // Each matrix size
+        for (d = 0; d < 2; d++) {  // Each matrix size
             long dim = dimensions[d]; // The corresponding dimension.
             korlat->buildBasis(dim);
             std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
