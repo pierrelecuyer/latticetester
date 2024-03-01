@@ -105,6 +105,7 @@ static inline void CheckFinite(double *p) {
 // Just to be safe!!
 #define TR_BND (NTL_FDOUBLE_PRECISION/2.0)
 
+// Returns the largest absolute value of the coordinates of v.
 static double max_abs(double *v, long n) {
     double res, t;
     res = 0.0;
@@ -231,7 +232,10 @@ void RowTransform(vector64 &A, vector64 &B, const int64_t &MU1, long n) {
         return;
     for (i = 0; i < n; i++) {
         A[i] -= MU * B[i];
+        if ((A[i] > modulus) ||  (A[i] < -modulus))
+           std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
     }
+    long maxc =
 }
 
 // The ZZ case.
@@ -361,6 +365,7 @@ void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1, long
     }
     if (MU == 0)
         return;
+
     double b_bnd = fabs(TR_BND / mu) - 1;
     if (b_bnd < 0)
         b_bnd = 0;
@@ -371,6 +376,8 @@ void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1, long
         }
         mul(T, B[i], MU);
         sub(A[i], A[i], T);
+        if ((A[i] > modulus) ||  (A[i] < -modulus))
+            std::cout << "RowTransform-FP-64: A[i] = " << A[i] << "\n";
     }
 }
 
@@ -935,7 +942,8 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                                 || (j == trigger_index && small_trigger)) {
                             cnt++;
                             if (cnt > thresh) {
-                                std::cout << "inc_red_fudge():  cnt= " << cnt << ",  dim= " << n << ", B = " << B << " \n";
+                                std::cout << "inc_red_fudge():  cnt= " << cnt << ",  dim= " << n << ", B[1] = " << B[1] << " \n";
+                                abort();
                                 if (log_red <= 15) {
                                     while (log_red > 10)
                                         inc_red_fudge();
