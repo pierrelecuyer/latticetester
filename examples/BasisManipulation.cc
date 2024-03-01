@@ -110,7 +110,7 @@ Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1125899906842597);  // Prime modulus near 2^{50}
 Int a;       // The LCG multiplier
 
-const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
+const long numSizes = 2;    // Number of matrix sizes (choices of dimension).
 //const long dimensions[numSizes] = { 10, 12, 14, 16, 18, 20 };
 const long dimensions[numSizes] = { 4, 6, 10, 20, 30 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
@@ -238,7 +238,7 @@ static void printResults() {
 }
 
 int main() {
-    long numRep = 50;  // Number of replications (multipliers) for each case.
+    long numRep = 40;  // Number of replications (multipliers) for each case.
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
