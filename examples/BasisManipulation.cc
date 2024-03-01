@@ -80,8 +80,8 @@
 
  **/
 
-// #define TYPES_CODE  LD     // Int == int64_t
-#define TYPES_CODE  ZD     // Int == ZZ
+#define TYPES_CODE  LD     // Int == int64_t
+// #define TYPES_CODE  ZD     // Int == ZZ
 
 #include <iostream>
 #include <cstdint>
@@ -180,7 +180,7 @@ static void testLoopResize(long numRep) {
             basis1.SetDims(dim, dim); // Will be initial triangular basis.
             basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
             basisdual.SetDims(dim, dim);  // m-dual basis.
-            korlat = new Rank1Lattice<Int, Real>(m, a, dim);
+            korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, true);
             korlat->buildBasis(dim);
             copy(korlat->getBasis(), basis1); // This initial basis is triangular.
             // Here this basis is a dim x dim IntMat object.
@@ -194,13 +194,13 @@ static void testLoopResize(long numRep) {
 // In this testing loop, we try to minimize the creation of objects.
 // The `IntMat` and `Rank1Lattice` objects are created only once.
 static void testLoopNoResize(long numRep) {
-    long d;
+    long d;  // Index of dimension.
     IntMat basis1, basis2, basisdual;
     basis1.SetDims(maxdim, maxdim); // Will be initial triangular basis.
     basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
     basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
     Rank1Lattice<Int, Real> *korlat;    // We create a single Korobov lattice.
-    korlat = new Rank1Lattice<Int, Real>(m, maxdim, true);
+    korlat = new Rank1Lattice<Int, Real>(m, maxdim, true, true);
 
     for (d = 0; d < numSizes; d++)   // Reset timers.
         for (int64_t meth = 0; meth < numMeth; meth++)

@@ -41,8 +41,8 @@ using namespace LatticeTester;
 //Int m(1021);     // Modulus m = 1021
 Int m(1048573);  // Modulus m = 1048573 (prime number near 2^{20})
 Int a(209714);       // The LCG multiplier
-const long dim = 4;  // Dimension of lattice.
-const long maxDim = 10;  // Dimension of lattice.
+const long dim = 6;  // Dimension of lattice.
+const long maxDim = 30;  // Dimension of lattice.
 
 int main() {
     std::cout << "Types: " << strFlexTypes << "\n\n";
