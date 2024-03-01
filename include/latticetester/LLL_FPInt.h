@@ -237,7 +237,6 @@ void RowTransform(vector64 &A, vector64 &B, const int64_t &MU1, long n) {
         if ((A[i] > modulus64) ||  (A[i] < -modulus64))
            std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
     }
-    long maxc =
 }
 
 // The ZZ case.
