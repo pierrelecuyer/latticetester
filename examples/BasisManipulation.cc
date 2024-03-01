@@ -1,7 +1,7 @@
 /**
  * This example illustrates the usage of the BasisConstruction module.
  *
- * TO REWRITE:   *****
+ * TO REWRITE WHEN DONE:   *****
  *
  * GOALS:
  *
@@ -43,6 +43,8 @@
  *
  * Example of results with m = 1048573 (prime modulus near 2^{20}):
  *
+ *  ***  These must be replaced  ***
+ *
  Types: Int = NTL::ZZ, Real = double
  Timings for different methods, in basic clock units
  dim:          10       20       30       40       50
@@ -78,8 +80,8 @@
 
  **/
 
-#define TYPES_CODE  LD     // Int == int64_t
-// #define TYPES_CODE  ZD     // Int == ZZ
+// #define TYPES_CODE  LD     // Int == int64_t
+#define TYPES_CODE  ZD     // Int == ZZ
 
 #include <iostream>
 #include <cstdint>
