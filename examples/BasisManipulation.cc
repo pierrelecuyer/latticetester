@@ -242,11 +242,9 @@ int main() {
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
-// #if TYPES_CODE  ==  ZD
-    testLoopResize(numRep);  // Works only for ZZ.
+    // testLoopResize(numRep);  // Works only for ZZ.
     std::cout << "Results for `testLoop-Resize` (many objects are created or resized)\n";
     printResults();
-// #endif
     testLoopNoResize(numRep);
     std::cout << "Results for `testLoop-NoResize`\n";
     printResults();

@@ -379,10 +379,11 @@ void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1, long
             conv(A[i], a[i]);
             in_a[i] = 0;
         }
-        mul(T, B[i], MU);
-        sub(A[i], A[i], T);
+        A[i] = A[i] - B[i] * MU;
+        // mul(T, B[i], MU);
+        // sub(A[i], A[i], T);
         if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-            std::cout << "RowTransform-FP-64: A[i] = " << A[i] << "\n";
+            std::cout << "RowTransform-FP-64: i = " << i << ",  A[i] = " << A[i] << "\n";
     }
 }
 
@@ -969,7 +970,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                         Fc1 = 1;
                         if (k < rr_st)
                             rr_st = k;
-                        // std::cout                            << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
+                        // std::cout << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
                         RowTransformStart(B1[k], in_vec, in_float, n);
                     }
                     mu1 = mu[k][j];
@@ -1004,8 +1005,9 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                     // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
                     // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
                     // The change must be on vector B[k].
-                    RowTransform(B[k], B[j], MU, n, B1[k], B1[j], in_vec,
-                            max_b[k], max_b[j], in_float);
+                    RowTransform(B[k], B[j], MU, n);
+                    //  RowTransform(B[k], B[j], MU, n, B1[k], B1[j], in_vec,
+                    //         max_b[k], max_b[j], in_float);
                     // std::cout << "After row transform, MU = " << MU << " \n";
                     // std::cout << "Basis after row transform: \n" << B << "\n";
                 }
