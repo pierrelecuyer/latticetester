@@ -937,7 +937,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                     sz = new_sz;
                 } else {
                     cerr << "LLL_FPInt sz = " << sz << " not smaller; infinite loop? \n";
-                    abort();
+                    //  abort();
                 }
             }
             Fc1 = 0;
@@ -1199,7 +1199,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                 if ((counter >> 7) == 1 || new_sz < sz) {
                     sz = new_sz;
                 } else {
-                    cerr << "LLL_FPInt: warning--infinite loop?\n";
+                    cerr << "LLL_FPInt sz = " << sz << " not smaller; infinite loop? \n";
                 }
             }
             Fc1 = 0;
