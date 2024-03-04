@@ -119,9 +119,11 @@ std::string names[numMeth] = { "LLL5      ", "LLL9      ", "LLL99999  ",
         "LLL99999-R", "UppTri    ", "mDualUT   "};
 
 // Here we use ctime directly for the timings, to minimize overhead.
+clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
 clock_t timer[numMeth][numSizes];
-clock_t tmp;
+double sumSq[numMeth][numSizes];
+double sqlen[30];
 
 // Run speed test for dim = dimensions[d], with given matrices.
 static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
@@ -129,25 +131,29 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     // We apply LLL to basis1 with different values of `delta`, incrementally.
     copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis2, 0.5, dim, dim);
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.5, dim, dim, sqlen);
     timer[0][d] += clock() - tmp;
+    sumSq[0][d] += sqlen[0];
 
     // We continue the LLL process with a larger `delta`.
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim);
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim, sqlen);
     timer[1][d] += clock() - tmp;
+    sumSq[1][d] += sqlen[0];
 
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim);
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim, sqlen);
     timer[2][d] += clock() - tmp;
+    sumSq[2][d] += sqlen[0];
 
     // Here we restart LLL from the initial triangular basis.
     copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim);
+    BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim, sqlen);
     timer[3][d] += clock() - tmp;
+    sumSq[3][d] += sqlen[0];
 
     // We now construct an upper-triangular basis from basis2 into basis1.
     tmp = clock();
@@ -169,9 +175,10 @@ static void testLoopResize(long numRep) {
     long d, dim;
     IntMat basis1, basis2, basisdual;
     Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
-    for (d = 0; d < numSizes; d++)      // Reset timers.
-        for (int64_t meth = 0; meth < numMeth; meth++)
-            timer[meth][d] = 0;
+    for (d = 0; d < numSizes; d++)      // Reset timers and sums.
+        for (int64_t meth = 0; meth < numMeth; meth++) {
+            timer[meth][d] = 0;   sumSq[meth][d] = 0.0;
+        }
     totalTime = clock();
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
@@ -197,7 +204,7 @@ static void testLoopResize(long numRep) {
 // In this testing loop, we try to minimize the creation of objects.
 // The `IntMat` and `Rank1Lattice` objects are created only once.
 static void testLoopNoResize(long numRep) {
-    long d;  // Index of dimension.
+    long d, dim;  // Index of dimension.
     IntMat basis1, basis2, basisdual;
     basis1.SetDims(maxdim, maxdim); // Will be initial triangular basis.
     basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
@@ -206,14 +213,15 @@ static void testLoopNoResize(long numRep) {
     korlat = new Rank1Lattice<Int, Real>(m, maxdim, true, true);
 
     for (d = 0; d < numSizes; d++)   // Reset timers.
-        for (int64_t meth = 0; meth < numMeth; meth++)
-            timer[meth][d] = 0;
+        for (int64_t meth = 0; meth < numMeth; meth++) {
+            timer[meth][d] = 0;     sumSq[meth][d] = 0.0;
+        }
     totalTime = clock();
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
         korlat->seta(a);
         for (d = 0; d < numSizes; d++) {  // Each matrix size
-            long dim = dimensions[d]; // The corresponding dimension.
+            dim = dimensions[d]; // The corresponding dimension.
             korlat->buildBasis(dim);
             // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
             copy(korlat->getBasis(), basis1, dim, dim); // Triangular basis.
@@ -232,6 +240,13 @@ static void printResults() {
         std::cout << names[meth] << " ";
         for (d = 0; d < numSizes; d++)
             std::cout << std::setw(8) << timer[meth][d] << " ";
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+    for (int meth = 0; meth < numMeth; meth++) {
+        std::cout << names[meth] << " ";
+        for (d = 0; d < numSizes; d++)
+            std::cout << std::setw(8) << sumSq[meth][d] << " ";
         std::cout << std::endl;
     }
     std::cout << std::endl;
