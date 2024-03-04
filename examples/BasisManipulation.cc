@@ -189,7 +189,9 @@ static void testLoopResize(long numRep) {
             delete korlat;
         }
     }
-    delete basis1, basis2, basisdual;
+    delete *basis1;
+    delete *basis2;
+    delete *basisdual;
 }
 
 // In this testing loop, we try to minimize the creation of objects.
