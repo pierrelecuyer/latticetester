@@ -226,6 +226,7 @@ static void testLoopNoResize(long numRep) {
             // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
             copy(korlat->getBasis(), basis1, dim, dim); // Triangular basis.
             transformBases(d, dim, basis1, basis2, basisdual);
+            std::cout << "sqlen[0] = " << sqlen[0] << "\n";
         }
     }
 }
@@ -256,7 +257,7 @@ static void printResults() {
 }
 
 int main() {
-    long numRep = 1000;  // Number of replications (multipliers) for each case.
+    long numRep = 3;  // Number of replications (multipliers) for each case.
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
