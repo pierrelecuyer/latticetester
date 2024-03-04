@@ -56,6 +56,7 @@ int main() {
     basisProj.SetDims(dim, dimProj);
     basisDualProj.SetDims(dimProj, dimProj);
     Int sqlength;
+    double *sqlen = new double[dim];
 
     // We construct a Korobov lattice in dim dimensions.
     Rank1Lattice<Int, double> *korlat;
@@ -65,28 +66,23 @@ int main() {
     std::cout << "Initial Korobov lattice basis = \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
-/*
+
     // We apply LLL to reduce basis1.
-    BasisConstruction<Int>::LLLConstruction0(basis1, 0.5);
+    BasisConstruction<Int>::LLLConstruction0(basis1, 0.5, dim, dim, sqlen);
     std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
-*/
-    double *sqlen;
-    sqlen = new double[dim];
-    std::cout << "sqlen = " << sqlen << "\n";
-    std::cout << "sqlen[0] = " << sqlen[0] << "\n";
-    std::cout << "*sqlen = " << *sqlen << "\n";
-    NTL::LLL_FPInt(basis1, 0.99999, dim, dim, sqlen);
-    // BasisConstruction<Int>::LLLConstruction0(basis1, 0.99999, dim, dim, sqlen);
     std::cout << "Square lengths of first 3 vectors as returned by LLL_FPInt: \n";
     std::cout << sqlen[0] << "  " << sqlen[1] << "  " << sqlen[2] << "\n\n";
-    std::cout << "***********************************\n";
 
+    std::cout << "sqlen = " << sqlen << "\n";
+    NTL::LLL_FPInt(basis1, 0.99999, dim, dim, sqlen);
+    // BasisConstruction<Int>::LLLConstruction0(basis1, 0.99999, dim, dim, sqlen);
     std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
-    abort();
+    std::cout << "Square lengths of first 3 vectors as returned by LLL_FPInt: \n";
+    std::cout << sqlen[0] << "  " << sqlen[1] << "  " << sqlen[2] << "\n\n";
 
     // We finally compute the shortest vector in primal, with BB.
     // For this, we need to create a Reducer object.
