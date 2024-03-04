@@ -65,13 +65,13 @@ int main() {
     std::cout << "Initial Korobov lattice basis = \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
-
+/*
     // We apply LLL to reduce basis1.
     BasisConstruction<Int>::LLLConstruction0(basis1, 0.5);
     std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
-
+*/
     double *sqlen;
     sqlen = new double[dim];
     std::cout << "sqlen = " << sqlen << "\n";
