@@ -215,6 +215,7 @@ static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
 template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n);
 
+/*
 // The int64_t case.
 template<>
 void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const long &MU1, long n) {
@@ -238,6 +239,7 @@ void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const long &MU1, long n)
            std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
     }
 }
+*/
 
 // The ZZ case.
 template<>
@@ -298,6 +300,7 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
         long &in_float);
 
+/*
 // The change is on the vector A.
 template<>
 void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1, long n,
@@ -386,6 +389,7 @@ void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1, long
             std::cout << "RowTransform-FP-64: i = " << i << ",  A[i] = " << A[i] << "\n";
     }
 }
+*/
 
 template<>
 void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,

@@ -137,7 +137,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     tmp = clock();
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim);
     timer[1][d] += clock() - tmp;
-/*
+
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim);
@@ -158,7 +158,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     tmp = clock();
     BasisConstruction<Int>::mDualUpperTriangular(basis1, basisdual, m, dim);
     timer[5][d] += clock() - tmp;
-*/
+
     // mDualBasis is currently implemented only for Int = ZZ and dim = maxDim.
     // BasisConstruction<Int>::mDualBasis(basis2, basisdual, m);
 }
@@ -238,7 +238,7 @@ static void printResults() {
 }
 
 int main() {
-    long numRep = 2;  // Number of replications (multipliers) for each case.
+    long numRep = 100;  // Number of replications (multipliers) for each case.
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
