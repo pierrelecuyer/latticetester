@@ -1390,8 +1390,8 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
 
     UniqueArray<double> b_store;
     b_store.SetLength(m + 1);
-    // double *b = b_store.get(); // squared lengths of basis vectors
-    sqlen = b_store.get(); // squared lengths of basis vectors
+    double *b = b_store.get(); // squared lengths of basis vectors
+    // sqlen2 = b_store.get(); // squared lengths of basis vectors
     // This b is the same as sqlen, so in principle we could use
     // sqlen instead of b, but we are not sure if it has the right size.
     // we may not want to change the pointer sqlen.
