@@ -74,6 +74,9 @@ int main() {
 
     double *sqlen;
     sqlen = new double[dim];
+    std::cout << "sqlen = " << sqlen << "\n";
+    std::cout << "sqlen& = " << sqlen& << "\n";
+    std::cout << "*sqlen = " << *sqlen << "\n";
     NTL::LLL_FPInt(basis1, 0.99999, dim, dim, sqlen);
     // BasisConstruction<Int>::LLLConstruction0(basis1, 0.99999, dim, dim, sqlen);
     std::cout << "Square lengths of first 3 vectors as returned by LLL_FPInt: \n";
