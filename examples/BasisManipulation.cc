@@ -123,8 +123,8 @@ clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
 clock_t timer[numMeth][numSizes];
 double sumSq[numMeth][numSizes];
-double *sqlen;
-sqlen = new double[maxdim];
+double *sqlen = new double[maxdim];
+// sqlen = new double[maxdim];
 
 // Run speed test for dim = dimensions[d], with given matrices.
 static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
