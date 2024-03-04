@@ -166,7 +166,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
 // In this testing loop, new `Rank1Lattice` objects are created
 // and the  `IntMat` matrices are resized inside the loop.
 static void testLoopResize(long numRep) {
-    long d;
+    long d, dim;
     IntMat basis1, basis2, basisdual;
     Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
     for (d = 0; d < numSizes; d++)      // Reset timers.
@@ -176,7 +176,7 @@ static void testLoopResize(long numRep) {
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
         for (d = 0; d < numSizes; d++) {  // Each matrix size
-            long dim = dimensions[d]; // The corresponding dimension.
+            dim = dimensions[d]; // The corresponding dimension.
             basis1.SetDims(dim, dim); // Will be initial triangular basis.
             basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
             basisdual.SetDims(dim, dim);  // m-dual basis.
@@ -189,6 +189,7 @@ static void testLoopResize(long numRep) {
             delete korlat;
         }
     }
+    delete basis1, basis2, basisdual;
 }
 
 // In this testing loop, we try to minimize the creation of objects.
@@ -238,11 +239,11 @@ static void printResults() {
 }
 
 int main() {
-    long numRep = 5000;  // Number of replications (multipliers) for each case.
+    long numRep = 1000;  // Number of replications (multipliers) for each case.
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
-    // testLoopResize(numRep);
+    testLoopResize(numRep);  // When I do this, the "no resize"  does not work!
     std::cout << "Results for `testLoop-Resize` (many objects are created or resized)\n";
     printResults();
     testLoopNoResize(numRep);
