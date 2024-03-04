@@ -72,7 +72,8 @@ int main() {
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
-    double *sqlen = new double[dim];
+    double *sqlen;
+    sqlen = new double[dim];
     NTL::LLL_FPInt(basis1, 0.99999, dim, dim, sqlen);
     // BasisConstruction<Int>::LLLConstruction0(basis1, 0.99999, dim, dim, sqlen);
     std::cout << "Square lengths of first 3 vectors as returned by LLL_FPInt: \n";
