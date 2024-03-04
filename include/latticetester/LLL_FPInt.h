@@ -1390,7 +1390,7 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
 
     UniqueArray<double> b_store;
     b_store.SetLength(m + 1);
-    double *b = b_store.get(); // squared lengths of basis vectors
+    double *sqlen2 = b_store.get(); // squared lengths of basis vectors
     // sqlen2 = b_store.get(); // squared lengths of basis vectors
     // This b is the same as sqlen, so in principle we could use
     // sqlen instead of b, but we are not sure if it has the right size.
@@ -1402,28 +1402,30 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
             CheckFinite(&B1[i][j]);
         }
     for (i = 0; i < m; i++) {
-        sqlen[i] = InnerProductD(B1[i], B1[i], n);  // Square norms in double.
-        CheckFinite(&sqlen[i]);
+        sqlen2[i] = InnerProductD(B1[i], B1[i], n);  // Square norms in double.
+        CheckFinite(&sqlen2[i]);
     }
     // std::cout << "LLL FPInt before ll_LLL  \n";
     // Indices in sqlen and B1 start at 0, which is 1 less than in NTL.
-    new_m = ll_LLL_FP(B, delta, B1, mu, sqlen, c, m, n, 0);
+    new_m = ll_LLL_FP(B, delta, B1, mu, sqlen2, c, m, n, 0);
     // std::cout << "LLL FPInt after ll_LLL  \n";
 
     // In this version, we leave the zero rows at the bottom.
     // The new_m independent basis vectors will be at the top of `B`.
     // Put shortest nonzero vector in first place.
     long imin = 0;
-    double minSqlen = sqlen[0];
+    double minSqlen = sqlen2[0];
     for (i = 1; i < new_m; i++)
-        if (sqlen[i] < minSqlen) {
-            minSqlen = sqlen[i];
+        if (sqlen2[i] < minSqlen) {
+            minSqlen = sqlen2[i];
             imin = i;
         };
     if (imin > 0) {
         NTL::swap(B[0], B[imin]);
-        std::swap(sqlen[0], sqlen[imin]);
+        std::swap(sqlen2[0], sqlen2[imin]);
     }
+    if (sqlen)
+        for (i = 0; i < new_m; i++)  sqlen[i] = sqlen2[i+1];
     std::cout << "LLL FPInt after swaps  \n";
     std::cout << "sqlen[0] = " << sqlen[0] << "\n";
     return new_m;
