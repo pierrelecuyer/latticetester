@@ -1426,6 +1426,8 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     }
     if (sqlen) {
         for (i = 0; i < new_m; i++)  sqlen[i] = sqlen2[i];
+        std::cout << "new_m = " << new_m << "\n";
+        std::cout << "sqlen2[0] = " << sqlen2[0] << "\n";
         std::cout << "sqlen[0] = " << sqlen[0] << "\n";
     }
     std::cout << "LLL FPInt after swaps  \n";
