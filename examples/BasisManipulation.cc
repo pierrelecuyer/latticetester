@@ -245,11 +245,12 @@ int main() {
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
-    testLoopResize(numRep);  // When I do this, the "no resize"  does not work!
-    std::cout << "Results for `testLoop-Resize` (many objects are created or resized)\n";
-    printResults();
     testLoopNoResize(numRep);
     std::cout << "Results for `testLoop-NoResize`\n";
     printResults();
+    testLoopResize(numRep);  // When I do this first, the "no resize"  does not work!
+    std::cout << "Results for `testLoop-Resize` (many objects are created or resized)\n";
+    printResults();
+
 }
 
