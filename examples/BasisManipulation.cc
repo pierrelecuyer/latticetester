@@ -238,11 +238,11 @@ static void printResults() {
 }
 
 int main() {
-    long numRep = 1000;  // Number of replications (multipliers) for each case.
+    long numRep = 5000;  // Number of replications (multipliers) for each case.
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
-    testLoopResize(numRep);
+    // testLoopResize(numRep);
     std::cout << "Results for `testLoop-Resize` (many objects are created or resized)\n";
     printResults();
     testLoopNoResize(numRep);
