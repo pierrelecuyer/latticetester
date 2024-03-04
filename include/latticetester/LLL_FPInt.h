@@ -932,8 +932,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                 if ((counter >> 7) == 1 || new_sz < sz) {  // Should be 7
                     sz = new_sz;
                 } else {
-                    cerr
-                            << "LLL: _FPInt sz = " << sz << " not smaller; warning--infinite loop? \n";
+                    cerr << "LLL_FPInt sz = " << sz << " not smaller; infinite loop? \n";
                     abort();
                 }
             }
@@ -953,7 +952,6 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                             cnt++;
                             if (cnt > thresh) {
                                 std::cout << "inc_red_fudge():  cnt= " << cnt << ",  dim= " << n << ", B[1] = " << B[1] << " \n";
-                                abort();
                                 if (log_red <= 15) {
                                     while (log_red > 10)
                                         inc_red_fudge();
@@ -997,15 +995,15 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                     conv(MU, mu1);
                     // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
 
-                    //register int64_t T, MU2 = MU;
-                    //for (i = 0; i < n; i++) {
-                    //    T = MU2 * B1[j][i];
-                    //    B1[k][i] -= T;
-                    //}
+                    register int64_t T, MU2 = MU;
+                    for (i = 0; i < n; i++) {
+                        T = MU2 * B1[j][i];
+                        B1[k][i] -= T;
+                    }
                     // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
                     // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
                     // The change must be on vector B[k].
-                    RowTransform(B[k], B[j], MU, n);
+                    // RowTransform(B[k], B[j], MU, n);
                     //  RowTransform(B[k], B[j], MU, n, B1[k], B1[j], in_vec,
                     //         max_b[k], max_b[j], in_float);
                     // std::cout << "After row transform, MU = " << MU << " \n";
