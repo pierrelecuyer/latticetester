@@ -123,7 +123,7 @@ clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
 clock_t timer[numMeth][numSizes];
 double sumSq[numMeth][numSizes];
-double *sqlen = new double[maxdim];
+double *sqlen = new double[maxdim+1];
 // sqlen = new double[maxdim];
 
 // Run speed test for dim = dimensions[d], with given matrices.
@@ -135,6 +135,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.5, dim, dim, sqlen);
     timer[0][d] += clock() - tmp;
     sumSq[0][d] += sqlen[0];
+    std::cout << "sqlen[0] = " << sqlen[0] << "\n";
 
     // We continue the LLL process with a larger `delta`.
     // copy(basis1, basis2, dim, dim);
@@ -154,7 +155,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     tmp = clock();
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim, sqlen);
     timer[3][d] += clock() - tmp;
-    sumSq[3][d] += sqlen[1];
+    sumSq[3][d] += sqlen[0];
 
     // We now construct an upper-triangular basis from basis2 into basis1.
     tmp = clock();
