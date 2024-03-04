@@ -209,10 +209,10 @@ static void testLoopNoResize(long numRep) {
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
         korlat->seta(a);
-        for (d = 0; d < 2; d++) {  // Each matrix size
+        for (d = 0; d < numSizes; d++) {  // Each matrix size
             long dim = dimensions[d]; // The corresponding dimension.
             korlat->buildBasis(dim);
-            std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
+            // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
             copy(korlat->getBasis(), basis1, dim, dim); // Triangular basis.
             transformBases(d, dim, basis1, basis2, basisdual);
         }
@@ -238,7 +238,7 @@ static void printResults() {
 }
 
 int main() {
-    long numRep = 100;  // Number of replications (multipliers) for each case.
+    long numRep = 1000;  // Number of replications (multipliers) for each case.
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
