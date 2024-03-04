@@ -72,14 +72,15 @@ int main() {
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
-    double *sqlen = new double[dim];
+    double *sqlen;
+    sqlen = new double[dim];
     NTL::LLL_FPInt(basis1, 0.99999, dim, dim, sqlen);
     // BasisConstruction<Int>::LLLConstruction0(basis1, 0.99999, dim, dim, sqlen);
+    std::cout << "Square lengths of first 3 vectors: \n";
+    std::cout << sqlen[0] << "  " << sqlen[1] << "  " << sqlen[2] << "\n\n";
     std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
-    std::cout << "Square lengths of the vectors: \n";
-    std::cout << sqlen[0] << "  " << sqlen[1] << "  " << sqlen[2] << "\n\n";
 
     // We finally compute the shortest vector in primal, with BB.
     // For this, we need to create a Reducer object.
