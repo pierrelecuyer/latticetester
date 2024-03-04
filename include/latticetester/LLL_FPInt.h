@@ -937,7 +937,7 @@ int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
                     sz = new_sz;
                 } else {
                     cerr << "LLL_FPInt sz = " << sz << " not smaller; infinite loop? \n";
-                    cerr << "new_sz = " << new_sz << ",  counter = " << counter << ",  k = " << k "\n";
+                    cerr << "new_sz = " << new_sz << ",  counter = " << counter << ",  k = " << k << "\n";
                     //  abort();
                 }
             }
