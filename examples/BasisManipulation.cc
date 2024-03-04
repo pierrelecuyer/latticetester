@@ -123,7 +123,8 @@ clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
 clock_t timer[numMeth][numSizes];
 double sumSq[numMeth][numSizes];
-double sqlen[30];
+double *sqlen;
+sqlen = new double[maxdim];
 
 // Run speed test for dim = dimensions[d], with given matrices.
 static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
@@ -153,7 +154,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     tmp = clock();
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim, sqlen);
     timer[3][d] += clock() - tmp;
-    sumSq[3][d] += sqlen[0];
+    sumSq[3][d] += sqlen[1];
 
     // We now construct an upper-triangular basis from basis2 into basis1.
     tmp = clock();
