@@ -80,8 +80,8 @@
 
  **/
 
-#define TYPES_CODE  LD     // Int == int64_t
-//#define TYPES_CODE  ZD     // Int == ZZ
+// #define TYPES_CODE  LD     // Int == int64_t
+#define TYPES_CODE  ZD     // Int == ZZ
 
 #include <iostream>
 #include <cstdint>
@@ -165,8 +165,6 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
-    /*
-
     // Here we restart LLL from the initial triangular basis.
     copy(basis1, basis2, dim, dim);
     tmp = clock();
@@ -183,7 +181,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     tmp = clock();
     BasisConstruction<Int>::mDualUpperTriangular(basis1, basisdual, m, dim);
     timer[5][d] += clock() - tmp;
-*/
+
     // mDualBasis is currently implemented only for Int = ZZ and dim = maxDim.
     // BasisConstruction<Int>::mDualBasis(basis2, basisdual, m);
 }
@@ -283,9 +281,9 @@ int main() {
     testLoopNoResize(numRep);
     std::cout << "Results for `testLoop No Resize`\n";
     printResults();
-    // testLoopResize(numRep);  // When I do this first, the "no resize"  does not work!
-    //std::cout << "Results for `testLoop Resize` (many objects are created or resized)\n";
-    //printResults();
+    testLoopResize(numRep);  // When I do this first, the "no resize"  does not work!
+    std::cout << "Results for `testLoop Resize` (many objects are created or resized)\n";
+    printResults();
 
 }
 
