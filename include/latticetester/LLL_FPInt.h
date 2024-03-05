@@ -1391,10 +1391,9 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     UniqueArray<double> b_store;
     b_store.SetLength(m + 1);
     double *sqlen2 = b_store.get(); // squared lengths of basis vectors
-    // sqlen2 = b_store.get(); // squared lengths of basis vectors
-    // This b is the same as sqlen, so in principle we could use
-    // sqlen instead of b, but we are not sure if it has the right size.
-    // we may not want to change the pointer sqlen.
+    // This sqlen2 is usually the same as sqlen, but we have to do this
+    // because we are not sure how much space has been reserved for sqlen.
+    // and we do not want to change the pointer sqlen that is passed!
 
     for (i = 0; i < m; i++)
         for (j = 0; j < n; j++) {
@@ -1427,9 +1426,9 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
     if (sqlen != 0) {
         for (i = 0; i < new_m; i++)  sqlen[i] = sqlen2[i];
     }
-    //std::cout << "LLL FPInt after swaps  \n";
-    //std::cout << "sqlen2[0] = " << sqlen2[0] << "\n";
-    //std::cout << "sqlen[0] = " << sqlen[0] << "\n";
+    std::cout << "LLL FPInt after swaps  \n";
+    std::cout << "sqlen2[0] = " << sqlen2[0] << "\n";
+    std::cout << "sqlen[0] = " << sqlen[0] << "\n";
     return new_m;
 }
 
