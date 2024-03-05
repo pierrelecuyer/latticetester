@@ -139,6 +139,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     sumSq[0][d] += sqlen[0];
     std::cout << "After LLL 0.5:  sqlen[0] = " << sqlen[0] << "\n";
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
+    std::cout << "First basis vector: " << basis[0] << "\n";
     std::cout << "Square length of first basis vector: " << sqlength << "\n";
 
     // We continue the LLL process with a larger `delta`.
@@ -150,6 +151,8 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     std::cout << "After LLL 0.9:  sqlen[0] = " << sqlen[0] << "\n";
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n";
+
+    /*
 
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
@@ -173,7 +176,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     tmp = clock();
     BasisConstruction<Int>::mDualUpperTriangular(basis1, basisdual, m, dim);
     timer[5][d] += clock() - tmp;
-
+*/
     // mDualBasis is currently implemented only for Int = ZZ and dim = maxDim.
     // BasisConstruction<Int>::mDualBasis(basis2, basisdual, m);
 }
@@ -275,8 +278,8 @@ int main() {
     std::cout << "Results for `testLoop No Resize`\n";
     printResults();
     // testLoopResize(numRep);  // When I do this first, the "no resize"  does not work!
-    std::cout << "Results for `testLoop Resize` (many objects are created or resized)\n";
-    printResults();
+    //std::cout << "Results for `testLoop Resize` (many objects are created or resized)\n";
+    //printResults();
 
 }
 
