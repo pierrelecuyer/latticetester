@@ -160,7 +160,8 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim, sqlen);
     timer[2][d] += clock() - tmp;
     sumSq[2][d] += sqlen[0];
-    std::cout << "After LLL 0.9:  sqlen[0] = " << sqlen[0] << "\n";
+    std::cout << "After LLL 0.99999:  sqlen[0] = " << sqlen[0] << "\n";
+    std::cout << "First basis vector: " << basis2[0] << "\n";
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
