@@ -131,6 +131,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
         IntMat &basisdual) {
     // We apply LLL to basis1 with different values of `delta`, incrementally.
     Int sqlength;
+    std::cout << "*** dim = " << dim << "\n";
 
     copy(basis1, basis2, dim, dim);
     tmp = clock();
@@ -138,20 +139,21 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     // BasisConstruction<Int>::LLLConstruction0(basis2, 0.5, dim, dim, sqlen);
     timer[0][d] += clock() - tmp;
     sumSq[0][d] += sqlen[0];
-    std::cout << "After LLL 0.5:  sqlen[0] = " << sqlen[0] << "\n";
+    std::cout << "After LLL 0.5: sqlen[0] = " << sqlen[0] << "\n";
     std::cout << "First basis vector: " << basis2[0] << "\n";
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
-    std::cout << "Square length of first basis vector: " << sqlength << "\n";
+    std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     // We continue the LLL process with a larger `delta`.
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim, sqlen);
+    NTL::LLL_FPInt(basis2, 0.9, dim, dim, sqlen);
+    // BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim, sqlen);
     timer[1][d] += clock() - tmp;
     sumSq[1][d] += sqlen[0];
     std::cout << "After LLL 0.9:  sqlen[0] = " << sqlen[0] << "\n";
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
-    std::cout << "Square length of first basis vector: " << sqlength << "\n";
+    std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     /*
 
