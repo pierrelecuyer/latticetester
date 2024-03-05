@@ -252,7 +252,7 @@ static void printResults() {
     long d;
     std::cout << " dim:    ";
     for (d = 0; d < numSizes; d++)
-        std::cout << std::setw(8) << dimensions[d] << " ";
+        std::cout << std::setw(8) << dimensions[d] << "  ";
     std::cout << std::endl << std::endl;
     for (int meth = 0; meth < numMeth; meth++) {
         std::cout << names[meth] << " ";
@@ -262,7 +262,7 @@ static void printResults() {
     }
     std::cout << std::endl;
     std::cout << "Sums of square lengths of shortest basis vector:\n";
-    for (int meth = 0; meth < numMeth; meth++) {
+    for (int meth = 0; meth < numMeth-2; meth++) {
         std::cout << names[meth] << " ";
         for (d = 0; d < numSizes; d++)
             std::cout << std::setw(8) << sumSq[meth][d] << " ";
