@@ -125,7 +125,7 @@ clock_t timer[numMeth][numSizes];
 double sumSq[numMeth][numSizes];
 double *sqlen = new double[maxdim+1];
 // sqlen = new double[maxdim];
-Int *sqlength;
+Int sqlength;
 
 // Run speed test for dim = dimensions[d], with given matrices.
 static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
