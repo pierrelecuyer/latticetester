@@ -139,7 +139,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     sumSq[0][d] += sqlen[0];
     std::cout << "After LLL 0.5:  sqlen[0] = " << sqlen[0] << "\n";
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
-    std::cout << "First basis vector: " << basis[0] << "\n";
+    std::cout << "First basis vector: " << basis2[0] << "\n";
     std::cout << "Square length of first basis vector: " << sqlength << "\n";
 
     // We continue the LLL process with a larger `delta`.
