@@ -131,7 +131,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
         IntMat &basisdual) {
     // We apply LLL to basis1 with different values of `delta`, incrementally.
     Int sqlength;
-    std::cout << "*** dim = " << dim << "\n";
+    std::cout << "\n ******** dim = " << dim << "\n";
 
     copy(basis1, basis2, dim, dim);
     tmp = clock();
@@ -242,7 +242,6 @@ static void testLoopNoResize(long numRep) {
             // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
             copy(korlat->getBasis(), basis1, dim, dim); // Triangular basis.
             transformBases(d, dim, basis1, basis2, basisdual);
-            std::cout << "sqlen[2] = " << sqlen[2] << "\n";
         }
     }
 }
