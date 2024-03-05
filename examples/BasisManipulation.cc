@@ -191,7 +191,8 @@ static void testLoopResize(long numRep) {
     totalTime = clock();
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
-        for (d = 0; d < numSizes; d++) {  // Each matrix size
+        for (d = 0; d < 2; d++) {  // Each matrix size
+        // for (d = 0; d < numSizes; d++) {  // Each matrix size
             dim = dimensions[d]; // The corresponding dimension.
             basis1.SetDims(dim, dim); // Will be initial triangular basis.
             basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
@@ -266,14 +267,14 @@ static void printResults() {
 }
 
 int main() {
-    long numRep = 3;  // Number of replications (multipliers) for each case.
+    long numRep = 2;  // Number of replications (multipliers) for each case.
     std::cout << "Types: " << strFlexTypes << "\n\n";
     std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
     testLoopNoResize(numRep);
     std::cout << "Results for `testLoop No Resize`\n";
     printResults();
-    testLoopResize(numRep);  // When I do this first, the "no resize"  does not work!
+    // testLoopResize(numRep);  // When I do this first, the "no resize"  does not work!
     std::cout << "Results for `testLoop Resize` (many objects are created or resized)\n";
     printResults();
 
