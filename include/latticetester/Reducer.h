@@ -205,11 +205,11 @@ public:
      * This method performs pairwise reduction sequentially on all vectors
      * of the basis whose indices are greater of equal to `dim >=0`,
      * as proposed in \cite rDIE75a.
-     * The boolean vector `xx[]` is used internally in Minkowski reduction only:
-     * when this vector is not `NULL`, `xx[j]=true' means that the j-th vector
+     * The boolean vector `taboo[]` is used internally in Minkowski reduction only:
+     * when this vector is not `NULL`, `taboo[j]=true' means that the j-th vector
      * should not be modified.
      */
-    void redDieter(int64_t dim, bool xx[] = NULL);
+    void redDieter(int64_t dim, bool taboo[] = NULL);
 
     /**
      * Same as `redDieter(dim)` but the choice of
@@ -264,17 +264,17 @@ public:
      * Here, the precision type is always `DOUBLE`.
      */
     static void redLLLNTL(IntMat &basis, double delta = 0.999999,
-            long dim = 0, double *sqlen = 0, PrecisionType precision = DOUBLE);
+            long r = 0, long c = 0, Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
 
     /**
-     * This implements an exact algorithm from NTL to perform the original LLL reduction.
+     * This static function implements an exact algorithm from NTL to perform the original LLL reduction.
      * This is slower than `redLLLNTL`, but more accurate.
      * There is also a static version which takes the basis as input.
      */
     // void redLLLNTLExact(double delta = 0.999999);
 
-    static void redLLLNTLExact(IntMat &basis, double delta =
-            0.999999);
+    static void redLLLNTLExact(IntMat &basis, double delta = 0.999999
+            long r = 0, long c = 0, Vec<double> *sqlen = 0);
 
     /**
      * This calls the NTL implementation of the floating point version of the
@@ -293,8 +293,8 @@ public:
     /**
      * A static version of the previous method.  The lattice basis is passed as a parameter.
      */
-    static void redBKZ(IntMat &basis, double delta = 0.999999,
-            int64_t blocksize = 10, long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
+    static void redBKZ(IntMat &basis, double delta = 0.999999, int64_t blocksize = 10,
+            long prune = 0, long r = 0, long c = 0, Vec<double> *sqlen = 0, PrecisionType prec = DOUBLE);
 
     /**
      * Returns the length of the current shortest basis vector in the lattice,
@@ -389,7 +389,7 @@ private:
      * branch-and-bound.
      */
     bool redBBMink(int64_t i, int64_t d, int64_t Stage, bool &smaller,
-            bool xx[] = NULL);
+            bool taboo[] = NULL);
 
     /**
      * Recursive procedure used in `redBBMink` to try find shorter vectors.
@@ -403,7 +403,7 @@ private:
      * adding to it a multiple of the \f$i\f$-th vector. Always uses the
      * Euclidean norm.
      */
-    void pairwiseRedPrimal(int64_t i, int64_t d, bool xx[] = NULL);
+    void pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[] = NULL);
 
     /**
      * Performs pairwise reductions, trying to reduce every other vector of
@@ -413,7 +413,7 @@ private:
      * length of vector \f$i\f$ in the primal basis. Always uses the
      * Euclidean norm.
      */
-    void pairwiseRedDual(int64_t i, bool xx[] = NULL);
+    void pairwiseRedDual(int64_t i, bool taboo[] = NULL);
 
     /**
      * Computes a Cholesky decomposition of the basis. Returns in `C0` the
@@ -726,6 +726,7 @@ inline void Reducer<Int, Real>::calculGramVD() {
     // Returns in m_gramVD the matrix of scalar products m_lat->V[i] * m_lat->V[j].
     // The vector m_lat->V.vecNorm contains only the values m_lat->V[i] * m_lat->V[i].
     // Used only by redLLLOld.
+    // %%%  Could easily be made static.
     const int64_t dim = m_lat->getDim();
     Int temp;
     for (int64_t i = 0; i < dim; i++) {
@@ -751,6 +752,7 @@ template<typename Int, typename Real>
 inline void Reducer<Int, Real>::miseAJourGramVD(int64_t j) {
     // Recalcule la j-ieme ligne et la j-ieme colonne de la matrice des
     // produits scalaires.  Used only in redLLLOld.
+    // %%%  Could easily be made static by passing the rows and gramVD as parameters.
     const int64_t dim = m_lat->getDim();
     for (int64_t i = 0; i < dim; i++) {
         NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
@@ -764,6 +766,7 @@ inline void Reducer<Int, Real>::miseAJourGramVD(int64_t j) {
 
 template<typename Int, typename Real>
 void Reducer<Int, Real>::permuteGramVD(int64_t i, int64_t j, int64_t n) {
+    // %%%  Could swap the rows directly.
     int64_t k;
     for (k = 0; k < n; k++) {
         std::swap(m_gramVD[i][k], m_gramVD[j][k]);
@@ -902,7 +905,7 @@ bool Reducer<Int, Real>::calculCholesky(RealVec &DC2, RealMat &C0) {
 //===========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool xx[]) {
+void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[]) {
     const int64_t dim = m_lat->getDim();
     ++m_countDieter;
     m_lat->updateScalL2Norm(i);
@@ -960,9 +963,9 @@ void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool xx[]) {
                 m_lat->setDualNegativeNorm(i);
 
             }
-            if (xx) {
-                xx[i] = false;
-                xx[j] = false;
+            if (taboo) {
+                taboo[i] = false;
+                taboo[j] = false;
             }
         }
     }
@@ -971,7 +974,7 @@ void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool xx[]) {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::pairwiseRedDual(int64_t i, bool xx[]) {
+void Reducer<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
     int64_t j;
     const int64_t dim = m_lat->getDim();
 
@@ -1004,8 +1007,8 @@ void Reducer<Int, Real>::pairwiseRedDual(int64_t i, bool xx[]) {
         for (j = 0; j < dim; j++)
             row6(j) = m_bv[j];
         m_lat->setNegativeNorm(i);
-        if (xx)
-            xx[i] = false;
+        if (taboo)
+            taboo[i] = false;
         m_lat->setVecNorm(m_ns, i);
         for (j = 0; j < dim; j++) {
             NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), j);
@@ -1016,8 +1019,8 @@ void Reducer<Int, Real>::pairwiseRedDual(int64_t i, bool xx[]) {
                 //  ModifVect (m_lat->getDualBasis ()[j], m_lat->getDualBasis ()[i],
                 //            m_bs, dim);
                 m_lat->setDualNegativeNorm(j);
-                if (xx)
-                    xx[j] = false;
+                if (taboo)
+                    taboo[j] = false;
             }
         }
     }
@@ -1026,7 +1029,7 @@ void Reducer<Int, Real>::pairwiseRedDual(int64_t i, bool xx[]) {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::redDieter(int64_t d, bool xx[]) {
+void Reducer<Int, Real>::redDieter(int64_t d, bool taboo[]) {
     std::int64_t BoundCount;
     const int64_t dim = m_lat->getDim();
     bool withDual = m_lat->withDual();
@@ -1038,9 +1041,9 @@ void Reducer<Int, Real>::redDieter(int64_t d, bool xx[]) {
     m_countDieter = 0;
     BoundCount = 2 * dim - d;
     do {
-        pairwiseRedPrimal(i, d, xx);
+        pairwiseRedPrimal(i, d, taboo);
         if (i > d && withDual)
-            pairwiseRedDual(i, xx);
+            pairwiseRedDual(i, taboo);
         if (i < 1)
             i = dim - 1;
         else
@@ -1413,7 +1416,7 @@ bool Reducer<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage,
 
 template<typename Int, typename Real>
 bool Reducer<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage,
-        bool &smaller, bool xx[]) {
+        bool &smaller, bool taboo[]) {
     /*
      * Tries to shorten m_lat->getBasis()[i] using branch-and-bound.
      * Used in Minkowski Reduction.
@@ -1426,7 +1429,7 @@ bool Reducer<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage,
     bool withDual = m_lat->withDual();
     const int64_t dim = m_lat->getDim();
     IntMat VTemp(dim, dim), WTemp(dim, dim);
-    bool XXTemp[dim];
+    bool TabooTemp[dim];
     Real tmp;
     smaller = false;
 
@@ -1470,7 +1473,7 @@ bool Reducer<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage,
             WTemp = m_lat->getDualBasis();
         }
         for (h = 0; h < dim; h++)
-            XXTemp[h] = true;
+            TabooTemp[h] = true;
         redLLLOld(1.0, 1000000, dim - 1);
         m_lat->updateVecNorm();
         if (withDual) {
@@ -1494,7 +1497,7 @@ bool Reducer<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage,
             m_lat->updateDualVecNorm();
         }
         for (h = 0; h < dim; h++)
-            xx[h] = XXTemp[h];
+            taboo[h] = TabooTemp[h];
     }
     if (smaller) {
         /* On a trouve un plus court vecteur.  On ameliore
@@ -1524,12 +1527,12 @@ bool Reducer<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage,
                 }
                 if (Stage == 2) {
                     if (h >= d)
-                        xx[h] = false;
+                        taboo[h] = false;
                 }
             }
         }
     } else if (Stage == 2)
-        xx[dim - 1] = true;
+        taboo[dim - 1] = true;
 
     m_lat->permute(i, dim - 1);
     // trace( "APRES redBBMink");
@@ -1823,17 +1826,17 @@ bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
     std::int64_t totalNodes = 0;
     bool found;
     bool smaller;      // A smaller vector has been found
-    bool xx[dim];      // xx[i]=true means that vector i should not be modified.
+    bool taboo[dim];   // taboo[i]=true means that vector i should not be modified.
 
     do {
         // The first d vectors should not be modified.
         for (i = 0; i < d; i++)
-            xx[i] = true;
+            taboo[i] = true;
         for (i = d; i < dim; i++)
-            xx[i] = false;
+            taboo[i] = false;
         found = false;
         do {
-            redDieter(d, xx);  // Not so good... should be changed to BKZ!
+            redDieter(d, taboo);  // Not very efficient...  Change to BKZ.
             m_lat->setNegativeNorm(d);
             m_lat->updateVecNorm(d);
             if (withDual) {
@@ -1844,9 +1847,9 @@ bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
             found = false;
 
             for (i = 0; i < dim; i++) {
-                if (!xx[i]) {
+                if (!taboo[i]) {
                     // On essaie de reduire le i-eme vecteur.
-                    if (!redBBMink(i, d, 2, smaller, xx))
+                    if (!redBBMink(i, d, 2, smaller, taboo))
                         return false;
                     totalNodes += m_countNodes;
                     if (smaller) {
@@ -1858,7 +1861,7 @@ bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
         // Stage 3
         if (dim > 7) {
             for (i = d; i < dim; i++) {
-                if (!redBBMink(i, d, 3, smaller, xx))
+                if (!redBBMink(i, d, 3, smaller, taboo))
                     return false;
                 totalNodes += m_countNodes;
                 if (smaller)
@@ -2101,6 +2104,13 @@ void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta, std::int64_t blocksize,
     IntLattice<NTL::ZZ>* lat = red->getIntLattice();
     redBKZ(lat->getBasis(), delta, blocksize, lat->getDim(), 0, precision);
 }
+
+
+// Static version, general.
+void redBKZ(IntMat &basis, double delta, int64_t blocksize,
+            long prune, long r, long c, Vec<double> *sqlen, PrecisionType prec);
+
+
 
 // Static version: specialization for Int = int64_t.
 template<typename Real>

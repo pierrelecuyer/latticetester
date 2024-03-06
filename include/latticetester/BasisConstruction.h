@@ -112,8 +112,7 @@ class BasisConstruction {
 private:
     typedef NTL::vector<Int> IntVec;
     typedef NTL::matrix<Int> IntMat;
-    // typedef NTL::matrix<int64_t> mat_long;
-    // typedef NTL::vector<int64_t> vec_long;
+
 public:
 
     /**
@@ -294,8 +293,6 @@ long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
     // long num = gen.NumRows();   // Number of generating vectors.
     int64_t rank = 0;
     if (precision == DOUBLE)    // & (c == 0) & (r == 0) & (sqlen == 0))
-        // *************
-        // This one needs to be replaced by FPInt, but there are still conflicts!!! ********
         // rank = LLL64_FP(gen, delta);
         rank = NTL::LLL_FPInt(gen, delta, r, c, sqlen);    //  TO DO !!!!
     else
@@ -311,8 +308,6 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
         double delta, long r, long c, double *sqlen, PrecisionType precision) {
     long rank = 0;
     if (precision == DOUBLE) {
-        // This function returns the nonzero vectors in the top rows of `gen`.
-        // It never resizes the matrix `gen`.                                    ***
         // return rank = NTL::LLL_FPZZflex(gen, delta, r, c, sqlen); // We are done!
         return rank = NTL::LLL_FPInt(gen, delta, r, c, sqlen); // We are done!
     }

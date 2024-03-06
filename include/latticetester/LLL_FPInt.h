@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <type_traits>
 
-#include "NTL/tools.h"
+#include <NTL/tools.h>
 #include <NTL/fileio.h>
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -60,12 +60,9 @@
 
 typedef NTL::vector<Int> IntVec;
 typedef NTL::matrix<Int> IntMat;
-typedef NTL::matrix<int64_t> matrix64;
 typedef NTL::vector<int64_t> vector64;
-//typedef NTL::matrix<NTL::ZZ> matrixZZ;
-//typedef NTL::vector<NTL::ZZ> vectorZZ;
 
-Int modulus64(1048573);
+// Int modulus64(1048573);  // To test if basis entries ever exceed the modulus.
 
 NTL_OPEN_NNS
 
@@ -83,7 +80,7 @@ NTL_OPEN_NNS
  */
 template<typename IntMat>
 static long LLL_FPInt(IntMat &B, double delta = 0.99, long r = 0, long c = 0,
-        double *sqlen = 0);
+        Vec<double>& sqlen = 0);
 
 /**
  * This function is similar to `BKZ_FP` in NTL, with the same modifications
@@ -91,7 +88,7 @@ static long LLL_FPInt(IntMat &B, double delta = 0.99, long r = 0, long c = 0,
  */
 template<typename IntMat>
 static long BKZ_FPInt(IntMat &BB, double delta = 0.99, long blocksize = 10,
-        long r = 0, long c = 0, double *sqlen = 0);
+        long prune = 0, long r = 0, long c = 0, Vec<double>& sqlen = 0);
 
 NTL_CLOSE_NNS
 
@@ -276,8 +273,8 @@ void RowTransform(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
         } else {
             for (i = 0; i < n; i++) {
                 MulSubFrom(A[i], B[i], mu1);
-                if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-                   std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
+                //if ((A[i] > modulus64) ||  (A[i] < -modulus64))
+                //   std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
             }
         }
     } else {
@@ -286,8 +283,8 @@ void RowTransform(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
             if (k > 0)
                 LeftShift(T, T, k);
             sub(A[i], A[i], T);
-            if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-               std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
+            // if ((A[i] > modulus64) ||  (A[i] < -modulus64))
+            //   std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
         }
     }
 }
@@ -494,8 +491,8 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
                         in_a[i] = 0;
                     }
                     MulSubFrom(A[i], B[i], mu1);
-                    if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-                       std::cout << "RowTransform: A[i] = " << A[i] << "\n";
+                    // if ((A[i] > modulus64) ||  (A[i] < -modulus64))
+                    //   std::cout << "RowTransform: A[i] = " << A[i] << "\n";
                 }
             }
         }
@@ -509,8 +506,8 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
             if (k > 0)
                 LeftShift(T, T, k);
             sub(A[i], A[i], T);
-            if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-               std::cout << "RowTransform: A[i] = " << A[i] << "\n";
+            // if ((A[i] > modulus64) ||  (A[i] < -modulus64))
+            //   std::cout << "RowTransform: A[i] = " << A[i] << "\n";
         }
     }
 }
@@ -842,7 +839,7 @@ static long ll_LLL_FP(IntMat &B, double delta, double **B1, double **mu,
 
 // The int64_t version.
 template<>
-int64_t ll_LLL_FP(matrix64 &B, double delta, double **B1, double **mu,
+int64_t ll_LLL_FP(matrix<int64_t> &B, double delta, double **B1, double **mu,
         double *b, double *c, int64_t m, int64_t n, int64_t init_k) {
     // init_k and k are one less compared with NTL.
     int64_t i, j, k, Fc1;
@@ -1363,7 +1360,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
 }
 
 template<typename IntMat>
-static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
+static long LLL_FPInt(IntMat &B, double delta, long m, long n, Vec<double>* sqlen) {
     if (m == 0)
         m = B.NumRows();
     if (n == 0)
@@ -1423,8 +1420,9 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, double *sqlen) {
         NTL::swap(B[0], B[imin]);
         std::swap(sqlen2[0], sqlen2[imin]);
     }
-    if (sqlen != 0) {
-        for (i = 0; i < new_m; i++)  sqlen[i] = sqlen2[i];
+    if (sqlen) {
+        if (sqlen->length() < new_m) sqlen->SetLength(new_m);
+        for (i = 0; i < new_m; i++)  (sqlen*)[i] = sqlen2[i];
     }
     // std::cout << "In LLL FPInt after the swaps:  ";
     // std::cout << "sqlen2[0] = " << sqlen2[0] << "\n";
@@ -1529,8 +1527,8 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
 }
 
 template<typename IntMat>
-static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
-        double *sqlen) {
+static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, long n,
+        Vec<double>* sqlen) {
     if (m == 0)
         m = BB.NumRows();
     if (n == 0)
@@ -1636,6 +1634,8 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
     if (m > 1) {
         if (beta > m)
             beta = m;
+        if (prune > 0)
+           ComputeBKZConstant(beta, prune);
         z = 0;
         jj = 0;
         while (z < m - 1) {
@@ -1646,6 +1646,8 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                 kk = beta - 1;
                 clean = 1;
             }
+            if (prune > 0)
+                ComputeBKZThresh(&c[jj], kk-jj+1);
             cbar = c[jj];
             utildavec[jj] = uvec[jj] = 1;
             yvec[jj] = vvec[jj] = 0;
@@ -1664,6 +1666,10 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
                         + (yvec[t] + utildavec[t]) * (yvec[t] + utildavec[t])
                                 * c[t];
                 ForceToMem(&ctilda[t]);  // prevents an infinite loop
+                if (prune > 0 && t > jj)
+                    eta = BKZThresh(t-jj);
+                else
+                    eta = 0;
                 if (ctilda[t] < cbar) {
                     if (t > jj) {
                         t--;
@@ -1817,8 +1823,9 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long m, long n,
         std::swap(b[1], b[imin]);
     }
     if (sqlen)
+        if (sqlen->length() < m) sqlen->SetLength(m);
         for (i = 0; i < m; i++)
-            sqlen[i] = b[i];
+            (sqlen*)[i] = b[i];
     return m;    // Number of rows in basis.
 }
 
