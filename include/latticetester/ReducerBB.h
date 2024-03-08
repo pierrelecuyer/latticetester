@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LATTICETESTER_REDUCER_H
-#define LATTICETESTER_REDUCER_H
+#ifndef LATTICETESTER_REDUCERBB_H
+#define LATTICETESTER_REDUCERBB_H
 
 #include "NTL/LLL.h"
 #include "NTL/tools.h"
@@ -29,6 +29,7 @@
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/NTLWrap.h"
 #include "latticetester/LLL_FPInt.h"
+#include "latticetester/LLL_RR_lt.h"
 
 #include <fstream>
 #include <sstream>
@@ -48,34 +49,13 @@
 namespace LatticeTester {
 
 /**
- * This `Reducer` class provides facilities to reduce the basis of a lattice
+ * This `ReducerBB` class provides facilities to reduce the basis of a lattice
  * (an `IntLattice` object) in various ways (pairwise, LLL, BKZ, Minkowski
  * \cite rDIE75a, \cite mLEN82a, \cite mSCH91a),
  * and to find a shortest nonzero vector in the lattice using a BB algorithm \cite rFIN85a.
  * Each `Reducer` must have an internal `IntLattice` object which is given upon construction
  * and can also be changed later via `setIntLattice`.
  * The reduction methods are applied to this internal object.
- *
- * Some of the lattice reduction methods are wrappers of the NTL methods described at
- * https://libntl.org/doc/LLL.cpp.html .
- * The methods are sometimes more efficient when `Int` is the `NTL::ZZ` type than the `int64_t` type.
- * For LLL, we have both an old and slow implementation in `redLLLOld` and the more efficient
- * implementations from NTL in `redLLLNTL` and `redLLLNTLExact`.
- * The method `redBKZ` is also a wrapper for the NTL algorithm for BKZ reduction.
- *
- * The NTL-wrapper methods for LLL and BKZ reductions have static versions,
- * which do not require the creation of a `Reducer` object.
- * Using them whenever possible is the most efficient approach.
- * These methods also have non-static version which basically apply the static methods
- * to the internal `IntLattice` object of this `Reducer`, and use no other internal variable.
- * All these methods always reduce the full basis contained in the `IntLattice` object
- * (they use the dimension of the `IntMat` object that contains the basis).
- * ****   Not always, see also below !!!!!   This part should be rewritten.   *****
- * They assume that `basis` is a square matrix that contains a set of independent vectors.
- * There is also a version of `redLLLNTL` that applies LLL only to the submatrix
- * that contains the first `dim` rows and columns of the given `basis` matrix.
- * This is convenient if one wants to apply LLL to several projections without
- * having to create a new `basis` object (or resize it) for each projection.
  *
  * The `shortestVector` and `reductMinkowski` methods do not apply any pre-reduction by themselves
  * Before calling them, one should always reduce the basis separately beforehand
@@ -102,7 +82,7 @@ namespace LatticeTester {
  */
 
 template<typename Int, typename Real>
-class Reducer {
+class ReducerBB {
 
 // using namespace LatticeTester;
 
@@ -119,31 +99,31 @@ public:
      * Constructor that initializes the reducer to work on the lattice `lat`.
      * The maximal dimension will be that of `lat`.
      */
-    Reducer(IntLattice<Int, Real> &lat);
+    ReducerBB(IntLattice<Int, Real> &lat);
 
     /**
-     * Constructor of a `Reducer` than can handle up to `maxDim` dimensions.
+     * Constructor of a `ReducerBB` than can handle up to `maxDim` dimensions.
      * Space will be reserved once for all for the internal `IntMat` objects such as
      * the Gram and Cholesky matrices. These same matrices will be re-used over and over
      * to avoid repeated space reallocation.
      */
-    Reducer(int64_t maxDim);
+    ReducerBB(int64_t maxDim);
 
     /**
      * Copy constructor.
      */
-    Reducer(const Reducer<Int, Real> &red);
+    ReducerBB(const ReducerBB<Int, Real> &red);
 
     /**
      * Destructor.
      */
-    ~Reducer();
+    ~ReducerBB();
 
     /**
      * Assignment operator that makes a deep copy of `red`
      * into the current object, using `copy`.
      */
-    Reducer<Int, Real>& operator=(const Reducer<Int, Real> &red);
+    ReducerBB<Int, Real>& operator=(const ReducerBB<Int, Real> &red);
 
     /**
      * Initializes all matrices used in the following
@@ -153,14 +133,14 @@ public:
     /**
      * Copies `red` into the current object.
      */
-    void copy(const Reducer<Int, Real> &red);
+    void copy(const ReducerBB<Int, Real> &red);
 
     /**
-     * Computes a shortest non-zero vector for the `IntLattice` stored in this `Reducer` object,
+     * Computes a shortest non-zero vector for the `IntLattice` stored in this `ReducerBB` object,
      * with respect to the norm in this `IntLattice`,
      * using the BB algorithm described in \cite rLEC97c and \cite iLEC22l.
      * The admissible norm types here are `L1NORM` and `L2NORM` (see `EnumTypes.h`).
-     * If the constant `Reducer::MaxNodesBB` (see below) is exceeded
+     * If the constant `ReducerBB::MaxNodesBB` (see below) is exceeded
      * during the branch-and-bound, the method aborts and returns
      * `false`. Otherwise, it returns `true`. If the reduction was
      * successful, the new reduced basis can be accessed via `getIntLattice()`.
@@ -176,9 +156,9 @@ public:
 
     /**
      * In this version, the lattice is passed as a parameter.
-     * It will become the new `IntLattice` of this `Reducer` object.
+     * It will become the new `IntLattice` of this `ReducerBB` object.
      * This method calls `setIntLattice(lat)`, so if the max dimension for the
-     * reducer is not large enough for `lat`, all the internal variables of this
+     * ReducerBB is not large enough for `lat`, all the internal variables of this
      * reducer will be reset and the vectors and matrices will be automatically enlarged.
      * In particular, the bounds set by `setBoundL2` will have to be reset.
      */
@@ -196,7 +176,7 @@ public:
 
     /**
      * In this version, the lattice is passed as a parameter.
-     * It will become the new `IntLattice` of this `Reducer` object,
+     * It will become the new `IntLattice` of this `ReducerBB` object,
      * exactly as in `shortestVector(IntLattice)`.
      */
     bool reductMinkowski(IntLattice<Int, Real> &lat, int64_t d = 0);
@@ -243,60 +223,6 @@ public:
             int64_t dim = 0);
 
     /**
-     * This is the NTL implementation of the floating point version of the
-     * LLL reduction algorithm presented in \cite mSCH91a.
-     * The factor `delta` has the same meaning as in `redLLLOld`.
-     * The parameter `precision` specifies the precision of the floating point numbers
-     * that the algorithm will use. `EnumTypes.h` provides a list of the possible values,
-     * and their description is done in the module `LLL` of NTL.
-     * The reduction is always applied to the entire basis (all vectors and coordinates).
-     */
-    // void redLLLNTL(double delta = 0.999999, PrecisionType precision = DOUBLE);
-
-    /**
-     * A static version of the same function for which the basis is passed as a parameter.
-     * In this version, when `dim > 0`, the reduction is applied only to the square submatrix
-     * comprised of the first `dim` rows and `dim` columns of the `basis` matrix, which is actually
-     * considered as the basis. The other rows and columns are ignored.
-     * This is useful if one wants to reuse the same `basis` object several times
-     * to pass lattice bases having different dimensions.
-     * When `dim = 0`, the number of columns of `gen` is used for the dimension.
-     * Here, the precision type is always `DOUBLE`.
-     */
-    static void redLLLNTL(IntMat &basis, double delta = 0.999999,
-            long r = 0, long c = 0, Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
-
-    /**
-     * This static function implements an exact algorithm from NTL to perform the original LLL reduction.
-     * This is slower than `redLLLNTL`, but more accurate.
-     * There is also a static version which takes the basis as input.
-     */
-    // void redLLLNTLExact(double delta = 0.999999);
-
-    static void redLLLNTLExact(IntMat &basis, double delta = 0.999999
-            long r = 0, long c = 0, Vec<double> *sqlen = 0);
-
-    /**
-     * This calls the NTL implementation of the floating point version of the
-     * BKZ reduction algorithm presented in \cite mSCH91a,
-     * with reduction factor `delta` and block size `blocksize`; see \cite iLEC22l.
-     * The factor `delta` has a similar meaning as in `redLLLOld`.
-     * The `precision` and `dim` parameters have the same meaning as in `redLLLNTL`.
-     * The parameter `blocksize` gives the size of the blocks in the BKZ
-     * reduction. Roughly, larger blocks means a stronger condition.
-     * A `blocksize` of 2 is equivalent to LLL reduction.
-     * There is also a static version that takes the lattice as input.
-     */
-//    void redBKZ(double delta = 0.999999, int64_t blocksize = 10,
-//            long dim=0, double *sqlen=0, PrecisionType prec = DOUBLE);
-
-    /**
-     * A static version of the previous method.  The lattice basis is passed as a parameter.
-     */
-    static void redBKZ(IntMat &basis, double delta = 0.999999, int64_t blocksize = 10,
-            long prune = 0, long r = 0, long c = 0, Vec<double> *sqlen = 0, PrecisionType prec = DOUBLE);
-
-    /**
      * Returns the length of the current shortest basis vector in the lattice,
      * which is stored in a local variable.
      * This depends only on the lattice, but this length is stored and used in this class.
@@ -338,7 +264,7 @@ public:
     /**
      * Sets the `IntLattice` object on which this object will be working.
      * If the dimension of this lattice is larger than the max dimension for
-     * this `Reducer`, the latter is increased and the `Reducer` is re-initialized
+     * this `ReducerBB`, the latter is increased and the `ReducerBB` is re-initialized
      * with new internal variables having the appropriate dimensions.
      */
     void setIntLattice(IntLattice<Int, Real> &lat) {
@@ -545,7 +471,7 @@ private:
      * They are used inside the basis reduction and short vector methods, and
      * are declared here to avoid passing them as parameters across the methods.
      * The matrices and vectors are sized to some maximum dimensions in init(),
-     * which must be large enough for all computations handled by this Reducer object.
+     * which must be large enough for all computations handled by this ReducerBB object.
      */
     int64_t m_maxDim, m_dim; // maximum dimension and current dimension.
     IntVec m_bv;   // Saves current shortest vector in primal basis
@@ -576,13 +502,13 @@ private:
     RealMat m_cho2, m_gramVD;  // Matrices used by redLLLOld.
 
 };
-// End class Reducer
+// End class ReducerBB
 
 //=========================================================================
 
 // Constructor for a given `IntLattice` object `lat`.
 template<typename Int, typename Real>
-Reducer<Int, Real>::Reducer(IntLattice<Int, Real> &lat) {
+ReducerBB<Int, Real>::ReducerBB(IntLattice<Int, Real> &lat) {
     m_lat = &lat;
     init(m_lat->getDim());
 }
@@ -591,7 +517,7 @@ Reducer<Int, Real>::Reducer(IntLattice<Int, Real> &lat) {
 
 // Constructor.
 template<typename Int, typename Real>
-Reducer<Int, Real>::Reducer(int64_t maxDim) {
+ReducerBB<Int, Real>::ReducerBB(int64_t maxDim) {
     init(maxDim);
 }
 
@@ -599,7 +525,7 @@ Reducer<Int, Real>::Reducer(int64_t maxDim) {
 
 // Initialization.
 template<typename Int, typename Real>
-void Reducer<Int, Real>::init(int64_t maxDim) {
+void ReducerBB<Int, Real>::init(int64_t maxDim) {
     m_maxDim = maxDim;
     int64_t dim1 = maxDim;
     int64_t dim2 = maxDim;
@@ -641,15 +567,15 @@ void Reducer<Int, Real>::init(int64_t maxDim) {
 //=========================================================================
 
 template<typename Int, typename Real>
-Reducer<Int, Real>::Reducer(const Reducer<Int, Real> &red) {
+ReducerBB<Int, Real>::ReducerBB(const ReducerBB<Int, Real> &red) {
     copy(red);
 }
 
 //=========================================================================
 
 template<typename Int, typename Real>
-Reducer<Int, Real>&
-Reducer<Int, Real>::operator=(const Reducer<Int, Real> &red) {
+ReducerBB<Int, Real>&
+ReducerBB<Int, Real>::operator=(const ReducerBB<Int, Real> &red) {
     if (this != &red)
         copy(red);
     return *this;
@@ -658,7 +584,7 @@ Reducer<Int, Real>::operator=(const Reducer<Int, Real> &red) {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::copy(const Reducer<Int, Real> &red) {
+void ReducerBB<Int, Real>::copy(const ReducerBB<Int, Real> &red) {
     m_lat = red.m_lat;
     m_maxDim = red.m_maxDim;
     m_c0 = red.m_c0;
@@ -692,7 +618,7 @@ void Reducer<Int, Real>::copy(const Reducer<Int, Real> &red) {
 //=========================================================================
 
 template<typename Int, typename Real>
-Reducer<Int, Real>::~Reducer() {
+ReducerBB<Int, Real>::~ReducerBB() {
     m_c0.clear();
     m_c2.clear();
     m_cho2.clear();
@@ -712,7 +638,7 @@ Reducer<Int, Real>::~Reducer() {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::setBoundL2(const RealVec &thresholds, int64_t dim1,
+void ReducerBB<Int, Real>::setBoundL2(const RealVec &thresholds, int64_t dim1,
         int64_t dim2) {
     m_BoundL2.resize(dim2);
     for (int64_t i = dim1; i < dim2; i++)
@@ -722,7 +648,7 @@ void Reducer<Int, Real>::setBoundL2(const RealVec &thresholds, int64_t dim1,
 //=========================================================================
 
 template<typename Int, typename Real>
-inline void Reducer<Int, Real>::calculGramVD() {
+inline void ReducerBB<Int, Real>::calculGramVD() {
     // Returns in m_gramVD the matrix of scalar products m_lat->V[i] * m_lat->V[j].
     // The vector m_lat->V.vecNorm contains only the values m_lat->V[i] * m_lat->V[i].
     // Used only by redLLLOld.
@@ -749,7 +675,7 @@ inline void Reducer<Int, Real>::calculGramVD() {
 //=========================================================================
 
 template<typename Int, typename Real>
-inline void Reducer<Int, Real>::miseAJourGramVD(int64_t j) {
+inline void ReducerBB<Int, Real>::miseAJourGramVD(int64_t j) {
     // Recalcule la j-ieme ligne et la j-ieme colonne de la matrice des
     // produits scalaires.  Used only in redLLLOld.
     // %%%  Could easily be made static by passing the rows and gramVD as parameters.
@@ -765,7 +691,7 @@ inline void Reducer<Int, Real>::miseAJourGramVD(int64_t j) {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::permuteGramVD(int64_t i, int64_t j, int64_t n) {
+void ReducerBB<Int, Real>::permuteGramVD(int64_t i, int64_t j, int64_t n) {
     // %%%  Could swap the rows directly.
     int64_t k;
     for (k = 0; k < n; k++) {
@@ -779,7 +705,7 @@ void Reducer<Int, Real>::permuteGramVD(int64_t i, int64_t j, int64_t n) {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::calculCholesky2LLL(int64_t n, int64_t j) {
+void ReducerBB<Int, Real>::calculCholesky2LLL(int64_t n, int64_t j) {
     // Recalcule les n premieres entrees de la colonne j de la matrice de
     // Cholesky d'ordre 2.   Pour redLLLOld.
     m_cho2[0][j] = m_gramVD[0][j];
@@ -794,7 +720,7 @@ void Reducer<Int, Real>::calculCholesky2LLL(int64_t n, int64_t j) {
 //=========================================================================
 
 template<typename Int, typename Real>
-inline void Reducer<Int, Real>::calculCholesky2Ele(int64_t i, int64_t j) {
+inline void ReducerBB<Int, Real>::calculCholesky2Ele(int64_t i, int64_t j) {
     // Recalcule l'entree [i][j] de la matrice de Cholesky d'ordre 2.
     // Used only by redLLLOld.
     m_cho2[i][j] = m_gramVD[i][j];
@@ -811,7 +737,7 @@ void negativeCholesky() {
 }
 
 template<typename Int, typename Real>
-bool Reducer<Int, Real>::calculCholesky(RealVec &DC2, RealMat &C0) {
+bool ReducerBB<Int, Real>::calculCholesky(RealVec &DC2, RealMat &C0) {
     /*
      * Returns in C0 the elements of the upper triangular matrix of the
      * Cholesky decomposition that are above the diagonal. Returns in DC2 the
@@ -905,7 +831,7 @@ bool Reducer<Int, Real>::calculCholesky(RealVec &DC2, RealMat &C0) {
 //===========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[]) {
+void ReducerBB<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[]) {
     const int64_t dim = m_lat->getDim();
     ++m_countDieter;
     m_lat->updateScalL2Norm(i);
@@ -974,7 +900,7 @@ void Reducer<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[]) {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
+void ReducerBB<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
     int64_t j;
     const int64_t dim = m_lat->getDim();
 
@@ -1029,7 +955,7 @@ void Reducer<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::redDieter(int64_t d, bool taboo[]) {
+void ReducerBB<Int, Real>::redDieter(int64_t d, bool taboo[]) {
     std::int64_t BoundCount;
     const int64_t dim = m_lat->getDim();
     bool withDual = m_lat->withDual();
@@ -1054,7 +980,7 @@ void Reducer<Int, Real>::redDieter(int64_t d, bool taboo[]) {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::redDieterRandomized(int64_t d, int64_t seed) {
+void ReducerBB<Int, Real>::redDieterRandomized(int64_t d, int64_t seed) {
     std::int64_t BoundCount;
     const int64_t dim = m_lat->getDim();
     bool withDual = m_lat->withDual();
@@ -1085,7 +1011,7 @@ void Reducer<Int, Real>::redDieterRandomized(int64_t d, int64_t seed) {
  * to the j-th vector. It updates the Gram-Schmidt matrix.
  */
 template<typename Int, typename Real>
-void Reducer<Int, Real>::reductionFaible(int64_t i, int64_t j) {
+void ReducerBB<Int, Real>::reductionFaible(int64_t i, int64_t j) {
     /*
      * Reduit la matrice de Cholesky (d'ordre 2) en ajoutant un multiple du
      * vecteur i au vecteur j, si possible.  Modifie le vecteur dual W_i en
@@ -1142,7 +1068,7 @@ void Reducer<Int, Real>::reductionFaible(int64_t i, int64_t j) {
 // =========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::transformStage3Mink(std::vector<std::int64_t> &z,
+void ReducerBB<Int, Real>::transformStage3Mink(std::vector<std::int64_t> &z,
         int64_t &k) {
     int64_t j, i;
     std::int64_t q;
@@ -1198,7 +1124,7 @@ void Reducer<Int, Real>::transformStage3Mink(std::vector<std::int64_t> &z,
  * the basis to get dim+1 generating vectors, and apply LLL to recover a new basis.
  */
 template<typename Int, typename Real>
-void Reducer<Int, Real>::transformStage3ShortVec(std::vector<std::int64_t> &z,
+void ReducerBB<Int, Real>::transformStage3ShortVec(std::vector<std::int64_t> &z,
         int64_t &k) {
     int64_t j, i;
     std::int64_t q;
@@ -1234,7 +1160,7 @@ void Reducer<Int, Real>::transformStage3ShortVec(std::vector<std::int64_t> &z,
 //=========================================================================
 
 template<typename Int, typename Real>
-bool Reducer<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage,
+bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage,
         bool &smaller, const IntMat &WTemp)
         // If m_countNodes > MaxNodesBB, returns false, otherwise returns true.
         {
@@ -1415,7 +1341,7 @@ bool Reducer<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage,
 //=========================================================================
 
 template<typename Int, typename Real>
-bool Reducer<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage,
+bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage,
         bool &smaller, bool taboo[]) {
     /*
      * Tries to shorten m_lat->getBasis()[i] using branch-and-bound.
@@ -1542,7 +1468,7 @@ bool Reducer<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage,
 //=========================================================================
 
 template<typename Int, typename Real>
-bool Reducer<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm) {
+bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm) {
     /*
      * This recursive procedure uses a lower-triangular matrix obtained either via the Cholesky
      * decomposition or by taking a lower-triangular basis. It works for the
@@ -1693,7 +1619,7 @@ bool Reducer<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm) {
 //=========================================================================
 
 template<typename Int, typename Real>
-bool Reducer<Int, Real>::redBBShortVec() {
+bool ReducerBB<Int, Real>::redBBShortVec() {
     /*
      * Finds shortest non-zero vector, using branch-and-bound, with L1 or L2 norm.
      * Stops and returns false if not finished after examining MaxNodesBB nodes in the
@@ -1819,7 +1745,7 @@ bool Reducer<Int, Real>::redBBShortVec() {
 
 // This works only for the L2 norm.
 template<typename Int, typename Real>
-bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
+bool ReducerBB<Int, Real>::reductMinkowski(int64_t d) {
     bool withDual = m_lat->withDual();
     const int64_t dim = m_lat->getDim();
     int64_t i;
@@ -1882,7 +1808,7 @@ bool Reducer<Int, Real>::reductMinkowski(int64_t d) {
 //=========================================================================
 
 template<typename Int, typename Real>
-void Reducer<Int, Real>::tracePrintBases(char *message) {
+void ReducerBB<Int, Real>::tracePrintBases(char *message) {
     std::cout << std::endl << "================================= " << message
             << std::endl;
     //std::cout << "dim = " << m_lat->getDim () << std::endl;
@@ -1898,7 +1824,7 @@ void Reducer<Int, Real>::tracePrintBases(char *message) {
 
 // Translation of our old LLL implementation from Modula-2 to C++. Rather slow.
 template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
+void ReducerBB<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
         int64_t Max) {
     // This is a C translation of the old implementation by R. Couture.
     // Effectue la pre-reduction de B au sens de Lenstra-Lenstra-Lovasz. N'utilise
@@ -1996,194 +1922,32 @@ void Reducer<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
 
 //=========================================================================
 
-/*
-// This is the general implementation.
 template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLNTL(double delta, PrecisionType precision) {
-    redLLLNTL(m_lat->getBasis(), delta, m_lat->getDim(), 0, precision);
-    //        m_lat->getVecNorm(), precision);
-    // MyExit(1, "redLLLNTL only works with integers.");
-}
-
-// A specialization for the case where Int = ZZ.
-template<typename Real>
-void redLLLNTL(Reducer<NTL::ZZ, Real> &red, double delta,
-        PrecisionType precision) {
-    IntLattice<NTL::ZZ>* lat = red.getIntLattice();
-    redLLLNTL(lat->getBasis(), delta, lat->getDim(), 0, precision);
-}
-*/
-
-// Static version: general.
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLNTL(IntMat &basis, double delta,
-        long dim, double *sqlen, PrecisionType precision) {
-    MyExit(1, "redLLLNTL: General version not implemented.\n");
-}
-
-// Static version: a specialization for the case where Int = int64_t.
-template<typename Real>
-void Reducer<Int, Real>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
-        long dim, double *sqlen, PrecisionType precision) {
-    if (precision == DOUBLE) {
-        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
-        // NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
-        return;
-    }
-    MyExit(1, "redLLLNTL: Int = int64_t with precision != DOUBLE.\n");
-}
-
-// Static version: a specialization for the case where Int = ZZ.
-// See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
-// about the `PrecisionType` choices.
-template<typename Real>
-void Reducer<Int, Real>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
-        long dim, double *sqlen, PrecisionType precision) {
-    if (precision == DOUBLE) {
-        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
-        NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
-        return;
-    }
-    // If precision is not DOUBLE, we are not allowed to specify dim;
-    // it is taken as the dimension of basis.
-    NTL::matrix<NTL::ZZ> cpbasis;
-    // if ((dim > 0) & (dim != basis.NumRows())) {
-        cpbasis.SetDims (dim, dim);
-        copy (basis, cpbasis, dim, dim);  // From Util
-    //} else
-    //    cpbasis = &basis;
-    switch (precision) {
-    case QUADRUPLE:
-        NTL::LLL_QP(cpbasis, delta);
-        break;
-    case XDOUBLE:
-        NTL::LLL_XD(cpbasis, delta);
-        break;
-    case RR:
-        NTL::LLL_RR(cpbasis, delta);
-        break;
-    default:
-        MyExit(1, "redLLLNTL: undefined PrecisionType.");
-    }
-    copy (cpbasis, basis, dim, dim);
-}
-
-//=========================================================================
-
-// Static version for the general case.
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redLLLNTLExact(IntMat &basis, double delta) {
-    MyExit(1, "redLLLNTLExact works only for Int = ZZ");
-}
-
-// Static version, for Int = ZZ.
-template<>
-void Reducer<Int, Real>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
-        double delta) {
-    NTL::ZZ det(0);
-    int64_t denum;
-    denum = round(1.0 / (1.0 - delta)); // We want (denum-1)/denum \approx delta.
-    NTL::LLL(det, basis, denum - 1, denum);
-}
-
-//=========================================================================
-
-/*
-// This is the general implementation, for anything else than ZZ.
-template<typename Int, typename Real>
-void Reducer<Int, Real>::redBKZ(double delta, std::int64_t blocksize,
-        long dim, double *sqlen, PrecisionType precision) {
-    redBKZ(m_lat.getBasis(), delta, blocksize, dim, sqlen, precision);
-    // MyExit(1, "redBKZ cannot be used with int64_t integers.");
-}
-
-// A specialization for the case where Int = ZZ.
-template<typename Real>
-void redBKZ(Reducer<NTL::ZZ, Real> &red, double delta, std::int64_t blocksize,
-        PrecisionType precision) {
-    IntLattice<NTL::ZZ>* lat = red->getIntLattice();
-    redBKZ(lat->getBasis(), delta, blocksize, lat->getDim(), 0, precision);
-}
-
-
-// Static version, general.
-void redBKZ(IntMat &basis, double delta, int64_t blocksize,
-            long prune, long r, long c, Vec<double> *sqlen, PrecisionType prec);
-
-
-
-// Static version: specialization for Int = int64_t.
-template<typename Real>
-void Reducer<int64_t, Real>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
-        std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
-    if (precision == DOUBLE) {
-        NTL::BKZ_FPInt(basis, delta, blocksize, dim, dim, sqlen);
-        return;
-    }
-    MyExit(1, "redBKZ: Int = int64_t with precision != DOUBLE.\n");
-}
-
-// Static version, for Int = ZZ.
-template<typename Real>
-void Reducer<NTL::ZZ, Real>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
-        std::int64_t blocksize, long dim, double *sqlen, PrecisionType precision) {
-    if (precision == DOUBLE) {
-        // NTL::LLL_FPZZflex(basis, delta, dim, dim, sqlen);
-        NTL::BKZ_FPInt(basis, delta, blocksize, dim, dim, sqlen);
-        return;
-    }
-    // If precision is not DOUBLE, dim is taken as the dimension of basis.
-    NTL::matrix<NTL::ZZ> cpbasis;
-    // if ((dim > 0) & (dim != basis.NumRows())) {
-        cpbasis.SetDims (dim, dim);
-        LatticeTester::copy (basis, cpbasis, dim, dim);  // From Util
-    //} else
-    //    cpbasis = &basis;
-    switch (precision) {
-    case QUADRUPLE:
-        NTL::BKZ_QP(cpbasis, delta, blocksize);
-        break;
-    case XDOUBLE:
-        NTL::BKZ_XD(cpbasis, delta, blocksize);
-        break;
-    case RR:
-        NTL::BKZ_RR(cpbasis, delta, blocksize);
-        break;
-    default:
-        MyExit(1, "Undefined precision type for redBKZ");
-    }
-    LatticeTester::copy (cpbasis, basis);
-}
-*/
-
-//=========================================================================
-
-template<typename Int, typename Real>
-bool Reducer<Int, Real>::reductMinkowski(IntLattice<Int, Real> &lat,
+bool ReducerBB<Int, Real>::reductMinkowski(IntLattice<Int, Real> &lat,
         int64_t d) {
     setIntLattice(lat);
-    return Reducer<Int, Real>::reductMinkowski(d);
+    return ReducerBB<Int, Real>::reductMinkowski(d);
 }
 
 //=========================================================================
 
 template<typename Int, typename Real>
-bool Reducer<Int, Real>::shortestVector() {
-    return Reducer<Int, Real>::redBBShortVec();
+bool ReducerBB<Int, Real>::shortestVector() {
+    return ReducerBB<Int, Real>::redBBShortVec();
 }
 
 template<typename Int, typename Real>
-bool Reducer<Int, Real>::shortestVector(IntLattice<Int, Real> &lat) {
+bool ReducerBB<Int, Real>::shortestVector(IntLattice<Int, Real> &lat) {
     setIntLattice(lat);
-    return Reducer<Int, Real>::redBBShortVec();
+    return ReducerBB<Int, Real>::redBBShortVec();
 }
 
 //============================================================================
 
-template class Reducer<std::int64_t, double> ;
-template class Reducer<NTL::ZZ, double> ;
-template class Reducer<std::int64_t, NTL::RR> ;
-template class Reducer<NTL::ZZ, NTL::RR> ;
+template class ReducerBB<std::int64_t, double> ;
+template class ReducerBB<NTL::ZZ, double> ;
+template class ReducerBB<std::int64_t, NTL::RR> ;
+template class ReducerBB<NTL::ZZ, NTL::RR> ;
 
 }     // namespace LatticeTester
 

@@ -32,29 +32,27 @@
 // #include <latticetester/NTLWrap.h>
 
 /**
- * This module contains a  modified version of the `LLL_FP` module of NTL.
- * With the modified functions, we can apply LLL or BKZ to a submatrix
+ * This module contains a modified version of the `LLL_FP` module of NTL.
+ * With the modified functions, the basis entries are in `Int`, which can be
+ * either `int64_t` or `ZZ`.  We can also apply LLL or BKZ only to a submatrix
  * (first `r` rows and `c` columns) of the matrix `B` that is passed in and returned.
  * The returned basis will have `c` columns and at most `max(r,c)` rows
  * (the rank of the basis matrix), so it may not occupy the entire space in `B`.
- * This is useful because with this flexibility, we can reserve a large block of
- * memory for the matrix `B` and reuse always the same block (the same object `B`)
+ * With this flexibility, we can reserve a large block of
+ * memory for the matrix `B` and reuse this same block (the same object `B`)
  * for thousands or millions of lattices that we want to analyze, even if the bases
  * have different dimensions.
  *
  * Another addition is the possibility to recover an array `sqlen` that gives the square
  * Euclidean lengths of the basis vectors, in `double`.
- * This array is maintained in the LLL functions of NTL,
+ * This array is maintained in the `LLL_FP` functions of NTL,
  * but it is hidden in the implementation and not accessible from outside.
- * Note that in `IntLattice`, these lengths are maintained in a `RealVec` object,
+ * In `IntLattice`, these lengths are maintained in a `RealVec` object,
  * which is not always an array of `double`, and the norm is not always the Euclidean one.
- * One has to be careful about that.
- *
- * In this class, some inner products are computed in RR, others in double. Check this.
- * This class does not use the Real type.                                 ***********
+ * One has to be careful about that. This class does not use the Real type.
  *
  * Each function returns the dimension of the computed basis (number of independent rows).
- * Important: This basis is always returned in the upper-left corner of the matrix `B`.
+ * This basis is always returned in the upper-left corner of the matrix `B`.
  * This differs from the `LLL_FP` functions, which returns the zero vectors at the top.
  */
 
@@ -213,7 +211,7 @@ template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n);
 
 /*
-// The int64_t case.
+// The int64_t case.  No longer used.
 template<>
 void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const long &MU1, long n) {
     register int64_t MU = MU1;
@@ -298,7 +296,7 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
         long &in_float);
 
 /*
-// The change is on the vector A.
+// This int64_t version is no longer used.
 template<>
 void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1, long n,
         double *a, double *b, long *in_a, double &max_a, double max_b,
@@ -514,7 +512,7 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
 
 // -------------------------------------------------------
 // A = A + B*MU  for the first n vector entries only.
-// The change is on the vector A.
+// The change is on the vector A.  This is used once in BKZ.
 template<typename IntVec, typename Int>
 static void RowTransformAdd(IntVec &A, IntVec &B, const Int &MU1, long n);
 

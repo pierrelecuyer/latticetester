@@ -28,11 +28,11 @@
 #include <NTL/ZZ.h>
 #include "latticetester/FlexTypes.h"    // This defines Int = int64_t
 #include "latticetester/EnumTypes.h"
-#include "latticetester/BasisConstruction.h"
 #include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
-//#include "latticetester/Reducer.h"
+#include "latticetester/BasisConstruction.h"
+//#include "latticetester/ReducerStatic.h"
 #include "latticetester/Coordinates.h"
 
 using namespace LatticeTester;
@@ -61,7 +61,8 @@ int main() {
     Rank1Lattice<Int, double> *korlat;
     korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, true);
     korlat->buildBasis(dim);
-    copy(korlat->getBasis(), basis1);  // This initial basis is triangular.
+    basis1 = korlat->getBasis();
+    // copy(korlat->getBasis(), basis1);  // This initial basis is triangular.
     std::cout << "Initial Korobov lattice basis = \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";

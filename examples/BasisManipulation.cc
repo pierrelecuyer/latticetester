@@ -94,11 +94,12 @@
 #include <NTL/ZZ.h>
 #include "latticetester/FlexTypes.h"    // This defines Int and Real
 #include "latticetester/EnumTypes.h"
-#include "latticetester/BasisConstruction.h"
 #include "latticetester/Util.h"
 #include "latticetester/Chrono.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
+#include "latticetester/BasisConstruction.h"
+#include "latticetester/ReducerStatic.h"
 // #include "latticetester/LLL_FPInt.h"
 
 using namespace LatticeTester;
@@ -133,9 +134,11 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     Int sqlength;
     std::cout << "\n ******** dim = " << dim << "\n";
 
-    copy(basis1, basis2, dim, dim);
+    // ****   Use CopyPartMat instead!
+    CopyPartMat (basis2, basis1, dim, dim);
+    //  copy(basis1, basis2, dim, dim);
     tmp = clock();
-    NTL::LLL_FPInt(basis2, 0.5, dim, dim, sqlen);
+    ReducerStatic<Int>::redLLLNTL(basis2, 0.5, dim, sqlen);
     // BasisConstruction<Int>::LLLConstruction0(basis2, 0.5, dim, dim, sqlen);
     timer[0][d] += clock() - tmp;
     sumSq[0][d] += sqlen[0];
@@ -147,7 +150,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     // We continue the LLL process with a larger `delta`.
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    NTL::LLL_FPInt(basis2, 0.9, dim, dim, sqlen);
+    ReducerStatic<Int>::redLLLNTL(basis2, 0.9, dim, sqlen);
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim, sqlen);
     timer[1][d] += clock() - tmp;
     sumSq[1][d] += sqlen[0];
@@ -157,7 +160,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
 
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim, sqlen);
+    ReducerStatic<Int>::redLLLNTL(basis2, 0.99999, dim, dim, sqlen);
     timer[2][d] += clock() - tmp;
     sumSq[2][d] += sqlen[0];
     std::cout << "After LLL 0.99999:  sqlen[0] = " << sqlen[0] << "\n";
@@ -207,7 +210,8 @@ static void testLoopResize(long numRep) {
             basisdual.SetDims(dim, dim);  // m-dual basis.
             korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, true);
             korlat->buildBasis(dim);
-            copy(korlat->getBasis(), basis1); // This initial basis is triangular.
+            basis1 = korlat->getBasis();
+           //  copy(korlat->getBasis(), basis1); // This initial basis is triangular.
             // Here this basis is a dim x dim IntMat object.
             // std::cout << " before transform \n ";
             transformBases(d, dim, basis1, basis2, basisdual);

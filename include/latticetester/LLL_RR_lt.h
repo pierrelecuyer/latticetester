@@ -27,37 +27,24 @@
 #include <NTL/vec_double.h>
 #include <NTL/ZZ.h>
 #include <NTL/LLL.h>
+
 #include <NTL/LLL_RR.cpp>
 
 #include <latticetester/Util.h>
 
 
 /**
- * This module contains a slight extension of `LLL_RR.cpp` from NTL.
- *
+ * This module is a slight modification of `LLL_RR.cpp` from NTL.
+ * The modifications are similar to those in `LLL_FPInt`.
  * With the modified functions, we can apply LLL or BKZ to a submatrix
  * (first `r` rows and `c` columns) of the matrix `B` that is passed in and returned.
  * The returned basis will have `c` columns and at most `max(r,c)` rows
  * (the rank of the basis matrix), so it may not occupy the entire space in `B`.
- * This is useful because with this flexibility, we can reserve a large block of
- * memory for the matrix `B` and reuse always the same block (the same object `B`)
- * for thousands or millions of lattices that we want to analyze, even if the bases
- * have different dimensions.
- *
- * Another addition is the possibility to recover an array `sqlen` that gives the square
- * Euclidean lengths of the basis vectors, in `double`.
- * This array is maintained in the LLL functions of NTL,
- * but it is hidden in the implementation and not accessible from outside.
- * Note that in `IntLattice`, these lengths are maintained in a `RealVec` object,
- * which is not always an array of `double`, and the norm is not always the Euclidean one.
- * One has to be careful about that.
- *
- * In this class, some inner products are computed in RR, others in double. Check this.
- * This class does not use the Real type.                                 ***********
- *
+ * We can also recover an array `sqlen` that gives the square
+ * Euclidean lengths of the basis vectors, either in `double` or `RR`.
  * Each function returns the dimension of the computed basis (number of independent rows).
  * Important: This basis is always returned in the upper-left corner of the matrix `B`.
- * This differs from the `LLL_FP` functions, which returns the zero vectors at the top.
+ * This differs from the `LLL_RR` functions, which returns the zero vectors at the top.
  */
 
 typedef NTL::vector<Int> IntVec;
@@ -75,8 +62,8 @@ NTL_OPEN_NNS
  * with the shortest basis vector always in the first row.
  * If `r=0`, then all the rows of the `IntMat` object are taken.
  * If `c=0`, then all the columns are taken.
- * The square lengths of the returned basis vectors are also returned in the
- * `double` vector `sqlen`,  in `sqlen[0],..., sqlen[d-1]`, if this vector given.
+ * The square lengths of the returned basis vectors are returned in the
+ * vector `sqlen` if this vector is given (nonzero).
  * The functions return the dimension of the computed basis (the number of independent rows).
  */
 static long LLL_RR_lt(mat_ZZ& B, const RR& delta = 0.99, long r = 0, long c = 0,
@@ -87,14 +74,13 @@ static long LLL_RR_lt(mat_ZZ &B, const double delta = 0.99, long r = 0, long c =
 
 /**
  * These two functions are wrappers of `BKZ_RR` in NTL, with the same modifications
- * as in LLL_RR_lt above.
+ * as in `LLL_RR_lt` above.
  */
-
 static long BKZ_RR_lt(mat_ZZ &BB, const RR& delta = 0.99, long blocksize = 10,
-        long r = 0, long c = 0, vec_RR* sqlen = 0);
+        long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
 static long BKZ_RR_lt(mat_ZZ &BB, const double delta = 0.99, long blocksize = 10,
-        long r = 0, long c = 0, Vec<double>* sqlen = 0);
+        long prune = 0, long r = 0, long c = 0, Vec<double>* sqlen = 0);
 
 
 NTL_CLOSE_NNS
@@ -170,7 +156,8 @@ long LLL_RR_lt(mat_ZZ& B, const double delta, long m, long n, Vec<double>* sqlen
 
 
 // This is for BKZ with RR.
-long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune, long m, long n, Vec<double>* sqlen) {
+long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
+        long m, long n, Vec<double>* sqlen) {
    NTL_TLS_GLOBAL_ACCESS(red_fudge);
    NTL_TLS_GLOBAL_ACCESS(BKZThresh);
 
@@ -460,7 +447,8 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune, long m, long 
 
 // Here, `delta` and `sqlen` are in `double`.  We need to create a `VecRR` each time
 // to call the other function.
-long BKZ_RR_lt(mat_ZZ& BB, const double delta, long beta, long prune, long m, long n, Vec<double>* sqlen) {
+long BKZ_RR_lt(mat_ZZ& BB, const double delta, long beta, long prune,
+         long m, long n, Vec<double>* sqlen) {
     vec_RR sqlenRR;
     sqlenRR.SetDims(m);
     RR Delta;

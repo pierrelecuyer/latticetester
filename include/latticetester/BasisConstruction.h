@@ -141,7 +141,7 @@ public:
      * explicitly beforehand to the set of generating vectors, or call the next method.
      */
     static long LLLConstruction0(IntMat &gen, double delta = 0.9, long r = 0,
-            long c = 0, double *sqlen = 0, PrecisionType precision = DOUBLE);
+            long c = 0, Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
 
     /**
      * Similar to `LLLConstruction0`, except that in case the set of generating
@@ -151,7 +151,7 @@ public:
      * than the lattice dimension.
      */
     static void LLLBasisConstruction(IntMat &gen, const Int &m, double delta =
-            0.9, long r = 0, long c = 0, double *sqlen = 0,
+            0.9, long r = 0, long c = 0, Vec<double> *sqlen = 0,
             PrecisionType precision = DOUBLE);
 
     /**
@@ -286,40 +286,28 @@ public:
 // Implementation
 
 // The int64_t implementation.
-// This one works only for r = c = 0 (that is, dim == maxDim) for now!
+// This one works only for `precision == DOUBLE`.
 template<>
 long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
-        double delta, long r, long c, double *sqlen, PrecisionType precision) {
+        double delta, long r, long c, Vec<double> *sqlen, PrecisionType precision) {
     // long num = gen.NumRows();   // Number of generating vectors.
-    int64_t rank = 0;
     if (precision == DOUBLE)    // & (c == 0) & (r == 0) & (sqlen == 0))
-        // rank = LLL64_FP(gen, delta);
-        rank = NTL::LLL_FPInt(gen, delta, r, c, sqlen);    //  TO DO !!!!
+        return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
     else
         std::cerr
-                << "LLLConstruction0 for int64_t: implemented only for precision=DOUBLE and c=r=0.\n";
-    // gen.SetDims(rank, gen.NumCols());  // Here, gen would be resized.
-    return rank;
+                << "LLLConstruction0 for int64_t: implemented only for precision=DOUBLE.\n";
+    abort();
 }
 
-// The ZZ implementation.  We can have `dim < maxDim` only if `precision == DOUBLE`.
+// The ZZ implementation.
 template<>
 long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
-        double delta, long r, long c, double *sqlen, PrecisionType precision) {
+        double delta, long r, long c, Vec<double> *sqlen, PrecisionType precision) {
     long rank = 0;
-    if (precision == DOUBLE) {
-        // return rank = NTL::LLL_FPZZflex(gen, delta, r, c, sqlen); // We are done!
-        return rank = NTL::LLL_FPInt(gen, delta, r, c, sqlen); // We are done!
-    }
-
-    // In other cases, we cannot use the flex version:
-    // If precision is not DOUBLE, we are not allowed to specify r or c
-    // with positive values that differ from the dimensions of the matrix gen.
-    //  ******   This needs to be changed!
-    if (((r > 0) & (r != gen.NumRows())) | (((c > 0) & (c != gen.NumCols()))))
-        std::cerr
-                << "LLLConstruction0: r and c params not allowed when precision != DOUBLE.\n";
     switch (precision) {
+    case DOUBLE:
+        return rank = NTL::LLL_FPInt(gen, delta, r, c, sqlen);
+        break;
     case QUADRUPLE:
         rank = NTL::LLL_QP(gen, delta);
         break;
@@ -327,7 +315,7 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
         rank = NTL::LLL_XD(gen, delta);
         break;
     case RR:
-        rank = NTL::LLL_RR(gen, delta);
+        return rank = NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
         break;
     default:
         std::cerr << "LLLConstruction0: unknown precision type.\n";
@@ -345,7 +333,7 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 
 template<typename Int>
 void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m,
-        double delta, long r, long c, double *sqlen, PrecisionType precision) {
+        double delta, long r, long c, Vec<double> *sqlen, PrecisionType precision) {
     int64_t rank = LLLConstruction0(gen, delta, r, c, sqlen, precision);
     if (!c)  // c == 0
         c = gen.NumCols();
