@@ -26,9 +26,8 @@
 #include <NTL/matrix.h>
 #include <NTL/vec_double.h>
 #include <NTL/ZZ.h>
+#include <NTL/mat_ZZ.h>
 #include <NTL/LLL.h>
-
-#include <NTL/LLL_RR.cpp>
 
 #include <latticetester/Util.h>
 
@@ -66,21 +65,22 @@ NTL_OPEN_NNS
  * vector `sqlen` if this vector is given (nonzero).
  * The functions return the dimension of the computed basis (the number of independent rows).
  */
-static long LLL_RR_lt(mat_ZZ& B, const RR& delta = 0.99, long r = 0, long c = 0,
+
+static long LLL_RR_lt(mat_ZZ& B, const RR& delta = conv<RR>(0.99999), long r = 0, long c = 0,
         vec_RR* sqlen = 0);
 
-static long LLL_RR_lt(mat_ZZ &B, const double delta = 0.99, long r = 0, long c = 0,
-        Vec<double}* sqlen = 0);
+static long LLL_RR_lt(mat_ZZ &B, const double delta = 0.99999, long r = 0, long c = 0,
+        NTL::Vec<double>* sqlen = NULL);
 
 /**
  * These two functions are wrappers of `BKZ_RR` in NTL, with the same modifications
  * as in `LLL_RR_lt` above.
  */
-static long BKZ_RR_lt(mat_ZZ &BB, const RR& delta = 0.99, long blocksize = 10,
-        long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
+static long BKZ_RR_lt(mat_ZZ &BB, const RR& delta = conv<RR>(0.99999), long blocksize = 10,
+        long prune = 0, long r = 0, long c = 0, NTL::vec_RR* sqlen = 0);
 
-static long BKZ_RR_lt(mat_ZZ &BB, const double delta = 0.99, long blocksize = 10,
-        long prune = 0, long r = 0, long c = 0, Vec<double>* sqlen = 0);
+static long BKZ_RR_lt(mat_ZZ &BB, const double delta = 0.99999, long blocksize = 10,
+        long prune = 0, long r = 0, long c = 0, NTL::Vec<double>* sqlen = 0);
 
 
 NTL_CLOSE_NNS
@@ -89,18 +89,43 @@ NTL_CLOSE_NNS
 
 NTL_START_IMPL
 
+NTL_TLS_GLOBAL_DECL(RR, red_fudge_RR)
+
+static NTL_CHEAP_THREAD_LOCAL long log_red_RR = 0;
+
+static void init_red_fudge_RR()
+{
+   NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);
+   log_red_RR = long(0.50*RR::precision());
+   power2(red_fudge_RR, -log_red_RR);
+}
+
+static void inc_red_fudge_RR()
+{
+   NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);
+   mul(red_fudge_RR, red_fudge_RR, 2);
+   log_red_RR--;
+   cerr << "LLL_RR: warning--relaxing reduction (" << log_red_RR << ")\n";
+   if (log_red_RR < 4)
+      ResourceError("LLL_RR: can not continue, log_red_RR < 4, ...sorry");
+}
+
+long ll_LLL_RR_lt(mat_ZZ& B, mat_ZZ* U, const RR& delta, long deep,
+           LLLCheckFct check, mat_RR& B1, mat_RR& mu,
+           vec_RR& b, vec_RR& c, long m, long init_k, long &quit);
+
 // Here, `delta` and `sqlen` are in `RR`, as in NTL.
-long LLL_RR_lt(mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen) {
+long LLL_RR_lt(NTL::mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen) {
        if (m == 0) m = B.NumRows();
        if (n == 0) n = B.NumCols();
-       long i, j;
+       long i, j, new_m, quit;
        RR s;
-       ZZ MU, T1
+       ZZ MU, T1;
        RR mu1, t1;
 
        NumSwaps = 0;
        if (delta < 0.50 || delta >= 1) LogicError("LLL_RR: bad delta");
-       init_red_fudge();
+       init_red_fudge_RR();
        mat_RR B1;  // approximates B
        B1.SetDims(m, n);
        mat_RR mu;
@@ -119,7 +144,8 @@ long LLL_RR_lt(mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen) {
        for (i = 0; i < m; i++) {
           InnerProduct(sqlen2[i], B1[i], B1[i]);
        }
-       long new_m = ll_LLL_RR(B, 0, delta, 0, 0, B1, mu, sqlen2, c, m, 1, 0);
+       new_m = ll_LLL_RR_lt(B, 0, delta, 0, 0, B1, mu, sqlen2, c, m, 1, quit);
+       // new_m = ll_LLL_RR(B, U, delta, deep, check, B1, mu, b, c, m, 1, quit);
 
        // In this version, we leave the zero rows at the bottom.
        // The new_m independent basis vectors will be at the top of `B`.
@@ -137,39 +163,46 @@ long LLL_RR_lt(mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen) {
        }
        if (sqlen) {
            if (sqlen->length() < new_m) sqlen->SetLength(new_m);
-           for (i = 0; i < new_m; i++)  (sqlen*)[i] = sqlen2[i];
+           for (i = 0; i < new_m; i++)  (*sqlen)[i] = sqlen2[i];
        }
        return new_m;
     }
 
 // Here, `delta` and `sqlen` are in `double`.  We need to create a `VecRR` each time
 // to call the other function.
-long LLL_RR_lt(mat_ZZ& B, const double delta, long m, long n, Vec<double>* sqlen) {
-    vec_RR sqlenRR;
-    sqlenRR.SetDims(m);
-    RR Delta;
-    conv(Delta, delta);
-    long new_m = LLL_RR_lt(B, Delta, m, n, sqlenRR);
-    if (sqlen) sqlen = conv<double> (sqlenRR);
+long LLL_RR_lt(mat_ZZ& B, const double delta, long m, long n, NTL::Vec<double>* sqlen) {
+    vec_RR* sqlenRR;
+    if (sqlen) (*sqlenRR).SetLength(m);
+    // RR Delta;
+    // conv(Delta, delta);
+    long new_m = LLL_RR_lt(B, conv<RR>(delta), m, n, sqlenRR);
+    if (sqlen) {
+        if (sqlen->length() < new_m) sqlen->SetLength(new_m);
+        for (int i = 0; i < new_m; i++)  (*sqlen)[i] = conv<double> ((*sqlenRR)[i]);
+    }
     return new_m;
 }
 
 
+
+NTL_TLS_GLOBAL_DECL(vec_RR, BKZConstant)
+NTL_TLS_GLOBAL_DECL(vec_RR, BKZThresh)
+
 // This is for BKZ with RR.
 long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
-        long m, long n, Vec<double>* sqlen) {
-   NTL_TLS_GLOBAL_ACCESS(red_fudge);
-   NTL_TLS_GLOBAL_ACCESS(BKZThresh);
+        long m, long n, NTL::Vec<double>* sqlen) {
 
-   if (m == 0) m = B.NumRows();
-   if (n == 0) n = B.NumCols();
+   NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);
+   NTL_TLS_GLOBAL_ACCESS(BKZThresh);
+   if (m == 0) m = BB.NumRows();
+   if (n == 0) n = BB.NumCols();
    long m_orig = m;
    long i, j;
    ZZ MU;
    RR t1, t2;
    ZZ T1;
 
-   init_red_fudge();
+   init_red_fudge_RR();
    mat_ZZ B;
    B = BB;
    B.SetDims(m+1, n);
@@ -220,7 +253,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
    for (i = 0; i < m; i++) {
       InnerProduct(b[i], B1[i], B1[i]);
    }
-   m = ll_LLL_RR(B, 0, delta, 0, 0, B1, mu, b, c, m, 1, quit);
+   m = ll_LLL_RR_lt(B, 0, delta, 0, 0, B1, mu, b, c, m, 1, quit);
 
    double tt;
    double enum_time = 0;
@@ -325,7 +358,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
          }
          NumIterations++;
          h = min(kk+1, m);
-         mul(t1, red_fudge, -8);
+         mul(t1, red_fudge_RR, -8);
          add(t1, t1, delta);
          mul(t1, t1, c(jj));
          if (t1 > cbar) {
@@ -352,7 +385,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
                   swap(B1(i-1), B1(i));
                   swap(b(i-1), b(i));
                }
-               new_m = ll_LLL_RR(B, 0, delta, 0, 0,
+               new_m = ll_LLL_RR_lt(B, 0, delta, 0, 0,
                                  B1, mu, b, c, h, jj, quit);
                if (new_m != h) LogicError("BKZ_RR: internal error");
                if (quit) break;
@@ -379,7 +412,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
 
                // remove linear dependencies
                // cerr << "general case\n";
-               new_m = ll_LLL_RR(B, 0, delta, 0, 0, B1, mu, b, c, kk+1, jj, quit);
+               new_m = ll_LLL_RR_lt(B, 0, delta, 0, 0, B1, mu, b, c, kk+1, jj, quit);
                if (new_m != kk) LogicError("BKZ_RR: internal error");
 
                // remove zero vector
@@ -400,7 +433,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
                if (quit) break;
                if (h > kk) {
                   // extend reduced basis
-                  new_m = ll_LLL_RR(B, 0, delta, 0, 0,
+                  new_m = ll_LLL_RR_lt(B, 0, delta, 0, 0,
                                    B1, mu, b, c, h, h, quit);
                   if (new_m != h) LogicError("BKZ_RR: internal error");
                   if (quit) break;
@@ -412,7 +445,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
             NumNoOps++;
             if (!clean) {
                new_m =
-                  ll_LLL_RR(B, 0, delta, 0, 0, B1, mu, b, c, h, h, quit);
+                  ll_LLL_RR_lt(B, 0, delta, 0, 0, B1, mu, b, c, h, h, quit);
                if (new_m != h) LogicError("BKZ_RR: internal error");
                if (quit) break;
             }
@@ -448,14 +481,601 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
 // Here, `delta` and `sqlen` are in `double`.  We need to create a `VecRR` each time
 // to call the other function.
 long BKZ_RR_lt(mat_ZZ& BB, const double delta, long beta, long prune,
-         long m, long n, Vec<double>* sqlen) {
+         long m, long n, NTL::Vec<double>& sqlen) {
     vec_RR sqlenRR;
-    sqlenRR.SetDims(m);
-    RR Delta;
-    conv(Delta, delta);
-    long new_m = BKZ_RR_lt(BB, Delta, beta, prune, m, n, sqlenRR);
-    if (sqlen) sqlen = conv<double> (sqlenRR);
+    if (sqlen) sqlenRR.SetDims(m);
+    // RR Delta;
+    // conv(Delta, delta);
+    long new_m = BKZ_RR_lt(BB, conv<RR>(delta), beta, prune, m, n, sqlenRR);
+    if (sqlen) {
+        if (sqlen.length() < new_m) sqlen.SetLength(new_m);
+        for (int i = 0; i < new_m; i++)  sqlen[i] = conv<double> (sqlenRR[i]);
+    }
     return new_m;
+}
+
+// ===========================================================================
+
+// Copied from NTL::LLL_RR
+
+// NTL_START_IMPL
+
+
+static void RowTransform(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1)
+// x = x - y*MU
+{
+   NTL_ZZRegister(T);
+   NTL_ZZRegister(MU);
+   long k;
+
+   long n = A.length();
+   long i;
+
+   MU = MU1;
+
+   if (MU == 1) {
+      for (i = 1; i <= n; i++)
+         sub(A(i), A(i), B(i));
+
+      return;
+   }
+
+   if (MU == -1) {
+      for (i = 1; i <= n; i++)
+         add(A(i), A(i), B(i));
+
+      return;
+   }
+
+   if (MU == 0) return;
+
+   if (NumTwos(MU) >= NTL_ZZ_NBITS)
+      k = MakeOdd(MU);
+   else
+      k = 0;
+
+
+   if (MU.WideSinglePrecision()) {
+      long mu1;
+      conv(mu1, MU);
+
+      for (i = 1; i <= n; i++) {
+         mul(T, B(i), mu1);
+         if (k > 0) LeftShift(T, T, k);
+         sub(A(i), A(i), T);
+      }
+   }
+   else {
+      for (i = 1; i <= n; i++) {
+         mul(T, B(i), MU);
+         if (k > 0) LeftShift(T, T, k);
+         sub(A(i), A(i), T);
+      }
+   }
+}
+
+static void RowTransform2(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1)
+// x = x + y*MU
+{
+   NTL_ZZRegister(T);
+   NTL_ZZRegister(MU);
+   long k;
+
+   long n = A.length();
+   long i;
+
+   MU = MU1;
+
+   if (MU == 1) {
+      for (i = 1; i <= n; i++)
+         add(A(i), A(i), B(i));
+
+      return;
+   }
+
+   if (MU == -1) {
+      for (i = 1; i <= n; i++)
+         sub(A(i), A(i), B(i));
+
+      return;
+   }
+
+   if (MU == 0) return;
+
+   if (NumTwos(MU) >= NTL_ZZ_NBITS)
+      k = MakeOdd(MU);
+   else
+      k = 0;
+
+   if (MU.WideSinglePrecision()) {
+      long mu1;
+      conv(mu1, MU);
+
+      for (i = 1; i <= n; i++) {
+         mul(T, B(i), mu1);
+         if (k > 0) LeftShift(T, T, k);
+         add(A(i), A(i), T);
+      }
+   }
+   else {
+      for (i = 1; i <= n; i++) {
+         mul(T, B(i), MU);
+         if (k > 0) LeftShift(T, T, k);
+         add(A(i), A(i), T);
+      }
+   }
+}
+
+void ComputeGS(const mat_ZZ& B, mat_RR& B1,
+               mat_RR& mu, vec_RR& b,
+               vec_RR& c, long k, const RR& bound, long st,
+               vec_RR& buf, const RR& bound2)
+{
+   long i, j;
+   RR s, t, t1;
+   ZZ T1;
+
+   if (st < k) {
+      for (i = 1; i < st; i++)
+         mul(buf(i), mu(k,i), c(i));
+   }
+
+   for (j = st; j <= k-1; j++) {
+      InnerProduct(s, B1(k), B1(j));
+
+      sqr(t1, s);
+      mul(t1, t1, bound);
+      mul(t, b(k), b(j));
+
+      if (t >= bound2 && t >= t1) {
+         InnerProduct(T1, B(k), B(j));
+         conv(s, T1);
+      }
+
+      clear(t1);
+      for (i = 1; i <= j-1; i++) {
+         mul(t, mu(j, i), buf(i));
+         add(t1, t1, t);
+      }
+
+      sub(t, s, t1);
+      buf(j) = t;
+      div(mu(k, j), t, c(j));
+   }
+
+
+   clear(s);
+   for (j = 1; j <= k-1; j++) {
+      mul(t, mu(k, j), buf(j));
+      add(s, s, t);
+   }
+
+   sub(c(k), b(k), s);
+}
+
+
+static NTL_CHEAP_THREAD_LOCAL long verbose = 0;
+static NTL_CHEAP_THREAD_LOCAL unsigned long NumSwaps = 0;
+static NTL_CHEAP_THREAD_LOCAL double StartTime = 0;
+static NTL_CHEAP_THREAD_LOCAL double LastTime = 0;
+
+
+
+static void LLLStatus(long max_k, double t, long m, const mat_ZZ& B)
+{
+   cerr << "---- LLL_RR status ----\n";
+   cerr << "elapsed time: ";
+   PrintTime(cerr, t-StartTime);
+   cerr << ", stage: " << max_k;
+   cerr << ", rank: " << m;
+   cerr << ", swaps: " << NumSwaps << "\n";
+
+   ZZ t1;
+   long i;
+   double prodlen = 0;
+
+   for (i = 1; i <= m; i++) {
+      InnerProduct(t1, B(i), B(i));
+      if (!IsZero(t1))
+         prodlen += log(t1);
+   }
+
+   cerr << "log of prod of lengths: " << prodlen/(2.0*log(2.0)) << "\n";
+
+   if (LLLDumpFile64) {
+      cerr << "dumping to " << LLLDumpFile64 << "...";
+
+      ofstream f;
+      OpenWrite(f, LLLDumpFile64);
+
+      f << "[";
+      for (i = 1; i <= m; i++) {
+         f << B(i) << "\n";
+      }
+      f << "]\n";
+
+      f.close();
+
+      cerr << "\n";
+   }
+   LastTime = t;
+}
+
+
+static
+long ll_LLL_RR_lt(mat_ZZ& B, mat_ZZ* U, const RR& delta, long deep,
+           LLLCheckFct check, mat_RR& B1, mat_RR& mu,
+           vec_RR& b, vec_RR& c, long m, long init_k, long &quit) {
+   NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);
+
+   long n = B.NumCols();
+
+   long i, j, k, Fc1;
+   ZZ MU;
+   RR mu1, t1, t2, cc;
+   ZZ T1;
+
+   RR bound;
+
+      // we tolerate a 15% loss of precision in computing
+      // inner products in ComputeGS.
+
+   power2(bound, 2*long(0.15*RR::precision()));
+
+
+   RR bound2;
+
+   power2(bound2, 2*RR::precision());
+
+
+   quit = 0;
+   k = init_k;
+
+   vec_long st_mem;
+   st_mem.SetLength(m+2);
+   long *st = st_mem.elts();
+
+   for (i = 1; i < k; i++)
+      st[i] = i;
+
+   for (i = k; i <= m+1; i++)
+      st[i] = 1;
+
+   vec_RR buf;
+   buf.SetLength(m);
+
+   long rst;
+   long counter;
+
+   long trigger_index;
+   long small_trigger;
+   long cnt;
+
+   RR half;
+   conv(half,  0.5);
+   RR half_plus_fudge;
+   add(half_plus_fudge, half, red_fudge_RR);
+
+   long max_k = 0;
+   double tt;
+
+   while (k <= m) {
+
+      if (k > max_k) {
+         max_k = k;
+      }
+
+      if (verbose) {
+         tt = GetTime();
+
+         if (tt > LastTime + LLLStatusInterval64)
+            LLLStatus(max_k, tt, m, B);
+      }
+
+
+      if (st[k] == k)
+         rst = 1;
+      else
+         rst = k;
+
+      if (st[k] < st[k+1]) st[k+1] = st[k];
+      ComputeGS(B, B1, mu, b, c, k, bound, st[k], buf, bound2);
+      st[k] = k;
+
+      counter = 0;
+      trigger_index = k;
+      small_trigger = 0;
+      cnt = 0;
+
+      do {
+         // size reduction
+
+         counter++;
+         if (counter > 10000) {
+            cerr << "LLL_XD: warning--possible infinite loop\n";
+            counter = 0;
+         }
+
+
+         Fc1 = 0;
+
+         for (j = rst-1; j >= 1; j--) {
+            abs(t1, mu(k,j));
+            if (t1 > half_plus_fudge) {
+
+               if (!Fc1) {
+                  if (j > trigger_index ||
+                      (j == trigger_index && small_trigger)) {
+
+                     cnt++;
+
+                     if (cnt > 10) {
+                        inc_red_fudge_RR();
+                        add(half_plus_fudge, half, red_fudge_RR);
+                        cnt = 0;
+                     }
+                  }
+
+                  trigger_index = j;
+                  small_trigger = (t1 < 4);
+               }
+
+               Fc1 = 1;
+
+               mu1 = mu(k,j);
+               if (sign(mu1) >= 0) {
+                  sub(mu1, mu1, half);
+                  ceil(mu1, mu1);
+               }
+               else {
+                  add(mu1, mu1, half);
+                  floor(mu1, mu1);
+               }
+
+               if (mu1 == 1) {
+                  for (i = 1; i <= j-1; i++)
+                     sub(mu(k,i), mu(k,i), mu(j,i));
+               }
+               else if (mu1 == -1) {
+                  for (i = 1; i <= j-1; i++)
+                     add(mu(k,i), mu(k,i), mu(j,i));
+               }
+               else {
+                  for (i = 1; i <= j-1; i++) {
+                     mul(t2, mu1, mu(j,i));
+                     sub(mu(k,i), mu(k,i), t2);
+                  }
+               }
+
+
+               conv(MU, mu1);
+
+               sub(mu(k,j), mu(k,j), mu1);
+
+               RowTransform(B(k), B(j), MU);
+               if (U) RowTransform((*U)(k), (*U)(j), MU);
+            }
+         }
+
+         if (Fc1) {
+            for (i = 1; i <= n; i++)
+               conv(B1(k, i), B(k, i));
+
+            InnerProduct(b(k), B1(k), B1(k));
+            ComputeGS(B, B1, mu, b, c, k, bound, 1, buf, bound2);
+         }
+      } while (Fc1);
+
+      if (check && (*check)(B(k)))
+         quit = 1;
+
+      if (IsZero(b(k))) {
+         for (i = k; i < m; i++) {
+            // swap i, i+1
+            swap(B(i), B(i+1));
+            swap(B1(i), B1(i+1));
+            swap(b(i), b(i+1));
+            if (U) swap((*U)(i), (*U)(i+1));
+         }
+
+         for (i = k; i <= m+1; i++) st[i] = 1;
+
+         m--;
+         if (quit) break;
+         continue;
+      }
+
+      if (quit) break;
+
+      if (deep > 0) {
+         // deep insertions
+
+         cc = b(k);
+         long l = 1;
+         while (l <= k-1) {
+            mul(t1, delta, c(l));
+            if (t1 > cc) break;
+            sqr(t1, mu(k,l));
+            mul(t1, t1, c(l));
+            sub(cc, cc, t1);
+            l++;
+         }
+
+         if (l <= k-1 && (l <= deep || k-l <= deep)) {
+            // deep insertion at position l
+
+            for (i = k; i > l; i--) {
+               // swap rows i, i-1
+               swap(B(i), B(i-1));
+               swap(B1(i), B1(i-1));
+               swap(mu(i), mu(i-1));
+               swap(b(i), b(i-1));
+               if (U) swap((*U)(i), (*U)(i-1));
+            }
+
+            k = l;
+            continue;
+         }
+      } // end deep insertions
+
+      // test LLL reduction condition
+
+      if (k <= 1) {
+         k++;
+      }
+      else {
+         sqr(t1, mu(k,k-1));
+         mul(t1, t1, c(k-1));
+         add(t1, t1, c(k));
+         mul(t2, delta, c(k-1));
+         if (t2 > t1) {
+            // swap rows k, k-1
+            swap(B(k), B(k-1));
+            swap(B1(k), B1(k-1));
+            swap(mu(k), mu(k-1));
+            swap(b(k), b(k-1));
+            if (U) swap((*U)(k), (*U)(k-1));
+
+            k--;
+            NumSwaps++;
+         }
+         else {
+            k++;
+         }
+      }
+   }
+
+   if (verbose) {
+      LLLStatus(m+1, GetTime(), m, B);
+   }
+
+
+   return m;
+}
+
+
+static
+void ComputeBKZConstant(long beta, long p)
+{
+   NTL_TLS_GLOBAL_ACCESS(BKZConstant);
+
+   RR c_PI;
+   ComputePi(c_PI);
+
+   RR LogPI = log(c_PI);
+
+   BKZConstant.SetLength(beta-1);
+
+   vec_RR Log;
+   Log.SetLength(beta);
+
+
+   long i, j, k;
+   RR x, y;
+
+   for (j = 1; j <= beta; j++)
+      Log(j) = log(to_RR(j));
+
+   for (i = 1; i <= beta-1; i++) {
+      // First, we compute x = gamma(i/2)^{2/i}
+
+      k = i/2;
+
+      if ((i & 1) == 0) { // i even
+         x = 0;
+         for (j = 1; j <= k; j++)
+            x += Log(j);
+
+         x = exp(x/k);
+
+      }
+      else { // i odd
+         x = 0;
+         for (j = k + 2; j <= 2*k + 2; j++)
+            x += Log(j);
+
+         x += 0.5*LogPI - 2*(k+1)*Log(2);
+
+         x = exp(2*x/i);
+      }
+
+      // Second, we compute y = 2^{2*p/i}
+
+      y = exp(-(2*p/to_RR(i))*Log(2));
+
+      BKZConstant(i) = x*y/c_PI;
+   }
+
+}
+
+static
+void ComputeBKZThresh(RR *c, long beta)
+{
+   NTL_TLS_GLOBAL_ACCESS(BKZConstant);
+   NTL_TLS_GLOBAL_ACCESS(BKZThresh);
+
+   BKZThresh.SetLength(beta-1);
+
+   long i;
+   RR x;
+   RR t1;
+
+   x = 0;
+
+   for (i = 1; i <= beta-1; i++) {
+      log(t1, c[i-1]);
+      add(x, x, t1);
+      div(t1, x, i);
+      exp(t1, t1);
+      mul(BKZThresh(i), t1, BKZConstant(i));
+   }
+}
+
+
+static
+void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
+               unsigned long NumTrivial, unsigned long NumNonTrivial,
+               unsigned long NumNoOps, long m,
+               const mat_ZZ& B)
+{
+   cerr << "---- BKZ_RR status ----\n";
+   cerr << "elapsed time: ";
+   PrintTime(cerr, tt-StartTime);
+   cerr << ", enum time: ";
+   PrintTime(cerr, enum_time);
+   cerr << ", iter: " << NumIterations << "\n";
+   cerr << "triv: " << NumTrivial;
+   cerr << ", nontriv: " << NumNonTrivial;
+   cerr << ", no ops: " << NumNoOps;
+   cerr << ", rank: " << m;
+   cerr << ", swaps: " << NumSwaps << "\n";
+   ZZ t1;
+   long i;
+   double prodlen = 0;
+
+   for (i = 1; i <= m; i++) {
+      InnerProduct(t1, B(i), B(i));
+      if (!IsZero(t1))
+         prodlen += log(t1);
+   }
+   cerr << "log of prod of lengths: " << prodlen/(2.0*log(2.0)) << "\n";
+
+   if (LLLDumpFile64) {
+      cerr << "dumping to " << LLLDumpFile64 << "...";
+
+      ofstream f;
+      OpenWrite(f, LLLDumpFile64);
+
+      f << "[";
+      for (i = 1; i <= m; i++) {
+         f << B(i) << "\n";
+      }
+      f << "]\n";
+
+      f.close();
+      cerr << "\n";
+   }
+   LastTime = tt;
 }
 
 

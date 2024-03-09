@@ -1420,7 +1420,7 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, Vec<double>* sqle
     }
     if (sqlen) {
         if (sqlen->length() < new_m) sqlen->SetLength(new_m);
-        for (i = 0; i < new_m; i++)  (sqlen*)[i] = sqlen2[i];
+        for (i = 0; i < new_m; i++)  sqlen[i] = sqlen2[i];
     }
     // std::cout << "In LLL FPInt after the swaps:  ";
     // std::cout << "sqlen2[0] = " << sqlen2[0] << "\n";
@@ -1615,7 +1615,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, l
     }
     m = ll_LLL_FP(B, delta, B1, mu, b, c, m, n, 0);
 
-    double tt;
+    // double tt;
     double enum_time = 0;
     unsigned long NumIterations = 0;
     unsigned long NumTrivial = 0;
@@ -1658,7 +1658,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, l
                 vvec[i] = 0;
                 deltavec[i] = 1;
             }
-            long enum_cnt = 0;
+            // long enum_cnt = 0;
             while (t <= kk) {
                 ctilda[t] = ctilda[t + 1]
                         + (yvec[t] + utildavec[t]) * (yvec[t] + utildavec[t])
@@ -1820,10 +1820,11 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, l
         swap(BB[0], BB[imin]);
         std::swap(b[1], b[imin]);
     }
-    if (sqlen)
+    if (sqlen) {
         if (sqlen->length() < m) sqlen->SetLength(m);
         for (i = 0; i < m; i++)
-            (sqlen*)[i] = b[i];
+            sqlen[i] = b[i];
+    }
     return m;    // Number of rows in basis.
 }
 

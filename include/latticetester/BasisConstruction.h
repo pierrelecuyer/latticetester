@@ -29,6 +29,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstdint>
+#include <cassert>
 #include <type_traits>
 
 #include "NTL/tools.h"
@@ -45,6 +46,7 @@
 #include "latticetester/LLL64.h"
 // #include "latticetester/LLL_FPZZflex.h"
 #include "latticetester/LLL_FPInt.h"
+#include "latticetester/LLL_RR_lt.h"
 
 namespace LatticeTester {
 
@@ -141,7 +143,7 @@ public:
      * explicitly beforehand to the set of generating vectors, or call the next method.
      */
     static long LLLConstruction0(IntMat &gen, double delta = 0.9, long r = 0,
-            long c = 0, Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
+            long c = 0, NTL::Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
 
     /**
      * Similar to `LLLConstruction0`, except that in case the set of generating
@@ -151,7 +153,7 @@ public:
      * than the lattice dimension.
      */
     static void LLLBasisConstruction(IntMat &gen, const Int &m, double delta =
-            0.9, long r = 0, long c = 0, Vec<double> *sqlen = 0,
+            0.9, long r = 0, long c = 0, NTL::Vec<double> *sqlen = 0,
             PrecisionType precision = DOUBLE);
 
     /**
@@ -289,7 +291,7 @@ public:
 // This one works only for `precision == DOUBLE`.
 template<>
 long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
-        double delta, long r, long c, Vec<double> *sqlen, PrecisionType precision) {
+        double delta, long r, long c, NTL::Vec<double> *sqlen, PrecisionType precision) {
     // long num = gen.NumRows();   // Number of generating vectors.
     if (precision == DOUBLE)    // & (c == 0) & (r == 0) & (sqlen == 0))
         return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
@@ -302,7 +304,7 @@ long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
 // The ZZ implementation.
 template<>
 long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
-        double delta, long r, long c, Vec<double> *sqlen, PrecisionType precision) {
+        double delta, long r, long c, NTL::Vec<double> *sqlen, PrecisionType precision) {
     long rank = 0;
     switch (precision) {
     case DOUBLE:
@@ -315,7 +317,7 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
         rank = NTL::LLL_XD(gen, delta);
         break;
     case RR:
-        return rank = NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
+        return rank = NTL::LLL_RR_lt(gen, delta, r, c, sqlen);
         break;
     default:
         std::cerr << "LLLConstruction0: unknown precision type.\n";
@@ -333,7 +335,7 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 
 template<typename Int>
 void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m,
-        double delta, long r, long c, Vec<double> *sqlen, PrecisionType precision) {
+        double delta, long r, long c, NTL::Vec<double> *sqlen, PrecisionType precision) {
     int64_t rank = LLLConstruction0(gen, delta, r, c, sqlen, precision);
     if (!c)  // c == 0
         c = gen.NumCols();

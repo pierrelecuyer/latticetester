@@ -20,6 +20,8 @@
 
 #include "NTL/LLL.h"
 #include "NTL/tools.h"
+#include "NTL/vector.h"
+#include "NTL/matrix.h"
 #include "NTL/ZZ.h"
 #include "NTL/RR.h"
 
@@ -103,7 +105,7 @@ public:
      * and their description is done in the module `LLL` of NTL.
      */
     static void redLLLNTL(IntMat &basis, double delta = 0.99999,
-            long dim = 0, Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
+            long dim = 0, NTL::Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
 
     /**
      * This static function implements an exact algorithm from NTL to perform the original LLL reduction.
@@ -123,7 +125,7 @@ public:
      * A `blocksize` of 2 is equivalent to LLL reduction.
      */
     static void redBKZ(IntMat &basis, double delta = 0.999999, int64_t blocksize = 10,
-            long prune = 0, long dim = 0, Vec<double> *sqlen = 0, PrecisionType prec = DOUBLE);
+            long prune = 0, long dim = 0, NTL::Vec<double> *sqlen = 0, PrecisionType prec = DOUBLE);
 
 };
 
@@ -143,7 +145,7 @@ void ReducerStatic<Int>::redLLLNTL(IntMat &basis, Real delta,
 // A specialization for the case where Int = int64_t and Real = double.
 template<>
 void ReducerStatic<int64_t>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
-        long dim, Vec<double> *sqlen, PrecisionType precision) {
+        long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
         NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
         return;
@@ -156,7 +158,7 @@ void ReducerStatic<int64_t>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta
 // about the `PrecisionType` choices.
 template<>
 void ReducerStatic<NTL::ZZ>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
-        long dim, Vec<double> *sqlen, PrecisionType precision) {
+        long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
     switch (precision) {
     case DOUBLE:
         NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
@@ -209,12 +211,12 @@ void ReducerStatic<Int>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
 // BKZ, general case.
 template<typename Int>
 void redBKZ(IntMat &basis, double delta, long blocksize, long prune,
-        long dim, Vec<double> *sqlen, PrecisionType prec);
+        long dim, NTL::Vec<double> *sqlen, PrecisionType prec);
 
 // Specialization for Int = int64_t.
 template<>
 void ReducerStatic<int64_t>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
-        long blocksize, long prune, long dim, Vec<double> *sqlen, PrecisionType precision) {
+        long blocksize, long prune, long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
         NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
         return;
@@ -225,7 +227,7 @@ void ReducerStatic<int64_t>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
 // Specialization for Int = ZZ.
 template<>
 void ReducerStatic<NTL::ZZ>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
-        long blocksize, long prune, long dim, Vec<double> *sqlen, PrecisionType precision) {
+        long blocksize, long prune, long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
     switch (precision) {
     case DOUBLE:
         NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
