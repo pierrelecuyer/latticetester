@@ -137,8 +137,8 @@ public:
 
 // General implementation.
 template<typename Int>
-void ReducerStatic<Int>::redLLLNTL(IntMat &basis, Real delta,
-        long dim, RealVec *sqlen, PrecisionType precision) {
+void ReducerStatic<Int>::redLLLNTL(IntMat &basis, double delta,
+        long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
    MyExit(1, "redLLLNTL: General version not implemented.\n");
 }
 
@@ -159,12 +159,12 @@ void ReducerStatic<int64_t>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta
 template<>
 void ReducerStatic<NTL::ZZ>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
         long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
+   NTL::matrix<NTL::ZZ> cpbasis;
     switch (precision) {
     case DOUBLE:
         NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
         break;
     case QUADRUPLE:
-        NTL::matrix<NTL::ZZ> cpbasis;
         cpbasis.SetDims (dim, dim);
         copy (basis, cpbasis, dim, dim);  // From Util
         NTL::LLL_QP(cpbasis, delta);
@@ -172,7 +172,6 @@ void ReducerStatic<NTL::ZZ>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta
         copy (cpbasis, basis, dim, dim);
         break;
     case XDOUBLE:
-        NTL::matrix<NTL::ZZ> cpbasis;
         cpbasis.SetDims (dim, dim);
         copy (basis, cpbasis, dim, dim);  // From Util
         NTL::LLL_XD(cpbasis, delta);
@@ -197,7 +196,7 @@ void ReducerStatic<Int>::redLLLNTLExact(IntMat &basis, double delta) {
 
 // Exact version, for Int = ZZ.
 template<>
-void ReducerStatic<Int>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
+void ReducerStatic<NTL::ZZ>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
         double delta) {
     NTL::ZZ det(0);
     int64_t denum;
@@ -228,19 +227,18 @@ void ReducerStatic<int64_t>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
 template<>
 void ReducerStatic<NTL::ZZ>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
         long blocksize, long prune, long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
+    NTL::matrix<NTL::ZZ> cpbasis;
     switch (precision) {
     case DOUBLE:
         NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
         return;
     case QUADRUPLE:
-        NTL::matrix<NTL::ZZ> cpbasis;
         cpbasis.SetDims (dim, dim);
         LatticeTester::copy (basis, cpbasis, dim, dim);  // From Util
         NTL::BKZ_QP(cpbasis, delta, blocksize);
         LatticeTester::copy (cpbasis, basis);
         break;
     case XDOUBLE:
-        NTL::matrix<NTL::ZZ> cpbasis;
         cpbasis.SetDims (dim, dim);
         LatticeTester::copy (basis, cpbasis, dim, dim);  // From Util
         NTL::BKZ_XD(cpbasis, delta, blocksize);

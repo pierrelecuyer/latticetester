@@ -249,7 +249,7 @@ public:
      */
     static void projectionConstructionLLL(const IntMat &inBasis,
             IntMat &projBasis, const Coordinates &proj, const Int &m,
-            const double delta = 0.9, long r = 0, double *sqlen = 0);
+            const double delta = 0.9, long r = 0, NTL::Vec<double> *sqlen = 0);
 
     /**
      * Same as `projectionConstructionLLL`, but the construction is made using
@@ -766,7 +766,7 @@ void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
 template<typename Int>
 void BasisConstruction<Int>::projectionConstructionLLL(const IntMat &inBasis,
         IntMat &projBasis, const Coordinates &proj, const Int &m,
-        const double delta, long r, double *sqlen) {
+        const double delta, long r, NTL::Vec<double> *sqlen) {
     projectMatrix(inBasis, projBasis, proj, r);
     LLLBasisConstruction(projBasis, m, delta, r, proj.size(), sqlen);
 }

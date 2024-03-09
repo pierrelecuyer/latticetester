@@ -56,7 +56,8 @@ int main() {
     basisProj.SetDims(dim, dimProj);
     basisDualProj.SetDims(dimProj, dimProj);
     Int sqlength;
-    double *sqlen = new double[dim];
+    NTL::Vec<double> sqlen;
+    sqlen.SetLength(dim);
 
     // We construct a Korobov lattice in dim dimensions.
     Rank1Lattice<Int, double> *korlat;
@@ -68,7 +69,7 @@ int main() {
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     // We apply LLL to reduce basis1.
-    BasisConstruction<Int>::LLLConstruction0(basis1, 0.5, dim, dim, sqlen);
+    BasisConstruction<Int>::LLLConstruction0(basis1, 0.5, dim, dim, &sqlen);
     std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
@@ -76,7 +77,7 @@ int main() {
     std::cout << sqlen[0] << "  " << sqlen[1] << "  " << sqlen[2] << "\n\n";
 
     std::cout << "sqlen = " << sqlen << "\n";
-    NTL::LLL_FPInt(basis1, 0.99999, dim, dim, sqlen);
+    NTL::LLL_FPInt(basis1, 0.99999, dim, dim, &sqlen);
     // BasisConstruction<Int>::LLLConstruction0(basis1, 0.99999, dim, dim, sqlen);
     std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);

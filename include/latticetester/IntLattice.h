@@ -970,6 +970,10 @@ void IntLattice<Int, Real>::sortPrimalBasis(int64_t d) {
 
 /*=========================================================================*/
 
+inline double sqrtReal(const double &a) { return std::sqrt(a); }
+
+inline NTL::RR sqrtReal(const NTL::RR &a) { return NTL::sqrt(a); }
+
 template<typename Int, typename Real>
 std::string IntLattice<Int, Real>::toString() const {
     std::ostringstream os;
@@ -1005,7 +1009,7 @@ std::string IntLattice<Int, Real>::toString() const {
             os << "NaN OR Not computed";
         } else {
             if (this->m_norm == L2NORM) {
-                os << NTL::sqrt(this->m_vecNorm[i]);
+                os << sqrtReal(this->m_vecNorm[i]);
             } else {
                 os << this->m_vecNorm[i];
             }
@@ -1016,7 +1020,7 @@ std::string IntLattice<Int, Real>::toString() const {
                 os << "NaN OR Not computed";
             else {
                 if (this->m_norm == L2NORM) {
-                    os << NTL::sqrt(this->m_dualvecNorm[i]);
+                    os << sqrtReal(this->m_dualvecNorm[i]);
                 } else {
                     os << this->m_dualvecNorm[i];
                 }

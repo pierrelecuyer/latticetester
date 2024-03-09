@@ -514,7 +514,9 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
 // A = A + B*MU  for the first n vector entries only.
 // The change is on the vector A.  This is used once in BKZ.
 template<typename IntVec, typename Int>
-static void RowTransformAdd(IntVec &A, IntVec &B, const Int &MU1, long n);
+static void RowTransformAdd(IntVec &A, IntVec &B, const Int &MU1, long n) {
+   LatticeTester::MyExit (1, "RowTransformAdd: the general case is not implemented.");
+}
 
 template<>
 void RowTransformAdd(vector64 &A, vector64 &B, const int64_t &MU1, long n) {
@@ -1420,7 +1422,7 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, Vec<double>* sqle
     }
     if (sqlen) {
         if (sqlen->length() < new_m) sqlen->SetLength(new_m);
-        for (i = 0; i < new_m; i++)  sqlen[i] = sqlen2[i];
+        for (i = 0; i < new_m; i++)  (*sqlen)[i] = sqlen2[i];
     }
     // std::cout << "In LLL FPInt after the swaps:  ";
     // std::cout << "sqlen2[0] = " << sqlen2[0] << "\n";
@@ -1602,8 +1604,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, l
     long z, jj, kk;
     long s, t;
     long h;
-    double eta;
-
+    long eta;
     for (i = 0; i < m; i++)
         for (j = 0; j < n; j++) {
             conv(B1[i][j], B[i][j]);
@@ -1616,7 +1617,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, l
     m = ll_LLL_FP(B, delta, B1, mu, b, c, m, n, 0);
 
     // double tt;
-    double enum_time = 0;
+    // double enum_time = 0;
     unsigned long NumIterations = 0;
     unsigned long NumTrivial = 0;
     unsigned long NumNonTrivial = 0;
@@ -1668,7 +1669,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, l
                     eta = BKZThresh(t-jj);
                 else
                     eta = 0;
-                if (ctilda[t] < cbar) {
+                if (ctilda[t] < cbar - eta) {
                     if (t > jj) {
                         t--;
                         t1 = 0;
@@ -1768,7 +1769,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, l
 
                     // remove linear dependencies
                     // cerr << "general case\n";
-                    new_m = ll_LLL_FP(B, delta, 0, B1, mu, b, c, kk + 1, n, jj);
+                    new_m = ll_LLL_FP(B, delta, B1, mu, b, c, kk + 1, n, jj);
                     if (new_m != kk)
                         LogicError("BKZ_FPInt: internal error, new_m != kk");
                     // remove zero vectors
@@ -1823,7 +1824,7 @@ static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, l
     if (sqlen) {
         if (sqlen->length() < m) sqlen->SetLength(m);
         for (i = 0; i < m; i++)
-            sqlen[i] = b[i];
+            (*sqlen)[i] = b[i];
     }
     return m;    // Number of rows in basis.
 }

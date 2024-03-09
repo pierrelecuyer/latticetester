@@ -977,7 +977,7 @@ template<typename Matr>
 inline void CopyPartMat(Matr &toMat, const Matr &fromMat, int64_t r, int64_t c) {
     for (int64_t i = 0; i < r; i++)
         for (int64_t j = 0; j < c; j++)
-           toMat[i, j] = fromMat[i, j];
+           toMat[i][j] = fromMat[i][j];
 }
 
 
