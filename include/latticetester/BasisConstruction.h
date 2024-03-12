@@ -46,6 +46,9 @@
 #include "latticetester/LLL_FPInt.h"
 #include "latticetester/LLL_RR_lt.h"
 
+using namespace LatticeTester;
+using namespace NTL;
+
 namespace LatticeTester {
 
 /**
@@ -106,14 +109,9 @@ namespace LatticeTester {
  * illustrate how to use these functions and make speed comparisons.
  */
 
-template<typename Int>
-class BasisConstruction {
+typedef NTL::vector<Int> IntVec;
+typedef NTL::matrix<Int> IntMat;
 
-private:
-    typedef NTL::vector<Int> IntVec;
-    typedef NTL::matrix<Int> IntMat;
-
-public:
 
     /**
      * This function takes a set of generating vectors of a lattice in matrix `gen` and
@@ -140,7 +138,8 @@ public:
      * To make sure that these vectors belong to the lattice, we can add them
      * explicitly beforehand to the set of generating vectors, or call the next method.
      */
-    static long LLLConstruction0(IntMat &gen, double delta = 0.9, long r = 0,
+template<typename IntMat>
+static long LLLConstruction0(IntMat &gen, double delta = 0.9, long r = 0,
             long c = 0, NTL::Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
 
     /**
@@ -150,7 +149,8 @@ public:
      * The matrix `gen` is not resized by this function, so it can remain larger
      * than the lattice dimension.
      */
-    static void LLLBasisConstruction(IntMat &gen, const Int &m, double delta =
+template<typename IntMat, typename Int>
+static void LLLBasisConstruction(IntMat &gen, const Int &m, double delta =
             0.9, long r = 0, long c = 0, NTL::Vec<double> *sqlen = 0,
             PrecisionType precision = DOUBLE);
 
@@ -172,13 +172,15 @@ public:
      * rows and columns of `gen` that are actually used, as in `LLLConstruction0`.
      * The matrix `gen` is never resized.  The new basis should be c x c.
      */
-    static void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m,
+template<typename IntMat, typename Int>
+static void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m,
             long r = 0, long c = 0);
 
     /**
      * Same as `lowerTriangularBasis`, except that the returned basis is upper triangular.
      */
-    static void upperTriangularBasis(IntMat &gen, IntMat &basis, const Int &m,
+template<typename IntMat, typename Int>
+static void upperTriangularBasis(IntMat &gen, IntMat &basis, const Int &m,
             long r = 0, long c = 0);
 
     /**
@@ -190,18 +192,20 @@ public:
      * When `dim > 0`, it gives the number of rows and columns of the matrix `basis`
      * that is actually used. Otherwise (by default) the method uses `basis.numCols()`.
      */
-    static void mDualUpperTriangular(const IntMat &basis, IntMat &basisDual,
+template<typename IntMat, typename Int>
+static void mDualUpperTriangular(const IntMat &basis, IntMat &basisDual,
             const Int &m, long dim = 0);
 
     /**
      * This function does essentially the same thing as `mDualUpperTriangular`, but the
      * algorithm is slightly different. It uses the method described in \cite rCOU96a.
      */
-    static void mDualUpperTriangular96(IntMat &basis, IntMat &basisDual,
+template<typename IntMat, typename Int>
+static void mDualUpperTriangular96(IntMat &basis, IntMat &basisDual,
             const Int &m, long dim = 0);
 
-    static void mDualUpperTriangular96ZZ(NTL::matrix<NTL::ZZ> &basis,
-            NTL::matrix<NTL::ZZ> &basisDual, const NTL::ZZ &m, long dim = 0);
+// static void mDualUpperTriangular96ZZ(NTL::matrix<NTL::ZZ> &basis,
+//            NTL::matrix<NTL::ZZ> &basisDual, const NTL::ZZ &m, long dim = 0);
 
     /**
      * This function assumes that `basis` contains a basis of the primal lattice
@@ -211,8 +215,8 @@ public:
      * of the two `IntMat` objects is exactly the same as the dimensions of the lattices.
      * The reason for this is that we use an NTL function that works only under these conditions.
      */
-    static void mDualBasis(const IntMat &basis, IntMat &basisDual,
-            const Int &m);
+template<typename IntMat, typename Int>
+static void mDualBasis(const IntMat &basis, IntMat &basisDual,  const Int &m);
 
     /**
      * This function overwrites the first `r` rows of matrix 'out' by a matrix formed by the
@@ -228,7 +232,8 @@ public:
      * The matrices `in` and `out` must be different IntMat objects, otherwise the program
      * halts with an error message.
      */
-    static void projectMatrix(const IntMat &in, IntMat &out,
+template<typename IntMat>
+static void projectMatrix(const IntMat &in, IntMat &out,
             const Coordinates &proj, long r = 0);
 
     /**
@@ -245,7 +250,8 @@ public:
      * The square Euclidean lengths of the basis vectors are returned in the array `sqlen` when
      * the latter is given.
      */
-    static void projectionConstructionLLL(const IntMat &inBasis,
+template<typename IntMat, typename Int>
+static void projectionConstructionLLL(const IntMat &inBasis,
             IntMat &projBasis, const Coordinates &proj, const Int &m,
             const double delta = 0.9, long r = 0, NTL::Vec<double> *sqlen = 0);
 
@@ -263,11 +269,13 @@ public:
      * In the second version, this matrix is not passed and a temporary one is created internally,
      * which may add a bit of overhead.
      */
-    static void projectionConstructionUpperTri(const IntMat &inBasis,
+template<typename IntMat, typename Int>
+static void projectionConstructionUpperTri(const IntMat &inBasis,
             IntMat &projBasis, IntMat &genTemp, const Coordinates &proj,
             const Int &m, long r = 0);
 
-    static void projectionConstructionUpperTri(const IntMat &inBasis,
+template<typename IntMat, typename Int>
+static void projectionConstructionUpperTri(const IntMat &inBasis,
             IntMat &projBasis, const Coordinates &proj, const Int &m,
             long r = 0);
 
@@ -275,12 +283,12 @@ public:
      * In this version, the construction method is passed as a parameter. The default is LLL.
      * In the triangular case, a temporary matrix is created internally.
      */
-    static void projectionConstruction(const IntMat &inBasis, IntMat &projBasis,
+template<typename IntMat, typename Int>
+static void projectionConstruction(const IntMat &inBasis, IntMat &projBasis,
             const Coordinates &proj, const Int &m,
             const ProjConstructType projType = LLLPROJ,
             const double delta = 0.9);
 
-};
 
 //============================================================================
 // Implementation
@@ -288,7 +296,7 @@ public:
 // The int64_t implementation.
 // This one works only for `precision == DOUBLE`.
 template<>
-long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
+long LLLConstruction0(NTL::matrix<int64_t> &gen,
         double delta, long r, long c, NTL::Vec<double> *sqlen, PrecisionType precision) {
     // long num = gen.NumRows();   // Number of generating vectors.
     if (precision == DOUBLE)    // & (c == 0) & (r == 0) & (sqlen == 0))
@@ -301,7 +309,7 @@ long BasisConstruction<int64_t>::LLLConstruction0(NTL::matrix<int64_t> &gen,
 
 // The ZZ implementation.
 template<>
-long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
+long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
         double delta, long r, long c, NTL::Vec<double> *sqlen, PrecisionType precision) {
     long rank = 0;
     switch (precision) {
@@ -331,8 +339,8 @@ long BasisConstruction<NTL::ZZ>::LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
 
 //============================================================================
 
-template<typename Int>
-void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m,
+template<typename IntMat, typename Int>
+void LLLBasisConstruction(IntMat &gen, const Int &m,
         double delta, long r, long c, NTL::Vec<double> *sqlen, PrecisionType precision) {
     int64_t rank = LLLConstruction0(gen, delta, r, c, sqlen, precision);
     if (!c)  // c == 0
@@ -355,13 +363,14 @@ void BasisConstruction<Int>::LLLBasisConstruction(IntMat &gen, const Int &m,
     std::cout << "LLLBasisConstruction: we had to add some rows!\n";
 }
 
+
 //==============================================================================
 
-template<typename Int>
-void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
+template<typename IntMat, typename Int>
+void lowerTriangularBasis(IntMat &gen, IntMat &basis,
         const Int &m, long dim1, long dim2) {
     // Note:  dim1 = r, dim2 = c.   The new basis should be c x c.
-    IntVec coeff_gcd, coeff_xi, xi; // Several vectors are created locally here.
+    NTL::Vec<Int> coeff_gcd, coeff_xi, xi; // Several vectors are created locally here.
     Int gcd, gcd_tower, C, D;
     long i, j, k, l;
     // In case r or c is zero:
@@ -465,10 +474,10 @@ void BasisConstruction<Int>::lowerTriangularBasis(IntMat &gen, IntMat &basis,
 
 //===================================================================
 
-template<typename Int>
-void BasisConstruction<Int>::upperTriangularBasis(IntMat &gen, IntMat &basis,
+template<typename IntMat, typename Int>
+void upperTriangularBasis(IntMat &gen, IntMat &basis,
         const Int &m, long dim1, long dim2) {
-    IntVec coeff_gcd, coeff_xi, xi;  // Here we create new vectors!
+    NTL::Vec<Int> coeff_gcd, coeff_xi, xi;  // Here we create new vectors!
     Int gcd, gcd_tower, C, D;
     long i, j, k, l;
     // In case dim1 or dim2 is zero:
@@ -582,8 +591,8 @@ void BasisConstruction<Int>::upperTriangularBasis(IntMat &gen, IntMat &basis,
  * we simply have to recursively take for each line
  * \f[B_{i,j} = -\frac{1}{A_{j,j}}\sum_{k=j+1}^i A_{j,k} B_{i,k}.\f]
  */
-template<typename Int>
-void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
+template<typename IntMat, typename Int>
+void mDualUpperTriangular(const IntMat &A, IntMat &B,
         const Int &m, long dim) {
     // Note:  A = basis,  B = basisDual
     if (dim == 0)
@@ -606,11 +615,37 @@ void BasisConstruction<Int>::mDualUpperTriangular(const IntMat &A, IntMat &B,
     }
 }
 
+/*
+template<>
+void mDualUpperTriangular(const NTL::matrix<long> &A, NTL::matrix<long> &B,
+        const long &m, long dim) {
+    // Note:  A = basis,  B = basisDual
+    if (dim == 0)
+        dim = A.NumRows();
+    assert(dim <= A.NumCols());
+    assert(dim <= B.NumRows() && dim <= B.NumCols());
+    for (int64_t i = 0; i < dim; i++) {
+        // Put zeros under the diagonal.
+        for (int64_t j = i + 1; j < dim; j++)
+            B[i][j] = 0;
+        // Set diagonal elements.
+        B[i][i] = m / A[i][i];
+        // Compute the other ones.
+        for (int64_t j = i - 1; j >= 0; j--) {
+            B[i][j] = 0;
+            for (int64_t k = j + 1; k <= i; k++)
+                NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
+            NTL::div(B[i][j], B[i][j], A[j][j]);
+        }
+    }
+}
+*/
+
 //======================================================
 
 // This is the old version from Couture and L'Ecuyer (1996).
-template<typename Int>
-void BasisConstruction<Int>::mDualUpperTriangular96(IntMat &basis,
+template<typename IntMat, typename Int>
+void mDualUpperTriangular96(IntMat &basis,
         IntMat &basisDual, const Int &m, long dim) {
     if (!dim)
         dim = basis.NumRows();
@@ -642,10 +677,9 @@ void BasisConstruction<Int>::mDualUpperTriangular96(IntMat &basis,
     }
 }
 
-// A specialized implementation for ZZ.   WHY THIS?   What is different from Int version?   ****
+// A specialized implementation for ZZ. What is different from Int version?   ****
 template<>
-void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96ZZ(
-        NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDual,
+void mDualUpperTriangular96 (NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDual,
         const NTL::ZZ &m, long dim) {
     if (!dim)
         dim = basis.NumRows();
@@ -682,8 +716,8 @@ void BasisConstruction<NTL::ZZ>::mDualUpperTriangular96ZZ(
 
 // ===================================================
 
-template<typename Int>
-void BasisConstruction<Int>::mDualBasis(const IntMat &basis, IntMat &basisDual,
+template<typename IntMat, typename Int>
+void mDualBasis(const IntMat &basis, IntMat &basisDual,
         const Int &m) {
     std::cerr << "mDualBasis is implemented only for NTL::ZZ integers.\n";
     exit(1);
@@ -691,7 +725,7 @@ void BasisConstruction<Int>::mDualBasis(const IntMat &basis, IntMat &basisDual,
 
 // The specialization for the case where `Int = ZZ`.
 template<>
-void BasisConstruction<NTL::ZZ>::mDualBasis(const NTL::matrix<NTL::ZZ> &basis,
+void mDualBasis(const NTL::matrix<NTL::ZZ> &basis,
         NTL::matrix<NTL::ZZ> &basisDual, const NTL::ZZ &m) {
     NTL::ZZ det, fac;
     long dim = basis.NumRows();
@@ -744,8 +778,8 @@ void BasisConstruction<NTL::ZZ>::mDualBasis(const NTL::matrix<NTL::ZZ> &basis,
  */
 
 //=================================================================================
-template<typename Int>
-void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
+template<typename IntMat>
+void projectMatrix(const IntMat &in, IntMat &out,
         const Coordinates &proj, long r) {
     if (in == out)
         MyExit(1, "in and out must be different IntMat objects.");
@@ -761,8 +795,8 @@ void BasisConstruction<Int>::projectMatrix(const IntMat &in, IntMat &out,
 }
 
 //===================================================
-template<typename Int>
-void BasisConstruction<Int>::projectionConstructionLLL(const IntMat &inBasis,
+template<typename IntMat, typename Int>
+void projectionConstructionLLL(const IntMat &inBasis,
         IntMat &projBasis, const Coordinates &proj, const Int &m,
         const double delta, long r, NTL::Vec<double> *sqlen) {
     projectMatrix(inBasis, projBasis, proj, r);
@@ -771,16 +805,16 @@ void BasisConstruction<Int>::projectionConstructionLLL(const IntMat &inBasis,
 
 //===================================================
 
-template<typename Int>
-void BasisConstruction<Int>::projectionConstructionUpperTri(
+template<typename IntMat, typename Int>
+void projectionConstructionUpperTri(
         const IntMat &inBasis, IntMat &projBasis, IntMat &genTemp,
         const Coordinates &proj, const Int &m, long r) {
     projectMatrix(inBasis, genTemp, proj, r);
     upperTriangularBasis(genTemp, projBasis, m, r, proj.size());
 }
 
-template<typename Int>
-void BasisConstruction<Int>::projectionConstructionUpperTri(
+template<typename IntMat, typename Int>
+void projectionConstructionUpperTri(
         const IntMat &inBasis, IntMat &projBasis, const Coordinates &proj,
         const Int &m, long r) {
     long dim = proj.size();      // Dimension of projection
@@ -793,8 +827,8 @@ void BasisConstruction<Int>::projectionConstructionUpperTri(
 
 //===================================================
 
-template<typename Int>
-void BasisConstruction<Int>::projectionConstruction(const IntMat &inBasis,
+template<typename IntMat, typename Int>
+void projectionConstruction(const IntMat &inBasis,
         IntMat &projBasis, const Coordinates &proj, const Int &m,
         const ProjConstructType projType, const double delta) {
     if (projType == LLLPROJ)
@@ -803,8 +837,8 @@ void BasisConstruction<Int>::projectionConstruction(const IntMat &inBasis,
         projectionConstructionUpperTri(inBasis, projBasis, proj, m);
 }
 
-template class BasisConstruction<std::int64_t> ;
-template class BasisConstruction<NTL::ZZ> ;
+// template class BasisConstruction<std::int64_t> ;
+// template class BasisConstruction<NTL::ZZ> ;
 
 } // end namespace LatticeTester
 

@@ -29,6 +29,8 @@
 #include <iomanip>
 #include <cassert>
 
+using namespace LatticeTester;
+
 namespace LatticeTester {
 
 /**
@@ -72,7 +74,7 @@ namespace LatticeTester {
 template<typename Int, typename Real>
 class IntLattice {
 
-private:
+// private:
     typedef NTL::vector<Int> IntVec;
     typedef NTL::matrix<Int> IntMat;
     typedef NTL::vector<Real> RealVec;
@@ -670,7 +672,7 @@ void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat,
 
 //===========================================================================
 
-template<typename Int>class BasisConstruction;  // Needed? CW: Yes! Otherwise it does not compile.
+// template<typename Int>class BasisConstruction;  // Otherwise it does not compile.
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
@@ -678,14 +680,17 @@ void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
     // We assume here that this and lattice have the same m.
     projLattice->setDim (proj.size());  // Number of coordinates in the projection.
     if (!projLattice->m_withDual) { // This builds only the primal basis.
-        BasisConstruction<Int>::projectionConstructionLLL(this->m_basis,
+        projectionConstructionLLL(this->m_basis,
                 projLattice->m_basis, proj, this->m_modulo, delta, proj.size());//, CW
                 //projLattice->m_vecNorm);
     } else { // This builds both the primal and the m-dual bases.
-        BasisConstruction<Int>::projectionConstructionUpperTri(this->m_basis,
+        projectionConstructionUpperTri(this->m_basis,
                 projLattice->m_basis, proj, this->m_modulo, this->m_dim);
-        BasisConstruction<Int>::mDualUpperTriangular(projLattice->m_basis,
-                projLattice->m_dualbasis, this->m_modulo, projLattice->m_dim);
+// For some reason, the following statement does not compile;
+// the compiler does not find this function in BasisConstruction!
+ //       mDualUpperTriangular(projLattice->m_basis,
+ //               projLattice->m_dualbasis, this->m_modulo, projLattice->m_dim);
+        std::cout << "IntLattice::buildProjection: mdualUT not implemented \n";
         this->setNegativeNorm();
         this->setDualNegativeNorm();
     }

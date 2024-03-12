@@ -141,7 +141,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     //  copy(basis1, basis2, dim, dim);
     tmp = clock();
     redLLLNTL(basis2, 0.5, dim, &sqlen);
-    // BasisConstruction<Int>::LLLConstruction0(basis2, 0.5, dim, dim, sqlen);
+    // LLLConstruction0(basis2, 0.5, dim, dim, sqlen);
     timer[0][d] += clock() - tmp;
     sumSq[0][d] += sqlen[0];
     std::cout << "After LLL 0.5: sqlen[0] = " << sqlen[0] << "\n";
@@ -153,7 +153,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
     redLLLNTL(basis2, 0.9, dim, &sqlen);
-    BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim, &sqlen);
+    LLLConstruction0(basis2, 0.9, dim, dim, &sqlen);
     timer[1][d] += clock() - tmp;
     sumSq[1][d] += sqlen[0];
     std::cout << "After LLL 0.9:  sqlen[0] = " << sqlen[0] << "\n";
@@ -173,18 +173,18 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     // Here we restart LLL from the initial triangular basis.
     copy(basis1, basis2, dim, dim);
     tmp = clock();
-    BasisConstruction<Int>::LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen);
+    LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen);
     timer[3][d] += clock() - tmp;
     sumSq[3][d] += sqlen[0];
 
     // We now construct an upper-triangular basis from basis2 into basis1.
     tmp = clock();
-    BasisConstruction<Int>::upperTriangularBasis(basis2, basis1, m, dim, dim);
+    upperTriangularBasis(basis2, basis1, m, dim, dim);
     timer[4][d] += clock() - tmp;
 
     // We compute an m-dual basis to basis1.
     tmp = clock();
-    BasisConstruction<Int>::mDualUpperTriangular(basis1, basisdual, m, dim);
+    mDualUpperTriangular(basis1, basisdual, m, dim);
     timer[5][d] += clock() - tmp;
 
     // mDualBasis is currently implemented only for Int = ZZ and dim = maxDim.

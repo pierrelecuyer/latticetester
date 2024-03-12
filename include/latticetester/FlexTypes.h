@@ -33,28 +33,28 @@
 // std::string strFlexTypes;
 
 #if TYPES_CODE  ==  LD
-	   typedef int64_t  Int;
-       typedef double  Real;
-       std::string strFlexTypes = "Int = int64_t, Real = double";
-   #elif  TYPES_CODE  == ZD
-	   typedef NTL::ZZ Int;
-       typedef double Real;
-       std::string strFlexTypes = "Int = NTL::ZZ, Real = double";
-   #elif  TYPES_CODE  ==  LR
-	   typedef int64_t  Int;
+	  typedef int64_t  Int;
+     typedef double  Real;
+     std::string strFlexTypes = "Int = int64_t, Real = double";
+#elif  TYPES_CODE  == ZD
+	  typedef NTL::ZZ Int;
+     typedef double Real;
+     std::string strFlexTypes = "Int = NTL::ZZ, Real = double";
+#elif  TYPES_CODE  ==  LR
+	  typedef int64_t  Int;
      typedef NTL::RR Real;
      std::string strFlexTypes = "Int = int64_t, Real = NTL::RR";
-   #elif  TYPES_CODE ==  ZR
-       typedef NTL::ZZ Int;
-       typedef NTL::RR Real;
-       std::string strFlexTypes = "Int = NTL::ZZ, Real = NTL::RR";
+#elif  TYPES_CODE ==  ZR
+     typedef NTL::ZZ Int;
+     typedef NTL::RR Real;
+     std::string strFlexTypes = "Int = NTL::ZZ, Real = NTL::RR";
 #endif
 
 #ifdef TYPES_CODE
-       typedef NTL::vector<Int> IntVec;
-       typedef NTL::matrix<Int> IntMat;
-       typedef NTL::vector<Real> RealVec;
-       typedef NTL::matrix<Real> RealMat;
+     typedef NTL::vector<Int> IntVec;
+     typedef NTL::matrix<Int> IntMat;
+     typedef NTL::vector<Real> RealVec;
+     typedef NTL::matrix<Real> RealMat;
 #endif
 
 #endif

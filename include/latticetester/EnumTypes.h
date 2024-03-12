@@ -19,8 +19,8 @@
 #define LATTICETESTER__ENUMTYPES_H
 #include <string>
 #include <array>
-using namespace std;
 
+using namespace std;
 
 namespace LatticeTester {
 

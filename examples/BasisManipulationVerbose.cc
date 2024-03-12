@@ -68,12 +68,12 @@ int main() {
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     // We apply LLL to reduce basis1.
-    BasisConstruction<Int>::LLLConstruction0(basis1, 0.5);
+    LLLConstruction0(basis1, 0.5);
     std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
-    BasisConstruction<Int>::LLLConstruction0(basis1, 0.99999);
+    LLLConstruction0(basis1, 0.99999);
     std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
@@ -87,13 +87,13 @@ int main() {
 
     // We now transform basis1 to the upper-triangular basis2.
     // Note that after this, basis1 contains only garbage.
-    BasisConstruction<Int>::upperTriangularBasis(basis1, basis2, m);
+    upperTriangularBasis(basis1, basis2, m);
     std::cout << "After `upperTriangularBasis`: \n" << basis2 << "\n\n";
     // Then we compute the m-dual of basis2 and put it in basisDual.
-    BasisConstruction<Int>::mDualUpperTriangular(basis2, basisDual, m);
+    mDualUpperTriangular(basis2, basisDual, m);
     std::cout << "m-dual upperTriangular basis: \n" << basisDual << "\n\n";
     // We reduce this basisDual with LLL.
-    BasisConstruction<Int>::LLLConstruction0(basisDual, 0.99999);
+    LLLConstruction0(basisDual, 0.99999);
     std::cout << "m-dual basis after LLL with delta=0.99999: \n" << basisDual << "\n";
     ProdScal<Int>(basisDual[0], basisDual[0], dim, sqlength);
     std::cout << "Square length of first dual basis vector: " << sqlength << "\n\n";
@@ -111,22 +111,22 @@ int main() {
     std::cout << " Part of the matrix is not used and must be ignored.\n\n";
 
     // Basis construction with LLL.
-    BasisConstruction<Int>::projectMatrix(basis2, basisProj, proj, dim);
+    projectMatrix(basis2, basisProj, proj, dim);
     std::cout << "basisProj after projectMatrix (generating vectors): \n" << basisProj << "\n";
-    BasisConstruction<Int>::LLLBasisConstruction(basisProj, m, 0.5, dim);
+    LLLBasisConstruction(basisProj, m, 0.5, dim);
     std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
 
     // Basis construction with upper-triangular method.
-    BasisConstruction<Int>::projectionConstructionUpperTri(basis2, basisProj,
+    projectionConstructionUpperTri(basis2, basisProj,
             proj, m, 5);
     std::cout << "Upper-triangular basis for this proj.: \n" << basisProj
             << "\n";
 
     // Use first three rows of `basisProj` basis matrix to construct an m-dual basis.
-    BasisConstruction<Int>::mDualUpperTriangular(basisProj, basisDualProj, m, 3);
+    mDualUpperTriangular(basisProj, basisDualProj, m, 3);
     std::cout << "Triangular basis for m-dual of this projection: \n"
             << basisDualProj << "\n";
-    BasisConstruction<Int>::LLLConstruction0(basisDualProj, 0.99999, 3, 3);
+    LLLConstruction0(basisDualProj, 0.99999, 3, 3);
     std::cout << "m-dual basis of proj after LLL with delta=0.99999: \n" << basisDualProj
             << "\n";
     ProdScal<Int>(basisDualProj[0], basisDualProj[0], dim, sqlength);
