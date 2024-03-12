@@ -70,19 +70,16 @@ namespace LatticeTester {
  * The same `IntMat` object can then be used for several lattices of different sizes.
  */
 
-template<typename Int>
-class ReducerStatic {
+// class ReducerStatic {
 
-// using namespace LatticeTester;
-
-private:
+//private:
     // Local typedefs for matrix and vector types needed in the class.
     typedef NTL::vector<Int> IntVec;
     typedef NTL::matrix<Int> IntMat;
     //typedef NTL::vector<Real> RealVec;
     //typedef NTL::matrix<Real> RealMat;
 
-public:
+//public:
 
     /**
      * This function uses the NTL implementation of the LLL reduction algorithm
@@ -99,11 +96,13 @@ public:
      * the more the basis is reduced, in the sense that the LLL
      * algorithm will enforce tighter conditions on the basis.
      * The returned basis always has its shortest vector in first place.
-     * The vector `sqlen` (if given) will contain the square lengths of the basis vectors.
+     * The vector pointed by `sqlen` (if given) will contain the square lengths of the basis vectors.
+     * To recover these values in a `Vec<double> v` one can pass `&v` to the function.
      * The parameter `precision` specifies the precision of the floating point numbers
      * that the algorithm will use. `EnumTypes.h` provides a list of the possible values,
      * and their description is done in the module `LLL` of NTL.
      */
+    template<typename IntMat>
     static void redLLLNTL(IntMat &basis, double delta = 0.99999,
             long dim = 0, NTL::Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
 
@@ -112,6 +111,7 @@ public:
      * This is slower than `redLLLNTL`, but more accurate.
      * It does not take the `dim` and `sqlen` parameters (for now).
      */
+    template<typename IntMat>
     static void redLLLNTLExact(IntMat &basis, double delta = 0.99999);
 
     /**
@@ -124,10 +124,11 @@ public:
      * reduction. Roughly, larger blocks means a stronger condition.
      * A `blocksize` of 2 is equivalent to LLL reduction.
      */
+    template<typename IntMat>
     static void redBKZ(IntMat &basis, double delta = 0.999999, int64_t blocksize = 10,
             long prune = 0, long dim = 0, NTL::Vec<double> *sqlen = 0, PrecisionType prec = DOUBLE);
 
-};
+// }
 
 
 //============================================================================
@@ -135,16 +136,20 @@ public:
 
 //===========================================================================
 
+// namespace LatticeTester {
+
+using namespace LatticeTester;
+
 // General implementation.
-template<typename Int>
-void ReducerStatic<Int>::redLLLNTL(IntMat &basis, double delta,
+template<typename IntMat>
+void redLLLNTL(IntMat &basis, double delta,
         long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
    MyExit(1, "redLLLNTL: General version not implemented.\n");
 }
 
 // A specialization for the case where Int = int64_t and Real = double.
 template<>
-void ReducerStatic<int64_t>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
+void redLLLNTL(NTL::matrix<int64_t> &basis, double delta,
         long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
         NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
@@ -157,7 +162,7 @@ void ReducerStatic<int64_t>::redLLLNTL(NTL::matrix<int64_t> &basis, double delta
 // See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
 // about the `PrecisionType` choices.
 template<>
-void ReducerStatic<NTL::ZZ>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
+void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
         long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
    NTL::matrix<NTL::ZZ> cpbasis;
     switch (precision) {
@@ -189,14 +194,14 @@ void ReducerStatic<NTL::ZZ>::redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta
 //=========================================================================
 
 // Exact version for the general case.
-template<typename Int>
-void ReducerStatic<Int>::redLLLNTLExact(IntMat &basis, double delta) {
+template<typename IntMat>
+void redLLLNTLExact(IntMat &basis, double delta) {
     MyExit(1, "redLLLNTLExact works only for Int = ZZ");
 }
 
 // Exact version, for Int = ZZ.
 template<>
-void ReducerStatic<NTL::ZZ>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
+void redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
         double delta) {
     NTL::ZZ det(0);
     int64_t denum;
@@ -208,13 +213,13 @@ void ReducerStatic<NTL::ZZ>::redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis,
 
 
 // BKZ, general case.
-template<typename Int>
+template<typename IntMat>
 void redBKZ(IntMat &basis, double delta, long blocksize, long prune,
         long dim, NTL::Vec<double> *sqlen, PrecisionType prec);
 
 // Specialization for Int = int64_t.
 template<>
-void ReducerStatic<int64_t>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
+void redBKZ(NTL::matrix<int64_t> &basis, double delta,
         long blocksize, long prune, long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
     if (precision == DOUBLE) {
         NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
@@ -225,7 +230,7 @@ void ReducerStatic<int64_t>::redBKZ(NTL::matrix<int64_t> &basis, double delta,
 
 // Specialization for Int = ZZ.
 template<>
-void ReducerStatic<NTL::ZZ>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
+void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
         long blocksize, long prune, long dim, NTL::Vec<double> *sqlen, PrecisionType precision) {
     NTL::matrix<NTL::ZZ> cpbasis;
     switch (precision) {
@@ -251,11 +256,6 @@ void ReducerStatic<NTL::ZZ>::redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta,
         MyExit(1, "Undefined precision type for redBKZ");
     }
 }
-
-//============================================================================
-
-template class ReducerStatic<std::int64_t>;
-template class ReducerStatic<NTL::ZZ>;
 
 }   // namespace LatticeTester
 

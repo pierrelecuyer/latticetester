@@ -62,6 +62,7 @@ typedef NTL::vector<int64_t> vector64;
 
 // Int modulus64(1048573);  // To test if basis entries ever exceed the modulus.
 
+// This macro is defined in NTL/tools.h
 NTL_OPEN_NNS
 
 /**
@@ -92,6 +93,7 @@ NTL_CLOSE_NNS
 
 /* ============================================================== */
 
+// This macro is defined in NTL/tools.h
 NTL_START_IMPL
 
 static inline void CheckFinite(double *p) {

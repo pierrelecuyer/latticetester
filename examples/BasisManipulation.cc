@@ -140,7 +140,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     CopyPartMat (basis2, basis1, dim, dim);
     //  copy(basis1, basis2, dim, dim);
     tmp = clock();
-    ReducerStatic<Int>::redLLLNTL(basis2, 0.5, dim, &sqlen);
+    redLLLNTL(basis2, 0.5, dim, &sqlen);
     // BasisConstruction<Int>::LLLConstruction0(basis2, 0.5, dim, dim, sqlen);
     timer[0][d] += clock() - tmp;
     sumSq[0][d] += sqlen[0];
@@ -152,7 +152,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     // We continue the LLL process with a larger `delta`.
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    ReducerStatic<Int>::redLLLNTL(basis2, 0.9, dim, &sqlen);
+    redLLLNTL(basis2, 0.9, dim, &sqlen);
     BasisConstruction<Int>::LLLConstruction0(basis2, 0.9, dim, dim, &sqlen);
     timer[1][d] += clock() - tmp;
     sumSq[1][d] += sqlen[0];
@@ -162,7 +162,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
 
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    ReducerStatic<Int>::redLLLNTL(basis2, 0.99999, dim, &sqlen);
+    redLLLNTL(basis2, 0.99999, dim, &sqlen);
     timer[2][d] += clock() - tmp;
     sumSq[2][d] += sqlen[0];
     std::cout << "After LLL 0.99999:  sqlen[0] = " << sqlen[0] << "\n";

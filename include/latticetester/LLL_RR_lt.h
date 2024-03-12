@@ -49,6 +49,7 @@
 typedef NTL::vector<Int> IntVec;
 typedef NTL::matrix<Int> IntMat;
 
+// This macro is defined in NTL/tools.h
 NTL_OPEN_NNS
 
 /**
@@ -87,6 +88,7 @@ NTL_CLOSE_NNS
 
 /* ============================================================== */
 
+// This macro is defined in NTL/tools.h
 NTL_START_IMPL
 
 NTL_TLS_GLOBAL_DECL(RR, red_fudge_RR)
