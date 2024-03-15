@@ -29,6 +29,7 @@
 #include <NTL/mat_ZZ.h>
 #include <NTL/LLL.h>
 
+#include <latticetester/FlexTypes.h>
 #include <latticetester/Util.h>
 
 
@@ -39,15 +40,16 @@
  * (first `r` rows and `c` columns) of the matrix `B` that is passed in and returned.
  * The returned basis will have `c` columns and at most `max(r,c)` rows
  * (the rank of the basis matrix), so it may not occupy the entire space in `B`.
- * We can also recover an array `sqlen` that gives the square
+ * We can also recover a vector `sqlen` that gives the square
  * Euclidean lengths of the basis vectors, either in `double` or `RR`.
+ * Normally, this module should be used with `Real = RR`.
  * Each function returns the dimension of the computed basis (number of independent rows).
  * Important: This basis is always returned in the upper-left corner of the matrix `B`.
  * This differs from the `LLL_RR` functions, which returns the zero vectors at the top.
  */
 
-typedef NTL::vector<Int> IntVec;
-typedef NTL::matrix<Int> IntMat;
+// typedef NTL::vector<Int> IntVec;
+// typedef NTL::matrix<Int> IntMat;
 
 // This macro is defined in NTL/tools.h
 NTL_OPEN_NNS
@@ -63,26 +65,41 @@ NTL_OPEN_NNS
  * If `r=0`, then all the rows of the `IntMat` object are taken.
  * If `c=0`, then all the columns are taken.
  * The square lengths of the returned basis vectors are returned in the
- * vector `sqlen` if this vector is given (nonzero).
+ * vector pointed by `sqlen` if a nonzero pointer is given.
+ * We give a default type to the default value because the compiler
+ * needs to know which type to take in the template.
  * The functions return the dimension of the computed basis (the number of independent rows).
  */
+// template<typename RealVec>
+static long LLL_RR_lt(mat_ZZ& B, vec_RR* sqlen, const RR& delta, long r = 0, long c = 0);
 
+static long LLL_RR_lt(mat_ZZ& B, vec_RR* sqlen, const double delta = 0.99999, long r = 0, long c = 0);
+
+/*
 static long LLL_RR_lt(mat_ZZ& B, const RR& delta = conv<RR>(0.99999), long r = 0, long c = 0,
         vec_RR* sqlen = 0);
 
 static long LLL_RR_lt(mat_ZZ &B, const double delta = 0.99999, long r = 0, long c = 0,
         NTL::Vec<double>* sqlen = 0);
-
+*/
 /**
  * These two functions are wrappers of `BKZ_RR` in NTL, with the same modifications
  * as in `LLL_RR_lt` above.
  */
+// template<typename RealVec>
+static long BLZ_RR_lt(mat_ZZ& B, vec_RR* sqlen, const RR& delta,
+      long blocksize = 10, long prune = 0, long r = 0, long c = 0);
+
+static long BLZ_RR_lt(mat_ZZ& B, vec_RR* sqlen, const double delta = 0.99999,
+      long blocksize = 10, long prune = 0, long r = 0, long c = 0);
+
+/*
 static long BKZ_RR_lt(mat_ZZ &BB, const RR& delta = conv<RR>(0.99999), long blocksize = 10,
         long prune = 0, long r = 0, long c = 0, NTL::vec_RR* sqlen = 0);
 
 static long BKZ_RR_lt(mat_ZZ &BB, const double delta = 0.99999, long blocksize = 10,
         long prune = 0, long r = 0, long c = 0, NTL::Vec<double>* sqlen = 0);
-
+*/
 
 NTL_CLOSE_NNS
 
@@ -123,41 +140,43 @@ static void inc_red_fudge_RR()
 
 // NTL_START_IMPL
 
+/*
+// A version for RR.
+static void InnerProductR(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
+    RR t1, x;
+    clear(x);
+    for (long i = 0; i < n; i++) {
+        mul(t1, a[i], b[i]);
+        add(x, x, t1);
+    }
+    xx = x;
+}
+*/
 
-static void RowTransform(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1)
 // x = x - y*MU
-{
+static void RowTransform(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1, long n) {
    NTL_ZZRegister(T);
    NTL_ZZRegister(MU);
    long k;
-
-   long n = A.length();
+   // if (n == 0) n = A.length();
    long i;
-
    MU = MU1;
-
    if (MU == 1) {
       for (i = 1; i <= n; i++)
          sub(A(i), A(i), B(i));
-
       return;
    }
-
    if (MU == -1) {
       for (i = 1; i <= n; i++)
          add(A(i), A(i), B(i));
-
       return;
    }
-
    if (MU == 0) return;
 
    if (NumTwos(MU) >= NTL_ZZ_NBITS)
       k = MakeOdd(MU);
    else
       k = 0;
-
-
    if (MU.WideSinglePrecision()) {
       long mu1;
       conv(mu1, MU);
@@ -177,43 +196,32 @@ static void RowTransform(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1)
    }
 }
 
-static void RowTransform2(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1)
 // x = x + y*MU
-{
+static void RowTransform2(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1, long n) {
    NTL_ZZRegister(T);
    NTL_ZZRegister(MU);
    long k;
-
-   long n = A.length();
+   // if (n == 0) n = A.length();
    long i;
-
    MU = MU1;
-
    if (MU == 1) {
       for (i = 1; i <= n; i++)
          add(A(i), A(i), B(i));
-
       return;
    }
-
    if (MU == -1) {
       for (i = 1; i <= n; i++)
          sub(A(i), A(i), B(i));
-
       return;
    }
-
    if (MU == 0) return;
-
    if (NumTwos(MU) >= NTL_ZZ_NBITS)
       k = MakeOdd(MU);
    else
       k = 0;
-
    if (MU.WideSinglePrecision()) {
       long mu1;
       conv(mu1, MU);
-
       for (i = 1; i <= n; i++) {
          mul(T, B(i), mu1);
          if (k > 0) LeftShift(T, T, k);
@@ -229,32 +237,26 @@ static void RowTransform2(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1)
    }
 }
 
-void ComputeGS(const mat_ZZ& B, mat_RR& B1,
+void ComputeGS_RR(const mat_ZZ& B, mat_RR& B1,
                mat_RR& mu, vec_RR& b,
-               vec_RR& c, long k, const RR& bound, long st,
-               vec_RR& buf, const RR& bound2)
-{
+               vec_RR& c, long k, long n, const RR& bound, long st,
+               vec_RR& buf, const RR& bound2) {
    long i, j;
    RR s, t, t1;
    ZZ T1;
-
    if (st < k) {
       for (i = 1; i < st; i++)
          mul(buf(i), mu(k,i), c(i));
    }
-
    for (j = st; j <= k-1; j++) {
-      InnerProduct(s, B1(k), B1(j));
-
+      InnerProductR(s, B1(k), B1(j), n);
       sqr(t1, s);
       mul(t1, t1, bound);
       mul(t, b(k), b(j));
-
       if (t >= bound2 && t >= t1) {
-         InnerProduct(T1, B(k), B(j));
+         InnerProductV(T1, B(k), B(j), n);
          conv(s, T1);
       }
-
       clear(t1);
       for (i = 1; i <= j-1; i++) {
          mul(t, mu(j, i), buf(i));
@@ -265,23 +267,20 @@ void ComputeGS(const mat_ZZ& B, mat_RR& B1,
       buf(j) = t;
       div(mu(k, j), t, c(j));
    }
-
-
    clear(s);
    for (j = 1; j <= k-1; j++) {
       mul(t, mu(k, j), buf(j));
       add(s, s, t);
    }
-
    sub(c(k), b(k), s);
 }
 
 
 static
 long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
-           vec_RR& b, vec_RR& c, long m, long init_k, long &quit) {
+           vec_RR& b, vec_RR& c, long m, long n, long init_k, long &quit) {
    NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);
-   long n = B.NumCols();
+   if (n == 0) n = B.NumCols();
    long i, j, k, Fc1;
    ZZ MU;
    RR mu1, t1, t2, cc;
@@ -325,7 +324,7 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
       else
          rst = k;
       if (st[k] < st[k+1]) st[k+1] = st[k];
-      ComputeGS(B, B1, mu, b, c, k, bound, st[k], buf, bound2);
+      ComputeGS(B, B1, mu, b, c, k, n, bound, st[k], buf, bound2);
       st[k] = k;
       counter = 0;
       trigger_index = k;
@@ -333,37 +332,29 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
       cnt = 0;
       do {
          // size reduction
-
          counter++;
          if (counter > 10000) {
             cerr << "LLL_XD: warning--possible infinite loop\n";
             counter = 0;
          }
          Fc1 = 0;
-
          for (j = rst-1; j >= 1; j--) {
             abs(t1, mu(k,j));
             if (t1 > half_plus_fudge) {
-
                if (!Fc1) {
                   if (j > trigger_index ||
                       (j == trigger_index && small_trigger)) {
-
                      cnt++;
-
                      if (cnt > 10) {
                         inc_red_fudge_RR();
                         add(half_plus_fudge, half, red_fudge_RR);
                         cnt = 0;
                      }
                   }
-
                   trigger_index = j;
                   small_trigger = (t1 < 4);
                }
-
                Fc1 = 1;
-
                mu1 = mu(k,j);
                if (sign(mu1) >= 0) {
                   sub(mu1, mu1, half);
@@ -373,7 +364,6 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
                   add(mu1, mu1, half);
                   floor(mu1, mu1);
                }
-
                if (mu1 == 1) {
                   for (i = 1; i <= j-1; i++)
                      sub(mu(k,i), mu(k,i), mu(j,i));
@@ -388,22 +378,17 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
                      sub(mu(k,i), mu(k,i), t2);
                   }
                }
-
-
                conv(MU, mu1);
-
                sub(mu(k,j), mu(k,j), mu1);
-
-               RowTransform(B(k), B(j), MU);
+               RowTransform(B(k), B(j), MU, n);
             }
          }
-
          if (Fc1) {
             for (i = 1; i <= n; i++)
                conv(B1(k, i), B(k, i));
-
-            InnerProduct(b(k), B1(k), B1(k));
-            ComputeGS(B, B1, mu, b, c, k, bound, 1, buf, bound2);
+            InnerProductR(b(k), B1(k), B1(k), n);
+            //std::cout << "ll_LLL_RR_lt inside (Fc1) before computeGS, b(k) = " << b(k) << "\n";
+            ComputeGS_RR(B, B1, mu, b, c, k, n, bound, 1, buf, bound2);
          }
       } while (Fc1);
       if (IsZero(b(k))) {
@@ -419,7 +404,6 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
          continue;
       }
       if (quit) break;
-
       // test LLL reduction condition
       if (k <= 1) {
          k++;
@@ -446,13 +430,14 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
    return m;
 }
 
-
 static long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta,
            mat_RR& B1, mat_RR& mu,
-           vec_RR& b, vec_RR& c, long m, long init_k, long &quit);
+           vec_RR& b, vec_RR& c, long m, long n, long init_k, long &quit);
+
 
 // Here, `delta` and `sqlen` are in `RR`, as in NTL.
-long LLL_RR_lt(NTL::mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen) {
+// template<>
+long LLL_RR_lt(NTL::mat_ZZ& B, vec_RR* sqlen, const RR& delta, long m, long n) {
        if (m == 0) m = B.NumRows();
        if (n == 0) n = B.NumCols();
        long i, j, new_m, quit;
@@ -479,10 +464,10 @@ long LLL_RR_lt(NTL::mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen) {
           for (j = 0; j < n; j++)
              conv(B1[i][j], B[i][j]);
        for (i = 0; i < m; i++) {
-          InnerProduct(sqlen2[i], B1[i], B1[i]);
+          InnerProductR(sqlen2[i], B1[i], B1[i], n);
        }
-       new_m = ll_LLL_RR_lt(B, delta, B1, mu, sqlen2, c, m, 1, quit);
-       // new_m = ll_LLL_RR(B, delta, B1, mu, b, c, m, 1, quit);
+       new_m = ll_LLL_RR_lt(B, delta, B1, mu, sqlen2, c, m, n, 1, quit);
+       // new_m = ll_LLL_RR(B, delta, B1, mu, b, c, m, n, 1, quit);
 
        // In this version, we leave the zero rows at the bottom.
        // The new_m independent basis vectors will be at the top of `B`.
@@ -505,20 +490,11 @@ long LLL_RR_lt(NTL::mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen) {
        return new_m;
     }
 
-// Here, `delta` and `sqlen` are in `double`.  We need to create a `VecRR` each time
-// to call the other function.
-long LLL_RR_lt(mat_ZZ& B, const double delta, long m, long n, NTL::Vec<double>* sqlen) {
-    vec_RR sqlenRR;
-    sqlenRR.SetLength(m);
-    // vec_RR* sqlenRRpt = &sqlenRR;
-    long new_m = LLL_RR_lt(B, conv<RR>(delta), m, n, &sqlenRR);
-    if (sqlen) {
-        if (sqlen->length() < new_m) sqlen->SetLength(new_m);
-        for (int i = 0; i < new_m; i++)  (*sqlen)[i] = conv<double> (sqlenRR[i]);
-    }
-    return new_m;
+// Here, `delta` is passed as a `double`.
+// template<>
+long LLL_RR_lt(mat_ZZ& B, vec_RR* sqlen, const double delta, long m, long n) {
+    return LLL_RR_lt(B, sqlen, conv<RR>(delta), m, n);
 }
-
 
 static
 void ComputeBKZConstant_RR(long beta, long p) {
@@ -576,8 +552,9 @@ void ComputeBKZThresh(RR *c, long beta)
 }
 
 // This is for BKZ with RR.
-long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
-        long m, long n, vec_RR* sqlen) {
+// template<>
+long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune,
+        long m, long n) {
 
    NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);
    NTL_TLS_GLOBAL_ACCESS(BKZThresh);
@@ -638,9 +615,9 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
       for (j = 0; j < n; j++)
          conv(B1[i][j], B[i][j]);
    for (i = 0; i < m; i++) {
-      InnerProduct(b[i], B1[i], B1[i]);
+      InnerProductR(b[i], B1[i], B1[i], n);
    }
-   m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, m, 1, quit);
+   m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, m, n, 1, quit);
 
    unsigned long NumIterations = 0;
    unsigned long NumTrivial = 0;
@@ -769,7 +746,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
                   swap(B1(i-1), B1(i));
                   swap(b(i-1), b(i));
                }
-               new_m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, h, jj, quit);
+               new_m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, h, n, jj, quit);
                if (new_m != h) LogicError("BKZ_RR: internal error");
                if (quit) break;
             }
@@ -780,7 +757,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
                for (i = jj; i <= kk; i++) {
                   if (uvec(i) == 0) continue;
                   conv(MU, uvec(i));
-                  RowTransform2(B(m+1), B(i), MU);
+                  RowTransform2(B(m+1), B(i), MU, n);
                }
                for (i = m+1; i >= jj+1; i--) {
                   // swap i, i-1
@@ -790,12 +767,12 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
                }
                for (i = 1; i <= n; i++)
                   conv(B1(jj, i), B(jj, i));
-               InnerProduct(b(jj), B1(jj), B1(jj));
+               InnerProductR(b(jj), B1(jj), B1(jj), n);
                if (b(jj) == 0) LogicError("BKZ_RR: internal error, b(jj) == 0");
 
                // remove linear dependencies
                // cerr << "general case\n";
-               new_m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, kk+1, jj, quit);
+               new_m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, kk+1, n, jj, quit);
                if (new_m != kk) LogicError("BKZ_RR: internal error");
 
                // remove zero vector
@@ -809,7 +786,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
                if (quit) break;
                if (h > kk) {
                   // extend reduced basis
-                  new_m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, h, h, quit);
+                  new_m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, h, n, h, quit);
                   if (new_m != h) LogicError("BKZ_RR: internal error");
                   if (quit) break;
                }
@@ -820,7 +797,7 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
             NumNoOps++;
             if (!clean) {
                new_m =
-                  ll_LLL_RR_lt(B, delta, B1, mu, b, c, h, h, quit);
+                  ll_LLL_RR_lt(B, delta, B1, mu, b, c, h, n, h, quit);
                if (new_m != h) LogicError("BKZ_RR: internal error");
                if (quit) break;
             }
@@ -853,20 +830,11 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
     return m;    // Number of rows in basis.
 }
 
-// Here, `delta` and `sqlen` are in `double`.  We need to create a `VecRR` each time
-// to call the other function.
-long BKZ_RR_lt(mat_ZZ& BB, const double delta, long beta, long prune,
-         long m, long n, NTL::Vec<double>* sqlen) {
-    vec_RR sqlenRR;
-    sqlenRR.SetLength(m);
-    // RR Delta;
-    // conv(Delta, delta);
-    long new_m = BKZ_RR_lt(BB, conv<RR>(delta), beta, prune, m, n, &sqlenRR);
-    if (sqlen) {
-        if (sqlen->length() < new_m) sqlen->SetLength(new_m);
-        for (int i = 0; i < new_m; i++)  (*sqlen)[i] = conv<double> (sqlenRR[i]);
-    }
-    return new_m;
+// Here, `delta` is passed as a `double`.
+// template<>
+long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const double delta, long beta, long prune,
+         long m, long n) {
+    return BKZ_RR_lt(BB, sqlen, conv<RR>(delta), beta, prune, m, n);
 }
 
 NTL_END_IMPL

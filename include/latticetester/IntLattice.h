@@ -680,15 +680,15 @@ void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
     // We assume here that this and lattice have the same m.
     projLattice->setDim (proj.size());  // Number of coordinates in the projection.
     if (!projLattice->m_withDual) { // This builds only the primal basis.
+        NTL::vector<Real>* sqlen = 0;
         projectionConstructionLLL(this->m_basis,
-                projLattice->m_basis, proj, this->m_modulo, delta, proj.size());//, CW
-                //projLattice->m_vecNorm);
+                projLattice->m_basis, proj, this->m_modulo, sqlen, delta, proj.size());
     } else { // This builds both the primal and the m-dual bases.
         projectionConstructionUpperTri(this->m_basis,
                 projLattice->m_basis, proj, this->m_modulo, this->m_dim);
 // For some reason, the following statement does not compile;
 // the compiler does not find this function in BasisConstruction!
- //       mDualUpperTriangular(projLattice->m_basis,
+ //       mDualUpperTriangular<Int>(projLattice->m_basis,
  //               projLattice->m_dualbasis, this->m_modulo, projLattice->m_dim);
         std::cout << "IntLattice::buildProjection: mdualUT not implemented \n";
         this->setNegativeNorm();

@@ -45,44 +45,11 @@
  *
  *  ***  These must be replaced  ***
  *
- Types: Int = NTL::ZZ, Real = double
- Timings for different methods, in basic clock units
- dim:          10       20       30       40       50
-
- LLL5          3053     6595    12300    20728    29432
- LLL8          3562    13129    23420    38350    55714
- LLL99999      4175    22895    47833    74681   108213
- UppTri         829     2585     3682     4819     6492
- Tri96         2016     7068    11316    15016    17853
- mDualUT        258     1074     3368     7607    13729
- mDualUT96      424     1342     3301     6734    11970
- mDual         7081    33344    91112   180249   312506
- Total time: 1.22782 seconds
-
- With our LLL_PFZZflex with -O3, we are no longer slower:
- LLL5          2359     6908    11512    20036    29576
- LLL8          3208    12281    22975    38997    53318
- LLL99999      3789    21911    44474    69750    98466
-
-
- Types: Int = int64_t, Real = double
- Timings for different methods, in basic clock units
- dim:          10       20       30       40       50
-
- LLL5          1424     5465    10151    18259    27243
- LLL8          1678    11336    22571    41384    65910
- LLL99999      2064    20915    55015    96772   156141
- UppTri          92      319      520      746     1017
- Tri96          133      591     1006     1522     2015
- mDualUT         50      203      383      772     1303
- mDualUT96       87      481     1142     2820     4460
- Total time: 0.559324 seconds
-
  **/
 
-// #define TYPES_CODE  LD     // Int == int64_t
-// #define TYPES_CODE  ZD     // Int == ZZ
-#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
+//#define TYPES_CODE  LD     // Int == int64_t
+#define TYPES_CODE  ZD     // Int == ZZ, Real = double
+//#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 #include <iostream>
 #include <cstdint>
@@ -126,25 +93,66 @@ std::string names[numMeth] = { "LLL5      ", "LLL9      ", "LLL99999  ",
 clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
 clock_t timer[numMeth][numSizes];
-double sumSq[numMeth][numSizes];
-NTL::Vec<double> sqlen;
+Real sumSq[numMeth][numSizes];
+RealVec sqlen; // Cannot set length in the preamble, we do it below.
 
 // Run speed test for dim = dimensions[d], with given matrices.
-static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
+static void transformBases (long d, long dim, IntMat &basis1, IntMat &basis2,
+        IntMat &basisdual) {
+    // We apply LLL to basis1 with different values of `delta`, incrementally.
+    CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
+    tmp = clock();
+    LLLConstruction0(basis2, &sqlen, 0.5, dim, dim);
+    timer[0][d] += clock() - tmp;
+    sumSq[0][d] += sqlen[0];
+
+    // We continue the LLL process with a larger `delta`.
+    tmp = clock();
+    LLLConstruction0(basis2, &sqlen, 0.9, dim, dim);
+    timer[1][d] += clock() - tmp;
+    sumSq[1][d] += (sqlen)[0];
+
+    tmp = clock();
+    LLLConstruction0(basis2, &sqlen, 0.99999, dim, dim);
+    timer[2][d] += clock() - tmp;
+    sumSq[2][d] += (sqlen)[0];
+
+    // Here we restart LLL from the initial triangular basis.
+    CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
+    tmp = clock();
+    LLLConstruction0(basis2, &sqlen, 0.99999, dim, dim);
+    timer[3][d] += clock() - tmp;
+    sumSq[3][d] += (sqlen)[0];
+
+    // We now construct an upper-triangular basis from basis2 into basis1.
+    tmp = clock();
+    upperTriangularBasis(basis2, basis1, m, dim, dim);
+    timer[4][d] += clock() - tmp;
+
+    // We compute an m-dual basis to basis1.
+    tmp = clock();
+    mDualUpperTriangular(basis1, basisdual, m, dim);
+    timer[5][d] += clock() - tmp;
+}
+
+/*
+// A verbose version, for checking.
+static void transformBasesVerb (long d, long dim, IntMat &basis1, IntMat &basis2,
         IntMat &basisdual) {
     // We apply LLL to basis1 with different values of `delta`, incrementally.
     Int sqlength;
     std::cout << "\n ******** dim = " << dim << "\n";
 
     // ****   Use CopyPartMat instead!
-    CopyPartMat (basis2, basis1, dim, dim);
+    CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
     //  copy(basis1, basis2, dim, dim);
+    std::cout << "Before LLL 0.5: sqlen = " << sqlen << "\n";
     tmp = clock();
-    redLLLNTL(basis2, 0.5, dim, &sqlen);
-    // LLLConstruction0(basis2, 0.5, dim, dim, sqlen);
+    // redLLLNTL(basis2, 0.5, dim, &sqlen);
+    LLLConstruction0(basis2, &sqlen, 0.5, dim, dim);   // FAILS for RR
     timer[0][d] += clock() - tmp;
     sumSq[0][d] += sqlen[0];
-    std::cout << "After LLL 0.5: sqlen[0] = " << sqlen[0] << "\n";
+    std::cout << "After LLL 0.5: sqlen[0] = " << (sqlen)[0] << "\n";
     std::cout << "First basis vector: " << basis2[0] << "\n";
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
@@ -152,30 +160,31 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     // We continue the LLL process with a larger `delta`.
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    redLLLNTL(basis2, 0.9, dim, &sqlen);
-    LLLConstruction0(basis2, 0.9, dim, dim, &sqlen);
+    // redLLLNTL(basis2, 0.9, dim, &sqlen);
+    LLLConstruction0(basis2, &sqlen, 0.9, dim, dim);
     timer[1][d] += clock() - tmp;
-    sumSq[1][d] += sqlen[0];
-    std::cout << "After LLL 0.9:  sqlen[0] = " << sqlen[0] << "\n";
+    //sumSq[1][d] += sqlen[0];
+    std::cout << "After LLL 0.9:  sqlen[0] = " << (sqlen)[0] << "\n";
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    redLLLNTL(basis2, 0.99999, dim, &sqlen);
+    // redLLLNTL(basis2, 0.99999, dim, &sqlen);
     timer[2][d] += clock() - tmp;
-    sumSq[2][d] += sqlen[0];
-    std::cout << "After LLL 0.99999:  sqlen[0] = " << sqlen[0] << "\n";
+    //sumSq[2][d] += sqlen[0];
+    std::cout << "After LLL 0.99999:  sqlen[0] = " << (sqlen)[0] << "\n";
     std::cout << "First basis vector: " << basis2[0] << "\n";
     ProdScal<Int>(basis2[0], basis2[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     // Here we restart LLL from the initial triangular basis.
-    copy(basis1, basis2, dim, dim);
+    CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
+    // copy(basis1, basis2, dim, dim);
     tmp = clock();
-    LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen);
+    LLLConstruction0(basis2, &sqlen, 0.99999, dim, dim);
     timer[3][d] += clock() - tmp;
-    sumSq[3][d] += sqlen[0];
+    //sumSq[3][d] += sqlen[0];
 
     // We now construct an upper-triangular basis from basis2 into basis1.
     tmp = clock();
@@ -190,6 +199,7 @@ static void transformBases(long d, long dim, IntMat &basis1, IntMat &basis2,
     // mDualBasis is currently implemented only for Int = ZZ and dim = maxDim.
     // BasisConstruction<Int>::mDualBasis(basis2, basisdual, m);
 }
+*/
 
 // In this testing loop, new `Rank1Lattice` objects are created
 // and the  `IntMat` matrices are resized inside the loop.
@@ -197,10 +207,9 @@ static void testLoopResize(long numRep) {
     long d, dim;
     IntMat basis1, basis2, basisdual;
     Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
-    sqlen.SetLength(maxdim);
     for (d = 0; d < numSizes; d++)      // Reset timers and sums.
         for (int64_t meth = 0; meth < numMeth; meth++) {
-            timer[meth][d] = 0;   sumSq[meth][d] = 0.0;
+            timer[meth][d] = 0;   sumSq[meth][d] = 0.0;  // NTL::conv<Real>(0.0);
         }
     totalTime = clock();
     for (int64_t r = 0; r < numRep; r++) {
@@ -214,9 +223,6 @@ static void testLoopResize(long numRep) {
             korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, true);
             korlat->buildBasis(dim);
             basis1 = korlat->getBasis();
-           //  copy(korlat->getBasis(), basis1); // This initial basis is triangular.
-            // Here this basis is a dim x dim IntMat object.
-            // std::cout << " before transform \n ";
             transformBases(d, dim, basis1, basis2, basisdual);
             delete korlat;
         }
@@ -231,7 +237,6 @@ static void testLoopResize(long numRep) {
 static void testLoopNoResize(long numRep) {
     long d, dim;  // Index of dimension.
     IntMat basis1, basis2, basisdual;
-    sqlen.SetLength(maxdim);
     basis1.SetDims(maxdim, maxdim); // Will be initial triangular basis.
     basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
     basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
@@ -240,7 +245,7 @@ static void testLoopNoResize(long numRep) {
 
     for (d = 0; d < numSizes; d++)   // Reset timers.
         for (int64_t meth = 0; meth < numMeth; meth++) {
-            timer[meth][d] = 0;     sumSq[meth][d] = 0.0;
+            timer[meth][d] = 0;     sumSq[meth][d] = 0.0;  // NTL::conv<Real>(0.0);
         }
     totalTime = clock();
     for (int64_t r = 0; r < numRep; r++) {
@@ -261,36 +266,41 @@ static void printResults() {
     std::cout << " dim:    ";
     for (d = 0; d < numSizes; d++)
         std::cout << std::setw(8) << dimensions[d] << "  ";
-    std::cout << std::endl << std::endl;
+    std::cout << "\n\n";
     for (int meth = 0; meth < numMeth; meth++) {
         std::cout << names[meth] << " ";
         for (d = 0; d < numSizes; d++)
-            std::cout << std::setw(8) << timer[meth][d] << " ";
-        std::cout << std::endl;
+            std::cout << std::setw(9) << timer[meth][d] << " ";
+        std::cout << "\n";
     }
-    std::cout << std::endl;
+    std::cout << "\n";
     std::cout << "Sums of square lengths of shortest basis vector:\n";
+    std::cout << " dim:    ";
+    for (d = 0; d < numSizes; d++)
+        std::cout << std::setw(13) << dimensions[d] << "  ";
+    std::cout << "\n\n";
     for (int meth = 0; meth < numMeth-2; meth++) {
-        std::cout << names[meth] << " ";
+        std::cout << names[meth] << "  ";
         for (d = 0; d < numSizes; d++)
-            std::cout << std::setw(8) << sumSq[meth][d] << " ";
-        std::cout << std::endl;
+            std::cout << std::setw(14) << sumSq[meth][d] << " ";
+        std::cout << "\n";
     }
-    std::cout << std::endl;
+    std::cout << "\n";
     std::cout << "Total time: "
             << (double) (clock() - totalTime) / (CLOCKS_PER_SEC)
             << " seconds\n\n\n";
 }
 
 int main() {
-    long numRep = 2;  // Number of replications (multipliers) for each case.
+    long numRep = 1000;    // Number of replications (multipliers) for each case.
+    sqlen.SetLength(maxdim);   // Done here because cannot be done in preamble.
     std::cout << "Types: " << strFlexTypes << "\n\n";
-    std::cout << "Results of BasisManipulation.cc with m = " << m << "\n";
+    std::cout << "Results of TestBasisConstructionSpeed.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
     testLoopNoResize(numRep);
     std::cout << "Timings for `testLoop No Resize`\n";
     printResults();
-    testLoopResize(numRep);  // When I do this first, the "no resize"  does not work!
+    testLoopResize(numRep);
     std::cout << "Timings for `testLoop Resize` (many objects are created or resized)\n";
     printResults();
 

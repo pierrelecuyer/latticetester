@@ -28,6 +28,7 @@
 #include <NTL/ZZ.h>
 #include <NTL/LLL.h>
 
+#include <latticetester/FlexTypes.h>
 #include <latticetester/Util.h>
 // #include <latticetester/NTLWrap.h>
 
@@ -59,6 +60,7 @@
 typedef NTL::vector<Int> IntVec;
 typedef NTL::matrix<Int> IntMat;
 typedef NTL::vector<int64_t> vector64;
+typedef NTL::vector<Real> RealVec;
 
 // Int modulus64(1048573);  // To test if basis entries ever exceed the modulus.
 
@@ -78,16 +80,15 @@ NTL_OPEN_NNS
  * The function returns the dimension of the computed basis (the number of independent rows).
  */
 template<typename IntMat>
-static long LLL_FPInt(IntMat &B, double delta = 0.99, long r = 0, long c = 0,
-        Vec<double>& sqlen = 0);
+static long LLL_FPInt(IntMat &B, Vec<double>* sqlen, double delta = 0.99, long r = 0, long c = 0);
 
 /**
  * This function is similar to `BKZ_FP` in NTL, with the same modifications
  * as in LLL_FPInt above.
  */
 template<typename IntMat>
-static long BKZ_FPInt(IntMat &BB, double delta = 0.99, long blocksize = 10,
-        long prune = 0, long r = 0, long c = 0, Vec<double>& sqlen = 0);
+static long BKZ_FPInt(IntMat &BB, Vec<double>* sqlen, double delta = 0.99, long blocksize = 10,
+        long prune = 0, long r = 0, long c = 0);
 
 NTL_CLOSE_NNS
 
@@ -635,7 +636,7 @@ static void ComputeGS(IntMat &B, double **B1, double **mu, double *b, double *c,
     }
 
 #if (!NTL_EXT_DOUBLE)
-// Kahan summation
+    // Kahan summation
     double c1;
     s = c1 = 0;
     for (j = 0; j < k; j++) {
@@ -719,14 +720,13 @@ static void inc_red_fudge() {
 // The following functions always use RR matrices.  ***
 // We do not use them when Int = int64_t.
 // k and st are both reduced by 1 compared with NTL version
-
+// Why is the next one implemented ????                        *********
 void ComputeGS(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
         long k, const RR &bound, long st, vec_RR &buf, const RR &bound2);
 
 void ComputeGS(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
-        long k, long n, const RR &bound, long st, vec_RR &buf,
-        const RR &bound2) {
-    std::cout << "We are now in this ComputeGS with RR vectors!!! \n";
+        long k, long n, const RR &bound, long st, vec_RR &buf,  const RR &bound2) {
+    // std::cout << "We are now in this ComputeGS with RR vectors!!! \n";
     ComputeGS(B, B1, mu, b, c, k, bound, st, buf, bound2);
 }
 
@@ -1362,7 +1362,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
 }
 
 template<typename IntMat>
-static long LLL_FPInt(IntMat &B, double delta, long m, long n, Vec<double>* sqlen) {
+static long LLL_FPInt(IntMat &B, Vec<double>* sqlen, double delta, long m, long n) {
     if (m == 0)
         m = B.NumRows();
     if (n == 0)
@@ -1529,8 +1529,8 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
 }
 
 template<typename IntMat>
-static long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune, long m, long n,
-        Vec<double>* sqlen) {
+static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta, long prune, long m, long n
+       ) {
     if (m == 0)
         m = BB.NumRows();
     if (n == 0)

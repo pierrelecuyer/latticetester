@@ -38,6 +38,7 @@
 #include "NTL/mat_ZZ.h"
 #include "NTL/LLL.h"
 
+#include <latticetester/FlexTypes.h>
 #include "latticetester/NTLWrap.h"
 #include "latticetester/EnumTypes.h"
 #include "latticetester/IntLattice.h"
@@ -109,8 +110,9 @@ namespace LatticeTester {
  * illustrate how to use these functions and make speed comparisons.
  */
 
-typedef NTL::vector<Int> IntVec;
-typedef NTL::matrix<Int> IntMat;
+//typedef NTL::vector<Int> IntVec;
+//typedef NTL::matrix<Int> IntMat;
+//typedef NTL::vector<Real> RealVec;
 
 
     /**
@@ -138,21 +140,26 @@ typedef NTL::matrix<Int> IntMat;
      * To make sure that these vectors belong to the lattice, we can add them
      * explicitly beforehand to the set of generating vectors, or call the next method.
      */
+template<typename IntMat, typename RealVec>
+static long LLLConstruction0(IntMat &gen, RealVec* sqlen, const double delta = 0.9, long r = 0,
+        long c = 0, PrecisionType precision = DOUBLE);
+
+/*
 template<typename IntMat>
 static long LLLConstruction0(IntMat &gen, double delta = 0.9, long r = 0,
-            long c = 0, NTL::Vec<double> *sqlen = 0, PrecisionType precision = DOUBLE);
+            long c = 0);
+*/
 
-    /**
+/**
      * Similar to `LLLConstruction0`, except that in case the set of generating
      * vectors do not generate a full-dimensional lattice, it adds the vectors
      * \f$m e_i\f$ to the generating set, so it always returns a square matrix.
      * The matrix `gen` is not resized by this function, so it can remain larger
      * than the lattice dimension.
      */
-template<typename IntMat, typename Int>
-static void LLLBasisConstruction(IntMat &gen, const Int &m, double delta =
-            0.9, long r = 0, long c = 0, NTL::Vec<double> *sqlen = 0,
-            PrecisionType precision = DOUBLE);
+template<typename IntMat, typename Int, typename RealVec>
+static void LLLBasisConstruction(IntMat &gen, const Int &m, RealVec* sqlen, const double delta =
+            0.9, long r = 0, long c = 0, PrecisionType precision = DOUBLE);
 
     /**
      * Takes a set of generating vectors in the matrix `gen` and iteratively
@@ -250,10 +257,10 @@ static void projectMatrix(const IntMat &in, IntMat &out,
      * The square Euclidean lengths of the basis vectors are returned in the array `sqlen` when
      * the latter is given.
      */
-template<typename IntMat, typename Int>
+template<typename IntMat, typename Int, typename RealVec>
 static void projectionConstructionLLL(const IntMat &inBasis,
             IntMat &projBasis, const Coordinates &proj, const Int &m,
-            const double delta = 0.9, long r = 0, NTL::Vec<double> *sqlen = 0);
+            RealVec* sqlen, const double delta = 0.9, long r = 0);
 
     /**
      * Same as `projectionConstructionLLL`, but the construction is made using
@@ -279,6 +286,7 @@ static void projectionConstructionUpperTri(const IntMat &inBasis,
             IntMat &projBasis, const Coordinates &proj, const Int &m,
             long r = 0);
 
+
     /**
      * In this version, the construction method is passed as a parameter. The default is LLL.
      * In the triangular case, a temporary matrix is created internally.
@@ -294,55 +302,64 @@ static void projectionConstruction(const IntMat &inBasis, IntMat &projBasis,
 // Implementation
 
 // The int64_t implementation.
-// This one works only for `precision == DOUBLE`.
+// This one works only for `precision == DOUBLE` and Real == double.
 template<>
-long LLLConstruction0(NTL::matrix<int64_t> &gen,
-        double delta, long r, long c, NTL::Vec<double> *sqlen, PrecisionType precision) {
-    // long num = gen.NumRows();   // Number of generating vectors.
-    if (precision == DOUBLE)    // & (c == 0) & (r == 0) & (sqlen == 0))
-        return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
+long LLLConstruction0(NTL::matrix<int64_t> &gen, NTL::vector<double> *sqlen,
+        const double delta, long r, long c, PrecisionType precision) {
+    if (precision == DOUBLE)
+        return NTL::LLL_FPInt(gen, sqlen, delta, r, c);
     else
         std::cerr
                 << "LLLConstruction0 for int64_t: implemented only for precision=DOUBLE.\n";
     abort();
 }
 
-// The ZZ implementation.
+// The ZZ + double implementation.
 template<>
-long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
-        double delta, long r, long c, NTL::Vec<double> *sqlen, PrecisionType precision) {
-    long rank = 0;
+long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, NTL::vector<double> *sqlen,
+        const double delta, long r, long c, PrecisionType precision) {
     switch (precision) {
     case DOUBLE:
-        return rank = NTL::LLL_FPInt(gen, delta, r, c, sqlen);
+        return NTL::LLL_FPInt(gen, sqlen, delta, r, c);
         break;
-    case QUADRUPLE:
-        rank = NTL::LLL_QP(gen, delta);
-        break;
-    case XDOUBLE:
-        rank = NTL::LLL_XD(gen, delta);
+    //case RR:
+    //    return rank = NTL::LLL_RR_lt(gen, sqlen, delta, r, c);
+    //    break;
+    default:
+        std::cerr << "LLLConstruction0: precision type not implemented.\n";
+        abort();
+    }
+}
+
+// The ZZ + RR implementation.
+template<>
+long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, NTL::vector<NTL::RR> *sqlen,
+        const double delta, long r, long c, PrecisionType precision) {
+   // std::cout << "LLLConstruction0 for RR: before calling LLL_RR.\n";
+   return NTL::LLL_RR_lt(gen, sqlen, conv<NTL::RR>(delta), r, c);
+/*  switch (precision) {
+    case DOUBLE:
+        std::cerr << "LLLConstruction0: DOUBLE precision type not supported for Real=RR.\n";
+        // return rank = NTL::LLL_FPInt(gen, sqlen, delta, r, c);  // Not supported!!!
+        abort();
         break;
     case RR:
-        return rank = NTL::LLL_RR_lt(gen, delta, r, c, sqlen);
+       return NTL::LLL_RR_lt(gen, sqlen, conv<NTL::RR>(delta), r, c);
         break;
     default:
-        std::cerr << "LLLConstruction0: unknown precision type.\n";
+        std::cerr << "LLLConstruction0: precision type not supported.\n";
+        abort();
     }
-    // NTL puts the zero rows at the top of the matrix `gen`.
-    // Here we move the nonzero vectors to the top (first `rank` rows).
-    long num = gen.NumRows();
-    for (long i = 0; i < rank; i++) {
-        NTL::swap(gen[i], gen[num - rank + i]);
-    }
-    return rank;
+*/
 }
+
 
 //============================================================================
 
-template<typename IntMat, typename Int>
-void LLLBasisConstruction(IntMat &gen, const Int &m,
-        double delta, long r, long c, NTL::Vec<double> *sqlen, PrecisionType precision) {
-    int64_t rank = LLLConstruction0(gen, delta, r, c, sqlen, precision);
+template<typename IntMat, typename Int, typename RealVec>
+void LLLBasisConstruction(IntMat &gen, const Int &m, RealVec *sqlen,
+        double delta, long r, long c, PrecisionType precision) {
+    int64_t rank = LLLConstruction0(gen, sqlen, delta, r, c, precision);
     if (!c)  // c == 0
         c = gen.NumCols();
     if (rank == c)
@@ -359,8 +376,8 @@ void LLLBasisConstruction(IntMat &gen, const Int &m,
                 gen[i][j] = 0;
         }
     }
-    rank = LLLConstruction0(gen, delta, rank + c, c, sqlen);
-    std::cout << "LLLBasisConstruction: we had to add some rows!\n";
+    rank = LLLConstruction0(gen, sqlen, delta, rank + c, c);
+    std::cout << "Warning for LLLBasisConstruction: we had to add some rows!\n";
 }
 
 
@@ -370,7 +387,7 @@ template<typename IntMat, typename Int>
 void lowerTriangularBasis(IntMat &gen, IntMat &basis,
         const Int &m, long dim1, long dim2) {
     // Note:  dim1 = r, dim2 = c.   The new basis should be c x c.
-    NTL::Vec<Int> coeff_gcd, coeff_xi, xi; // Several vectors are created locally here.
+    NTL::vector<Int> coeff_gcd, coeff_xi, xi; // Several vectors are created locally here.
     Int gcd, gcd_tower, C, D;
     long i, j, k, l;
     // In case r or c is zero:
@@ -477,7 +494,7 @@ void lowerTriangularBasis(IntMat &gen, IntMat &basis,
 template<typename IntMat, typename Int>
 void upperTriangularBasis(IntMat &gen, IntMat &basis,
         const Int &m, long dim1, long dim2) {
-    NTL::Vec<Int> coeff_gcd, coeff_xi, xi;  // Here we create new vectors!
+    NTL::vector<Int> coeff_gcd, coeff_xi, xi;  // Here we create new vectors!
     Int gcd, gcd_tower, C, D;
     long i, j, k, l;
     // In case dim1 or dim2 is zero:
@@ -795,12 +812,12 @@ void projectMatrix(const IntMat &in, IntMat &out,
 }
 
 //===================================================
-template<typename IntMat, typename Int>
+template<typename IntMat, typename Int, typename RealVec>
 void projectionConstructionLLL(const IntMat &inBasis,
         IntMat &projBasis, const Coordinates &proj, const Int &m,
-        const double delta, long r, NTL::Vec<double> *sqlen) {
+        RealVec *sqlen, const double delta, long r) {
     projectMatrix(inBasis, projBasis, proj, r);
-    LLLBasisConstruction(projBasis, m, delta, r, proj.size(), sqlen);
+    LLLBasisConstruction(projBasis, m, sqlen, delta, r, proj.size());
 }
 
 //===================================================
@@ -832,13 +849,10 @@ void projectionConstruction(const IntMat &inBasis,
         IntMat &projBasis, const Coordinates &proj, const Int &m,
         const ProjConstructType projType, const double delta) {
     if (projType == LLLPROJ)
-        projectionConstructionLLL(inBasis, projBasis, proj, m, delta);
+        projectionConstructionLLL(inBasis, projBasis, proj, m, 0, delta);
     if (projType == UPPERTRIPROJ)
         projectionConstructionUpperTri(inBasis, projBasis, proj, m);
 }
-
-// template class BasisConstruction<std::int64_t> ;
-// template class BasisConstruction<NTL::ZZ> ;
 
 } // end namespace LatticeTester
 
