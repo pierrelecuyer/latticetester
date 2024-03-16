@@ -318,10 +318,23 @@ long LLLConstruction0(NTL::matrix<int64_t> &gen, NTL::vector<double> *sqlen,
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, NTL::vector<double> *sqlen,
         const double delta, long r, long c, PrecisionType precision) {
+    NTL::matrix<NTL::ZZ> cpbasis;
     switch (precision) {
     case DOUBLE:
         return NTL::LLL_FPInt(gen, sqlen, delta, r, c);
         break;
+    case QUADRUPLE:
+       cpbasis.SetDims(r, c);
+       LatticeTester::copy(gen, cpbasis, r, c);  // From Util
+       return NTL::LLL_QP(cpbasis, delta);
+       LatticeTester::copy(cpbasis, gen);
+       break;
+    case XDOUBLE:
+       cpbasis.SetDims(r, c);
+       LatticeTester::copy(gen, cpbasis, r, c);  // From Util
+       return NTL::LLL_XD(cpbasis, delta);
+       LatticeTester::copy(cpbasis, gen);
+       break;
     //case RR:
     //    return rank = NTL::LLL_RR_lt(gen, sqlen, delta, r, c);
     //    break;

@@ -433,7 +433,7 @@ inline void power2(NTL::ZZ &z, std::int64_t i) {
     z = NTL::power_ZZ(2, i);
 }
 
-inline double sqrt(const double &a) { return std::sqrt(a); }
+//inline double sqrt(const double &a) { return std::sqrt(a); }
 
 //inline double log(const double x) {
 //	return std::log(x);

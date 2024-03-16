@@ -1531,6 +1531,7 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
 template<typename IntMat>
 static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta, long prune, long m, long n
        ) {
+   std::cout << " Inside BKZ_FPInt, m = " << m << "\n";
     if (m == 0)
         m = BB.NumRows();
     if (n == 0)

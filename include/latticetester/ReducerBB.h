@@ -26,10 +26,10 @@
 #include "latticetester/EnumTypes.h"
 #include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
-#include "latticetester/BasisConstruction.h"
+// #include "latticetester/BasisConstruction.h"
 #include "latticetester/NTLWrap.h"
-#include "latticetester/LLL_FPInt.h"
-#include "latticetester/LLL_RR_lt.h"
+//#include "latticetester/LLL_FPInt.h"
+//#include "latticetester/LLL_RR_lt.h"
 
 #include <fstream>
 #include <sstream>
@@ -478,7 +478,7 @@ private:
     IntVec m_bw;   // Saves current shortest vector in dual basis
     Real m_lMin;   // The norm of the shortest vector in the primal basis
                    // according to the norm considered
-    Real m_lMin2; // Squared L2-norm of the shortest vector in the primal basis.
+    Real m_lMin2;  // Squared L2-norm of the shortest vector in the primal basis.
 
     Int m_bs;      // Used in pairwiseRedPrimal and pairwiseRedDual.
     Real m_ns;     // Used in pairwiseRedPrimal and pairwiseRedDual.
@@ -1675,18 +1675,16 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
         if (!calculCholesky(m_dc2, m_c0))
             return false;
     } else if (m_decomp == TRIANGULAR) {  // Just for testing; this is very slow!
-        // std::cerr << "RedBBShortVec:decomp=TRIANGULAR not supported for now.";
-        // return false;
         /* Perform a triangular decomposition:
-         * TO DO: Instead of doing the following, I think we should assume that the basis
-         * is already lower triangular!
+         * Instead of doing the following, perhaps we may just assume that the basis
+         * is already lower triangular?
          */
         IntMat m_v, m_v2;   // Here we create new matrices each time!!!!
         m_v.resize(dim, dim);
         m_v2.resize(dim, dim);
         Int mod = m_lat->getModulo();
         CopyMatr(m_v, m_lat->getBasis(), dim, dim);
-        BasisConstruction<Int>::lowerTriangularBasis(m_v, m_v2, mod);
+        lowerTriangularBasis (m_v, m_v2, mod);
         // CopyMatr(m_lat->getBasis(), m_v2, dim, dim);
         for (int64_t i = 0; i < dim; i++) {
             for (int64_t j = 0; j < dim; j++) {
