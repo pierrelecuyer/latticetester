@@ -1089,6 +1089,8 @@ int64_t ll_LLL_FP(matrix<int64_t> &B, double delta, double **B1, double **mu,
 template<>
 long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
         double *c, long m, long n, long init_k) {
+    // In NTL, the indices of B start at 0, but those of
+    // B1, b, c, st,  start at 1.
     long i, j, k, Fc1;
     ZZ MU;
     double mu1;
@@ -1404,7 +1406,7 @@ static long LLL_FPInt(IntMat &B, Vec<double>* sqlen, double delta, long m, long 
         CheckFinite(&sqlen2[i]);
     }
     // std::cout << "LLL FPInt before ll_LLL  \n";
-    // Indices in sqlen and B1 start at 0, which is 1 less than in NTL.
+    // Indices in B1, mu, sqlen2 start at 0, which is 1 less than in NTL.
     new_m = ll_LLL_FP(B, delta, B1, mu, sqlen2, c, m, n, 0);
     // std::cout << "LLL FPInt after ll_LLL  \n";
 
@@ -1488,6 +1490,7 @@ void ComputeBKZThresh(double *c, long beta) {
     }
 }
 
+/*
 template<typename IntMat>
 static
 void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
@@ -1527,11 +1530,11 @@ void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
     }
     LastTime = tt;
 }
+*/
 
 template<typename IntMat>
-static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta, long prune, long m, long n
-       ) {
-   std::cout << " Inside BKZ_FPInt, m = " << m << "\n";
+static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta,
+             long beta, long prune, long m, long n) {
     if (m == 0)
         m = BB.NumRows();
     if (n == 0)
@@ -1542,6 +1545,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta
         LogicError("BKZ_FPZZ: bad delta");
     if (beta < 2)
         LogicError("BKZ_FPZZ: bad block size");
+
     long m_orig = m;
     long i, j;
     Int MU;
@@ -1549,14 +1553,15 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta
     double *tp;
     init_red_fudge();
 
-    IntMat B;    // Will be a copy of BB, with one more row.   ********
-    // Change it to smaller dimensions.
-    B.SetDims(m + 1, n);
-    for (i = 0; i <= m; i++) {
+    IntMat B;  // Will be a copy of BB, with just enough dimensions.
+    B.SetDims(m, n);
+    for (i = 0; i < m; i++) {
         for (j = 0; j < n; j++) {
             B[i][j] = BB[i][j];
         }
     }
+    std::cout << " In BKZ, Matrix B = \n" << B << "\n";
+
     Unique2DArray<double> B1_store;
     B1_store.SetDims(m + 1, n);
     double **B1 = B1_store.get();  // approximates B
@@ -1566,41 +1571,41 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta
     double **mu = mu_store.get();
 
     UniqueArray<double> c_store;
-    c_store.SetLength(m + 1);
+    c_store.SetLength(m + 2);
     double *c = c_store.get(); // squared lengths of Gramm-Schmidt basis vectors
 
     UniqueArray<double> b_store;
-    b_store.SetLength(m + 1);
+    b_store.SetLength(m + 2);
     double *b = b_store.get(); // squared lengths of basis vectors
 
     double cbar;
 
     UniqueArray<double> ctilda_store;
-    ctilda_store.SetLength(m + 1);
+    ctilda_store.SetLength(m + 2);
     double *ctilda = ctilda_store.get();
 
     UniqueArray<double> vvec_store;
-    vvec_store.SetLength(m + 1);
+    vvec_store.SetLength(m + 2);
     double *vvec = vvec_store.get();
 
     UniqueArray<double> yvec_store;
-    yvec_store.SetLength(m + 1);
+    yvec_store.SetLength(m + 2);
     double *yvec = yvec_store.get();
 
     UniqueArray<double> uvec_store;
-    uvec_store.SetLength(m + 1);
+    uvec_store.SetLength(m + 2);
     double *uvec = uvec_store.get();
 
     UniqueArray<double> utildavec_store;
-    utildavec_store.SetLength(m + 1);
+    utildavec_store.SetLength(m + 2);
     double *utildavec = utildavec_store.get();
 
     UniqueArray<long> Deltavec_store;
-    Deltavec_store.SetLength(m + 1);
+    Deltavec_store.SetLength(m + 2);
     long *Deltavec = Deltavec_store.get();
 
     UniqueArray<long> deltavec_store;
-    deltavec_store.SetLength(m + 1);
+    deltavec_store.SetLength(m + 2);
     long *deltavec = deltavec_store.get();
 
     long new_m;
@@ -1656,7 +1661,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta
             Deltavec[jj] = 0;
             s = t = jj;
             deltavec[jj] = 1;
-            for (i = jj; i <= kk + 1; i++) {
+            for (i = jj+1; i <= kk + 1; i++) {
                 ctilda[i] = uvec[i] = utildavec[i] = yvec[i] = 0;
                 Deltavec[i] = 0;
                 vvec[i] = 0;
@@ -1707,12 +1712,13 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta
                 }
             }
             NumIterations++;
-            h = min(kk, m - 1);
+            h = min(kk, m - 1);  // One less than in NTL.
             if ((delta - 8 * red_fudge) * c[jj] > cbar) {
                 clean = 0;
                 // we treat the case that the new vector is b_s (jj < s <= kk)
                 // as a special case that appears to occur most of the time.
                 s = 0;
+                std::cout << " BKZ_FPZZ find s, jj = " << jj << ", kk = " << kk << ", i = " << i << "\n";
                 for (i = jj + 1; i <= kk; i++) {
                     if (uvec[i] != 0) {
                         if (s == 0)
@@ -1727,8 +1733,10 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta
                     // special case
                     NumTrivial++;
                     for (i = s - 1; i >= jj; i--) {
+                        // This i is one less than in NTL.
                         // swap i, i-1
                         swap(B[i - 1], B[i]);
+                        // B1 and b start at 0 instead of 1.
                         tp = B1[i - 1];
                         B1[i - 1] = B1[i];
                         B1[i] = tp;
@@ -1739,7 +1747,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta
                     // cerr << "special case\n";
                     new_m = ll_LLL_FP(B, delta, B1, mu, b, c, h, n, jj);
                     if (new_m != h)
-                        LogicError("BKZ_FPZZ: internal error");
+                        LogicError("BKZ_FPZZ: internal error, new_m != h");
                 } else {
                     // the general case
                     NumNonTrivial++;
@@ -1812,6 +1820,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta, long beta
             BB[i][j] = B[i][j];
         }
     }
+    std::cout << " End of BKZ, Matrix B = \n" << B << "\n";
 // Put the shortest nonzero vector in first place.
     long imin = 0;
     double minlen = b[0];

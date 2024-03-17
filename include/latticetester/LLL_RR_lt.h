@@ -565,11 +565,14 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
    ZZ MU;
    RR t1, t2;
    ZZ T1;
-
    init_red_fudge_RR();
+
    mat_ZZ B;
-   B = BB;
-   B.SetDims(m+1, n);
+   B.SetDims(m, n);
+   // B = BB;
+   for (i = 0; i < m; i++)
+      for (j = 0; j < n; j++)
+         B[i][j] = BB[i][j];
 
    mat_RR B1;
    B1.SetDims(m+1, n);
@@ -617,8 +620,13 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
    for (i = 0; i < m; i++) {
       InnerProductR(b[i], B1[i], B1[i], n);
    }
+   // std::cout << " Start of BKZ in LLL_RR_lt, Matrix BB = \n" << BB << "\n";
+   std::cout << " Start of BKZ in LLL_RR_lt, Matrix B = \n" << B << "\n";
+   // std::cout << " Start of BKZ in LLL_RR_lt, Matrix B1 = \n" << B1 << "\n";
+
    m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, m, n, 1, quit);
 
+   // std::cout << " After first ll_ of BKZ in LLL_RR_lt, Matrix B = \n" << B << "\n";
    unsigned long NumIterations = 0;
    unsigned long NumTrivial = 0;
    unsigned long NumNonTrivial = 0;
@@ -805,6 +813,7 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
          }
       }
    }
+   std::cout << " End of BKZ in LLL_RR_lt, Matrix B = \n" << B << "\n";
 // In this version, we do not move the zero vectors to the top.
 // We also do not change the dimensions of BB.
     for (i = 0; i < m_orig; i++) {
