@@ -231,7 +231,7 @@ void redBKZ(NTL::matrix<NTL::ZZ> &basis, NTL::vector<double> *sqlen, double delt
    NTL::matrix<NTL::ZZ> cpbasis;
    switch (precision) {
    case DOUBLE:
-      std::cout << " Calling the correct static BKZ \n";
+      // std::cout << " Calling static BKZ for ZZ + double \n";
       NTL::BKZ_FPInt(basis, sqlen, delta, blocksize, prune, dim, dim);
       return;
    case QUADRUPLE:

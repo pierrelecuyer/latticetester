@@ -99,7 +99,7 @@ NTL_START_IMPL
 
 static inline void CheckFinite(double *p) {
     if (!IsFinite(p))
-        ResourceError("LLL_FP: numbers too big...use LLL_XD");
+        ResourceError("LLL_FPInt: numbers too big...use LLL_XD \n");
 }
 
 // Just to be safe!!
@@ -1202,6 +1202,7 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                     sz = new_sz;
                 } else {
                     cerr << "LLL_FPInt sz = " << sz << " not smaller; infinite loop? \n";
+                    std::cout << " Matrix B = " << B << "\n";
                 }
             }
             Fc1 = 0;
@@ -1251,8 +1252,8 @@ long ll_LLL_FP(matrix<ZZ> &B, double delta, double **B1, double **mu, double *b,
                         Fc1 = 1;
                         if (k < rr_st)
                             rr_st = k;
-                        // std::cout
-                        //       << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
+                        //std::cout
+                        //      << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
                         RowTransformStart(B1[k], in_vec, in_float, n);
                         // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
                     }
@@ -1545,7 +1546,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta,
         LogicError("BKZ_FPZZ: bad delta");
     if (beta < 2)
         LogicError("BKZ_FPZZ: bad block size");
-
+    if (beta > n)  beta = n;  // Block size should not exceed dimension.
     long m_orig = m;
     long i, j;
     Int MU;
@@ -1560,7 +1561,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta,
             B[i][j] = BB[i][j];
         }
     }
-    std::cout << " In BKZ, Matrix B = \n" << B << "\n";
+    // std::cout << " In BKZ, Matrix B = \n" << B << "\n";
 
     Unique2DArray<double> B1_store;
     B1_store.SetDims(m + 1, n);
@@ -1820,7 +1821,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta,
             BB[i][j] = B[i][j];
         }
     }
-    std::cout << " End of BKZ, Matrix B = \n" << B << "\n";
+    std::cout << " End of BKZ in LLL_FPInt, Matrix B = \n" << B << "\n";
 // Put the shortest nonzero vector in first place.
     long imin = 0;
     double minlen = b[0];

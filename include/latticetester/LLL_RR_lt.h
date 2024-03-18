@@ -621,7 +621,7 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
       InnerProductR(b[i], B1[i], B1[i], n);
    }
    // std::cout << " Start of BKZ in LLL_RR_lt, Matrix BB = \n" << BB << "\n";
-   std::cout << " Start of BKZ in LLL_RR_lt, Matrix B = \n" << B << "\n";
+   // std::cout << " Start of BKZ in LLL_RR_lt, Matrix B = \n" << B << "\n";
    // std::cout << " Start of BKZ in LLL_RR_lt, Matrix B1 = \n" << B1 << "\n";
 
    m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, m, n, 1, quit);

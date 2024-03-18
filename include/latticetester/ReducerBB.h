@@ -840,37 +840,35 @@ void ReducerBB<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[])
     ++m_countDieter;
     m_lat->updateScalL2Norm(i);
     bool modifFlag;
-    std::cout << " redDieter, entering pairwiseRedPrimal, i = " << i << ", d = " << d << "\n";
+    std::cout << " redDieter, entering pairwiseRedPrimal, i = " << i << ", d = " << d << " **\n";
+    std::cout << " vecNorm(i) = " << m_lat->getVecNorm(i) << "\n";
 
     for (int64_t j = d; j < dim; j++) {
         NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+        std::cout << " row(i) = " << row1 << "\n";
         if (i == j)
             continue;
         modifFlag = false;
-        {
-            NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
-            ProdScal<Int>(row1, row2, dim, m_ns);
-        }
-        std::cout << " redDieter, before divideRound, j = " << j << "\n";
+        NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
+        ProdScal<Int>(row1, row2, dim, m_ns);
+        std::cout << " redPrimal, before divideRound, j = " << j << "\n";
         std::cout << " m_ns = " << m_ns << ",  vecNorm(i) = " << m_lat->getVecNorm(i) << "\n";
         DivideRound<Real>(m_ns, m_lat->getVecNorm(i), m_ns);
+        std::cout << " redPrimal, after divideRound, j = " << j << "\n";
         if (m_ns == 0)
             continue;
+        std::cout << " redPrimal, before conv, m_ns = " << m_ns << "\n";
         NTL::conv(m_bs, m_ns);
-        std::cout << " redDieter, before if (m_ns ...) \n";
+        std::cout << " redPrimal, before if (m_ns ...), m_ns = " << m_ns << "\n";
         if (m_ns < 1000 && m_ns > -1000) {
             m_lat->updateScalL2Norm(j);
-            {
                 NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
                 //NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
                 ModifVect(row2, row1, -m_bs, dim);
-            }
 
             // Verify that m_lat->getBasis()[j] is really shorter
-            {
                 NTL::matrix_row<IntMat> row1(m_lat->getBasis(), j);
                 ProdScal<Int>(row1, row1, dim, m_ns);
-            }
             if (m_ns >= m_lat->getVecNorm(j)) {
                 NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
                 //NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
@@ -879,18 +877,17 @@ void ReducerBB<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[])
                 modifFlag = true;
                 m_lat->setVecNorm(m_ns, j);
             }
-            std::cout << " redDieter, end of the if, j = " << j << "\n";
-    } else {
-          std::cout << " redDieter, in the else, j = " << j << "\n";
+            //std::cout << " redDieter, end of the if, j = " << j << "\n";
+         } else {
+            std::cout << " redDieter, in the else, j = " << j << "\n";
             NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
             //NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
             ModifVect(row2, row1, -m_bs, dim);
             m_lat->setNegativeNorm(j);
             modifFlag = true;
         }
-
         if (modifFlag) {
-           std::cout << " redDieter, in modifFlag \n";
+            std::cout << " redDieter, in modifFlag \n";
             m_countDieter = 0;
             ++m_cpt;
             if (m_lat->withDual()) {
@@ -906,7 +903,7 @@ void ReducerBB<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[])
             }
         }
     }
-    std::cout << " redDieter, end of pairwiseRedPrimal, i = " << i << ", d = " << d << "\n";
+    std::cout << " redDieter, end of pairwiseRedPrimal, i = " << i << ", d = " << d << " *****\n";
 }
 
 //=========================================================================
@@ -915,6 +912,7 @@ template<typename Int, typename Real>
 void ReducerBB<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
     int64_t j;
     const int64_t dim = m_lat->getDim();
+    std::cout << " redDieter, entering pairwiseRedDual, i = " << i << "  **\n";
 
     ++m_countDieter;
     m_lat->updateDualScalL2Norm(i);
@@ -927,15 +925,19 @@ void ReducerBB<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
             ProdScal<Int>(row1, row2, dim, m_ns);
             // ProdScal<Int> (m_lat->getDualBasis ()[i], m_lat->getDualBasis ()[j],
             //           dim, m_ns);
+            //std::cout << " redDual, before divideRound, j = " << j << "\n";
+            //std::cout << " m_ns = " << m_ns << ",  DualVecNorm(i) = " << m_lat->getDualVecNorm(i) << "\n";
             DivideRound<Real>(m_ns, m_lat->getDualVecNorm(i), m_nv[j]);
+            //std::cout << " after divideRound, j = " << j << ", m_nv[j] = " << m_nv[j] << "\n";
             if (m_nv[j] != 0) {
                 NTL::conv(m_bs, m_nv[j]);
+                std::cout << " after NTL::conv,  m_bs = " << m_bs << "\n";
                 NTL::matrix_row<IntMat> row7(m_lat->getBasis(), j);
                 ModifVect(m_bv, row7, m_bs, dim);
+                std::cout << " after ModifVect \n";
             }
         }
     }
-
     m_lat->updateScalL2Norm(i);
     ProdScal<Int>(m_bv, m_bv, dim, m_ns);
     if (m_ns < m_lat->getVecNorm(i)) {
@@ -943,7 +945,7 @@ void ReducerBB<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
         m_countDieter = 0;
         NTL::matrix_row<IntMat> row6(m_lat->getBasis(), i);
         for (j = 0; j < dim; j++)
-            row6(j) = m_bv[j];
+            row6[j] = m_bv[j];
         m_lat->setNegativeNorm(i);
         if (taboo)
             taboo[i] = false;
@@ -953,6 +955,7 @@ void ReducerBB<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
             if (i != j && m_nv[j] != 0) {
                 NTL::conv(m_bs, -m_nv[j]);
                 NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), i);
+                std::cout << " redDual, before modifVect \n";
                 ModifVect(row1, row2, m_bs, dim);
                 //  ModifVect (m_lat->getDualBasis ()[j], m_lat->getDualBasis ()[i],
                 //            m_bs, dim);
@@ -962,6 +965,7 @@ void ReducerBB<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
             }
         }
     }
+    std::cout << " redDieter, end of pairwiseRedDual, i = " << i << "  *****\n";
 }
 
 //=========================================================================
@@ -971,22 +975,18 @@ void ReducerBB<Int, Real>::redDieter(int64_t d, bool taboo[]) {
     std::int64_t BoundCount;
     const int64_t dim = m_lat->getDim();
     bool withDual = m_lat->withDual();
-    std::cout << " redDieter, withDual = " << withDual << "\n";
+    //std::cout << " redDieter, withDual = " << withDual << "\n";
 
     m_lat->updateScalL2Norm(d, dim);
     m_lat->sortBasis(d);
-    std::cout << " redDieter, after sortBasis, d = = " << d << "\n";
     int64_t i = dim - 1;
     m_cpt = 0;
     m_countDieter = 0;
     BoundCount = 2 * dim - d;
-    std::cout << " MAX_PRE_RED = " << MAX_PRE_RED << "\n";
     do {
         pairwiseRedPrimal(i, d, taboo);
-        std::cout << " redDieter, after RedPrimal, i = " << i << ", d = " << d << "\n";
         if (i > d && withDual) {
             pairwiseRedDual(i, taboo);
-            std::cout << " redDieter, after RedDual, i = " << i << ", d = " << d << "\n";
         }
         if (i < 1)
             i = dim - 1;
@@ -1659,8 +1659,8 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
         return false;
     }
     const int64_t dim = m_lat->getDim();  // Lattice dimension
-    std::cout << " Start redBBShortVec, dim  = " << dim << "\n";
-    std::cout << " Start redBBShortVec, basis = \n" << m_lat->getBasis() << "\n";
+    //std::cout << " Start redBBShortVec, dim  = " << dim << "\n";
+    //std::cout << " Start redBBShortVec, basis = \n" << m_lat->getBasis() << "\n";
 
     bool smaller = false;  // Will change when we find a smaller vector.
     int64_t k, h;
@@ -1686,7 +1686,7 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
         }
         m_lMin2 = m_lMin * m_lMin;  // Squared shortest length with L1 norm.
     }
-    std::cout << " redBBShortVec, Sq length shortest = " <<  m_lMin2 << "\n";
+    // std::cout << " redBBShortVec, Sq length shortest = " <<  m_lMin2 << "\n";
 
     // If we already have a shorter vector than the minimum threshold, we stop right away.
     // This is useful for the seek programs in LatMRG.
@@ -1726,7 +1726,7 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
         return false;
     }
 
-    std::cout << " redBBShortVec, after decomp \n";
+    //std::cout << " redBBShortVec, after decomp \n";
     /* Perform the branch and bound.  */
     /* m_n2[j] will be the sum of terms |z*k|^2 ||v*k||^2 for k > j.  */
     m_n2[dim - 1] = 0.0;
@@ -1735,25 +1735,25 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
     m_foundZero = false;
     if (!tryZShortVec(dim - 1, smaller, norm)) // We search for a shortest vector.
         return false;
-    std::cout << " redBBShortVec, after tryShortVec \n";
+    //std::cout << " redBBShortVec, after tryShortVec \n";
     if (smaller) {
-        std::cout << " redBBShortVec, found a shorter vector \n";
+        //std::cout << " redBBShortVec, found a shorter vector \n";
         // We found a shorter vector. Its square length is in m_lMin2.
         transformStage3ShortVec(m_zShort, k); // Is this useful and OK for L1 ???
-        std::cout << " redBBShortVec, after transformStage 3 \n";
+        //std::cout << " redBBShortVec, after transformStage 3 \n";
         NTL::matrix_row<IntMat> row1(m_lat->getBasis(), k);
-        std::cout << " redBBShortVec, after row1, k = " << k << "\n";
-        std::cout << " redBBShortVec, row1 = " << row1 << "\n";
-        std::cout << " redBBShortVec, m_bw = " << m_bw << "\n";
-        std::cout << " redBBShortVec, m_bw[1] = " << m_bw[1] << "\n";
+        //std::cout << " redBBShortVec, after row1, k = " << k << "\n";
+        //std::cout << " redBBShortVec, row1 = " << row1 << "\n";
+        //std::cout << " redBBShortVec, m_bw = " << m_bw << "\n";
+        //std::cout << " redBBShortVec, m_bw[1] = " << m_bw[1] << "\n";
         for (h = 0; h < dim; h++) {
-           std::cout << " redBBShortVec, row1 = m_bw, h = " << h << ", m_bw[h] = " << m_bw[h] << ", m_bv[h] = " << m_bv[h] << "\n";
+            //std::cout << " redBBShortVec, row1 = m_bw, h = " << h << ", m_bw[h] = " << m_bw[h] << ", m_bv[h] = " << m_bv[h] << "\n";
             // row1(h) = m_bw[h];   ??????????????
             row1[h] = m_bw[h];
         }
-        std::cout << " redBBShortVec, before set negative norm (k) \n";
+        //std::cout << " redBBShortVec, before set negative norm (k) \n";
         m_lat->setNegativeNorm(k);
-        std::cout << " redBBShortVec, after set negative norm (k) \n";
+        //std::cout << " redBBShortVec, after set negative norm (k) \n";
 
         /* The new current shortest vector will be in
          m_lat->getBasis()(0). */
@@ -1770,10 +1770,9 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
             }
         }
     }
-    std::cout << " redBBShortVec, before updating VecNorm \n";
     m_lat->updateVecNorm();
     m_lat->sortPrimalBasis(0);
-    std::cout << " redBBShortVec, before exit \n";
+    //std::cout << " redBBShortVec, before exit \n";
     return true;
 }
 
