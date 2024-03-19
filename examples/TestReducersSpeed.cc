@@ -15,8 +15,8 @@
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Select the flexible types Int and Real here.
-//#define TYPES_CODE  LD     // Int == int64_t
-#define TYPES_CODE  ZD     // Int == ZZ, Real = double
+#define TYPES_CODE  LD     // Int == int64_t
+//#define TYPES_CODE  ZD     // Int == ZZ, Real = double
 //#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 #include <iostream>
@@ -118,6 +118,7 @@ static void reduceBasis(long d) {
                << dim << "\n";
    }
 
+   return;
    /*
     if (dim < 30) {
     // beforeReduct (dim);
@@ -155,8 +156,8 @@ static void reduceBasis(long d) {
 
    beforeReduct(dim);
    CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
-   BKZ_FP(basisdual, 0.99999, 10, 0);
-   // redBKZ(basisdual, &sqlen, 0.99999, 4);
+   //BKZ_FPInt(basisdual, 0.99999, 10, 0);
+   redBKZ(basisdual, &sqlen, 0.99999, 4);
    // redBKZ(korlat->getBasis(), &sqlen, 0.99999, 4, 0, dim, prec);
    if (red->shortestVector())
       afterReduct(8, d);
@@ -183,7 +184,8 @@ static void testLoop(long numRep) {
       //a = 742938285;
       a = (m / 5 + 73 * r) % m;   // The multiplier we use for this rep.
       korlat->seta(a);
-      for (d = 0; d < numSizes; d++) {  // Each matrix size
+      for (d = 0; d < 1; d++) {  // Each matrix size
+      //for (d = 0; d < numSizes; d++) {  // Each matrix size
          // korlat->buildDualBasis(dim);
          std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
          // copy(korlat->getDualBasis(), dualbasis1, dim, dim); // Triangular basis.

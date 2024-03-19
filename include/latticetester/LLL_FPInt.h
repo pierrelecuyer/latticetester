@@ -1609,7 +1609,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta,
     }
     std::cout << " In BKZ, Matrix B = \n" << B << "\n";
 
-    // In this function, the entries used in B1, mu, c, b, all start at 0.
+    // Here, the entries used in B1, mu, c, b, all start at 0.
     // In NTL, they start at 1.
     Unique2DArray<double> B1_store;
     B1_store.SetDims(m + 1, n);
@@ -1629,6 +1629,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta,
 
     double cbar;
 
+    // The used entries of these arrays start at 1.
     UniqueArray<double> ctilda_store;
     ctilda_store.SetLength(m + 2);
     double *ctilda = ctilda_store.get();
@@ -1726,9 +1727,10 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta,
                 vvec[i] = 0;
                 deltavec[i] = 1;
             }
+            std::cout << " In BKZ, cbar = " << cbar <<  "\n";
             long enum_cnt = 0;  // Counts turns in next while loop
             while (t <= kk) {
-                if (enum_cnt > 30) abort();   // *****
+                if (enum_cnt > 20) return 0;   // *****
                 enum_cnt++;
                 std::cout << " In BKZ inside while (t <=...), t = "
                      << t << ", jj = " << jj <<  ", kk = " << kk <<  ", cnt = " << enum_cnt << "\n";
@@ -1740,6 +1742,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double>* sqlen, double delta,
                     eta = BKZThresh(t-jj);
                 else
                     eta = 0.0;
+                std::cout << " In BKZ, ctilda[t] = " << ctilda[t] << "\n";
                 if (ctilda[t] < cbar - eta) {
                     if (t > jj) {
                         t--;   // t decreases here

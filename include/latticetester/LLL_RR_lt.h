@@ -672,7 +672,10 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
             conv(vvec(i), 0);
             deltavec(i) = 1;
          }
+         std::cout << " In BKZ, cbar = " << cbar <<  "\n";
          while (t <= kk) {
+            std::cout << " In BKZ inside while (t <=...), t = "
+                 << t << ", jj = " << jj <<  ", kk = " << kk << "\n";
             add(t1, yvec(t), utildavec(t));
             sqr(t1, t1);
             mul(t1, t1, c(t));
@@ -682,6 +685,7 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
                sub(t1, cbar, BKZThresh(t-jj));
             else
                t1 = cbar;
+            std::cout << " In BKZ, ctilda[t] = " << ctilda[t] << "\n";
             if (ctilda(t) <t1) {
                if (t > jj) {
                   t--;
