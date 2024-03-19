@@ -45,11 +45,12 @@ using namespace LatticeTester;
 //Int m(1021);     // Modulus m = 1021
 Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1073741827);  // Prime modulus near 2^{30}
+//Int m(2147483647);  // Prime modulus 2^{31}-1
 //Int m(1099511627791);  // Prime modulus near 2^{40}
 //Int m(1125899906842597);  // Prime modulus near 2^{50}
 
 const long numSizes = 4;    // Number of matrix sizes (choices of dimension).
-const long dimensions[numSizes] = { 8, 10, 30, 40 };
+const long dimensions[numSizes] = { 4, 10, 30, 40 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 const long numMeth = 9;    // Number of methods, and their names.
 std::string names[numMeth] = { "LLL5        ", "LLL99999    ", "BKZ99999    ",
@@ -76,9 +77,10 @@ inline void beforeReduct(long dim) {
 }
 
 inline void afterReduct(long meth, long d) {
-   korlat->dualize();
    timer[meth][d] += clock() - tmp;
+   if (meth > 2) sqlen[0] = korlat->getVecNorm(0);
    sumSq[meth][d] += sqlen[0];
+   korlat->dualize();
    std::cout << "Done with method = " <<  names[meth] << ",  dim = " << dimensions[d]
          << ",  sqlen[0] = " << sqlen[0] << "\n\n";
    // std::cout << "Matrix B = " << korlat->getBasis() << "\n";
@@ -89,34 +91,35 @@ inline void afterReduct(long meth, long d) {
 static void reduceBasis(long d) {
    long dim = dimensions[d];
 
+/*
    beforeReduct(dim);  // Only pre-reductions.
-   redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
-   afterReduct(0, d);
+   // redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
+   //afterReduct(0, d);
 
    beforeReduct(dim);
-   redLLLNTL(korlat->getBasis(), &sqlen, 0.99999, dim, prec);
-   afterReduct(1, d);
-
+   //redLLLNTL(korlat->getBasis(), &sqlen, 0.99999, dim, prec);
+   //afterReduct(1, d);
+*/
    beforeReduct(dim);
    IntMat basisdual;
    basisdual.SetDims(dim, dim);
    CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
-   BKZ_FP(basisdual, 0.99999, 4, 0);
+   //BKZ_FP(basisdual, 0.99999, 10, 0);
    //redBKZ(basisdual, &sqlen, 0.99999, 10, 0, dim, prec);
-   //redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10, 0, dim, prec);
+   redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10, 0, dim, prec);
    afterReduct(2, d);
 
    if (dim < 30) {
       beforeReduct(dim);
-      if (!red->shortestVector())
+      if (red->shortestVector())
+         afterReduct(3, d);
+      else
          std::cout << " shortestVector failed with no pre-reduction, dim  = "
                << dim << "\n";
-      sqlen[0] = korlat->getVecNorm(0);
-      afterReduct(3, d);
    }
 
    /*
-    b if (dim < 30) {
+    if (dim < 30) {
     // beforeReduct (dim);
     korlat->buildBasis(dim);
     tmp = clock();
@@ -131,33 +134,34 @@ static void reduceBasis(long d) {
 
    beforeReduct(dim);
    redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
-   if (!red->shortestVector())
+   if (red->shortestVector())
+      afterReduct(5, d);
+   else
       std::cout << " shortestVector failed for LLL, delta = 0.5 \n";
-   sqlen[0] = korlat->getVecNorm(0);
-   afterReduct(5, d);
 
    beforeReduct(dim);
    redLLLNTL(korlat->getBasis(), &sqlen, 0.8, dim, prec);
-   if (!red->shortestVector())
+   if (red->shortestVector())
+      afterReduct(6, d);
+   else
       std::cout << " shortestVector failed for LLL, delta = 0.8 \n";
-   sqlen[0] = korlat->getVecNorm(0);
-   afterReduct(6, d);
 
    beforeReduct(dim);
    redLLLNTL(korlat->getBasis(), &sqlen, 0.99999, dim, prec);
-   if (!red->shortestVector())
+   if (red->shortestVector())
+      afterReduct(7, d);
+   else
       std::cout << " shortestVector failed for LLL, delta = 0.99999 \n";
-   sqlen[0] = korlat->getVecNorm(0);
-   afterReduct(7, d);
 
    beforeReduct(dim);
    CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
-   BKZ_FP(basisdual, 0.99999, 4, 0);
+   BKZ_FP(basisdual, 0.99999, 10, 0);
+   // redBKZ(basisdual, &sqlen, 0.99999, 4);
    // redBKZ(korlat->getBasis(), &sqlen, 0.99999, 4, 0, dim, prec);
-   if (!red->shortestVector())
+   if (red->shortestVector())
+      afterReduct(8, d);
+   else
       std::cout << " shortestVector failed for BKZ, delta = 0.99999 \n";
-   sqlen[0] = korlat->getVecNorm(0);
-   afterReduct(8, d);
 }
 
 /**  
@@ -176,7 +180,8 @@ static void testLoop(long numRep) {
       }
    totalTime = clock();
    for (int64_t r = 0; r < numRep; r++) {
-      a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
+      //a = 742938285;
+      a = (m / 5 + 73 * r) % m;   // The multiplier we use for this rep.
       korlat->seta(a);
       for (d = 0; d < numSizes; d++) {  // Each matrix size
          // korlat->buildDualBasis(dim);
@@ -201,14 +206,14 @@ static void printResults() {
    }
    std::cout << "\n";
    std::cout << "Sums of square lengths of shortest basis vector:\n";
-   std::cout << " dim:    ";
+   std::cout << " dim:     ";
    for (d = 0; d < numSizes; d++)
-      std::cout << std::setw(13) << dimensions[d] << "  ";
+      std::cout << std::setw(12) << dimensions[d] << "  ";
    std::cout << "\n\n";
-   for (int meth = 0; meth < numMeth - 2; meth++) {
-      std::cout << names[meth] << "  ";
+   for (int meth = 0; meth < numMeth; meth++) {
+      std::cout << names[meth];
       for (d = 0; d < numSizes; d++)
-         std::cout << std::setw(14) << sumSq[meth][d] << " ";
+         std::cout << std::setw(12) << sumSq[meth][d] << " ";
       std::cout << "\n";
    }
    std::cout << "\n";

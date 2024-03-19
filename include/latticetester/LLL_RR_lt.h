@@ -237,7 +237,7 @@ static void RowTransform2(vec_ZZ& A, vec_ZZ& B, const ZZ& MU1, long n) {
    }
 }
 
-void ComputeGS_RR(const mat_ZZ& B, mat_RR& B1,
+void ComputeGS_RR_lt(const mat_ZZ& B, mat_RR& B1,
                mat_RR& mu, vec_RR& b,
                vec_RR& c, long k, long n, const RR& bound, long st,
                vec_RR& buf, const RR& bound2) {
@@ -324,7 +324,7 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
       else
          rst = k;
       if (st[k] < st[k+1]) st[k+1] = st[k];
-      ComputeGS(B, B1, mu, b, c, k, n, bound, st[k], buf, bound2);
+      ComputeGS_RR_lt(B, B1, mu, b, c, k, n, bound, st[k], buf, bound2);
       st[k] = k;
       counter = 0;
       trigger_index = k;
@@ -388,7 +388,7 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
                conv(B1(k, i), B(k, i));
             InnerProductR(b(k), B1(k), B1(k), n);
             //std::cout << "ll_LLL_RR_lt inside (Fc1) before computeGS, b(k) = " << b(k) << "\n";
-            ComputeGS_RR(B, B1, mu, b, c, k, n, bound, 1, buf, bound2);
+            ComputeGS_RR_lt(B, B1, mu, b, c, k, n, bound, 1, buf, bound2);
          }
       } while (Fc1);
       if (IsZero(b(k))) {
