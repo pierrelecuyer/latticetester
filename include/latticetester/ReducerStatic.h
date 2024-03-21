@@ -254,7 +254,7 @@ void redBKZ(NTL::matrix<NTL::ZZ> &basis, NTL::vector<double> *sqlen, double delt
    }
 }
 
-// Specialization for Int = ZZ and Real = RR.
+// Specialization for Int = ZZ and Real = RR.   `precision` is not used.
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, NTL::vector<NTL::RR> *sqlen, double delta, long blocksize,
       long prune, long dim,  PrecisionType precision) {

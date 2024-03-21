@@ -49,8 +49,8 @@ Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1099511627791);  // Prime modulus near 2^{40}
 //Int m(1125899906842597);  // Prime modulus near 2^{50}
 
-const long numSizes = 4;    // Number of matrix sizes (choices of dimension).
-const long dimensions[numSizes] = { 4, 10, 30, 40 };
+const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
+const long dimensions[numSizes] = { 5, 10, 20, 30, 40 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 const long numMeth = 9;    // Number of methods, and their names.
 std::string names[numMeth] = { "LLL5        ", "LLL99999    ", "BKZ99999    ",
@@ -69,20 +69,23 @@ Rank1Lattice<Int, Real> *korlat;    // We create a single lattice object.
 ReducerBB<Int, Real> *red;          // Also a single ReducerBB object.
 
 inline void beforeReduct(long dim) {
+   korlat->setPrimalFlag(false);
+   korlat->setDualFlag(true);
    korlat->buildDualBasis(dim);
    korlat->dualize();
-   sqlen[0] = 0.0;
+   //sqlen[0] = 0.0;
    // CopyPartMat (basis2, korlat->getBasis(), dim, dim);  // Copy basis1 to basis2.
    tmp = clock();
 }
 
 inline void afterReduct(long meth, long d) {
    timer[meth][d] += clock() - tmp;
-   if (meth > 2) sqlen[0] = korlat->getVecNorm(0);
+   if (meth > 2)
+      sqlen[0] = korlat->getVecNorm(0);
    sumSq[meth][d] += sqlen[0];
-   korlat->dualize();
-   std::cout << "Done with method = " <<  names[meth] << ",  dim = " << dimensions[d]
-         << ",  sqlen[0] = " << sqlen[0] << "\n\n";
+   // korlat->dualize();
+   std::cout << "Done with method = " << names[meth] << ",  dim = "
+         << dimensions[d] << ",  sqlen[0] = " << sqlen[0] << "\n";
    // std::cout << "Matrix B = " << korlat->getBasis() << "\n";
 }
 
@@ -91,25 +94,25 @@ inline void afterReduct(long meth, long d) {
 static void reduceBasis(long d) {
    long dim = dimensions[d];
 
-/*
    beforeReduct(dim);  // Only pre-reductions.
-   // redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
-   //afterReduct(0, d);
+   redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
+   afterReduct(0, d);
 
    beforeReduct(dim);
-   //redLLLNTL(korlat->getBasis(), &sqlen, 0.99999, dim, prec);
-   //afterReduct(1, d);
-*/
+   redLLLNTL(korlat->getBasis(), &sqlen, 0.99999, dim, prec);
+   afterReduct(1, d);
+
    beforeReduct(dim);
-   IntMat basisdual;
-   basisdual.SetDims(dim, dim);
-   CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
-   //BKZ_FP(basisdual, 0.99999, 10, 0);
+   //IntMat basisdual;
+   //basisdual.SetDims(dim, dim);
+   //CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
    //redBKZ(basisdual, &sqlen, 0.99999, 10, 0, dim, prec);
-   redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10, 0, dim, prec);
+   redBKZ(korlat->getBasis(), &sqlen, 0.99, 10, 0, dim, prec);
    afterReduct(2, d);
 
-   if (dim < 30) {
+   return;
+
+   if (dim < 12) {
       beforeReduct(dim);
       if (red->shortestVector())
          afterReduct(3, d);
@@ -118,20 +121,24 @@ static void reduceBasis(long d) {
                << dim << "\n";
    }
 
-   return;
-   /*
-    if (dim < 30) {
-    // beforeReduct (dim);
-    korlat->buildBasis(dim);
-    tmp = clock();
-    red->redDieter(0);
-    std::cout << " After redDieter(0) \n";
-    korlat->dualize();
-    if (!red->shortestVector())
-    std::cout << " shortestVector failed for pairwise pre-reduction with dim  = " << dim << "\n";
-    afterReduct (4, d);
-    }
-    */
+/*   if (dim < 12) {
+      // beforeReduct (dim);
+      korlat->setPrimalFlag(true);
+      korlat->setDualFlag(true);
+      korlat->buildBasis(dim);
+      korlat->dualize();
+      tmp = clock();
+      red->redDieter(0);
+      std::cout << " After redDieter(0) \n";
+      if (red->shortestVector())
+         afterReduct(4, d);
+      else
+         std::cout
+               << " shortestVector failed for pairwise pre-reduction with dim  = "
+               << dim << "\n";
+      korlat->setPrimalFlag(false);
+   }
+*/
 
    beforeReduct(dim);
    redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
@@ -155,10 +162,10 @@ static void reduceBasis(long d) {
       std::cout << " shortestVector failed for LLL, delta = 0.99999 \n";
 
    beforeReduct(dim);
-   CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
+   //CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
    //BKZ_FPInt(basisdual, 0.99999, 10, 0);
-   redBKZ(basisdual, &sqlen, 0.99999, 4);
-   // redBKZ(korlat->getBasis(), &sqlen, 0.99999, 4, 0, dim, prec);
+   // redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10);
+   redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10, 0, dim, prec);
    if (red->shortestVector())
       afterReduct(8, d);
    else
@@ -182,10 +189,10 @@ static void testLoop(long numRep) {
    totalTime = clock();
    for (int64_t r = 0; r < numRep; r++) {
       //a = 742938285;
-      a = (m / 5 + 73 * r) % m;   // The multiplier we use for this rep.
+      a = (m / 5 + 13 * r) % m;   // The multiplier we use for this rep.
       korlat->seta(a);
-      for (d = 0; d < 1; d++) {  // Each matrix size
-      //for (d = 0; d < numSizes; d++) {  // Each matrix size
+      for (d = 0; d < 2; d++) {  // Each matrix size
+         //for (d = 0; d < numSizes; d++) {  // Each matrix size
          // korlat->buildDualBasis(dim);
          std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
          // copy(korlat->getDualBasis(), dualbasis1, dim, dim); // Triangular basis.
@@ -196,7 +203,7 @@ static void testLoop(long numRep) {
 
 static void printResults() {
    long d;
-   std::cout << " dim:    ";
+   std::cout << " dim:        ";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(8) << dimensions[d] << "  ";
    std::cout << "\n\n";
@@ -210,7 +217,7 @@ static void printResults() {
    std::cout << "Sums of square lengths of shortest basis vector:\n";
    std::cout << " dim:     ";
    for (d = 0; d < numSizes; d++)
-      std::cout << std::setw(12) << dimensions[d] << "  ";
+      std::cout << std::setw(12) << dimensions[d] << " ";
    std::cout << "\n\n";
    for (int meth = 0; meth < numMeth; meth++) {
       std::cout << names[meth];

@@ -110,8 +110,8 @@ NTL_START_IMPL
 
 NTL_TLS_GLOBAL_DECL(RR, red_fudge_RR)
 static NTL_CHEAP_THREAD_LOCAL long log_red_RR = 0;
-NTL_TLS_GLOBAL_DECL(vec_RR, BKZConstant)
-NTL_TLS_GLOBAL_DECL(vec_RR, BKZThresh)
+NTL_TLS_GLOBAL_DECL(vec_RR, BKZConstant_RR)
+NTL_TLS_GLOBAL_DECL(vec_RR, BKZThresh_RR)
 
 static NTL_CHEAP_THREAD_LOCAL unsigned long NumSwapsRR = 0;
 
@@ -275,7 +275,9 @@ void ComputeGS_RR_lt(const mat_ZZ& B, mat_RR& B1,
    sub(c(k), b(k), s);
 }
 
-
+// Here, the indices in B, B1, mu, b, c start at 0, just like in LLL_RR in NTL.
+// init_k and k usually start at 1.
+// The indices in st start at 1.
 static
 long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
            vec_RR& b, vec_RR& c, long m, long n, long init_k, long &quit) {
@@ -498,11 +500,11 @@ long LLL_RR_lt(mat_ZZ& B, vec_RR* sqlen, const double delta, long m, long n) {
 
 static
 void ComputeBKZConstant_RR(long beta, long p) {
-   NTL_TLS_GLOBAL_ACCESS(BKZConstant);
+   NTL_TLS_GLOBAL_ACCESS(BKZConstant_RR);
    RR c_PI;
    ComputePi(c_PI);
    RR LogPI = log(c_PI);
-   BKZConstant.SetLength(beta-1);
+   BKZConstant_RR.SetLength(beta-1);
    vec_RR Log;
    Log.SetLength(beta);
    long i, j, k;
@@ -527,17 +529,17 @@ void ComputeBKZConstant_RR(long beta, long p) {
       }
       // Second, we compute y = 2^{2*p/i}
       y = exp(-(2*p/to_RR(i))*Log(2));
-      BKZConstant(i) = x*y/c_PI;
+      BKZConstant_RR(i) = x*y/c_PI;
    }
 }
 
 static
-void ComputeBKZThresh(RR *c, long beta)
+void ComputeBKZThresh_RR(RR *c, long beta)
 {
-   NTL_TLS_GLOBAL_ACCESS(BKZConstant);
-   NTL_TLS_GLOBAL_ACCESS(BKZThresh);
+   NTL_TLS_GLOBAL_ACCESS(BKZConstant_RR);
+   NTL_TLS_GLOBAL_ACCESS(BKZThresh_RR);
 
-   BKZThresh.SetLength(beta-1);
+   BKZThresh_RR.SetLength(beta-1);
    long i;
    RR x;
    RR t1;
@@ -547,7 +549,7 @@ void ComputeBKZThresh(RR *c, long beta)
       add(x, x, t1);
       div(t1, x, i);
       exp(t1, t1);
-      mul(BKZThresh(i), t1, BKZConstant(i));
+      mul(BKZThresh_RR(i), t1, BKZConstant_RR(i));
    }
 }
 
@@ -557,7 +559,7 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
         long m, long n) {
 
    NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);
-   NTL_TLS_GLOBAL_ACCESS(BKZThresh);
+   NTL_TLS_GLOBAL_ACCESS(BKZThresh_RR);
    if (m == 0) m = BB.NumRows();
    if (n == 0) n = BB.NumCols();
    long m_orig = m;
@@ -568,14 +570,15 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
    init_red_fudge_RR();
 
    mat_ZZ B;
-   B.SetDims(m, n);
    // B = BB;
+   B.SetDims(m+1, n);
    for (i = 0; i < m; i++)
       for (j = 0; j < n; j++)
          B[i][j] = BB[i][j];
 
    mat_RR B1;
    B1.SetDims(m+1, n);
+
    mat_RR mu;
    mu.SetDims(m+1, m);
 
@@ -624,9 +627,14 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
    // std::cout << " Start of BKZ in LLL_RR_lt, Matrix B = \n" << B << "\n";
    // std::cout << " Start of BKZ in LLL_RR_lt, Matrix B1 = \n" << B1 << "\n";
 
+   // The indices in B, B1, mu, b, c start at 0. They also start at 0 in NTL for RR.
    m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, m, n, 1, quit);
+   std::cout << " After first ll_ of BKZ in LLL_RR_lt, Matrix B = \n" << B << "\n";
+   std::cout << " b[0] = " << b[0] << ", b[1] = " << b[1] <<
+         ", b[2] = " << b[2] <<  ", b[3] = " << b[3] << "\n";
+   std::cout << " c[0] = " << c[0] << ", c[1] = " << c[1] <<
+         ", c[2] = " << c[2] <<  ", c[3] = " << c[3] << "\n";
 
-   // std::cout << " After first ll_ of BKZ in LLL_RR_lt, Matrix B = \n" << B << "\n";
    unsigned long NumIterations = 0;
    unsigned long NumTrivial = 0;
    unsigned long NumNonTrivial = 0;
@@ -653,7 +661,7 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
             clean = 1;
          }
          if (prune > 0)
-            ComputeBKZThresh(&c(jj), kk-jj+1);
+            ComputeBKZThresh_RR(&c(jj), kk-jj+1);
          cbar = c(jj);
          conv(utildavec(jj), 1);
          conv(uvec(jj), 1);
@@ -674,20 +682,22 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
          }
          std::cout << " In BKZ, cbar = " << cbar <<  "\n";
          while (t <= kk) {
-            std::cout << " In BKZ inside while (t <=...), t = "
-                 << t << ", jj = " << jj <<  ", kk = " << kk << "\n";
+             std::cout << " In BKZ inside while (t <=...), t = "
+                  << t << ", jj = " << jj <<  ", kk = " << kk ;
+             std::cout << ", ctilda(t+1) = " << ctilda(t+1) << ", c[t-1] = " << c[t-1] << "\n";
             add(t1, yvec(t), utildavec(t));
             sqr(t1, t1);
             mul(t1, t1, c(t));
             add(ctilda(t), ctilda(t+1), t1);
 
             if (prune > 0 && t > jj)
-               sub(t1, cbar, BKZThresh(t-jj));
+               sub(t1, cbar, BKZThresh_RR(t-jj));
             else
                t1 = cbar;
-            std::cout << " In BKZ, ctilda[t] = " << ctilda[t] << "\n";
-            if (ctilda(t) <t1) {
+            std::cout << " In BKZ, cbar = " << cbar << ", ctilda(t) = " << ctilda(t) << "\n";
+            if (ctilda(t) < t1) {
                if (t > jj) {
+                  std::cout << " Decrease t = " << t << "\n";
                   t--;
                   clear(t1);
                   for (i = t+1; i <= s; i++) {
@@ -716,6 +726,7 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
                }
                else {
                   cbar = ctilda(jj);
+                  std::cout << " Reset cbar = " << cbar << " utildevec(jj)= " << utildavec[jj-1] << "\n";
                   for (i = jj; i <= kk; i++) {
                      uvec(i) = utildavec(i);
                   }
@@ -730,6 +741,7 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
             }
          }
          NumIterations++;
+         std::cout << " NumIterations = " << NumIterations << "  ********** \n";
          h = min(kk+1, m);
          mul(t1, red_fudge_RR, -8);
          add(t1, t1, delta);
@@ -784,8 +796,14 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
 
                // remove linear dependencies
                // cerr << "general case\n";
+               // The matrices B and B1 must have one more row!
+               std::cout << " Before if else 3, matrix B = \n" << B << "\n";
+               std::cout << "   b[0] = " << b[0] << ",  b[1] = " << b[1] << "\n\n";
+               std::cout << "   c[0] = " << c[0] << ",  c[1] = " << c[1] << "\n\n";
                new_m = ll_LLL_RR_lt(B, delta, B1, mu, b, c, kk+1, n, jj, quit);
-               if (new_m != kk) LogicError("BKZ_RR: internal error");
+               if (new_m != kk) LogicError("BKZ_RR: internal error, new_m != kk+1");
+               std::cout << " After if else 3, matrix B = \n" << B << "\n";
+               std::cout << "   b[0] = " << b[0] << ",  b[1] = " << b[1] << "\n\n";
 
                // remove zero vector
                for (i = kk+2; i <= m+1; i++) {
@@ -840,6 +858,8 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
     if (sqlen)
         for (i = 0; i < m; i++)
             (*sqlen)[i] = b[i];
+    std::cout << " End of BKZ in LLL_RR_lt, Matrix B = \n" << B << "\n";
+    std::cout << "   b[0] = " << b[0] <<  ",  b[1] = " << b[1] << "\n\n";
     return m;    // Number of rows in basis.
 }
 
