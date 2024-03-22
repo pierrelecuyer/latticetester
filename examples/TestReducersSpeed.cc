@@ -93,7 +93,7 @@ inline void afterReduct(long meth, long d) {
 // We test several methods to reduce basis1 and find a shortest vector in its lattice.
 static void reduceBasis(long d) {
    long dim = dimensions[d];
-
+/*
    beforeReduct(dim);  // Only pre-reductions.
    redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
    afterReduct(0, d);
@@ -101,6 +101,7 @@ static void reduceBasis(long d) {
    beforeReduct(dim);
    redLLLNTL(korlat->getBasis(), &sqlen, 0.99999, dim, prec);
    afterReduct(1, d);
+*/
 
    beforeReduct(dim);
    //IntMat basisdual;

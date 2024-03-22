@@ -316,6 +316,13 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
    RR half_plus_fudge;
    add(half_plus_fudge, half, red_fudge_RR);
 
+   std::cout << "\nEntering in ll_LLL_FPInt2, k = " << k << "  !!!!!! \n";
+   std::cout << " Matrix B = \n" << B  << "\n";
+   for (int i = 0; i < m; i++) {
+      std::cout << " B1[" << i << "] = [" << B1[i][0] << ", " << B1[i][1] << ", " << B1[k][2] ;
+      std::cout << ", " << B1[i][3] << ", " << B1[i][4] << ", " << B1[i][5] << " ...\n";
+   }
+
    long max_k = 0;
    while (k <= m) {
       if (k > max_k) {
@@ -382,10 +389,21 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
                }
                conv(MU, mu1);
                sub(mu(k,j), mu(k,j), mu1);
+               std::cout << "Before row transform: B[k] = " << B[k] << "\n";
+               std::cout << "B1[k] = [ " << B1[k][0] << ", " << B1[k][1] << ", " << B1[k][2];
+               std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", " << B1[k][5] << " ...\n";
+
                RowTransform(B(k), B(j), MU, n);
+
+               std::cout << "After row transform, (k,j) = (" << k << ", " << j << "), MU = " << MU << " \n";
+               std::cout << "Basis B = \n" << B << "\n";
+               std::cout << "B[k] = " << B[k] << "\n";
+               std::cout << "B1[k] = [ " << B1[k][0] << ", " << B1[k][1] << ", " << B1[k][2];
+               std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", " << B1[k][5] << " ...\n";
             }
          }
          if (Fc1) {
+            std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
             for (i = 1; i <= n; i++)
                conv(B1(k, i), B(k, i));
             InnerProductR(b(k), B1(k), B1(k), n);
@@ -393,6 +411,9 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
             ComputeGS_RR_lt(B, B1, mu, b, c, k, n, bound, 1, buf, bound2);
          }
       } while (Fc1);
+      std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "  b(k) = " << b(k) << "\n";
+      std::cout << "Basis after while Fc1 \n" << B << "\n";
+
       if (IsZero(b(k))) {
          for (i = k; i < m; i++) {
             // swap i, i+1
@@ -400,6 +421,8 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
             swap(B1(i), B1(i+1));
             swap(b(i), b(i+1));
          }
+         std::cout << "ll_LLL FPInt after swap because b[k] == 0 \n";
+         std::cout << "Basis after swap: \n" << B << "\n";
          for (i = k; i <= m+1; i++) st[i] = 1;
          m--;
          if (quit) break;
@@ -468,6 +491,7 @@ long LLL_RR_lt(NTL::mat_ZZ& B, vec_RR* sqlen, const RR& delta, long m, long n) {
        for (i = 0; i < m; i++) {
           InnerProductR(sqlen2[i], B1[i], B1[i], n);
        }
+       // The matrix B received and passed here may be larger than m x n.
        new_m = ll_LLL_RR_lt(B, delta, B1, mu, sqlen2, c, m, n, 1, quit);
        // new_m = ll_LLL_RR(B, delta, B1, mu, b, c, m, n, 1, quit);
 
@@ -575,6 +599,7 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
    for (i = 0; i < m; i++)
       for (j = 0; j < n; j++)
          B[i][j] = BB[i][j];
+   std::cout << "Start BKZ_RR_lt, dim n = " << n << ", Basis B = \n" << B << "\n";
 
    mat_RR B1;
    B1.SetDims(m+1, n);
@@ -778,10 +803,23 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
                // the general case
                NumNonTrivial++;
                for (i = 1; i <= n; i++) conv(B(m+1, i), 0);
+               std::cout << " Before RowTransformAdd \n";
+               std::cout << " Matrix B = \n" << B  << "\n";
+               for (int k = 0; k <= m; k++) {
+                  std::cout << " B1[" << k << "] = [" << B1[k][0] << ", " << B1[k][1] << ", " << B1[k][2] ;
+                  std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", " << B1[k][5] << " ...\n";
+               }
                for (i = jj; i <= kk; i++) {
                   if (uvec(i) == 0) continue;
                   conv(MU, uvec(i));
+                  std::cout << " RowTransformAdd with i-1 = " << i-1 << ", MU = " << MU << "\n";
                   RowTransform2(B(m+1), B(i), MU, n);
+               }
+               std::cout << " After RowTransformAdd \n";
+               std::cout << " Matrix B = \n" << B  << "\n";
+               for (int k = 0; k <= m; k++) {
+                  std::cout << " B1[" << k << "] = [" << B1[k][0] << ", " << B1[k][1] << ", " << B1[k][2] ;
+                  std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", " << B1[k][5] << " ...\n";
                }
                for (i = m+1; i >= jj+1; i--) {
                   // swap i, i-1
@@ -789,10 +827,22 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
                   swap(B1(i-1), B1(i));
                   swap(b(i-1), b(i));
                }
+               std::cout << " After swap \n";
+               std::cout << " Matrix B = \n" << B  << "\n";
+               for (int k = 0; k <= m; k++) {
+                  std::cout << " B1[" << k << "] = [" << B1[k][0] << ", " << B1[k][1] << ", " << B1[k][2] ;
+                  std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", " << B1[k][5] << " ...\n";
+               }
                for (i = 1; i <= n; i++)
                   conv(B1(jj, i), B(jj, i));
                InnerProductR(b(jj), B1(jj), B1(jj), n);
                if (b(jj) == 0) LogicError("BKZ_RR: internal error, b(jj) == 0");
+               std::cout << " After conv B to B1 \n";
+               std::cout << " Matrix B = \n" << B  << "\n";
+               for (int k = 0; k <= m; k++) {
+                  std::cout << " B1[" << k << "] = [" << B1[k][0] << ", " << B1[k][1] << ", " << B1[k][2] ;
+                  std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", " << B1[k][5] << " ...\n";
+               }
 
                // remove linear dependencies
                // cerr << "general case\n";
