@@ -28,7 +28,7 @@
 #include <NTL/ZZ.h>
 #include <NTL/LLL.h>
 
-#include <latticetester/FlexTypes.h>
+//#include <latticetester/FlexTypes.h>
 #include <latticetester/Util.h>
 // #include <latticetester/NTLWrap.h>
 
@@ -279,8 +279,6 @@ void RowTransform(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
       } else {
          for (i = 0; i < n; i++) {
             MulSubFrom(A[i], B[i], mu1);
-            //if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-            //   std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
          }
       }
    } else {
@@ -289,8 +287,6 @@ void RowTransform(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
          if (k > 0)
             LeftShift(T, T, k);
          sub(A[i], A[i], T);
-         // if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-         //   std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
       }
    }
 }
@@ -308,9 +304,10 @@ template<typename IntVec, typename Int>
 static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
       double *a, double *b, long *in_a, double &max_a, double max_b,
       long &in_float) {
-    LatticeTester::MyExit(1, "RowTransform: the general case is not implemented.");
-};
-
+   LatticeTester::MyExit(1,
+         "RowTransform: the general case is not implemented.");
+}
+;
 
 // The case Int = long.
 // This int64_t version is no longer used (?)
@@ -520,8 +517,6 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
          if (k > 0)
             LeftShift(T, T, k);
          sub(A[i], A[i], T);
-         // if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-         //   std::cout << "RowTransform: A[i] = " << A[i] << "\n";
       }
    }
 }
@@ -733,7 +728,8 @@ static void init_red_fudge() {
 static void inc_red_fudge() {
    red_fudge = red_fudge * 2;
    log_red--;
-   cerr << "LLL_FP: warning--relaxing reduction (" << log_red << ")\n";
+   cerr << "LLL_FP: inc_red_fudge warning--relaxing reduction (" << log_red
+         << ")\n";
    if (log_red < 4)
       ResourceError("LLL_FP: too much loss of precision...stop!");
 }
@@ -806,7 +802,7 @@ void RR_GSInt<NTL::matrix<ZZ>>(NTL::matrix<ZZ> &B, double **B1, double **mu,
       double *b, double *c, double *buf, long prec, long rr_st, long k,
       long m_orig, long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b,
       vec_RR &rr_c) {
-   // Here, k and rr_st are both reduced by 1 compared with NTL version.
+   // Here, k, rr_st, i, j are reduced by 1 compared with NTL version.
    cerr << "LLL_FP: RR refresh " << rr_st << "..." << k << "...";
    if (rr_st > k)
       ResourceError("LLL_FP: rr_st > k, cannot continue!!!");
@@ -1002,7 +998,6 @@ int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
          Fc1 = 0;
          start_over = 0;
 
-         // std::cout << "rst = " << rst << "\n";
          for (j = rst - 1; j >= 0; j--) { // both j and rst are 1 less than in NTL.
             t1 = fabs(mu[k][j]);
             //std::cout << "entered for loop: j =  " <<  j << "  \n";
@@ -1010,17 +1005,22 @@ int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
             if (t1 > half_plus_fudge) {
                // std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << ",  Fc1 = " << Fc1 << "\n";
                if (!Fc1) {
+                  // std::cout << "Before j > trigger_index, we have j = " << j << ",  trigger_index = " << trigger_index << "\n";
                   if (j > trigger_index
                         || (j == trigger_index && small_trigger)) {
                      cnt++;
                      if (cnt > thresh) {
-                        //std::cout << "inc_red_fudge():  cnt= " << cnt << ",  dim= " << n << ", B[1] = " << B[1] << " \n";
+                        //std::cout << "inc_red_fudge():  cnt= " << cnt << ", thresh = " << thresh
+                        //      << ",  dim= " << n << " \n";
                         if (log_red <= 15) {
                            while (log_red > 10)
                               inc_red_fudge();
                            half_plus_fudge = 0.5 + red_fudge;
+                           std::cout
+                                 << "Skipping the part removed for the `long` version \n";
                            // Some part removed here for the `int64_t` version
                         } else {
+                           std::cout << "... log_red > 15, in the else, put cnt = 0. \n";
                            inc_red_fudge();
                            half_plus_fudge = 0.5 + red_fudge;
                            cnt = 0;
@@ -1032,7 +1032,8 @@ int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
                   Fc1 = 1;
                   if (k < rr_st)
                      rr_st = k;
-                  // std::cout << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
+                  //std::cout << "ll_LLL FPInt calling RowTransformStart, k = "
+                  //      << k << ",  rr_st = " << rr_st << "\n";
                   RowTransformStart(B1[k], in_vec, in_float, n);
                }
                mu1 = mu[k][j];
@@ -1145,290 +1146,6 @@ int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
    return m;
 }
 
-// The ZZ version.
-template<>
-long ll_LLL_FPInt(matrix<ZZ> &B, double delta, double **B1, double **mu,
-      double *b, double *c, long m, long n, long init_k, long quit) {
-   // In NTL, the indices of B start at 0, but those of B1, b, c, st, start at 1.
-   // Here they all start at 0.
-   // Also init_k and k start at 1 in NTL and at 0 here (they are one less).
-   // m and n must be the same.
-   long i, j, k, Fc1;
-   ZZ MU;
-   double mu1;
-   double t1;
-   double *tp;
-   // we tolerate a 15% loss of precision in computing
-   // inner products in ComputeGSInt.
-   static double bound = 1.0;
-   for (i = 2 * long(0.15 * NTL_DOUBLE_PRECISION); i > 0; i--)
-      bound = bound * 2;
-   double half_plus_fudge = 0.5 + red_fudge;
-   quit = 0;
-   k = init_k;  // One less than in NTL.
-   vector64 st_mem;
-   st_mem.SetLength(m + 2);
-   long *st = st_mem.elts(); // An array of integers.
-   // Indices of st are one less than in NTL.
-   for (i = 0; i < k; i++)
-      st[i] = i;
-   for (i = k; i <= m; i++)
-      st[i] = 0;
-
-   // Here the indices of these arrays start at 0, they start at 1 in NTL.
-   UniqueArray<double> buf_store;
-   buf_store.SetLength(m + 1);
-   double *buf = buf_store.get();
-
-   vector64 in_vec_mem;
-   in_vec_mem.SetLength(n + 1);
-   long *in_vec = in_vec_mem.elts();
-
-   UniqueArray<double> max_b_store;
-   max_b_store.SetLength(m + 1);
-   double *max_b = max_b_store.get();
-
-   // std::cout << "ll_LLL FPInt after Unique Arrays  \n";
-   for (i = 0; i < m; i++)
-      max_b[i] = max_abs(B1[i], n);
-   long in_float = 0;
-   long rst;
-   long counter;
-   long start_over;
-   long trigger_index;
-   long small_trigger;
-   long cnt;
-
-   // These RR matrices are declared here but not created yet.
-   mat_RR rr_B1;
-   mat_RR rr_mu;
-   vec_RR rr_c;
-   vec_RR rr_b;
-
-   long m_orig = m;
-   long rr_st = 0;   // One less than in NTL.
-   long max_k = -1;   // Also 1 less.
-   long swap_cnt = 0;
-   long prec = RR::precision();
-
-   while (k < m) {
-      // std::cout << "ll_LLL FPInt enter while k < m with k = " << k << "\n";
-      if (k > max_k) {
-         max_k = k;
-         swap_cnt = 0;
-      }
-      if (k < rr_st)
-         rr_st = k;    // Both are 1 less than in NTL.
-      if (st[k] == k)
-         rst = 0;     // 1 less than in NTL.
-      else
-         rst = k;
-      if (st[k] < st[k + 1])
-         st[k + 1] = st[k];
-
-// std::cout << "ll_LLL FPInt before computeGS \n";
-// This one uses only matrices of `double`.
-      // All indices and k, st[k] are one less than in NTL.
-      ComputeGSInt(B, B1, mu, b, c, k, n, bound, st[k], buf);
-      CheckFinite(&c[k]);
-      st[k] = k;
-      // std::cout << "After ComputeGS, mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
-//std::cout << "ll_LLL FPInt after computeGS \n";
-
-// The following should happen very rarely.  We switch to RR.
-      if (swap_cnt > 200000) {
-         cerr << "LLL_FPInt: swap loop?\n";
-         // This one uses large RR matrices rr_* !
-         RR_GSInt(B, B1, mu, b, c, buf, prec, rr_st, k, m_orig, n, rr_B1, rr_mu,
-               rr_b, rr_c);
-         if (rr_st < st[k + 1])
-            st[k + 1] = rr_st;
-         rr_st = k + 1;
-         rst = k;
-         swap_cnt = 0;
-      }
-      counter = 0;
-      trigger_index = k;  // One less than in NTL
-      small_trigger = 0;
-      cnt = 0;
-      long thresh = 10;
-      long sz = 0, new_sz;
-      long did_rr_gs = 0;
-
-      do {
-         // size reduction
-         counter++;
-         if ((counter & 127) == 0) {    // Should be 127
-            new_sz = 0;
-            for (j = 0; j < n; j++)
-               new_sz += NumBits(B[k][j]);
-            if ((counter >> 7) == 1 || new_sz < sz) {
-               sz = new_sz;
-            } else {
-               cerr << "LLL_FPInt sz = " << sz
-                     << " not smaller; infinite loop? \n";
-               std::cout << " Matrix B = " << B << "\n";
-            }
-         }
-         Fc1 = 0;
-         start_over = 0;
-         // std::cout << "rst = " << rst << "\n";
-         for (j = rst - 1; j >= 0; j--) { // both j and rst are 1 less than in NTL.
-            t1 = fabs(mu[k][j]);
-            // std::cout << "entered for loop: j =  " <<  j << "  \n";
-            // std::cout << "mu[k,j] =  " <<  mu[k][j] << "  t1 =  " <<  t1 << "  \n";
-            if (t1 > half_plus_fudge) {
-               // std::cout << "we have t1 > half_plus_fudge, j =  " <<  j << ",  Fc1 = " << Fc1 << "\n";
-               if (!Fc1) {
-                  if (j > trigger_index
-                        || (j == trigger_index && small_trigger)) {
-                     cnt++;
-                     if (cnt > thresh) {
-                        // std::cout << "ll_LLL FPInt cnt > thresh *** \n";
-                        if (log_red <= 15) {
-                           while (log_red > 10)
-                              inc_red_fudge();
-                           half_plus_fudge = 0.5 + red_fudge;
-                           if (!did_rr_gs) {
-                              // This one uses large RR matrices rr_* !
-                              RR_GSInt(B, B1, mu, b, c, buf, prec, rr_st, k,
-                                    m_orig, n, rr_B1, rr_mu, rr_b, rr_c);
-                              if (rr_st < st[k + 1])
-                                 st[k + 1] = rr_st;
-                              rr_st = k + 1;
-                              did_rr_gs = 1;
-                              rst = k;
-                              trigger_index = k;
-                              small_trigger = 0;
-                              start_over = 1;
-                              break;
-                           }
-                        } else {
-                           inc_red_fudge();
-                           half_plus_fudge = 0.5 + red_fudge;
-                           cnt = 0;
-                        }
-                     }
-                  }
-                  trigger_index = j;
-                  small_trigger = (t1 < 4);
-                  Fc1 = 1;
-                  if (k < rr_st)
-                     rr_st = k;
-                  //std::cout
-                  //      << "ll_LLL FPInt calling RowTransformStart, k = " << k << ",  rr_st = " << rr_st << "\n";
-                  RowTransformStart(B1[k], in_vec, in_float, n);
-                  // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
-               }
-               mu1 = mu[k][j];
-               // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
-               if (mu1 >= 0)
-                  mu1 = ceil(mu1 - 0.5);
-               else
-                  mu1 = floor(mu1 + 0.5);
-               double *mu_k = mu[k];
-               double *mu_j = mu[j];
-               if (mu1 == 1) {
-                  for (i = 0; i < j - 1; i++)
-                     mu_k[i] -= mu_j[i];
-               } else if (mu1 == -1) {
-                  for (i = 0; i < j - 1; i++)
-                     mu_k[i] += mu_j[i];
-               } else {
-                  for (i = 0; i < j - 1; i++)
-                     mu_k[i] -= mu1 * mu_j[i];
-               }
-               mu_k[j] -= mu1;
-               conv(MU, mu1);
-               // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
-               // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
-               // The change must be on vector B[k].
-               RowTransform(B[k], B[j], MU, n, B1[k], B1[j], in_vec, max_b[k],
-                     max_b[j], in_float);
-               // std::cout << "After row transform, MU = " << MU << " \n";
-               // std::cout << "Basis after row transform: \n" << B << "\n";
-            }
-         }
-         // std::cout << "ll_LLL FPInt before if Fc1 \n";
-         if (Fc1) {
-            // std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
-            RowTransformFinish(B[k], B1[k], in_vec, n);
-            max_b[k] = max_abs(B1[k], n);
-            if (!did_rr_gs) {
-               b[k] = InnerProductD(B1[k], B1[k], n);
-               CheckFinite(&b[k]);
-               ComputeGSInt(B, B1, mu, b, c, k, n, bound, 0, buf);
-               CheckFinite(&c[k]);
-            } else {
-               // This one uses large RR matrices !
-               RR_GSInt(B, B1, mu, b, c, buf, prec, rr_st, k, m_orig, n, rr_B1,
-                     rr_mu, rr_b, rr_c);
-               rr_st = k + 1;
-            }
-            rst = k;
-            // std::cout << "After ComputeGS in (Fc1), rst = " << rst << ",  max_b[k]= "
-            //     << max_b[k] << ", did_rr_gs=  " << did_rr_gs << ", b[k]=  " << b[k] << "\n";
-            // std::cout << "After ComputeGS in (Fc1), mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
-         }
-         // std::cout << "End of loop, B = " <<  B << "  \n";
-      } while (Fc1 || start_over);  // end do loop
-
-      // std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "  b[k] = " << b[k] << "\n";
-      // std::cout << "Basis after while Fc1 \n" << B << "\n";
-      if (b[k] == 0) {
-         for (i = k; i < m - 1; i++) {
-            // swap i, i+1
-            swap(B[i], B[i + 1]);
-            tp = B1[i];
-            B1[i] = B1[i + 1];
-            B1[i + 1] = tp;
-            t1 = b[i];
-            b[i] = b[i + 1];
-            b[i + 1] = t1;
-            t1 = max_b[i];
-            max_b[i] = max_b[i + 1];
-            max_b[i + 1] = t1;
-         }
-         for (i = k; i <= m; i++)
-            st[i] = 1;
-         if (k < rr_st)
-            rr_st = k;
-         m--;
-         if (quit)
-            break;
-         continue;
-      }
-      if (quit)
-         break;
-      // std::cout << "ll_LLL FPInt before test LLL condition \n";
-      // Test LLL reduction condition
-      if (k > 0
-            && delta * c[k - 1]
-                  > c[k] + mu[k][k - 1] * mu[k][k - 1] * c[k - 1]) {
-         // swap rows k, k-1
-         swap(B[k], B[k - 1]);
-         tp = B1[k];
-         B1[k] = B1[k - 1];
-         B1[k - 1] = tp;
-         tp = mu[k];
-         mu[k] = mu[k - 1];
-         mu[k - 1] = tp;
-         t1 = b[k];
-         b[k] = b[k - 1];
-         b[k - 1] = t1;
-         t1 = max_b[k];
-         max_b[k] = max_b[k - 1];
-         max_b[k - 1] = t1;
-         k--;
-         NumSwaps++;
-         swap_cnt++;
-      } else {
-         k++;
-      }
-   }
-   return m;
-}
-
 template<typename IntMat>
 void printBB1(IntMat &B, double **B1, long m) {
    std::cout << " Matrix B = \n" << B << "\n";
@@ -1440,14 +1157,14 @@ void printBB1(IntMat &B, double **B1, long m) {
    }
 }
 
-// The ZZ version only.
+// This works for both ZZ and long.
 template<typename IntMat>
-long ll_LLL_FPInt2(IntMat &B, double delta, double **B1, double **mu, double *b,
+long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
       double *c, long m, long n, long init_k, long quit) {
    // In NTL, the indices of B start at 0, but those of B1, b, c, st, start at 1.
    // Here they all start at 0.
    // Also init_k and k start at 1 in NTL and at 0 here (they are one less).
-   // m and n must be the same as in NTL.   NO !!!!!!!!   We can have m > n.  *********
+   // m and n must be the same as in NTL.
 
    long i, j, k, Fc1;
    Int MU;
@@ -1473,8 +1190,8 @@ long ll_LLL_FPInt2(IntMat &B, double delta, double **B1, double **mu, double *b,
    for (i = k; i <= m; i++)
       st[i] = 0;
 
-   std::cout << "\nEntering in ll_LLL_FPInt2, k = " << k << "  !!!!!! \n";
-   printBB1(B, B1, m);
+   //std::cout << "\nEntering in ll_LLL_FPInt, k = " << k << "  !!!!!! \n";
+   //printBB1(B, B1, m);
 
    // Here the indices of these arrays will start at 0, they start at 1 in NTL.
    UniqueArray<double> buf_store;
@@ -1530,17 +1247,9 @@ long ll_LLL_FPInt2(IntMat &B, double delta, double **B1, double **mu, double *b,
 // std::cout << "ll_LLL FPInt before computeGS \n";
 // This one uses only matrices of `double`.
       // All indices and k, st[k] are one less than in NTL.
-      std::cout << "Before computeGSInt, Matrix B = \n" << B << "\n";
-      std::cout << "Before computeGSInt, B1[k] = [ " << B1[k][0] << ", "
-            << B1[k][1] << ", " << B1[k][2];
-      std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", " << B1[k][5]
-            << " ...\n";
       ComputeGSInt(B, B1, mu, b, c, k, n, bound, st[k], buf);
       CheckFinite(&c[k]);
       st[k] = k;
-      std::cout << "After ComputeGSInt, k = " << k << ", mu[k] = " << mu[k][0]
-            << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
-      std::cout << "  c[k] = " << c[k] << "\n";
 
 // The following should happen very rarely.  We switch to RR.
       if (swap_cnt > 200000) {
@@ -1574,32 +1283,34 @@ long ll_LLL_FPInt2(IntMat &B, double delta, double **B1, double **mu, double *b,
             } else {
                cerr << "LLL_FPInt sz = " << sz
                      << " not smaller; infinite loop? \n";
-               std::cout << " Matrix B = " << B << "\n";
             }
          }
          Fc1 = 0;
          start_over = 0;
-         // std::cout << "rst = " << rst << "\n";
          for (j = rst - 1; j >= 0; j--) { // both j and rst are 1 less than in NTL.
             t1 = fabs(mu[k][j]);
-            std::cout << "entered for loop: j =  " << j << "  \n";
-            std::cout << "mu[k,j] =  " << mu[k][j] << "  t1 =  " << t1
-                  << "  \n";
             if (t1 > half_plus_fudge) {
-               std::cout << "we have t1 > half_plus_fudge, j =  " << j
-                     << ",  Fc1 = " << Fc1 << "\n";
+               //std::cout << "we have t1 > half_plus_fudge, j =  " << j
+               //      << ",  Fc1 = " << Fc1 << ",  t1 = " << t1 << "\n";
                if (!Fc1) {
                   if (j > trigger_index
                         || (j == trigger_index && small_trigger)) {
                      cnt++;
+                     std::cout << "We have j > trigger_index, cnt = " << cnt << ", thresh = " << thresh << "\n";
                      if (cnt > thresh) {
-                        std::cout << "ll_LLL FPInt cnt > thresh = " << thresh
-                              << "  *** \n";
+                        std::cout << "inc_red_fudge():  cnt= " << cnt
+                              << ",  dim= " << n << ", B[1] = " << B[1]
+                              << " \n";
                         if (log_red <= 15) {
                            while (log_red > 10)
                               inc_red_fudge();
                            half_plus_fudge = 0.5 + red_fudge;
-                           if (!did_rr_gs) {
+                           // Some part is skipped here...
+                           std::cout
+                                 << "ll_LL_FPInt: Here we should use RR matrices, but we skip it.\n";
+                           if (false) {
+                              // if (!did_rr_gs) {
+                              std::cout << "FPInt: using the RR matrices. \n";
                               // This one uses large RR matrices rr_* !
                               RR_GSInt(B, B1, mu, b, c, buf, prec, rr_st, k,
                                     m_orig, n, rr_B1, rr_mu, rr_b, rr_c);
@@ -1614,6 +1325,7 @@ long ll_LLL_FPInt2(IntMat &B, double delta, double **B1, double **mu, double *b,
                               break;
                            }
                         } else {
+                           std::cout << "... in the else, put cnt = 0. \n";
                            inc_red_fudge();
                            half_plus_fudge = 0.5 + red_fudge;
                            cnt = 0;
@@ -1625,21 +1337,10 @@ long ll_LLL_FPInt2(IntMat &B, double delta, double **B1, double **mu, double *b,
                   Fc1 = 1;
                   if (k < rr_st)
                      rr_st = k;
-                  std::cout << "ll_LLL FPInt calls RowTransformStart, k = " << k
-                        << ",  rr_st = " << rr_st << "\n";
-                  std::cout << "B1[k] = [ " << B1[k][0] << ", " << B1[k][1]
-                        << ", " << B1[k][2];
-                  std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", "
-                        << B1[k][5] << " ...\n";
                   RowTransformStart(B1[k], in_vec, in_float, n);
-                  std::cout << "B1[k] = [ " << B1[k][0] << ", " << B1[k][1]
-                        << ", " << B1[k][2];
-                  std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", "
-                        << B1[k][5] << " ...\n";
                   // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
                }
                mu1 = mu[k][j];
-               std::cout << "Before row transform, mu1 = " << mu1 << " \n";
                if (mu1 >= 0)
                   mu1 = ceil(mu1 - 0.5);
                else
@@ -1658,35 +1359,22 @@ long ll_LLL_FPInt2(IntMat &B, double delta, double **B1, double **mu, double *b,
                }
                mu_k[j] -= mu1;
                conv(MU, mu1);
-               // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
-               std::cout << "Before row transform: B[k] = " << B[k] << "\n";
-               std::cout << "B1[k] = [ " << B1[k][0] << ", " << B1[k][1] << ", "
-                     << B1[k][2];
-               std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", "
-                     << B1[k][5] << " ...\n";
+               //std::cout << "Before row transform: mu1 = " << mu1 << ",\n"
+               //      "B1[k] = " << B1[k] << "\n" << "B1[j] = " << B1[j] << "\n";
                // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
                // The change must be on vector B[k].
                RowTransform(B[k], B[j], MU, n, B1[k], B1[j], in_vec, max_b[k],
                      max_b[j], in_float);
-               std::cout << "After row transform, (k,j) = (" << k << ", " << j
-                     << "), MU = " << MU << " \n";
-               std::cout << "Basis B = \n" << B << "\n";
-               std::cout << "B[k] = " << B[k] << "\n";
-               std::cout << "B1[k] = [ " << B1[k][0] << ", " << B1[k][1] << ", "
-                     << B1[k][2];
-               std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", "
-                     << B1[k][5] << " ...\n";
-               //b[k] = InnerProductD(B1[k], B1[k], n);
-               //std::cout << "b[k] = " << b[k] << "\n";
-               //if (b[k] < 16) return m+1;
+               //std::cout << "After row transform: mu1 = " << mu1 << ",\n"
+               //      "B1[k] = " << B1[k] << "\n\n";
             }
          }
-         // std::cout << "ll_LLL FPInt before if Fc1 \n";
          if (Fc1) {
-            std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
+            //std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
             RowTransformFinish(B[k], B1[k], in_vec, n);
             max_b[k] = max_abs(B1[k], n);
-            if (!did_rr_gs) {
+            if (true) {
+            // if (!did_rr_gs) {
                b[k] = InnerProductD(B1[k], B1[k], n);
                CheckFinite(&b[k]);
                ComputeGSInt(B, B1, mu, b, c, k, n, bound, 0, buf);
@@ -1698,22 +1386,10 @@ long ll_LLL_FPInt2(IntMat &B, double delta, double **B1, double **mu, double *b,
                rr_st = k + 1;
             }
             rst = k;
-            std::cout << "After ComputeGS in (Fc1), rst = " << rst
-                  << ",  max_b[k]= " << max_b[k] << ", did_rr_gs=  "
-                  << did_rr_gs << ", b[k]=  " << b[k] << "\n";
-            // std::cout << "After ComputeGS in (Fc1), mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
          }
-         // std::cout << "End of loop, B = " <<  B << "  \n";
       } while (Fc1 || start_over);  // end do loop
 
-      std::cout << "ll_LLL FPInt after while Fc1, k = " << k << "  b[k] = "
-            << b[k] << "\n";
-      std::cout << "Basis after while Fc1 \n" << B << "\n";
       if (b[k] == 0) {
-         std::cout
-               << "ll_LLL FPInt before swap because b[k] == 0   %%%%%%%%%%%% \n";
-         printBB1(B, B1, m);
-         // std::cout << "Basis before swap: \n" << B << "\n";
          for (i = k; i < m - 1; i++) {
             // swap i, i+1
             swap(B[i], B[i + 1]);
@@ -1727,9 +1403,9 @@ long ll_LLL_FPInt2(IntMat &B, double delta, double **B1, double **mu, double *b,
             max_b[i] = max_b[i + 1];
             max_b[i + 1] = t1;
          }
-         std::cout
-               << "ll_LLL FPInt after swap because b[k] == 0   %%%%%%%%%%%% \n";
-         printBB1(B, B1, m);
+         // std::cout
+         //      << "ll_LLL FPInt after swap because b[k] == 0   %%%%%%%%%%%% \n";
+         //printBB1(B, B1, m);
 
          for (i = k; i <= m; i++)
             st[i] = 1;
@@ -1797,11 +1473,11 @@ static long LLL_FPInt(IntMat &B, Vec<double> *sqlen, double delta, long m,
 
    UniqueArray<double> c_store;
    c_store.SetLength(m);
-   double *c = c_store.get(); // squared lengths of Gramm-Schmidt basis vectors
+   double *c = c_store.get();  // squared lengths of Gramm-Schmidt basis vectors
 
    UniqueArray<double> b_store;
    b_store.SetLength(m + 1);
-   double *sqlen2 = b_store.get(); // squared lengths of basis vectors
+   double *sqlen2 = b_store.get();  // squared lengths of basis vectors
    // This sqlen2 is usually the same as sqlen, but we have to do this
    // because we are not sure how much space has been reserved for sqlen.
    // and we do not want to change the pointer sqlen that is passed!
@@ -1877,7 +1553,7 @@ static void ComputeBKZConstant(long beta, long p) {
          x = 0;
          for (j = k + 2; j <= 2 * k + 2; j++)
             x = x + Log[j - 1];
-         x = 0.5 * LogPI + x - 2 * (k + 1) * Log[1];  // ln 2
+         x = 0.5 * LogPI + x - 2 * (k + 1) * Log[1]; // ln 2
          x = x * (2.0 / double(i));
          x = exp(x);
       }
@@ -1973,10 +1649,10 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
          B[i][j] = BB[i][j];
       }
    }
-   //std::cout << " In BKZ, Matrix B = \n" << B << "\n";
+//std::cout << " In BKZ, Matrix B = \n" << B << "\n";
 
-   // Here, the entries used in B1, mu, c, b, all start at 0.
-   // In NTL, they start at 1.
+// Here, the entries used in B1, mu, c, b, all start at 0.
+// In NTL, they start at 1.
    Unique2DArray<double> B1_store;
    B1_store.SetDims(m + 2, n);
    double **B1 = B1_store.get();  // approximates B
@@ -1987,15 +1663,15 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
 
    UniqueArray<double> c_store;
    c_store.SetLength(m + 2);
-   double *c = c_store.get(); // squared lengths of Gramm-Schmidt basis vectors
+   double *c = c_store.get();  // squared lengths of Gramm-Schmidt basis vectors
 
    UniqueArray<double> b_store;
    b_store.SetLength(m + 2);
-   double *b = b_store.get(); // squared lengths of basis vectors
+   double *b = b_store.get();  // squared lengths of basis vectors
 
    double cbar;
 
-   // The used entries of these arrays start at 1.
+// The used entries of these arrays start at 1.
    UniqueArray<double> ctilda_store;
    ctilda_store.SetLength(m + 2);
    double *ctilda = ctilda_store.get();
@@ -2027,13 +1703,13 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
    long quit = 0;
    double eta;  // Always 0 here.
    long new_m;
-   // Here, i, j will usually be 1 less than in NTL.
-   // z, jj, kk, h, s, t, beta  are the same.
+// Here, i, j, jj will be 1 less than in NTL.
+// z, jj, kk, h, s, t, beta  are the same.
    long z, jj, kk;
    long s, t;
    long h;
 
-   // Indices for B1 and b start at 0 here.
+// Indices for B1 and b start at 0 here.
    for (i = 0; i <= m; i++)
       for (j = 0; j < n; j++) {
          conv(B1[i][j], B[i][j]);
@@ -2043,20 +1719,8 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
       b[i] = InnerProductD(B1[i], B1[i], n);
       CheckFinite(&b[i]);
    }
+// Here we first perform LLL on the initial set of vectors.
    m = ll_LLL_FPInt(B, delta, B1, mu, b, c, m, n, 0, quit);
-   //std::cout << " In BKZ after ll_LLL, B1[0][0] = \n" << B1[0][0] << "\n";
-   std::cout << " After first ll_ of BKZ in LLL_RR_lt, Matrix B = \n" << B
-         << "\n";
-   for (int k = 0; k <= m; k++) {
-      std::cout << " B1[" << k << "] = [" << B1[k][0] << ", " << B1[k][1]
-            << ", " << B1[k][2];
-      std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", " << B1[k][5]
-            << " ...\n";
-   }
-   std::cout << " b[0] = " << b[0] << ", b[1] = " << b[1] << ", b[2] = " << b[2]
-         << ", b[3] = " << b[3] << "\n";
-   std::cout << " c[0] = " << c[0] << ", c[1] = " << c[1] << ", c[2] = " << c[2]
-         << ", c[3] = " << c[3] << "\n";
 
    unsigned long NumIterations = 0;
    unsigned long NumTrivial = 0;
@@ -2076,24 +1740,24 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
       if (prune > 0)
          ComputeBKZConstant(beta, prune);
       z = 0;
-      jj = 0;  // Same values as in NTL for z, jj, kk.
+      jj = -1;  // Same values as in NTL for z, kk, one less for jj.
       while (z < m - 1) {
-         jj++;       // Will start with jj = 1.
-         kk = min(jj + beta - 1, m);
-         if (jj == m) {
-            jj = 1;
+         jj++;       // Will start with jj = 0.
+         kk = min(jj + beta, m);
+         if (jj == m - 1) {
+            jj = 0;
             kk = beta;
             clean = 1;
          }
          if (prune > 0)
-            ComputeBKZThresh(&c[jj - 1], kk - jj + 1);
-         cbar = c[jj - 1];
-         utildavec[jj] = uvec[jj] = 1;
-         yvec[jj] = vvec[jj] = 0;
-         Deltavec[jj] = 0;
-         s = t = jj;  // Same values as in NTL.
-         deltavec[jj] = 1;
-         for (i = jj + 1; i <= kk + 1; i++) {
+            ComputeBKZThresh(&c[jj], kk - jj);
+         cbar = c[jj];
+         utildavec[jj + 1] = uvec[jj + 1] = 1;
+         yvec[jj + 1] = vvec[jj + 1] = 0;
+         Deltavec[jj + 1] = 0;
+         s = t = jj + 1;  // Same values as in NTL.
+         deltavec[jj + 1] = 1;
+         for (i = jj + 2; i <= kk + 1; i++) {
             // Same index i as in NTL.
             ctilda[i] = uvec[i] = utildavec[i] = yvec[i] = 0;
             Deltavec[i] = 0;
@@ -2101,31 +1765,20 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
             deltavec[i] = 1;
          }
          // std::cout << " In BKZ, cbar = " << cbar <<  "\n";
-         long enum_cnt = 0;
+         // long enum_cnt = 0;
          while (t <= kk) {
-            enum_cnt++;
-            if (enum_cnt > 100) {
-               std::cout << " BKZ inside while, enum_cnt > 100 \n\n";
-               return 0;
-            }
-            std::cout << " In BKZ inside while (t <=...), t = " << t
-                  << ", jj = " << jj << ", kk = " << kk;
-            std::cout << ", ctilda[t+1] = " << ctilda[t + 1] << ", c[t-1] = "
-                  << c[t - 1] << "\n";
             ctilda[t] = ctilda[t + 1]
                   + (yvec[t] + utildavec[t]) * (yvec[t] + utildavec[t])
                         * c[t - 1];
             ForceToMem(&ctilda[t]);  // prevents an infinite loop
-            if (prune > 0 && t > jj)
-               eta = BKZThresh(t - jj);
+            if (prune > 0 && t > jj + 1)
+               eta = BKZThresh(t - jj - 1);
             else
                eta = 0.0;
-            std::cout << " In BKZ, cbar = " << cbar << ", ctilda[t] = "
-                  << ctilda[t] << "\n";
             if (ctilda[t] < cbar - eta) {
-               if (t > jj) {
-                  std::cout << " Decrease t = " << t << "\n";
-                  t--;   // t decreases here
+               if (t > jj + 1) {
+                  //std::cout << " Decrease t = " << t << "\n";
+                  t--;  // t decreases here
                   t1 = 0;
                   for (i = t + 1; i <= s; i++)
                      t1 += utildavec[i] * mu[i - 1][t - 1]; // Indices in mu are 1 less.
@@ -2142,10 +1795,8 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
                   else
                      deltavec[t] = 1;
                } else {
-                  cbar = ctilda[jj];
-                  std::cout << " Reset cbar = " << cbar << " utildevec[jj] = "
-                        << utildavec[jj] << "\n";
-                  for (i = jj; i <= kk; i++) {
+                  cbar = ctilda[jj + 1];
+                  for (i = jj + 1; i <= kk; i++) {
                      uvec[i] = utildavec[i];
                   }
                }
@@ -2159,25 +1810,16 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
                utildavec[t] = vvec[t] + Deltavec[t];
             }
          }
-         std::cout << " Before NumIterations \n";
-         std::cout << " Matrix B = \n" << B << "\n";
-         for (int k = 0; k <= m; k++) {
-            std::cout << " B1[" << k << "] = [" << B1[k][0] << ", " << B1[k][1]
-                  << ", " << B1[k][2];
-            std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", "
-                  << B1[k][5] << " ...\n";
-         }
          NumIterations++;
-         std::cout << " NumIterations = " << NumIterations << "  ********** \n";
-         h = min(kk + 1, m);  // A number of rows, same value as in NTL.
-         std::cout << " h = " << h << " \n";
-         if ((delta - 8 * red_fudge) * c[jj - 1] > cbar) {  // ****
+         //std::cout << " NumIterations = " << NumIterations << "  ********** \n";
+         h = min(kk + 1, m);   // A number of rows, same value as in NTL.
+         if ((delta - 8 * red_fudge) * c[jj] > cbar) {
             clean = 0;
-            // we treat the case that the new vector is b_s (jj < s <= kk)
+            // we treat the case that the new vector is b_s (jj+1 < s <= kk)
             // as a special case that appears to occur most of the time.
             s = 0;
             // std::cout << " BKZ_FPZZ find s, jj = " << jj << ", kk = " << kk << ", i = " << i << "\n";
-            for (i = jj + 1; i <= kk; i++) {
+            for (i = jj + 2; i <= kk; i++) {
                if (uvec[i] != 0) {
                   if (s == 0)
                      s = i;
@@ -2190,7 +1832,7 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
             if (s > 0) {
                // special case
                NumTrivial++;
-               for (i = s - 1; i >= jj; i--) {
+               for (i = s - 1; i > jj; i--) {
                   // This i is one less than in NTL.
                   // swap i, i-1
                   swap(B[i - 1], B[i]);
@@ -2203,46 +1845,26 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
                   b[i] = t1;
                }
                // cerr << "special case\n";
-               // h and jj are same as in NTL.
-               new_m = ll_LLL_FPInt(B, delta, B1, mu, b, c, h, n, jj - 1, quit);
+               // h is the same as in NTL.
+               new_m = ll_LLL_FPInt(B, delta, B1, mu, b, c, h, n, jj, quit);
                if (new_m != h)
                   LogicError("BKZ_FPZZ: internal error, new_m != h");
                if (quit)
                   break;
-               if (b[0] == 1)
-                  std::cout << " b[0] = 1 in  if (s > 0) \n";
-
             } else {
                // the general case, here s < 0
                NumNonTrivial++;
                for (i = 0; i < n; i++)
-                  conv(B[m][i], 0);   // Put 0 in last row.
-               std::cout << " Before RowTransformAdd \n";
-               std::cout << " Matrix B = \n" << B << "\n";
-               for (int k = 0; k <= m; k++) {
-                  std::cout << " B1[" << k << "] = [" << B1[k][0] << ", "
-                        << B1[k][1] << ", " << B1[k][2];
-                  std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", "
-                        << B1[k][5] << " ...\n";
-               }
-               for (i = jj; i <= kk; i++) {
+                  conv(B[m][i], 0);            // Put 0 in last row.
+               for (i = jj + 1; i <= kk; i++) {
                   if (uvec[i] == 0)
                      continue;
                   conv(MU, uvec[i]);
-                  std::cout << " RowTransformAdd with i-1 = " << i - 1
-                        << ", MU = " << MU << "\n";
                   // This changes row B[m].
                   RowTransformAdd(B[m], B[i - 1], MU, n);
-                  /*
-                   for (long j = 0; j < n; j++) {
-                   // T = MU * B[i-1][j];
-                   B[m][j] = B[m][j] + MU * B[i-1][j];
-                   }
-                   */
                }
-               std::cout << " After RowTransformAdd \n";
-               printBB1(B, B1, m);
-               for (i = m; i >= jj; i--) {
+               //printBB1(B, B1, m);
+               for (i = m; i > jj; i--) {
                   // swap i, i-1
                   swap(B[i - 1], B[i]);
                   tp = B1[i - 1];
@@ -2252,59 +1874,29 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
                   b[i - 1] = b[i];
                   b[i] = t1;
                }
-               std::cout << " After swap, jj = " << jj << "\n";
-               printBB1(B, B1, m);
+               // std::cout << " After swap, jj = " << jj << "\n";
+               //printBB1(B, B1, m);
                for (i = 0; i < n; i++) {
-                  conv(B1[jj - 1][i], B[jj - 1][i]);
-                  CheckFinite(&B1[jj - 1][i]);
+                  conv(B1[jj][i], B[jj][i]);
+                  CheckFinite(&B1[jj][i]);
                }
-               b[jj - 1] = InnerProductD(B1[jj - 1], B1[jj - 1], n);
-               CheckFinite(&b[jj - 1]);
-               std::cout << " After B1[jj-1] <-- B[jj-1]  \n";
-               printBB1(B, B1, m);
+               b[jj] = InnerProductD(B1[jj], B1[jj], n);
+               CheckFinite(&b[jj]);
+               //std::cout << " After B1[jj] <-- B[jj]  \n";
+               //printBB1(B, B1, m);
 
-               if (b[jj - 1] == 0)
-                  LogicError("BKZ_FPInt: internal error, b[jj-1]==0");
-               if (b[jj - 1] < 16)
-                  std::cout << " b[jj-1] < 16 in  if else 2 \n";
-
+               if (b[jj] == 0)
+                  LogicError("BKZ_FPInt: internal error, b[jj]==0");
                // remove linear dependencies
                // cerr << "general case\n";
-               // Here, jj starts at 1, as in NTL.
+               // Here, jj starts at 0.
                // The matrices B and B1 must have one more row!
-               std::cout
-                     << " Before if else 3, before ll_LLL_FPInt2, matrix B = \n"
-                     << B << "\n";
-               std::cout << " jj-1 = " << jj - 1 << "\n";
-               for (int k = 0; k <= m; k++) {
-                  std::cout << " B1[" << k << "] = [" << B1[k][0] << ", "
-                        << B1[k][1] << ", " << B1[k][2];
-                  std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", "
-                        << B1[k][5] << " ...\n";
-               }
-               std::cout << "   b[0] = " << b[0] << ",  b[1] = " << b[1]
-                     << "\n";
-               std::cout << "   c[0] = " << c[0] << ",  c[1] = " << c[1]
-                     << "\n\n";
-               new_m = ll_LLL_FPInt2(B, delta, B1, mu, b, c, kk + 1, n, jj - 1,
+               new_m = ll_LLL_FPInt(B, delta, B1, mu, b, c, kk + 1, n, jj,
                      quit);
-               std::cout << " ******  After if else 3, matrix B = \n" << B
-                     << "\n";
-               for (int k = 0; k <= m; k++) {
-                  std::cout << " B1[" << k << "] = [" << B1[k][0] << ", "
-                        << B1[k][1] << ", " << B1[k][2];
-                  std::cout << ", " << B1[k][3] << ", " << B1[k][4] << ", "
-                        << B1[k][5] << " ...\n";
-               }
-               std::cout << "   b[0] = " << b[0] << ",  b[1] = " << b[1]
-                     << "\n\n";
                if (new_m != kk) {
-                  std::cout << " new_m = " << new_m << ", kk = " << kk << "\n";
+                  //std::cout << " new_m = " << new_m << ", kk = " << kk << "\n";
                   LogicError("BKZ_FPInt: internal error, new_m != kk");
                }
-               if (b[0] < 10)
-                  return 0;
-
                // remove zero vectors
                for (i = kk + 1; i <= m; i++) {
                   // swap i, i-1
@@ -2322,8 +1914,6 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
                         quit);
                   if (new_m != h)
                      LogicError("BKZ_FPInt: internal error, new_m != h");
-                  if (b[0] == 1)
-                     std::cout << " b[0] = 1 in  if else 4 \n";
                }
             }
             z = 0;
@@ -2333,8 +1923,6 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
                new_m = ll_LLL_FPInt(B, delta, B1, mu, b, c, h, n, h - 1, quit);
                if (new_m != h)
                   LogicError("BKZ_FPInt: internal error, new_m != h");
-               if (b[0] == 1)
-                  std::cout << " b[0] = 1 in  if else 5 \n";
             }
             z++;
          }
@@ -2365,9 +1953,8 @@ static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
       for (i = 0; i < m; i++)
          (*sqlen)[i] = b[i];
    }
-   std::cout << " End of BKZ in LLL_FPInt, Matrix B = \n" << B << "\n";
-   std::cout << "   b[0] = " << b[0] << ",  b[1] = " << b[1] << "\n\n";
-   return m;    // Number of rows in basis.
+// std::cout << " End of BKZ in LLL_FPInt, Matrix B = \n" << B << "\n";
+   return m;            // Number of rows in basis.
 }
 
 NTL_END_IMPL

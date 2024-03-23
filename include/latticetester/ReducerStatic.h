@@ -232,7 +232,11 @@ void redBKZ(NTL::matrix<NTL::ZZ> &basis, NTL::vector<double> *sqlen, double delt
    switch (precision) {
    case DOUBLE:
       // std::cout << " Calling static BKZ for ZZ + double \n";
-      NTL::BKZ_FPInt(basis, sqlen, delta, blocksize, prune, dim, dim);
+      // NTL::BKZ_FPInt(basis, sqlen, delta, blocksize, prune, dim, dim);
+      cpbasis.SetDims(dim, dim);
+      LatticeTester::copy(basis, cpbasis, dim, dim);  // From Util
+      NTL::BKZ_FP(cpbasis, delta, blocksize);
+      LatticeTester::copy(cpbasis, basis);
       return;
    case QUADRUPLE:
       cpbasis.SetDims(dim, dim);

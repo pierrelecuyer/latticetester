@@ -27,20 +27,40 @@
 
 #define   LD  1
 #define   ZD  2
-#define   LR  3
-#define   ZR  4
+#define   LQ  3
+#define   ZQ  4
+#define   LX  5
+#define   ZX  6
+#define   LR  7
+#define   ZR  8
 
 // std::string strFlexTypes;
 
-#if TYPES_CODE  ==  LD
+#if    TYPES_CODE == LD
 	  typedef int64_t  Int;
      typedef double  Real;
      std::string strFlexTypes = "Int = int64_t, Real = double";
-#elif  TYPES_CODE  == ZD
+#elif  TYPES_CODE == ZD
 	  typedef NTL::ZZ Int;
      typedef double Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = double";
-#elif  TYPES_CODE  ==  LR
+#elif  TYPES_CODE ==  LQ
+     typedef int64_t  Int;
+     typedef quad_float Real;
+     std::string strFlexTypes = "Int = int64_t, Real = quad_float";
+#elif  TYPES_CODE ==  ZQ
+     typedef NTL::ZZ Int;
+     typedef quad_float Real;
+     std::string strFlexTypes = "Int = NTL::ZZ, Real = quad_float";
+#elif  TYPES_CODE ==  LD
+     typedef int64_t  Int;
+     typedef xdouble Real;
+     std::string strFlexTypes = "Int = int64_t, Real = xdouble";
+#elif  TYPES_CODE ==  ZD
+     typedef NTL::ZZ Int;
+     typedef xdouble Real;
+     std::string strFlexTypes = "Int = NTL::ZZ, Real = xdouble";
+#elif  TYPES_CODE ==  LR
 	  typedef int64_t  Int;
      typedef NTL::RR Real;
      std::string strFlexTypes = "Int = int64_t, Real = NTL::RR";

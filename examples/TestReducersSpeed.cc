@@ -19,6 +19,10 @@
 //#define TYPES_CODE  ZD     // Int == ZZ, Real = double
 //#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
+//typedef long Int;
+//typedef NTL::ZZ Int;
+//typedef double Real;
+
 #include <iostream>
 #include <cstdint>
 #include <ctime>
@@ -72,9 +76,7 @@ inline void beforeReduct(long dim) {
    korlat->setPrimalFlag(false);
    korlat->setDualFlag(true);
    korlat->buildDualBasis(dim);
-   korlat->dualize();
-   //sqlen[0] = 0.0;
-   // CopyPartMat (basis2, korlat->getBasis(), dim, dim);  // Copy basis1 to basis2.
+   korlat->dualize();   // This also exchanges the primal / dual flags.
    tmp = clock();
 }
 
@@ -83,9 +85,8 @@ inline void afterReduct(long meth, long d) {
    if (meth > 2)
       sqlen[0] = korlat->getVecNorm(0);
    sumSq[meth][d] += sqlen[0];
-   // korlat->dualize();
-   std::cout << "Done with method = " << names[meth] << ",  dim = "
-         << dimensions[d] << ",  sqlen[0] = " << sqlen[0] << "\n";
+   //std::cout << "Done with method = " << names[meth] << ",  dim = "
+   //      << dimensions[d] << ",  sqlen[0] = " << sqlen[0] << "\n";
    // std::cout << "Matrix B = " << korlat->getBasis() << "\n";
 }
 
@@ -93,7 +94,7 @@ inline void afterReduct(long meth, long d) {
 // We test several methods to reduce basis1 and find a shortest vector in its lattice.
 static void reduceBasis(long d) {
    long dim = dimensions[d];
-/*
+
    beforeReduct(dim);  // Only pre-reductions.
    redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
    afterReduct(0, d);
@@ -101,7 +102,6 @@ static void reduceBasis(long d) {
    beforeReduct(dim);
    redLLLNTL(korlat->getBasis(), &sqlen, 0.99999, dim, prec);
    afterReduct(1, d);
-*/
 
    beforeReduct(dim);
    //IntMat basisdual;
@@ -110,8 +110,6 @@ static void reduceBasis(long d) {
    //redBKZ(basisdual, &sqlen, 0.99999, 10, 0, dim, prec);
    redBKZ(korlat->getBasis(), &sqlen, 0.99, 10, 0, dim, prec);
    afterReduct(2, d);
-
-   return;
 
    if (dim < 12) {
       beforeReduct(dim);
@@ -192,10 +190,10 @@ static void testLoop(long numRep) {
       //a = 742938285;
       a = (m / 5 + 13 * r) % m;   // The multiplier we use for this rep.
       korlat->seta(a);
-      for (d = 0; d < 2; d++) {  // Each matrix size
+      for (d = 0; d < 5; d++) {  // Each matrix size
          //for (d = 0; d < numSizes; d++) {  // Each matrix size
          // korlat->buildDualBasis(dim);
-         std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
+         //std::cout << "rep = " << r << ",  a = " << a << ",  dim = " << dimensions[d] << "\n";
          // copy(korlat->getDualBasis(), dualbasis1, dim, dim); // Triangular basis.
          reduceBasis(d);
       }
@@ -233,11 +231,12 @@ static void printResults() {
 }
 
 int main() {
-   long numRep = 1;    // Number of replications (multipliers) for each case.
+   long numRep = 20;    // Number of replications (multipliers) for each case.
    sqlen.SetLength(maxdim);   // Done here because cannot be done in preamble.
    korlat = new Rank1Lattice<Int, Real>(m, maxdim, false, true);
    red = new ReducerBB<Int, Real>(*korlat);
 
+   // std::cout << "Types: " << Int << Real << "\n";
    std::cout << "Types: " << strFlexTypes << "\n";
    std::cout << "PrecisionType: " << prec << "\n";
    std::cout << "maxdim = " << maxdim << "\n\n";
