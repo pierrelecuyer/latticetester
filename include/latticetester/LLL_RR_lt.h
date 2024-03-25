@@ -71,9 +71,9 @@ NTL_OPEN_NNS
  * The functions return the dimension of the computed basis (the number of independent rows).
  */
 // template<typename RealVec>
-static long LLL_RR_lt(mat_ZZ& B, vec_RR* sqlen, const RR& delta, long r = 0, long c = 0);
+static long LLL_RR_lt(mat_ZZ& B, const RR& delta, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
-static long LLL_RR_lt(mat_ZZ& B, vec_RR* sqlen, const double delta = 0.99999, long r = 0, long c = 0);
+static long LLL_RR_lt(mat_ZZ& B, const double delta = 0.99999, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
 /*
 static long LLL_RR_lt(mat_ZZ& B, const RR& delta = conv<RR>(0.99999), long r = 0, long c = 0,
@@ -87,11 +87,11 @@ static long LLL_RR_lt(mat_ZZ &B, const double delta = 0.99999, long r = 0, long 
  * as in `LLL_RR_lt` above.
  */
 // template<typename RealVec>
-static long BLZ_RR_lt(mat_ZZ& B, vec_RR* sqlen, const RR& delta,
-      long blocksize = 10, long prune = 0, long r = 0, long c = 0);
+static long BLZ_RR_lt(mat_ZZ& B, const RR& delta,
+      long blocksize = 10, long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
-static long BLZ_RR_lt(mat_ZZ& B, vec_RR* sqlen, const double delta = 0.99999,
-      long blocksize = 10, long prune = 0, long r = 0, long c = 0);
+static long BLZ_RR_lt(mat_ZZ& B, const double delta = 0.99999,
+      long blocksize = 10, long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
 /*
 static long BKZ_RR_lt(mat_ZZ &BB, const RR& delta = conv<RR>(0.99999), long blocksize = 10,
@@ -322,7 +322,6 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
       std::cout << " B1[" << i << "] = [" << B1[i][0] << ", " << B1[i][1] << ", " << B1[k][2] ;
       std::cout << ", " << B1[i][3] << ", " << B1[i][4] << ", " << B1[i][5] << " ...\n";
    }
-
    long max_k = 0;
    while (k <= m) {
       if (k > max_k) {
@@ -456,7 +455,7 @@ static long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta,
 
 // Here, `delta` and `sqlen` are in `RR`, as in NTL.
 // template<>
-long LLL_RR_lt(NTL::mat_ZZ& B, vec_RR* sqlen, const RR& delta, long m, long n) {
+long LLL_RR_lt(NTL::mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen) {
        if (m == 0) m = B.NumRows();
        if (n == 0) n = B.NumCols();
        long i, j, new_m, quit;
@@ -512,8 +511,8 @@ long LLL_RR_lt(NTL::mat_ZZ& B, vec_RR* sqlen, const RR& delta, long m, long n) {
 
 // Here, `delta` is passed as a `double`.
 // template<>
-long LLL_RR_lt(mat_ZZ& B, vec_RR* sqlen, const double delta, long m, long n) {
-    return LLL_RR_lt(B, sqlen, conv<RR>(delta), m, n);
+long LLL_RR_lt(mat_ZZ& B, const double delta, long m, long n, vec_RR* sqlen) {
+    return LLL_RR_lt(B, conv<RR>(delta), m, n, sqlen);
 }
 
 static
@@ -573,8 +572,8 @@ void ComputeBKZThresh_RR(RR *c, long beta)
 
 // This is for BKZ with RR.
 // template<>
-long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune,
-        long m, long n) {
+double BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
+        long m, long n, vec_RR* sqlen) {
 
    NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);
    NTL_TLS_GLOBAL_ACCESS(BKZThresh_RR);
@@ -870,14 +869,15 @@ long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const RR& delta, long beta, long prune
     if (sqlen)
         for (i = 0; i < m; i++)
             (*sqlen)[i] = b[i];
-    return m;    // Number of rows in basis.
+    //  return m;    // Number of rows in basis.
+    return m;
 }
 
 // Here, `delta` is passed as a `double`.
 // template<>
-long BKZ_RR_lt(mat_ZZ& BB, vec_RR* sqlen, const double delta, long beta, long prune,
-         long m, long n) {
-    return BKZ_RR_lt(BB, sqlen, conv<RR>(delta), beta, prune, m, n);
+long BKZ_RR_lt(mat_ZZ& BB, const double delta, long beta, long prune,
+         long m, long n, vec_RR* sqlen) {
+    return BKZ_RR_lt(BB, conv<RR>(delta), beta, prune, m, n, sqlen);
 }
 
 NTL_END_IMPL

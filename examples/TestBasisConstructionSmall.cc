@@ -17,8 +17,8 @@
  * line below), and with various choices of the modulus `m` and multiplier `a`.
  **/
 
-#define TYPES_CODE  LD     // int64_t + double
-//#define TYPES_CODE  ZD     // ZZ + double
+//#define TYPES_CODE  LD     // int64_t + double
+#define TYPES_CODE  ZD     // ZZ + double
 //#define TYPES_CODE  ZR     // ZZ + RR
 
 #include <iostream>
@@ -69,12 +69,12 @@ int main() {
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     // We apply LLL to reduce basis1.
-    LLLConstruction0<IntMat, RealVec>(basis1, sqlen, 0.5, 0, 0);
+    LLLConstruction0<IntMat, RealVec>(basis1, 0.5, 0, 0, sqlen);
     std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
-    LLLConstruction0<IntMat, RealVec>(basis1, sqlen, 0.99999, 0, 0);
+    LLLConstruction0<IntMat, RealVec>(basis1, 0.99999, 0, 0, sqlen);
     std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
@@ -87,7 +87,7 @@ int main() {
     mDualUpperTriangular(basis2, basisDual, m);
     std::cout << "m-dual of upper-triangular basis: \n" << basisDual << "\n\n";
     // We reduce this basisDual with LLL.
-    LLLConstruction0(basisDual, sqlen, 0.99999);
+    LLLConstruction0(basisDual, 0.99999, 0, 0, sqlen);
     std::cout << "m-dual basis after LLL with delta=0.99999: \n" << basisDual << "\n";
     ProdScal<Int>(basisDual[0], basisDual[0], dim, sqlength);
     std::cout << "Square length of first dual basis vector: " << sqlength << "\n\n";
@@ -107,7 +107,7 @@ int main() {
     // Basis construction with LLL.
     projectMatrix(basis2, basisProj, proj, dim);
     std::cout << "basisProj after projectMatrix (the generating vectors): \n" << basisProj << "\n";
-    LLLBasisConstruction(basisProj, m, sqlen, 0.5, dim);
+    LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.5, dim, dim, sqlen);
     std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
 
     // Basis construction with upper-triangular method, using 5 rows.
@@ -119,7 +119,7 @@ int main() {
     mDualUpperTriangular(basisProj, basisDualProj, m, 3);
     std::cout << "Triangular basis for the m-dual of this projection: \n"
             << basisDualProj << "\n";
-    LLLConstruction0(basisDualProj, sqlen, 0.99999, 3, 3);
+    LLLConstruction0(basisDualProj, 0.99999, 3, 3, sqlen);
     std::cout << "m-dual basis of proj after LLL with delta=0.99999: \n" << basisDualProj
             << "\n";
     ProdScal<Int>(basisDualProj[0], basisDualProj[0], dim, sqlength);

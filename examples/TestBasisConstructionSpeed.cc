@@ -105,25 +105,25 @@ static void transformBases (long d, long dim, IntMat &basis1, IntMat &basis2,
     // We apply LLL to basis1 with different values of `delta`, incrementally.
     CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
     tmp = clock();
-    LLLConstruction0(basis2, &sqlen, 0.5, dim, dim, prec);
+    LLLConstruction0(basis2, 0.5, dim, dim, &sqlen, prec);
     timer[0][d] += clock() - tmp;
     sumSq[0][d] += sqlen[0];
 
     // We continue the LLL process with a larger `delta`.
     tmp = clock();
-    LLLConstruction0(basis2, &sqlen, 0.9, dim, dim, prec);
+    LLLConstruction0(basis2,  0.9, dim, dim, &sqlen, prec);
     timer[1][d] += clock() - tmp;
     sumSq[1][d] += (sqlen)[0];
 
     tmp = clock();
-    LLLConstruction0(basis2, &sqlen, 0.99999, dim, dim, prec);
+    LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen, prec);
     timer[2][d] += clock() - tmp;
     sumSq[2][d] += (sqlen)[0];
 
     // Here we restart LLL from the initial triangular basis.
     CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
     tmp = clock();
-    LLLConstruction0(basis2, &sqlen, 0.99999, dim, dim, prec);
+    LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen, prec);
     timer[3][d] += clock() - tmp;
     sumSq[3][d] += (sqlen)[0];
 

@@ -25,8 +25,8 @@ using namespace std;
 namespace LatticeTester {
 
 /*
- * This static class contains enumeration types and global constants used in LatticeTester.
- *
+ * This static class collects enumeration types and global constants used in LatticeTester.
+ * Some of them may be no longer used or deprecated.
  */
 
   /**
@@ -58,6 +58,8 @@ namespace LatticeTester {
   enum ProblemType { BASIS, DUAL, REDUCTION, SHORTEST, MERIT };
 
   /**
+   * This can be supersed by the Real type.
+   *
    * Types of precision that the NTL can use for real numbers:
    * `DOUBLE` -- double
    * `QUADRUPLE` -- quad_float (quasi quadruple precision)

@@ -15,8 +15,8 @@
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Select the flexible types Int and Real here.
-#define TYPES_CODE  LD     // Int == int64_t
-//#define TYPES_CODE  ZD     // Int == ZZ, Real = double
+//#define TYPES_CODE  LD     // Int == int64_t
+#define TYPES_CODE  ZD     // Int == ZZ, Real = double
 //#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 //typedef long Int;
@@ -96,19 +96,19 @@ static void reduceBasis(long d) {
    long dim = dimensions[d];
 
    beforeReduct(dim);  // Only pre-reductions.
-   redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
+   redLLLNTL<IntMat, RealVec>(korlat->getBasis(), 0.5, dim, &sqlen, prec);
    afterReduct(0, d);
 
    beforeReduct(dim);
-   redLLLNTL(korlat->getBasis(), &sqlen, 0.99999, dim, prec);
+   redLLLNTL(korlat->getBasis(), 0.99999, dim, &sqlen, prec);
    afterReduct(1, d);
 
    beforeReduct(dim);
-   //IntMat basisdual;
-   //basisdual.SetDims(dim, dim);
-   //CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
-   //redBKZ(basisdual, &sqlen, 0.99999, 10, 0, dim, prec);
-   redBKZ(korlat->getBasis(), &sqlen, 0.99, 10, 0, dim, prec);
+   IntMat basisdual;
+   basisdual.SetDims(dim, dim);
+   CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
+   redBKZ(basisdual, 0.99999, 10, 0, dim, &sqlen, prec);
+   //redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10, 0, dim, prec);
    afterReduct(2, d);
 
    if (dim < 12) {
@@ -140,21 +140,21 @@ static void reduceBasis(long d) {
 */
 
    beforeReduct(dim);
-   redLLLNTL(korlat->getBasis(), &sqlen, 0.5, dim, prec);
+   redLLLNTL(korlat->getBasis(), 0.5, dim, &sqlen, prec);
    if (red->shortestVector())
       afterReduct(5, d);
    else
       std::cout << " shortestVector failed for LLL, delta = 0.5 \n";
 
    beforeReduct(dim);
-   redLLLNTL(korlat->getBasis(), &sqlen, 0.8, dim, prec);
+   redLLLNTL(korlat->getBasis(), 0.8, dim, &sqlen, prec);
    if (red->shortestVector())
       afterReduct(6, d);
    else
       std::cout << " shortestVector failed for LLL, delta = 0.8 \n";
 
    beforeReduct(dim);
-   redLLLNTL(korlat->getBasis(), &sqlen, 0.99999, dim, prec);
+   redLLLNTL(korlat->getBasis(), 0.99999, dim, &sqlen, prec);
    if (red->shortestVector())
       afterReduct(7, d);
    else
@@ -164,7 +164,7 @@ static void reduceBasis(long d) {
    //CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
    //BKZ_FPInt(basisdual, 0.99999, 10, 0);
    // redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10);
-   redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10, 0, dim, prec);
+   redBKZ(korlat->getBasis(), 0.99999, 10, 0, dim, &sqlen, prec);
    if (red->shortestVector())
       afterReduct(8, d);
    else

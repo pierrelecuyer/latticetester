@@ -25,6 +25,13 @@
 #include <NTL/RR.h>
 #include "latticetester/NTLWrap.h"  // This one is needed for the vector and matrix types.
 
+/**
+ * See below for the meanings of these codes.
+ * For example, to use Int = NTL::ZZ, Real = double  in a program, one should put:
+ *   #define TYPES_CODE  ZD
+ * at the very beginning of the file.
+*/
+
 #define   LD  1
 #define   ZD  2
 #define   LQ  3

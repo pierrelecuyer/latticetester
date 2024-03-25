@@ -80,16 +80,16 @@ NTL_OPEN_NNS
  * The function returns the dimension of the computed basis (the number of independent rows).
  */
 template<typename IntMat>
-static long LLL_FPInt(IntMat &B, Vec<double> *sqlen, double delta = 0.99,
-      long r = 0, long c = 0);
+static long LLL_FPInt(IntMat &B, double delta = 0.99,
+      long r = 0, long c = 0, Vec<double> *sqlen = 0);
 
 /**
  * This function is similar to `BKZ_FP` in NTL, with the same modifications
  * as in LLL_FPInt above.
  */
 template<typename IntMat>
-static long BKZ_FPInt(IntMat &BB, Vec<double> *sqlen, double delta = 0.99,
-      long blocksize = 10, long prune = 0, long r = 0, long c = 0);
+static long BKZ_FPInt(IntMat &BB, double delta = 0.99,
+      long blocksize = 10, long prune = 0, long r = 0, long c = 0, Vec<double> *sqlen = 0);
 
 NTL_CLOSE_NNS
 
@@ -191,7 +191,7 @@ static void InnerProductR(RR &xx, const vec_RR &a, const vec_RR &b, long n) {
 
 // ----------------------------------------------------------
 // Returns 1 in `in_float` iff all the coefficients `a[i]` are within the bounds.
-static void RowTransformStart(double *a, long *in_a, long &in_float, long n) {
+static void RowTransformStartInt(double *a, long *in_a, long &in_float, long n) {
    long inf = 1;
    for (long i = 0; i < n; i++) {
       in_a[i] = (a[i] < TR_BND && a[i] > -TR_BND);
@@ -201,7 +201,7 @@ static void RowTransformStart(double *a, long *in_a, long &in_float, long n) {
 }
 
 template<typename IntVec>
-static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
+static void RowTransformFinishInt(IntVec &A, double *a, long *in_a, long n) {
    for (long i = 0; i < n; i++) {
       if (in_a[i]) {
          conv(A[i], a[i]);
@@ -216,12 +216,12 @@ static void RowTransformFinish(IntVec &A, double *a, long *in_a, long n) {
 // A = A - B*MU   for the first n vector entries only.
 // The change is on the vector A.
 template<typename IntVec, typename Int>
-static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n);
+static void RowTransformInt(IntVec &A, IntVec &B, const Int &MU1, long n);
 
 /*
  // The int64_t case.  No longer used.
  template<>
- void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const long &MU1, long n) {
+ void RowTransformInt(NTL::Vec<long> &A, NTL::Vec<long> &B, const long &MU1, long n) {
  register int64_t MU = MU1;
  int64_t i;
  if (MU == 1) {
@@ -239,14 +239,14 @@ static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n);
  for (i = 0; i < n; i++) {
  A[i] -= MU * B[i];
  if ((A[i] > modulus64) ||  (A[i] < -modulus64))
- std::cout << "RowTransform-64: A[i] = " << A[i] << "\n";
+ std::cout << "RowTransformInt-64: A[i] = " << A[i] << "\n";
  }
  }
  */
 
 // The ZZ case.
 template<>
-void RowTransform(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
+void RowTransformInt(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
    NTL_ZZRegister(T);
    NTL_ZZRegister(MU);
    long k, i;
@@ -295,24 +295,24 @@ void RowTransform(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
 // A = A - B*MU1  for the first n vector entries only.
 // The change is on the vector A.
 template<typename IntVec, typename Int>
-static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
+static void RowTransformInt(IntVec &A, IntVec &B, const Int &MU1, long n,
       double *a, double *b, long *in_a, double &max_a, double max_b,
       long &in_float);
 
 // The general case.
 template<typename IntVec, typename Int>
-static void RowTransform(IntVec &A, IntVec &B, const Int &MU1, long n,
+static void RowTransformInt(IntVec &A, IntVec &B, const Int &MU1, long n,
       double *a, double *b, long *in_a, double &max_a, double max_b,
       long &in_float) {
    LatticeTester::MyExit(1,
-         "RowTransform: the general case is not implemented.");
+         "RowTransformInt: the general case is not implemented.");
 }
 ;
 
 // The case Int = long.
 // This int64_t version is no longer used (?)
 template<>
-void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1,
+void RowTransformInt(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1,
       long n, double *a, double *b, long *in_a, double &max_a, double max_b,
       int64_t &in_float) {
    register int64_t T, MU;
@@ -348,7 +348,7 @@ void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1,
          a[i] -= mu * b[i];
       return;
    }
-   // std::cout << "RowTransform int64_t, not in_float! \n";
+   // std::cout << "RowTransformInt int64_t, not in_float! \n";
    MU = MU1;
    if (MU == 1) {
       for (i = 0; i < n; i++) {
@@ -395,12 +395,12 @@ void RowTransform(NTL::Vec<long> &A, NTL::Vec<long> &B, const int64_t &MU1,
       mul(T, B[i], MU);
       sub(A[i], A[i], T);
       //if ((A[i] > modulus64) || (A[i] < -modulus64))
-      //   std::cout << "RowTransform-FP-64: i = " << i << ",  A[i] = " << A[i] << "\n";
+      //   std::cout << "RowTransformInt-FP-64: i = " << i << ",  A[i] = " << A[i] << "\n";
    }
 }
 
 template<>
-void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
+void RowTransformInt(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
       double *a, double *b, long *in_a, double &max_a, double max_b,
       long &in_float) {
    NTL_ZZRegister(T);
@@ -503,7 +503,7 @@ void RowTransform(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long n,
                }
                MulSubFrom(A[i], B[i], mu1);
                // if ((A[i] > modulus64) ||  (A[i] < -modulus64))
-               //   std::cout << "RowTransform: A[i] = " << A[i] << "\n";
+               //   std::cout << "RowTransformInt: A[i] = " << A[i] << "\n";
             }
          }
       }
@@ -672,50 +672,15 @@ static void ComputeGSInt(IntMat &B, double **B1, double **mu, double *b,
    c[k] = b[k] - s;
 }
 
-NTL_CHEAP_THREAD_LOCAL double LLLStatusInterval = 900.0;
-NTL_CHEAP_THREAD_LOCAL char *LLLDumpFile = 0;
+//NTL_CHEAP_THREAD_LOCAL double LLLStatusInterval = 900.0;
+//NTL_CHEAP_THREAD_LOCAL char *LLLDumpFile = 0;
 
 static NTL_CHEAP_THREAD_LOCAL double red_fudge = 0;
 static NTL_CHEAP_THREAD_LOCAL long log_red = 0;
-
 static NTL_CHEAP_THREAD_LOCAL unsigned long NumSwaps = 0;
-static NTL_CHEAP_THREAD_LOCAL double RR_GS_time = 0;
-static NTL_CHEAP_THREAD_LOCAL double StartTime = 0;
-static NTL_CHEAP_THREAD_LOCAL double LastTime = 0;
-
-template<typename IntMat>
-static void LLLStatus(long max_k, double t, long m, long n, const IntMat &B) {
-   cerr << "---- LLL_FP status ----\n";
-   cerr << "elapsed time: ";
-   PrintTime(cerr, t - StartTime);
-   cerr << ", stage: " << max_k;
-   cerr << ", rank: " << m;
-   cerr << ", swaps: " << NumSwaps << "\n";
-
-   Int t1;
-   long i;
-   double prodlen = 0;
-   for (i = 0; i < m; i++) {
-      InnerProductV(t1, B[i], B[i], n);   // all in Int.
-      if (t1 != 0)
-         // if (!IsZero(t1))
-         prodlen += log(t1);
-   }
-   cerr << "log of prod of lengths: " << prodlen / (2.0 * log(2.0)) << "\n";
-   if (LLLDumpFile) {
-      cerr << "dumping to " << LLLDumpFile << "...";
-      ofstream f;
-      OpenWrite(f, LLLDumpFile);
-      f << "[";
-      for (i = 0; i < m; i++) {
-         f << B[i] << "\n";
-      }
-      f << "]\n";
-      f.close();
-      cerr << "\n";
-   }
-   LastTime = t;
-}
+//static NTL_CHEAP_THREAD_LOCAL double RR_GS_time = 0;
+//static NTL_CHEAP_THREAD_LOCAL double StartTime = 0;
+//static NTL_CHEAP_THREAD_LOCAL double LastTime = 0;
 
 static void init_red_fudge() {
    long i;
@@ -786,7 +751,7 @@ static void RR_GSInt(IntMat &B, double **B1, double **mu, double *b, double *c,
 
 // Specialization for `Int = int64_t`.
 template<>
-void RR_GSInt<NTL::matrix<long>>(NTL::matrix<long> &B, double **B1, double **mu,
+void RR_GSInt(NTL::matrix<long> &B, double **B1, double **mu,
       double *b, double *c, double *buf, long prec, long rr_st, long k,
       long m_orig, long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b,
       vec_RR &rr_c) {
@@ -798,7 +763,7 @@ void RR_GSInt<NTL::matrix<long>>(NTL::matrix<long> &B, double **B1, double **mu,
 // Here they all start at 0.
 // Also init_k and k start at 1 in NTL and at 0 (they are one less) here.
 template<>
-void RR_GSInt<NTL::matrix<ZZ>>(NTL::matrix<ZZ> &B, double **B1, double **mu,
+void RR_GSInt(NTL::matrix<ZZ> &B, double **B1, double **mu,
       double *b, double *c, double *buf, long prec, long rr_st, long k,
       long m_orig, long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b,
       vec_RR &rr_c) {
@@ -811,14 +776,14 @@ void RR_GSInt<NTL::matrix<ZZ>>(NTL::matrix<ZZ> &B, double **B1, double **mu,
 
    // long n = B.NumCols();
    // Here we reserve space for RR matrices and vectors.
-   rr_B1.SetDims(k, n);
-   rr_mu.SetDims(k, m_orig);
-   rr_b.SetLength(k);
-   rr_c.SetLength(k);
+   rr_B1.SetDims(k+1, n);
+   rr_mu.SetDims(k+1, m_orig);
+   rr_b.SetLength(k+1);
+   rr_c.SetLength(k+1);
    vec_RR rr_buf;
-   rr_buf.SetLength(k);
+   rr_buf.SetLength(k+1);
 
-   long i, j;    // Both are 1 less than in NTL.
+   long i, j;    // Both are 1 less than in NTL, also k.
    for (i = rr_st; i <= k; i++)
       for (j = 0; j < n; j++)
          conv(rr_B1[i][j], B[i][j]);
@@ -853,7 +818,7 @@ void RR_GSInt<NTL::matrix<ZZ>>(NTL::matrix<ZZ> &B, double **B1, double **mu,
    }
 }
 
-// Computes Gramm-Schmidt data for B.
+// Computes Gramm-Schmidt data for B, using RR matrices.
 void ComputeGSInt(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long m, long n) {
    mat_RR B1;
    vec_RR b;
@@ -1034,7 +999,7 @@ int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
                      rr_st = k;
                   //std::cout << "ll_LLL FPInt calling RowTransformStart, k = "
                   //      << k << ",  rr_st = " << rr_st << "\n";
-                  RowTransformStart(B1[k], in_vec, in_float, n);
+                  RowTransformStartInt(B1[k], in_vec, in_float, n);
                }
                mu1 = mu[k][j];
                //std::cout << "Before row transform, mu1 = " << mu1 << " \n";
@@ -1068,8 +1033,8 @@ int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
                // std::cout << "Before row transform, mu1 = " << mu1 << " \n";
                // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
                // The change must be on vector B[k].
-               // RowTransform(B[k], B[j], MU, n);
-               //  RowTransform(B[k], B[j], MU, n, B1[k], B1[j], in_vec,
+               // RowTransformInt(B[k], B[j], MU, n);
+               //  RowTransformInt(B[k], B[j], MU, n, B1[k], B1[j], in_vec,
                //         max_b[k], max_b[j], in_float);
                // std::cout << "After row transform, MU = " << MU << " \n";
                // std::cout << "Basis after row transform: \n" << B << "\n";
@@ -1079,7 +1044,7 @@ int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
          if (Fc1) {
             // std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
             vector64 temp = B[k];
-            RowTransformFinish(temp, B1[k], in_vec, n);
+            RowTransformFinishInt(temp, B1[k], in_vec, n);
             B[k] = temp;
             max_b[k] = max_abs(B1[k], n);
             b[k] = InnerProductD(B1[k], B1[k], n);
@@ -1269,7 +1234,7 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
       cnt = 0;
       long thresh = 10;
       long sz = 0, new_sz;
-      long did_rr_gs = 0;
+      // long did_rr_gs = 0;
 
       do {
          // size reduction
@@ -1317,7 +1282,7 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
                               if (rr_st < st[k + 1])
                                  st[k + 1] = rr_st;
                               rr_st = k + 1;
-                              did_rr_gs = 1;
+                              // did_rr_gs = 1;
                               rst = k;
                               trigger_index = k;
                               small_trigger = 0;
@@ -1337,7 +1302,7 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
                   Fc1 = 1;
                   if (k < rr_st)
                      rr_st = k;
-                  RowTransformStart(B1[k], in_vec, in_float, n);
+                  RowTransformStartInt(B1[k], in_vec, in_float, n);
                   // Returns in_float = 1 if all entries of B1[k] are in [-TR_BND, TR_BND].
                }
                mu1 = mu[k][j];
@@ -1363,7 +1328,7 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
                //      "B1[k] = " << B1[k] << "\n" << "B1[j] = " << B1[j] << "\n";
                // We have `in_float=1` if all entries of B1[k] are in [-TR_BND, TR_BND].
                // The change must be on vector B[k].
-               RowTransform(B[k], B[j], MU, n, B1[k], B1[j], in_vec, max_b[k],
+               RowTransformInt(B[k], B[j], MU, n, B1[k], B1[j], in_vec, max_b[k],
                      max_b[j], in_float);
                //std::cout << "After row transform: mu1 = " << mu1 << ",\n"
                //      "B1[k] = " << B1[k] << "\n\n";
@@ -1371,7 +1336,7 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
          }
          if (Fc1) {
             //std::cout << "ll_LLL FPInt inside `if(Fc1)` \n";
-            RowTransformFinish(B[k], B1[k], in_vec, n);
+            RowTransformFinishInt(B[k], B1[k], in_vec, n);
             max_b[k] = max_abs(B1[k], n);
             if (true) {
             // if (!did_rr_gs) {
@@ -1448,13 +1413,12 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
 }
 
 template<typename IntMat>
-static long LLL_FPInt(IntMat &B, Vec<double> *sqlen, double delta, long m,
-      long n) {
+static long LLL_FPInt(IntMat &B, double delta, long m, long n, Vec<double> *sqlen) {
    if (m == 0)
       m = B.NumRows();
    if (n == 0)
       n = B.NumCols();
-   RR_GS_time = 0;
+   // RR_GS_time = 0;
    NumSwaps = 0;
    if (delta < 0.50 || delta >= 1)
       LogicError("LLL_FP: bad delta");
@@ -1580,56 +1544,15 @@ static void ComputeBKZThresh(double *c, long beta) {
    }
 }
 
-/*
- template<typename IntMat>
- static
- void BKZStatus(double tt, double enum_time, unsigned long NumIterations,
- unsigned long NumTrivial, unsigned long NumNonTrivial,
- unsigned long NumNoOps, long m, long n, const IntMat &B) {
- cerr << "---- BKZ_FPZZ status ----\n";
- cerr << "elapsed time: ";
- PrintTime(cerr, tt - StartTime);
- cerr << ", enum time: ";
- PrintTime(cerr, enum_time);
- cerr << ", iter: " << NumIterations << "\n";
- cerr << "triv: " << NumTrivial;
- cerr << ", nontriv: " << NumNonTrivial;
- cerr << ", no ops: " << NumNoOps;
- cerr << ", rank: " << m;
- cerr << ", swaps: " << NumSwaps << "\n";
- Int t1;
- long i;
- double prodlen = 0;
- for (i = 0; i < m; i++) {
- InnerProductV(t1, B[i], B[i], n);   // All in Int
- if (!IsZero(t1))
- prodlen += log(t1);
- }
- cerr << "log of prod of lengths: " << prodlen / (2.0 * log(2.0)) << "\n";
- if (LLLDumpFile) {
- cerr << "dumping to " << LLLDumpFile << "...";
- ofstream f;
- OpenWrite(f, LLLDumpFile);
- f << "[";
- for (i = 0; i < m; i++) {
- f << B[i] << "\n";
- }
- f << "]\n";
- f.close();
- cerr << "\n";
- }
- LastTime = tt;
- }
- */
 
 template<typename IntMat>
-static long BKZ_FPInt(IntMat &BB, vector<double> *sqlen, double delta,
-      long beta, long prune, long m, long n) {
+static long BKZ_FPInt(IntMat &BB, double delta,
+      long beta, long prune, long m, long n, vector<double> *sqlen) {
    if (m == 0)
       m = BB.NumRows();
    if (n == 0)
       n = BB.NumCols();
-   RR_GS_time = 0;
+   // RR_GS_time = 0;
    NumSwaps = 0;
    if (delta < 0.50 || delta >= 1)
       LogicError("BKZ_FPZZ: bad delta");
