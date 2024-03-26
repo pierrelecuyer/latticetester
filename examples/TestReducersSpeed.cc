@@ -16,8 +16,8 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Select the flexible types Int and Real here.
 //#define TYPES_CODE  LD     // Int == int64_t
-#define TYPES_CODE  ZD     // Int == ZZ, Real = double
-//#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
+//#define TYPES_CODE  ZD     // Int == ZZ, Real = double
+#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 //typedef long Int;
 //typedef NTL::ZZ Int;
@@ -225,9 +225,10 @@ static void printResults() {
       std::cout << "\n";
    }
    std::cout << "\n";
-   std::cout << "Total time: "
+   std::cout << "Total time for everything: "
          << (double) (clock() - totalTime) / (CLOCKS_PER_SEC)
-         << " seconds\n\n\n";
+         << " seconds\n\n";
+   std::cout << "Interestingly, we see that LLL or BKZ alone do not always find a shortest vector.\n\n\n";
 }
 
 int main() {

@@ -45,7 +45,7 @@
 #include "latticetester/Util.h"
 #include "latticetester/Coordinates.h"
 #include "latticetester/LLL_FPInt.h"
-//#include "latticetester/LLL_FP_lt.h"
+#include "latticetester/LLL_FP_lt.h"
 #include "latticetester/LLL_RR_lt.h"
 
 using namespace LatticeTester;
@@ -320,12 +320,15 @@ template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
         const double delta, long r, long c, NTL::vector<double> *sqlen, PrecisionType precision) {
     NTL::matrix<NTL::ZZ> cpbasis;
+    // long rank;
     switch (precision) {
     case DOUBLE:
-        return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
+        return NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
+        // std::cout << "Using LLL_FP_lt in LLL0, rank = " << rank << " \n";
+        // return rank;
         break;
     case QUADRUPLE:
-       cpbasis.SetDims(r, c);
+       cpbasis.SetDims(r, c);   // Does not work if r = c = 0.
        LatticeTester::copy(gen, cpbasis, r, c);  // From Util
        return NTL::LLL_QP(cpbasis, delta);
        LatticeTester::copy(cpbasis, gen);
@@ -350,7 +353,7 @@ template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, const double delta,
        long r, long c, NTL::vector<NTL::RR> *sqlen, PrecisionType precision) {
    // std::cout << "LLLConstruction0 for RR: before calling LLL_RR.\n";
-   return NTL::LLL_RR_lt(gen, conv<NTL::RR>(delta), r, c, sqlen);
+   return NTL::LLL_RR_lt(gen, delta, r, c, sqlen);
 /*  switch (precision) {
     case DOUBLE:
         std::cerr << "LLLConstruction0: DOUBLE precision type not supported for Real=RR.\n";
@@ -373,8 +376,11 @@ long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, const double delta,
 template<typename IntMat, typename Int, typename RealVec>
 void LLLBasisConstruction(IntMat &gen, const Int &m,
         double delta, long r, long c, RealVec *sqlen, PrecisionType precision) {
-    int64_t rank = LLLConstruction0(gen, delta, r, c, sqlen, precision);
-    if (!c)  // c == 0
+    //std::cout << "LLLBasisConstruction, before LLL:  c = " << c << "\n";
+    int64_t rank = LLLConstruction0<IntMat, RealVec>(gen, delta, r, c, sqlen, precision);
+    //std::cout << "LLLBasisConstruction, after LLL:  c = " << c << ", rank = " << rank << "\n";
+    //std::cout << "Basis: \n" << gen << "\n";
+    if (c == 0)
         c = gen.NumCols();
     if (rank == c)
         return;  // We are done!
@@ -390,8 +396,9 @@ void LLLBasisConstruction(IntMat &gen, const Int &m,
                 gen[i][j] = 0;
         }
     }
-    rank = LLLConstruction0(gen, delta, rank + c, c, sqlen);
     std::cout << "Warning for LLLBasisConstruction: we had to add some rows!\n";
+    std::cout << "  c = " << c << ", rank = " << rank << "\n";
+    rank = LLLConstruction0<IntMat, RealVec>(gen, delta, rank + c, c, sqlen);
 }
 
 

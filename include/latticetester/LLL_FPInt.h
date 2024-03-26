@@ -79,6 +79,7 @@ NTL_OPEN_NNS
  * The indices of `B` and `sqlen` start at 0.
  * The function returns the dimension of the computed basis (the number of independent rows).
  */
+
 template<typename IntMat>
 static long LLL_FPInt(IntMat &B, double delta = 0.99,
       long r = 0, long c = 0, Vec<double> *sqlen = 0);
@@ -87,11 +88,13 @@ static long LLL_FPInt(IntMat &B, double delta = 0.99,
  * This function is similar to `BKZ_FP` in NTL, with the same modifications
  * as in LLL_FPInt above.
  */
+
 template<typename IntMat>
 static long BKZ_FPInt(IntMat &BB, double delta = 0.99,
       long blocksize = 10, long prune = 0, long r = 0, long c = 0, Vec<double> *sqlen = 0);
 
 NTL_CLOSE_NNS
+
 
 /* ============================================================== */
 

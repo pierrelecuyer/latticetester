@@ -31,8 +31,9 @@
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/NTLWrap.h"
 #include "latticetester/LLL_FPInt.h"
-//#include "latticetester/LLL_FP_lt.h"
+#include "latticetester/LLL_FP_lt.h"
 #include "latticetester/LLL_RR_lt.h"
+//#include "latticetester/LLL_lt.h"
 
 #include <fstream>
 #include <sstream>
@@ -100,7 +101,7 @@ typedef NTL::matrix<Int> IntMat;
  * and their description is done in the module `LLL` of NTL.
  */
 template<typename IntMat, typename RealVec>
-static void redLLLNTL(IntMat &basis, const double delta = 0.99999,
+static void redLLLNTL(IntMat &basis, double delta = 0.99999,
         long dim = 0, RealVec* sqlen = 0, PrecisionType precision = DOUBLE);
 
 /**
@@ -122,7 +123,7 @@ static void redLLLNTLExact(IntMat &basis, double delta = 0.99999);
  * A `blocksize` of 2 is equivalent to LLL reduction.
  */
 template<typename IntMat, typename RealVec>
-static void redBKZ(IntMat &basis, const double delta = 0.99999,
+static void redBKZ(IntMat &basis, double delta = 0.99999,
       int64_t blocksize = 10, long prune = 0, long dim = 0,
       RealVec* sqlen = 0, PrecisionType prec = DOUBLE);
 
@@ -137,7 +138,7 @@ static void redBKZ(IntMat &basis, const double delta = 0.99999,
 
 // General implementation.
 template<typename IntMat, typename RealVec>
-void redLLLNTL(IntMat &basis, const double delta, long dim,
+void redLLLNTL(IntMat &basis, double delta, long dim,
       RealVec* sqlen, PrecisionType precision) {
    MyExit(1, "redLLLNTL: General version not implemented.\n");
 }
@@ -145,7 +146,7 @@ void redLLLNTL(IntMat &basis, const double delta, long dim,
 // A specialization for the case where Int = int64_t and Real = double.
 template<>
 void redLLLNTL(NTL::matrix<int64_t> &basis,
-      const double delta, long dim, NTL::vector<double> *sqlen, PrecisionType precision) {
+      double delta, long dim, NTL::vector<double> *sqlen, PrecisionType precision) {
    NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
    }
 
@@ -153,7 +154,7 @@ void redLLLNTL(NTL::matrix<int64_t> &basis,
 // See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt` for details
 // about the `PrecisionType` choices.  --->  Deprecated.
 template<>
-void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, const double delta,
+void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta,
         long dim, NTL::vector<double> *sqlen, PrecisionType precision) {
    NTL::matrix<NTL::ZZ> cpbasis;
    switch (precision) {
@@ -185,9 +186,9 @@ void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, const double delta,
 
 // A specialization for the case where Int = ZZ and Real = RR.
 template<>
-void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, const double delta, long dim,
+void redLLLNTL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim,
       NTL::vector<NTL::RR> *sqlen, PrecisionType precision) {
-   LLL_RR_lt(basis, NTL::conv<NTL::RR>(delta), dim, dim, sqlen);
+   LLL_RR_lt(basis, delta, dim, dim, sqlen);
 }
 
 
@@ -212,7 +213,7 @@ void redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis, double delta) {
 
 // BKZ, general case.
 template<typename IntMat, typename RealVec>
-void redBKZ(IntMat &basis, const double delta, long blocksize,
+void redBKZ(IntMat &basis, double delta, long blocksize,
       long prune, long dim, RealVec* sqlen, PrecisionType prec);
 
 // Specialization for Int = int64_t.
@@ -234,8 +235,8 @@ void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
    switch (precision) {
    case DOUBLE:
       // std::cout << " Calling static BKZ for ZZ + double \n";
-      //NTL::BKZ_FP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
-      NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
+      NTL::BKZ_FP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
+      // NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
       //cpbasis.SetDims(dim, dim);
       //LatticeTester::copy(basis, cpbasis, dim, dim);  // From Util
       //NTL::BKZ_FP(cpbasis, delta, blocksize);
@@ -265,7 +266,7 @@ void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
       long prune, long dim, NTL::vector<NTL::RR> *sqlen, PrecisionType precision) {
-   NTL::BKZ_RR_lt(basis, NTL::conv<NTL::RR>(delta), blocksize, prune, dim, dim, sqlen);
+   NTL::BKZ_RR_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
    }
 
 }   // namespace LatticeTester

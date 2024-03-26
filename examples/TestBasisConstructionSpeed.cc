@@ -49,8 +49,8 @@
 
 // Select the flexible types Int and Real here.
 //#define TYPES_CODE  LD     // Int == int64_t
-#define TYPES_CODE  ZD     // Int == ZZ, Real = double
-//#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
+//#define TYPES_CODE  ZD     // Int == ZZ, Real = double
+#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 #include <iostream>
 #include <cstdint>
@@ -90,7 +90,7 @@ const long numMeth = 6;    // Number of methods, and their names.
 std::string names[numMeth] = { "LLL5      ", "LLL9      ", "LLL99999  ",
         "LLL99999-R", "UppTri    ", "mDualUT   "};
 // PrecisionType prec = QUADRUPLE;  // QUADRUPLE, XDOUBLE, RR
-PrecisionType prec = DOUBLE;
+// PrecisionType prec = DOUBLE;
 
 // Here we use ctime directly for the timings, to minimize overhead.
 clock_t tmp;
@@ -105,25 +105,25 @@ static void transformBases (long d, long dim, IntMat &basis1, IntMat &basis2,
     // We apply LLL to basis1 with different values of `delta`, incrementally.
     CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
     tmp = clock();
-    LLLConstruction0(basis2, 0.5, dim, dim, &sqlen, prec);
+    LLLConstruction0(basis2, 0.5, dim, dim, &sqlen);
     timer[0][d] += clock() - tmp;
     sumSq[0][d] += sqlen[0];
 
     // We continue the LLL process with a larger `delta`.
     tmp = clock();
-    LLLConstruction0(basis2,  0.9, dim, dim, &sqlen, prec);
+    LLLConstruction0(basis2,  0.9, dim, dim, &sqlen);
     timer[1][d] += clock() - tmp;
     sumSq[1][d] += (sqlen)[0];
 
     tmp = clock();
-    LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen, prec);
+    LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen);
     timer[2][d] += clock() - tmp;
     sumSq[2][d] += (sqlen)[0];
 
     // Here we restart LLL from the initial triangular basis.
     CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
     tmp = clock();
-    LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen, prec);
+    LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen);
     timer[3][d] += clock() - tmp;
     sumSq[3][d] += (sqlen)[0];
 
@@ -257,7 +257,7 @@ static void testLoopNoResize(long numRep) {
         for (d = 0; d < numSizes; d++) {  // Each matrix size
             dim = dimensions[d]; // The corresponding dimension.
             korlat->buildBasis(dim);
-            // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
+            std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
             copy(korlat->getBasis(), basis1, dim, dim); // Triangular basis.
             transformBases(d, dim, basis1, basis2, basisdual);
         }
@@ -277,7 +277,8 @@ static void printResults() {
         std::cout << "\n";
     }
     std::cout << "\n";
-    std::cout << "Sums of square lengths of shortest basis vector:\n";
+    std::cout << "Sums of square lengths of shortest basis vector";
+    std::cout << " (must be the same across all implementations):\n";
     std::cout << " dim:    ";
     for (d = 0; d < numSizes; d++)
         std::cout << std::setw(13) << dimensions[d] << "  ";
