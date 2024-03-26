@@ -56,14 +56,14 @@ static long BKZ_FPInt(IntMat &BB, double delta = 0.99,
  * The indices of `B` and `sqlen` start at 0.
  * The function returns the dimension of the computed basis (the number of independent rows).
  */
-static long LLL_FP_lt(mat_ZZ &B, double delta = 0.99,
+long LLL_FP_lt(mat_ZZ &B, double delta = 0.99,
       long r = 0, long c = 0, vec_double *sqlen = 0);
 
 /**
  * This function is similar to `BKZ_FP` in NTL, with the same modifications
  * as in LLL_FPInt above.
  */
-static long BKZ_FP_lt(mat_ZZ &BB, double delta = 0.99,
+long BKZ_FP_lt(mat_ZZ &BB, double delta = 0.99,
       long blocksize = 10, long prune = 0, long r = 0, long c = 0, vec_double *sqlen = 0);
 
 

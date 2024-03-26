@@ -17,9 +17,9 @@
  * line below), and with various choices of the modulus `m` and multiplier `a`.
  **/
 
-//#define TYPES_CODE  LD     // int64_t + double
+#define TYPES_CODE  LD     // int64_t + double
 //#define TYPES_CODE  ZD     // ZZ + double
-#define TYPES_CODE  ZR     // ZZ + RR
+//#define TYPES_CODE  ZR     // ZZ + RR
 
 #include <iostream>
 #include <cstdint>
@@ -30,6 +30,7 @@
 #include "latticetester/EnumTypes.h"
 #include "latticetester/Util.h"
 #include "latticetester/Rank1Lattice.h"
+#include "latticetester/IntLattice.h"
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/Coordinates.h"
 
@@ -113,6 +114,13 @@ int main() {
     LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.5, dim, dimProj);
     std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
 
+    Rank1Lattice<Int, Real> *projLattice;
+    projLattice = new Rank1Lattice<Int, Real>(m, a, dimProj, true, true);
+    korlat->buildProjection(projLattice, proj, 0.5);
+    std::cout << "Basis for this projection, with `buildProjection`: \n"
+              << projLattice->getBasis() << "\n";
+
+
     // Basis construction with upper-triangular method, using dim rows.
     projectionConstructionUpperTri(basis2, basisProj, proj, m, dim);
     std::cout << "Upper-triangular basis for this proj.: \n" << basisProj
@@ -130,6 +138,7 @@ int main() {
 
     // We now project the dual lattice over coordinates {1, 3, 5}.
     projectMatrix(basisDual, basisProj, proj, dim);
+    std::cout << "We now look at the direct projection of the dual over the coordinates in proj.\n";
     std::cout << "Generating vectors for the projection of the dual: \n" << basisProj << "\n";
     // LLLConstruction0<IntMat, RealVec>(basisProj, 0.5, dim, dimProj, sqlen);
     // std::cout << "Basis for this projection, with LLL proj0: \n" << basisProj << "\n";

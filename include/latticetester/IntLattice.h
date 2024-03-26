@@ -682,8 +682,7 @@ void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
     projLattice->setDim (proj.size());  // Number of coordinates in the projection.
     if (!projLattice->m_withDual) { // This builds only the primal basis.
         // NTL::vector<Real>* sqlen = 0;
-        projectionConstructionLLL<IntMat, Int, RealVec>(this->m_basis,
-        //projectionConstructionLLL(this->m_basis,
+        projectionConstructionLLL<IntMat, Int, NTL::vector<Real>>(this->m_basis,
                 projLattice->m_basis, proj, this->m_modulo, delta, proj.size());
     } else { // The following builds both the primal and the m-dual bases.
         projectionConstructionUpperTri(this->m_basis,

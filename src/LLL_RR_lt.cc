@@ -880,10 +880,9 @@ static long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
         swap(b[1], b[imin]);
     }
     if (sqlen)
-        for (i = 0; i < m; i++)
+       for (i = 0; i < min(m, sqlen->length()); i++)
             (*sqlen)[i] = b[i];
-    //  return m;    // Number of rows in basis.
-    return m;
+    return m;    // Number of rows in basis.
 }
 
 // Here, `delta` is passed as a `double`.

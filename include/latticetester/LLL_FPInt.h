@@ -1416,7 +1416,7 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
 }
 
 template<typename IntMat>
-static long LLL_FPInt(IntMat &B, double delta, long m, long n, Vec<double> *sqlen) {
+long LLL_FPInt(IntMat &B, double delta, long m, long n, Vec<double> *sqlen) {
    if (m == 0)
       m = B.NumRows();
    if (n == 0)
@@ -1479,9 +1479,9 @@ static long LLL_FPInt(IntMat &B, double delta, long m, long n, Vec<double> *sqle
       std::swap(sqlen2[0], sqlen2[imin]);
    }
    if (sqlen) {
-      if (sqlen->length() < new_m)
-         sqlen->SetLength(new_m);
-      for (i = 0; i < new_m; i++)
+      //if (sqlen->length() < new_m)
+      //   sqlen->SetLength(new_m);
+      for (i = 0; i < min(new_m, sqlen->length()); i++)
          (*sqlen)[i] = sqlen2[i];
    }
    // std::cout << "In LLL FPInt after the swaps:  ";
@@ -1549,7 +1549,7 @@ static void ComputeBKZThresh(double *c, long beta) {
 
 
 template<typename IntMat>
-static long BKZ_FPInt(IntMat &BB, double delta,
+long BKZ_FPInt(IntMat &BB, double delta,
       long beta, long prune, long m, long n, vector<double> *sqlen) {
    if (m == 0)
       m = BB.NumRows();
@@ -1874,9 +1874,9 @@ static long BKZ_FPInt(IntMat &BB, double delta,
       std::swap(b[0], b[imin]);
    }
    if (sqlen) {
-      if (sqlen->length() < m)
-         sqlen->SetLength(m);
-      for (i = 0; i < m; i++)
+//      if (sqlen->length() < m)
+//         sqlen->SetLength(m);
+      for (i = 0; i < min(m, sqlen->length()); i++)
          (*sqlen)[i] = b[i];
    }
 // std::cout << " End of BKZ in LLL_FPInt, Matrix B = \n" << B << "\n";

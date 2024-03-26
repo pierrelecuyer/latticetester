@@ -299,7 +299,7 @@ int main() {
     long numRep = 1000;    // Number of replications (multipliers) for each case.
     sqlen.SetLength(maxdim);   // Done here because cannot be done in preamble.
     std::cout << "Types: " << strFlexTypes << "\n";
-    std::cout << "PrecisionType: " << prec << "\n\n";
+    // std::cout << "PrecisionType: " << prec << "\n\n";
     std::cout << "Results of TestBasisConstructionSpeed.cc with m = " << m << "\n";
     std::cout << "Timings for different methods, in basic clock units \n\n";
     testLoopNoResize(numRep);

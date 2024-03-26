@@ -1440,9 +1440,9 @@ long BKZ_FP_lt(mat_ZZ& BB, const double delta, long beta, long prune,
          std::swap(b[1], b[imin+1]);
       }
       if (sqlen) {
-         if (sqlen->length() < m)
-            sqlen->SetLength(m);
-         for (i = 0; i < m; i++)
+         //if (sqlen->length() < m)
+         //   sqlen->SetLength(m);
+         for (i = 0; i < min(m, sqlen->length()); i++)
             (*sqlen)[i] = b[i+1];
       }
       // std::cout << " End of BKZ in LLL_FPInt, Matrix B = \n" << B << "\n";

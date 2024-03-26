@@ -59,7 +59,7 @@ static long BKZ_FPInt(IntMat &BB, double delta = 0.99,
 
 // static long LLL_RR_lt(mat_ZZ& B, const RR& delta, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
-static long LLL_RR_lt(mat_ZZ& B, double delta = 0.99, long r = 0, long c = 0, vec_RR* sqlen = 0);
+long LLL_RR_lt(mat_ZZ& B, double delta = 0.99, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
 /**
  * These two functions are wrappers of `BKZ_RR` in NTL, with the same modifications
@@ -68,7 +68,7 @@ static long LLL_RR_lt(mat_ZZ& B, double delta = 0.99, long r = 0, long c = 0, ve
 //static long BKZ_RR_lt(mat_ZZ& B, const RR& delta,
 //      long blocksize = 10, long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
-static long BKZ_RR_lt(mat_ZZ& B, double delta = 0.99,
+long BKZ_RR_lt(mat_ZZ& B, double delta = 0.99,
       long blocksize = 10, long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
 
