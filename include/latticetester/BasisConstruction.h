@@ -323,6 +323,7 @@ long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
     // long rank;
     switch (precision) {
     case DOUBLE:
+        // return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
         return NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
         // std::cout << "Using LLL_FP_lt in LLL0, rank = " << rank << " \n";
         // return rank;

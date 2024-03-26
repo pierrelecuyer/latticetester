@@ -49,8 +49,8 @@
 
 // Select the flexible types Int and Real here.
 //#define TYPES_CODE  LD     // Int == int64_t
-//#define TYPES_CODE  ZD     // Int == ZZ, Real = double
-#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
+#define TYPES_CODE  ZD     // Int == ZZ, Real = double
+//#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 #include <iostream>
 #include <cstdint>
@@ -257,7 +257,7 @@ static void testLoopNoResize(long numRep) {
         for (d = 0; d < numSizes; d++) {  // Each matrix size
             dim = dimensions[d]; // The corresponding dimension.
             korlat->buildBasis(dim);
-            std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
+            // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
             copy(korlat->getBasis(), basis1, dim, dim); // Triangular basis.
             transformBases(d, dim, basis1, basis2, basisdual);
         }
@@ -296,8 +296,8 @@ static void printResults() {
 }
 
 int main() {
-    long numRep = 1000;    // Number of replications (multipliers) for each case.
-    sqlen.SetLength(maxdim);   // Done here because cannot be done in preamble.
+    long numRep = 1000;   // Number of replications (multipliers) for each case.
+    sqlen.SetLength(1);   // Done here because cannot be done in preamble.
     std::cout << "Types: " << strFlexTypes << "\n";
     // std::cout << "PrecisionType: " << prec << "\n\n";
     std::cout << "Results of TestBasisConstructionSpeed.cc with m = " << m << "\n";

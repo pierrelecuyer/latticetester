@@ -58,7 +58,7 @@ int main() {
     basisDualProj.SetDims(dimProj, dimProj);
     Int sqlength;
     RealVec sqlen;
-    sqlen.SetLength(dim);
+    sqlen.SetLength(1); // We only want to recover the length of the first basis vector.
 
     // We construct a Korobov lattice in dim dimensions.
     Rank1Lattice<Int, Real> *korlat;
