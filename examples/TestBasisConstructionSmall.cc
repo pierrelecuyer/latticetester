@@ -17,8 +17,8 @@
  * line below), and with various choices of the modulus `m` and multiplier `a`.
  **/
 
-#define TYPES_CODE  LD     // int64_t + double
-//#define TYPES_CODE  ZD     // ZZ + double
+//#define TYPES_CODE  LD     // int64_t + double
+#define TYPES_CODE  ZD     // ZZ + double
 //#define TYPES_CODE  ZR     // ZZ + RR
 
 #include <iostream>
@@ -114,11 +114,14 @@ int main() {
     LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.5, dim, dimProj);
     std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
 
-    Rank1Lattice<Int, Real> *projLattice;
-    projLattice = new Rank1Lattice<Int, Real>(m, a, dimProj, true, true);
-    korlat->buildProjection(projLattice, proj, 0.5);
+    // This one tests the `buildProjection` method from `IntLattice`.
+    Rank1Lattice<Int, Real> *korlat2;
+    Rank1Lattice<Int, Real> *projLattice2;
+    korlat2 = new Rank1Lattice<Int, Real>(m, a, dim, true, false);
+    projLattice2 = new Rank1Lattice<Int, Real>(m, a, dimProj, true, false);
+    korlat2->buildProjection(projLattice2, proj, 0.5);
     std::cout << "Basis for this projection, with `buildProjection`: \n"
-              << projLattice->getBasis() << "\n";
+              << projLattice2->getBasis() << "\n";
 
 
     // Basis construction with upper-triangular method, using dim rows.
