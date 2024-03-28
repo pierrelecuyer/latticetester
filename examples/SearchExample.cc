@@ -20,11 +20,11 @@
 
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
-#include "latticetester/FigureOfMeritM.h"
-#include "latticetester/FigureOfMeritDualM.h"
 #include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
+#include "latticetester/FigureOfMeritM.h"
+#include "latticetester/FigureOfMeritDualM.h"
 #include "latticetester/ReducerStatic.h"
 #include "latticetester/LLL_FPInt.h"
 #include "latticetester/Weights.h"
@@ -61,7 +61,7 @@ int main() {
 
   /*
    * The following variables are technical and shall not be changed by the user
-   */
+  */ 
    
   const long numMult = 10; // Number of stored primitive elements
   const long multipliers[numMult] = { 91, 93, 94, 96, 98, 102, 105, 115, 117, 118}; // These are all primitive elements mod 1048573
