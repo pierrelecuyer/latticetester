@@ -20,14 +20,15 @@
 
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
-#include "latticetester/FigureOfMeritM.h"
-#include "latticetester/FigureOfMeritDualM.h"
 #include "latticetester/Util.h"
-#include "latticetester/ParamReader.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
-#include "latticetester/Reducer.h"
+#include "latticetester/FigureOfMeritM.h"
+#include "latticetester/FigureOfMeritDualM.h"
+#include "latticetester/ReducerStatic.h"
 #include "latticetester/LLL_FPInt.h"
+#include "latticetester/Weights.h"
+#include "latticetester/WeightsOrderDependent.h"
 
 // Application specific headers
 #include "latticetester/NormaBestLat.h"
@@ -46,13 +47,13 @@ int main() {
   Int m(1048573); // Modulus
   //Int m(1073741827); // Prime modulus near 2^{30}
   //Int m(1099511627791);  // Prime modulus near 2^{40}
-  const int noBest = 50; // The number of best multipliers to keep for the BB algorithm
-  const int numRep = 1048573; // Total number of multipliers to check 
+  const int noBest = 5; // The number of best multipliers to keep for the BB algorithm
+  const int numRep = 50; // Total number of multipliers to check 
   int64_t max_dim = 32; // Dimension of the lattice
   double delta = 0.9999; // Delta for the pre-reduction algorithm
-  ReductionType meth = LLL; // Sets the reduction type
+  ReductionType meth = LatticeTester::LLL; // Sets the reduction type
   //The t-vector of the FOM, here M_{16,32,16,12}
-  vector<int64_t> t(4); // length of the t-vector
+  NTL::vector<int64_t> t(4); // length of the t-vector
   t[0] = 16;
   t[1] = 32;
   t[2] = 16;
@@ -60,7 +61,8 @@ int main() {
 
   /*
    * The following variables are technical and shall not be changed by the user
-   */
+  */ 
+   
   const long numMult = 10; // Number of stored primitive elements
   const long multipliers[numMult] = { 91, 93, 94, 96, 98, 102, 105, 115, 117, 118}; // These are all primitive elements mod 1048573
   double high = 1; // Higher bound when a multiplier is rejected (stays constant)
@@ -78,8 +80,9 @@ int main() {
   Rank1Lattice<Int, Real> *lat; // Rank1Lattice to store the current lattice for which the FoM is calculated 
   IntLattice<Int, Real> *proj; // The IntLattice used to store projections  
   Normalizer *norma; // Normalizer object (necessary to normalize FoMs)
-  Reducer<Int, Real> *red; // Reducer object (necessary for BB)
-
+  ReducerBB<Int, Real> *red; // Reducer object (necessary for BB)
+  WeightsOrderDependent weights; // Object for the weights applied to the FoM
+  
   // Initialization of objects
   // Arrays to store information about the FoM must be set to zero
   for (int i = 0; i < noBest; i++) {
@@ -90,12 +93,15 @@ int main() {
   double log_density=(double)(-log(abs(m)));
   norma = new NormaBestLat(log_density, max_dim);
   // Initialize the Reducer
-  red = new Reducer<Int, Real>(max_dim);
+  red = new ReducerBB<Int, Real>(max_dim);
   // Initialize the IntMat objects
   lat = new Rank1Lattice<Int, Real>(m, a, max_dim, with_primal, with_dual);
   proj = new IntLattice<Int, Real> (m, lat->getBasis().NumCols(), with_primal, with_dual);
+  // Set the default weight to 1
+  weights.setDefaultWeight(1);
   // Initialize the FoM object
-  FigureOfMeritDualM<Int> fom(t, meth, *red, *norma, true); 
+  FigureOfMeritDualM<Int> fom(t, weights, meth, *red, *norma, true); 
+  
   
   // Set the first multiplier equal to a primitive elements from the list
   a = multipliers[0];
@@ -110,14 +116,16 @@ int main() {
   fom.setReductionMethod(meth, delta);
   fom.setPrintDetails(false);
   index = 0;
+  
   for (int64_t j = 0; j < numRep; j++) {
      g = NTL::GCD(NTL::conv<Int>(j+1), m - 1);
      // Only look at the full period lattices
      if (g==1) {
          lat->seta(a);
          lat->buildBasis(max_dim);
-         fom.setBounds(low, high);
+         //fom.setBounds(low, high);
          f = fom.computeMeritDual(*lat, proj);
+         std::cout << "a:" << a << ", f:" << f << "\n";
          if (f > bestFoms[index]) {
              // Overwrite the current smallest FoM in the stored list
              mini = std::min_element(bestFoms, bestFoms + noBest);
@@ -131,7 +139,7 @@ int main() {
             low = bestFoms[index];
          }
      }
-     a = a * multipliers[0] % m;
+     a = a * multipliers[0] % m;;
     	 
   }
   totalTime = clock() - tmp;
@@ -167,6 +175,7 @@ int main() {
   std::cout << "Time elapsed for BB: " << (double) totalTime / (CLOCKS_PER_SEC) << " seconds\n";
   std::cout << "Best multiplier found: " << bestMult << "\n";
   std::cout << "Which has FoM: " << bestFom << "\n";
+  
   
   return 0;
 }
