@@ -449,7 +449,10 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
 
     for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
         coord = *it;
-        lat.buildProjection(proj, coord, this->m_delta); // Must have withDual = false   ***
+        //lat.buildProjection(proj, coord, this->m_delta); // Must have withDual = false   ***
+        proj->setDim (coord.size());
+        projectionConstructionLLL<IntMat, Int, NTL::vector<Real>>(lat.getBasis(),
+            proj->getBasis(), coord, lat.getModulo(), this->m_delta, coord.size());   
         if (m_doingBKZ) {
             //BKZ_FPInt(proj->getBasis(), this->m_delta, this->m_blocksize,
             //        coord.size(), coord.size(), this->m_sqlen);
