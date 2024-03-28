@@ -199,7 +199,14 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
     
     for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end(); it++){
         coord = *it;
-        lat.buildProjection(proj, coord, this->m_delta);
+        //lat.buildProjection(proj, coord, this->m_delta);
+        proj->setDim (coord.size());
+        projectionConstructionUpperTri(lat.getBasis(),
+                proj->getBasis(), coord, lat.getModulo(), lat.getDim());
+        mDualUpperTriangular(proj->getBasis(),
+               proj->getDualBasis(), lat.getModulo(), proj->getDim());
+        lat.setNegativeNorm();
+        lat.setDualNegativeNorm();
         if (this->m_doingBKZ) {
             //BKZ_FPZZflex(proj->getDualBasis(), this->m_delta, this->m_blocksize, 
             //        coord.size(), coord.size(), this->m_sqlen);
