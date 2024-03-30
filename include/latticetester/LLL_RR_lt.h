@@ -65,30 +65,9 @@ long LLL_RR_lt(mat_ZZ& B, double delta = 0.99, long r = 0, long c = 0, vec_RR* s
  * These two functions are wrappers of `BKZ_RR` in NTL, with the same modifications
  * as in `LLL_RR_lt` above.
  */
-//static long BKZ_RR_lt(mat_ZZ& B, const RR& delta,
-//      long blocksize = 10, long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
-
 long BKZ_RR_lt(mat_ZZ& B, double delta = 0.99,
       long blocksize = 10, long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
 
-
-/*
-
-long LLL_XD(mat_ZZ& B, double delta = 0.99, long deep = 0,
-           LLLCheckFct check = 0, long verbose = 0);
-
-long BKZ_XD(mat_ZZ& BB, double delta=0.99, long BlockSize=10, long prune=0,
-         LLLCheckFct check = 0, long verbose = 0);
-
-long LLL_QP(mat_ZZ& B, double delta = 0.99, long deep = 0,
-           LLLCheckFct check = 0, long verbose = 0);
-
-long BKZ_QP(mat_ZZ& BB, double delta=0.99, long BlockSize=10, long prune=0,
-         LLLCheckFct check = 0, long verbose = 0);
-
-long BKZ_QP1(mat_ZZ& BB, double delta=0.99, long BlockSize=10, long prune=0,
-         LLLCheckFct check = 0, long verbose = 0);
-*/
 
 NTL_CLOSE_NNS
 

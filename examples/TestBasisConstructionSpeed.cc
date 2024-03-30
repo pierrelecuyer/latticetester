@@ -48,8 +48,8 @@
  **/
 
 // Select the flexible types Int and Real here.
-//#define TYPES_CODE  LD     // Int == int64_t
-#define TYPES_CODE  ZD     // Int == ZZ, Real = double
+#define TYPES_CODE  LD     // Int == int64_t
+//#define TYPES_CODE  ZD     // Int == ZZ, Real = double
 //#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 #include <iostream>

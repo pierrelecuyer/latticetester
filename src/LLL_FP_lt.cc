@@ -1287,7 +1287,6 @@ long BKZ_FP_lt(mat_ZZ& BB, const double delta, long beta, long prune,
             }
             else
                eta = 0;
-   
             if (ctilda[t] < cbar - eta) {
                if (t > jj) {
                   t--;
