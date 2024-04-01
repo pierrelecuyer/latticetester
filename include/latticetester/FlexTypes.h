@@ -23,6 +23,8 @@
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
 #include <NTL/RR.h>
+#include <NTL/xdouble.h>
+#include <NTL/quad_float.h>
 #include "latticetester/NTLWrap.h"  // This one is needed for the vector and matrix types.
 
 /**
@@ -53,19 +55,19 @@
      std::string strFlexTypes = "Int = NTL::ZZ, Real = double";
 #elif  TYPES_CODE ==  LQ
      typedef int64_t  Int;
-     typedef quad_float Real;
+     typedef NTL::quad_float Real;
      std::string strFlexTypes = "Int = int64_t, Real = quad_float";
 #elif  TYPES_CODE ==  ZQ
      typedef NTL::ZZ Int;
-     typedef quad_float Real;
+     typedef NTL::quad_float Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = quad_float";
-#elif  TYPES_CODE ==  LD
+#elif  TYPES_CODE ==  LX
      typedef int64_t  Int;
-     typedef xdouble Real;
+     typedef NTL::xdouble Real;
      std::string strFlexTypes = "Int = int64_t, Real = xdouble";
-#elif  TYPES_CODE ==  ZD
+#elif  TYPES_CODE ==  ZX
      typedef NTL::ZZ Int;
-     typedef xdouble Real;
+     typedef NTL::xdouble Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = xdouble";
 #elif  TYPES_CODE ==  LR
 	  typedef int64_t  Int;

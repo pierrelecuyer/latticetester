@@ -965,25 +965,37 @@ long ll_LLL_FP(mat_ZZ& B, mat_ZZ* U, double delta, long deep,
    return m;
 }
 
+// ------------------------------------------------------
 long LLL_FP_lt(mat_ZZ &BB, double delta,
           long m, long n, vec_double *sqlen) {
    if (m == 0)
       m = BB.NumRows();
    if (n == 0)
       n = BB.NumCols();
-   RR_GS_time = 0;
-   NumSwaps = 0;
    if (delta < 0.50 || delta >= 1)
       LogicError("LLL_FP: bad delta");
-   mat_ZZ B;  // A copy of the used part of BB, with exact size.
-   B = BB;
-   B.SetDims(m, n);  // From here we work only with B and B1.
+   RR_GS_time = 0;
+   NumSwaps = 0;
 
    long i, j;
    long new_m, quit = 0;
    ZZ MU;
    ZZ T1;
    init_red_fudge();
+
+   //std::cout << "Matrix BB before SetDims = \n" << BB << "\n";
+   mat_ZZ B;  // A copy of the used part of BB, with exact size.
+   // B = BB;
+   //std::cout << "Matrix B before SetDims = \n" << B << "\n";
+   B.SetDims(m, n);  // From here we work only with B and B1.
+   //std::cout << "Matrix B after SetDims = \n" << B << "\n";
+   //std::cout << "Matrix BB after SetDims = \n" << BB << "\n";
+   for (i = 0; i < m; i++) {
+      for (j = 0; j < n; j++) {
+         B[i][j] = BB[i][j];
+      }
+   }
+   //std::cout << "Matrix B after copy = \n" << B << "\n";
 
    Unique2DArray<double> B1_store;
    B1_store.SetDimsFrom1(m+1, n+1);
@@ -1010,6 +1022,7 @@ long LLL_FP_lt(mat_ZZ &BB, double delta,
       sqlen2[i] = InnerProduct(B1[i], B1[i], n);
       CheckFinite(&sqlen2[i]);
    }
+   //std::cout << "Matrix B before ll_LLL = \n" << B << "\n";
    new_m = ll_LLL_FP(B, 0, delta, 0, 0, B1, mu, sqlen2, c, m, 1, quit);
 
    // In this version, we leave the zero rows at the bottom.
@@ -1029,9 +1042,10 @@ long LLL_FP_lt(mat_ZZ &BB, double delta,
          imin = i;
       };
    if (imin > 0) {
-      NTL::swap(B[0], B[imin]);
+      NTL::swap(BB[0], BB[imin]);
       std::swap(sqlen2[1], sqlen2[imin+1]);
    }
+   //std::cout << "Matrix BB after swap = \n" << B << "\n";
    if (sqlen) {
       // if (sqlen->length() < m)
       //   sqlen->SetLength(m);
@@ -1161,8 +1175,13 @@ long BKZ_FP_lt(mat_ZZ& BB, const double delta, long beta, long prune,
    init_red_fudge();
 
    mat_ZZ B;  // A copy of the used part of BB, plus one extra row.
-   B = BB;
+   // B = BB;
    B.SetDims(m+1, n);  // From here we work only with B and B1.
+   for (i = 0; i < m; i++) {
+      for (j = 0; j < n; j++) {
+         B[i][j] = BB[i][j];
+      }
+   }
 
    Unique2DArray<double> B1_store;
    B1_store.SetDimsFrom1(m+2, n+1);

@@ -104,7 +104,7 @@ typedef NTL::matrix<Int> IntMat;
  */
 template<typename IntMat, typename RealVec>
 static void redLLLNTL(IntMat &basis, double delta = 0.99999,
-        long dim = 0, RealVec* sqlen = 0, PrecisionType precision = DOUBLE);
+        long dim = 0, RealVec* sqlen = 0);
 
 /**
  * This static function implements an exact algorithm from NTL to perform the original LLL reduction.
@@ -127,7 +127,7 @@ static void redLLLNTLExact(IntMat &basis, double delta = 0.99999);
 template<typename IntMat, typename RealVec>
 static void redBKZ(IntMat &basis, double delta = 0.99999,
       int64_t blocksize = 10, long prune = 0, long dim = 0,
-      RealVec* sqlen = 0, PrecisionType prec = DOUBLE);
+      RealVec* sqlen = 0);
 
 // }
 
@@ -141,42 +141,42 @@ static void redBKZ(IntMat &basis, double delta = 0.99999,
 // General implementation.
 template<typename IntMat, typename RealVec>
 void redLLLNTL(IntMat &basis, double delta, long dim,
-      RealVec* sqlen, PrecisionType precision) {
+      RealVec* sqlen) {
    MyExit(1, "redLLLNTL: General version not implemented.\n");
 }
 
 // A specialization for the case where Int = int64_t and Real = double.
 template<>
 void redLLLNTL(NTL::matrix<int64_t> &basis,
-      double delta, long dim, NTL::vector<double> *sqlen, PrecisionType precision) {
+      double delta, long dim, NTL::vector<double> *sqlen) {
    NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
    }
 
 // A specialization for the case where Int = ZZ and Real = double.
 template<>
 void redLLLNTL(NTL::matrix<NTL::ZZ> &basis,
-      double delta, long dim, NTL::vector<double> *sqlen, PrecisionType precision) {
+      double delta, long dim, NTL::vector<double> *sqlen) {
    NTL::LLL_FP_lt(basis, delta, dim, dim, sqlen);
    }
 
 // A specialization for the case where Int = ZZ and Real = xdouble.
 template<>
 void redLLLNTL(NTL::matrix<NTL::ZZ> &basis,
-      double delta, long dim, NTL::vector<xdouble> *sqlen, PrecisionType precision) {
+      double delta, long dim, NTL::vector<xdouble> *sqlen) {
    NTL::LLL_XD_lt(basis, delta, dim, dim, sqlen);
    }
 
 // A specialization for the case where Int = ZZ and Real = quad_float.
 template<>
 void redLLLNTL(NTL::matrix<NTL::ZZ> &basis,
-      double delta, long dim, NTL::vector<quad_float> *sqlen, PrecisionType precision) {
+      double delta, long dim, NTL::vector<quad_float> *sqlen) {
    NTL::LLL_QP_lt(basis, delta, dim, dim, sqlen);
    }
 
 // A specialization for the case where Int = ZZ and Real = RR.
 template<>
 void redLLLNTL(NTL::matrix<NTL::ZZ> &basis,
-      double delta, long dim, NTL::vector<NTL::RR> *sqlen, PrecisionType precision) {
+      double delta, long dim, NTL::vector<NTL::RR> *sqlen) {
    NTL::LLL_RR_lt(basis, delta, dim, dim, sqlen);
    }
 
@@ -203,72 +203,40 @@ void redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis, double delta) {
 // BKZ, general case.
 template<typename IntMat, typename RealVec>
 void redBKZ(IntMat &basis, double delta, long blocksize,
-      long prune, long dim, RealVec* sqlen, PrecisionType prec);
+      long prune, long dim, RealVec* sqlen);
 
 // Specialization for Int = int64_t.
 template<>
 void redBKZ(NTL::matrix<int64_t> &basis, double delta, long blocksize,
-      long prune, long dim,  NTL::vector<double> *sqlen, PrecisionType precision) {
-   if (precision == DOUBLE) {
-      NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
-      return;
-   }
-   MyExit(1, "redBKZ: Int = int64_t with precision != DOUBLE.\n");
+      long prune, long dim,  NTL::vector<double> *sqlen) {
+   NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = double.
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
-      long prune, long dim, NTL::vector<double> *sqlen, PrecisionType precision) {
-   NTL::matrix<NTL::ZZ> cpbasis;
-   switch (precision) {
-   case DOUBLE:
-      // std::cout << " Calling static BKZ for ZZ + double \n";
-      NTL::BKZ_FP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
-      // NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
-      //cpbasis.SetDims(dim, dim);
-      //LatticeTester::copy(basis, cpbasis, dim, dim);  // From Util
-      //NTL::BKZ_FP(cpbasis, delta, blocksize);
-      //LatticeTester::copy(cpbasis, basis);
-      return;
-   case QUADRUPLE:
-      cpbasis.SetDims(dim, dim);
-      LatticeTester::copy(basis, cpbasis, dim, dim);  // From Util
-      NTL::BKZ_QP(cpbasis, delta, blocksize);
-      LatticeTester::copy(cpbasis, basis);
-      break;
-   case XDOUBLE:
-      cpbasis.SetDims(dim, dim);
-      LatticeTester::copy(basis, cpbasis, dim, dim);  // From Util
-      NTL::BKZ_XD(cpbasis, delta, blocksize);
-      LatticeTester::copy(cpbasis, basis);
-      break;
-   //case RR:
-   //   NTL::BKZ_RR_lt(basis, sqlen, NTL::conv<NTL::RR>(delta), blocksize, prune, dim, dim);
-   //   break;
-   default:
-      MyExit(1, "Undefined precision type for redBKZ");
-   }
+      long prune, long dim, NTL::vector<double> *sqlen) {
+   NTL::BKZ_FP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = xdouble.   `precision` is not used.
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
-      long prune, long dim, NTL::vector<xdouble> *sqlen, PrecisionType precision) {
+      long prune, long dim, NTL::vector<xdouble> *sqlen) {
    NTL::BKZ_XD_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
    }
 
 // Specialization for Int = ZZ and Real = quad_float.   `precision` is not used.
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
-      long prune, long dim, NTL::vector<quad_float> *sqlen, PrecisionType precision) {
+      long prune, long dim, NTL::vector<quad_float> *sqlen) {
    NTL::BKZ_QP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
    }
 
 // Specialization for Int = ZZ and Real = RR.   `precision` is not used.
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
-      long prune, long dim, NTL::vector<NTL::RR> *sqlen, PrecisionType precision) {
+      long prune, long dim, NTL::vector<NTL::RR> *sqlen) {
    NTL::BKZ_RR_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
    }
 

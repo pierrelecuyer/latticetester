@@ -17,7 +17,9 @@
 // Select the flexible types Int and Real here.
 //#define TYPES_CODE  LD     // Int == int64_t
 //#define TYPES_CODE  ZD     // Int == ZZ, Real = double
-#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
+#define TYPES_CODE  ZQ     // Int == ZZ, Real = quad_float
+//#define TYPES_CODE  ZX     // Int == ZZ, Real = xdouble
+//#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 //typedef long Int;
 //typedef NTL::ZZ Int;
@@ -54,6 +56,7 @@ Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1125899906842597);  // Prime modulus near 2^{50}
 
 const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
+//const long dimensions[numSizes] = { 3, 5 };
 const long dimensions[numSizes] = { 5, 10, 20, 30, 40 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 const long numMeth = 9;    // Number of methods, and their names.
@@ -61,7 +64,7 @@ std::string names[numMeth] = { "LLL5        ", "LLL99999    ", "BKZ99999    ",
       "Direct BB   ", "Pairwise+BB ", "LLL5+BB     ", "LLL8+BB     ",
       "LLL99999+BB ", "BKZ99999+BB " };
 // PrecisionType prec = QUADRUPLE;  // DOUBLE, QUADRUPLE, XDOUBLE, RR
-PrecisionType prec = DOUBLE;
+// PrecisionType prec = DOUBLE;
 
 // We use ctime directly for the timings, to minimize overhead.
 clock_t tmp;
@@ -87,7 +90,7 @@ inline void afterReduct(long meth, long d) {
    sumSq[meth][d] += sqlen[0];
    //std::cout << "Done with method = " << names[meth] << ",  dim = "
    //      << dimensions[d] << ",  sqlen[0] = " << sqlen[0] << "\n";
-   // std::cout << "Matrix B = " << korlat->getBasis() << "\n";
+   // std::cout << "Matrix B = \n" << korlat->getBasis() << "\n";
 }
 
 // Speed test for dim = dimensions[d], with given matrices.
@@ -96,20 +99,21 @@ static void reduceBasis(long d) {
    long dim = dimensions[d];
 
    beforeReduct(dim);  // Only pre-reductions.
-   redLLLNTL<IntMat, RealVec>(korlat->getBasis(), 0.5, dim, &sqlen, prec);
+   redLLLNTL<IntMat, RealVec>(korlat->getBasis(), 0.5, dim, &sqlen);
    afterReduct(0, d);
 
    beforeReduct(dim);
-   redLLLNTL(korlat->getBasis(), 0.99999, dim, &sqlen, prec);
+   redLLLNTL(korlat->getBasis(), 0.99999, dim, &sqlen);
    afterReduct(1, d);
 
    beforeReduct(dim);
-   IntMat basisdual;
-   basisdual.SetDims(dim, dim);
-   CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
-   redBKZ(basisdual, 0.99999, 10, 0, dim, &sqlen, prec);
-   //redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10, 0, dim, prec);
+   //IntMat basisdual;
+   //basisdual.SetDims(dim, dim);
+   //CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
+   //redBKZ(basisdual, 0.99999, 10, 0, dim, &sqlen);
+   redBKZ(korlat->getBasis(), 0.99999, 10, 0, dim, &sqlen);
    afterReduct(2, d);
+
 
    if (dim < 12) {
       beforeReduct(dim);
@@ -140,31 +144,32 @@ static void reduceBasis(long d) {
 */
 
    beforeReduct(dim);
-   redLLLNTL(korlat->getBasis(), 0.5, dim, &sqlen, prec);
+   redLLLNTL(korlat->getBasis(), 0.5, dim, &sqlen);
    if (red->shortestVector())
       afterReduct(5, d);
    else
       std::cout << " shortestVector failed for LLL, delta = 0.5 \n";
 
    beforeReduct(dim);
-   redLLLNTL(korlat->getBasis(), 0.8, dim, &sqlen, prec);
+   redLLLNTL(korlat->getBasis(), 0.8, dim, &sqlen);
    if (red->shortestVector())
       afterReduct(6, d);
    else
       std::cout << " shortestVector failed for LLL, delta = 0.8 \n";
 
    beforeReduct(dim);
-   redLLLNTL(korlat->getBasis(), 0.99999, dim, &sqlen, prec);
+   redLLLNTL(korlat->getBasis(), 0.99999, dim, &sqlen);
    if (red->shortestVector())
       afterReduct(7, d);
    else
       std::cout << " shortestVector failed for LLL, delta = 0.99999 \n";
 
    beforeReduct(dim);
-   //CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
-   //BKZ_FPInt(basisdual, 0.99999, 10, 0);
-   // redBKZ(korlat->getBasis(), &sqlen, 0.99999, 10);
-   redBKZ(korlat->getBasis(), 0.99999, 10, 0, dim, &sqlen, prec);
+   // redLLLNTL(korlat->getBasis(), 0.99999, dim, &sqlen);
+   redBKZ(korlat->getBasis(), 0.99999, 10, 0, dim, &sqlen);
+   // sumSq[8][d] += sqlen[0];
+   // afterReduct(8, d);
+   //std::cout << "Matrix B = \n" << korlat->getBasis() << "\n";
    if (red->shortestVector())
       afterReduct(8, d);
    else
@@ -190,7 +195,7 @@ static void testLoop(long numRep) {
       //a = 742938285;
       a = (m / 5 + 13 * r) % m;   // The multiplier we use for this rep.
       korlat->seta(a);
-      for (d = 0; d < 5; d++) {  // Each matrix size
+      for (d = 0; d < 4; d++) {  // Each matrix size
          //for (d = 0; d < numSizes; d++) {  // Each matrix size
          // korlat->buildDualBasis(dim);
          //std::cout << "rep = " << r << ",  a = " << a << ",  dim = " << dimensions[d] << "\n";
@@ -232,14 +237,13 @@ static void printResults() {
 }
 
 int main() {
-   long numRep = 20;    // Number of replications (multipliers) for each case.
+   long numRep = 10;    // Number of replications (multipliers) for each case.
    sqlen.SetLength(maxdim);   // Done here because cannot be done in preamble.
    korlat = new Rank1Lattice<Int, Real>(m, maxdim, false, true);
    red = new ReducerBB<Int, Real>(*korlat);
 
    // std::cout << "Types: " << Int << Real << "\n";
    std::cout << "Types: " << strFlexTypes << "\n";
-   std::cout << "PrecisionType: " << prec << "\n";
    std::cout << "maxdim = " << maxdim << "\n\n";
    std::cout << "Results of TestReducersSpeed.cc with m = " << m << "\n";
    std::cout << "Timings (in microseconds) for different methods for " << numRep

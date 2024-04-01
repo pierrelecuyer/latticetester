@@ -46,6 +46,8 @@
 #include "latticetester/Coordinates.h"
 #include "latticetester/LLL_FPInt.h"
 #include "latticetester/LLL_FP_lt.h"
+#include "latticetester/LLL_QP_lt.h"
+#include "latticetester/LLL_XD_lt.h"
 #include "latticetester/LLL_RR_lt.h"
 
 using namespace LatticeTester;
@@ -307,68 +309,35 @@ static void projectionConstruction(const IntMat &inBasis, IntMat &projBasis,
 template<>
 long LLLConstruction0(NTL::matrix<int64_t> &gen, const double delta,
       long r, long c, NTL::vector<double> *sqlen, PrecisionType precision) {
-    if (precision == DOUBLE)
-        return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
-    else
-        std::cerr
-                << "LLLConstruction0 for int64_t: implemented only for precision=DOUBLE.\n";
-    abort();
+    return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + double implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
         const double delta, long r, long c, NTL::vector<double> *sqlen, PrecisionType precision) {
-    NTL::matrix<NTL::ZZ> cpbasis;
-    // long rank;
-    switch (precision) {
-    case DOUBLE:
-        // return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
-        return NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
-        // std::cout << "Using LLL_FP_lt in LLL0, rank = " << rank << " \n";
-        // return rank;
-        break;
-    case QUADRUPLE:
-       cpbasis.SetDims(r, c);   // Does not work if r = c = 0.
-       LatticeTester::copy(gen, cpbasis, r, c);  // From Util
-       return NTL::LLL_QP(cpbasis, delta);
-       LatticeTester::copy(cpbasis, gen);
-       break;
-    case XDOUBLE:
-       cpbasis.SetDims(r, c);
-       LatticeTester::copy(gen, cpbasis, r, c);  // From Util
-       return NTL::LLL_XD(cpbasis, delta);
-       LatticeTester::copy(cpbasis, gen);
-       break;
-    //case RR:
-    //    return rank = NTL::LLL_RR_lt(gen, sqlen, delta, r, c);
-    //    break;
-    default:
-        std::cerr << "LLLConstruction0: precision type not implemented.\n";
-        abort();
-    }
+   return NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
+}
+
+// The ZZ + quad_float implementation.
+template<>
+long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
+        const double delta, long r, long c, NTL::vector<quad_float> *sqlen, PrecisionType precision) {
+   return NTL::LLL_QP_lt(gen, delta, r, c, sqlen);
+}
+
+// The ZZ + xdouble implementation.
+template<>
+long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
+        const double delta, long r, long c, NTL::vector<xdouble> *sqlen, PrecisionType precision) {
+   return NTL::LLL_XD_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + RR implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, const double delta,
        long r, long c, NTL::vector<NTL::RR> *sqlen, PrecisionType precision) {
-   // std::cout << "LLLConstruction0 for RR: before calling LLL_RR.\n";
    return NTL::LLL_RR_lt(gen, delta, r, c, sqlen);
-/*  switch (precision) {
-    case DOUBLE:
-        std::cerr << "LLLConstruction0: DOUBLE precision type not supported for Real=RR.\n";
-        // return rank = NTL::LLL_FPInt(gen, sqlen, delta, r, c);  // Not supported!!!
-        abort();
-        break;
-    case RR:
-       return NTL::LLL_RR_lt(gen, sqlen, conv<NTL::RR>(delta), r, c);
-        break;
-    default:
-        std::cerr << "LLLConstruction0: precision type not supported.\n";
-        abort();
-    }
-*/
 }
 
 

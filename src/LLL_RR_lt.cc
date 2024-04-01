@@ -461,14 +461,13 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta, mat_RR& B1, mat_RR& mu,
    return m;
 }
 
-static long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta,
+long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta,
            mat_RR& B1, mat_RR& mu,
            vec_RR& b, vec_RR& c, long m, long n, long init_k, long &quit);
 
 
-// Here, `delta` and `sqlen` are in `RR`, as in NTL.
 // template<>
-static long LLL_RR_lt(mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen) {
+long LLL_RR_lt(mat_ZZ& B, double delta, long m, long n, vec_RR* sqlen) {
        if (m == 0) m = B.NumRows();
        if (n == 0) n = B.NumCols();
        long i, j, new_m, quit;
@@ -476,9 +475,10 @@ static long LLL_RR_lt(mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen)
        ZZ MU, T1;
        RR mu1, t1;
 
-       NumSwapsRR = 0;
        if (delta < 0.50 || delta >= 1) LogicError("LLL_RR: bad delta");
        init_red_fudge_RR();
+       NumSwapsRR = 0;
+
        mat_RR B1;  // approximates B
        B1.SetDims(m, n);
        mat_RR mu;
@@ -497,8 +497,9 @@ static long LLL_RR_lt(mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen)
        for (i = 0; i < m; i++) {
           InnerProductR(sqlen2[i], B1[i], B1[i], n);
        }
+       // RR Delta = conv<RR>(delta);
        // The matrix B received and passed here may be larger than m x n.
-       new_m = ll_LLL_RR_lt(B, delta, B1, mu, sqlen2, c, m, n, 1, quit);
+       new_m = ll_LLL_RR_lt(B, conv<RR>(delta), B1, mu, sqlen2, c, m, n, 1, quit);
        // new_m = ll_LLL_RR(B, delta, B1, mu, b, c, m, n, 1, quit);
 
        // In this version, we leave the zero rows at the bottom.
@@ -522,11 +523,6 @@ static long LLL_RR_lt(mat_ZZ& B, const RR& delta, long m, long n, vec_RR* sqlen)
        return new_m;
     }
 
-// Here, `delta` is passed as a `double`.
-// template<>
-long LLL_RR_lt(mat_ZZ& B, double delta, long m, long n, vec_RR* sqlen) {
-    return LLL_RR_lt(B, conv<RR>(delta), m, n, sqlen);
-}
 
 static
 void ComputeBKZConstant_RR(long beta, long p) {
@@ -585,7 +581,7 @@ void ComputeBKZThresh_RR(RR *c, long beta)
 
 // This is for BKZ with RR.
 // template<>
-static long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
+long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
         long m, long n, vec_RR* sqlen) {
 
    NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);

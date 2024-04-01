@@ -3,6 +3,7 @@
 #include <NTL/fileio.h>
 #include <NTL/vec_xdouble.h>
 #include <NTL/vec_double.h>
+#include <NTL/xdouble.h>
 #include <NTL/LLL.h>
 
 
@@ -455,12 +456,8 @@ long LLL_XD_lt(mat_ZZ &BB, double delta,
       m = BB.NumRows();
    if (n == 0)
       n = BB.NumCols();
-   NumSwaps = 0;
    if (delta < 0.50 || delta >= 1)
       LogicError("LLL_FP: bad delta");
-   mat_ZZ B;  // A copy of the used part of BB, with exact size.
-   B = BB;
-   B.SetDims(m, n);  // From here we work only with B and B1.
 
    long i, j;
    long new_m, quit = 0;
@@ -468,6 +465,16 @@ long LLL_XD_lt(mat_ZZ &BB, double delta,
    ZZ MU, T1;
    xdouble mu1;
    xdouble t1;
+   NumSwaps = 0;
+
+   mat_ZZ B;  // A copy of the used part of BB, with exact size.
+   // B = BB;
+   B.SetDims(m, n);  // From here we work only with B and B1.
+   for (i = 0; i < m; i++) {
+      for (j = 0; j < n; j++) {
+         B[i][j] = BB[i][j];
+      }
+   }
    init_red_fudge();
 
    Unique2DArray<xdouble> B1_store;
@@ -624,8 +631,13 @@ long BKZ_XD_lt(mat_ZZ& BB, const xdouble delta, long beta, long prune,
    init_red_fudge();
 
    mat_ZZ B;  // A copy of the used part of BB, plus one extra row.
-   B = BB;
+   // B = BB;
    B.SetDims(m+1, n);  // From here we work only with B and B1.
+   for (i = 0; i < m; i++) {
+      for (j = 0; j < n; j++) {
+         B[i][j] = BB[i][j];
+      }
+   }
 
    Unique2DArray<xdouble> B1_store;
    B1_store.SetDimsFrom1(m+2, n+1);

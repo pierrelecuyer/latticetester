@@ -696,21 +696,26 @@ long LLL_QP_lt(mat_ZZ &BB, double delta,
       m = BB.NumRows();
    if (n == 0)
       n = BB.NumCols();
-   NumSwaps = 0;
    if (delta < 0.50 || delta >= 1)
       LogicError("LLL_FP: bad delta");
-   mat_ZZ B;  // A copy of the used part of BB, with exact size.
-   B = BB;
-   B.SetDims(m, n);  // From here we work only with B and B1.
 
    long i, j;
    long new_m, quit = 0;
    quad_float s;
-   ZZ MU;
+   ZZ MU, T1;
    quad_float mu1;
    quad_float t1;
-   ZZ T1;
 
+   mat_ZZ B;  // A copy of the used part of BB, with exact size.
+   // B = BB;
+   B.SetDims(m, n);  // From here we work only with B and B1.
+   for (i = 0; i < m; i++) {
+      for (j = 0; j < n; j++) {
+         B[i][j] = BB[i][j];
+      }
+   }
+
+   NumSwaps = 0;
    init_red_fudge();
 
    Unique2DArray<quad_float> B1_store;
@@ -872,8 +877,13 @@ long BKZ_QP_lt(mat_ZZ& BB, const quad_float delta, long beta, long prune,
    init_red_fudge();
 
    mat_ZZ B;  // A copy of the used part of BB, plus one extra row.
-   B = BB;
+   // B = BB;
    B.SetDims(m+1, n);  // From here we work only with B and B1.
+   for (i = 0; i < m; i++) {
+      for (j = 0; j < n; j++) {
+         B[i][j] = BB[i][j];
+      }
+   }
 
    Unique2DArray<quad_float> B1_store;
    B1_store.SetDimsFrom1(m+2, n+1);
@@ -933,6 +943,7 @@ long BKZ_QP_lt(mat_ZZ& BB, const quad_float delta, long beta, long prune,
          conv(B1[i][j], B(i, j));
          CheckFinite(&B1[i][j]);
       }
+   // The indices of b start at 1.
    for (i = 1; i <= m; i++) {
       b[i] = InnerProduct(B1[i], B1[i], n);
       CheckFinite(&b[i]);
