@@ -407,10 +407,10 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
         if (m_doingBKZ) {
             //BKZ_FPInt(lat.getBasis(), this->m_delta, this->m_blocksize, j, j,
             //        this->m_sqlen);
-            redBKZ(lat.getBasis(), this->m_delta, this->m_blocksize, 0, j, &this->m_sqlen, this->m_prec);
+            redBKZ (lat.getBasis(), this->m_delta, this->m_blocksize, 0, j, &this->m_sqlen);
         } else if (m_doingLLL) {
             //LLL_FPInt (lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
-            redLLLNTL<IntMat, RealVec> (lat.getBasis(), this->m_delta, j, &this->m_sqlen, this->m_prec);
+            redLLL<IntMat, RealVec> (lat.getBasis(), this->m_delta, j, &this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
             this->m_sqlen[0] = NTL::conv<double>(lat.getVecNorm(0));
@@ -456,13 +456,13 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
         if (m_doingBKZ) {
             //BKZ_FPInt(proj->getBasis(), this->m_delta, this->m_blocksize,
             //        coord.size(), coord.size(), this->m_sqlen);
-            redBKZ(proj->getBasis(), this->m_delta, this->m_blocksize, 0, 
-                coord.size(), &this->m_sqlen, this->m_prec);
+            redBKZ<IntMat, RealVec> (proj->getBasis(), this->m_delta, this->m_blocksize, 0, 
+                coord.size(), &this->m_sqlen);
         } else if (m_doingLLL) {
             //LLL_FPInt(proj->getBasis(), this->m_delta, coord.size(),
             //        coord.size(), this->m_sqlen);
-            redLLLNTL<IntMat, RealVec> (proj->getBasis(), this->m_delta, 
-                coord.size(), &this->m_sqlen, this->m_prec);
+            redLLL<IntMat, RealVec> (proj->getBasis(), this->m_delta, 
+                coord.size(), &this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
             this->m_sqlen[0] = NTL::conv<double>(lat.getVecNorm(0));
