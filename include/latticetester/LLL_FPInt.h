@@ -49,7 +49,7 @@
  * This array is maintained in the `LLL_FP` functions of NTL,
  * but it is hidden in the implementation and not accessible from outside.
  * In `IntLattice`, these lengths are maintained in a `RealVec` object.
- * In this module, it is assumed implicitly that `Real = double`.
+ * In this module, we assume that `Real = double`.
  *
  * Each function returns the dimension of the computed basis (number of independent rows).
  * This basis is always returned in the upper-left corner of the matrix `B`.
@@ -59,9 +59,6 @@
 typedef NTL::vector<Int> IntVec;
 typedef NTL::matrix<Int> IntMat;
 typedef NTL::vector<int64_t> vector64;
-typedef NTL::vector<Real> RealVec;
-
-// Int modulus64(1048573);  // To test if basis entries ever exceed the modulus.
 
 // This macro is defined in NTL/tools.h
 NTL_OPEN_NNS
@@ -81,8 +78,8 @@ NTL_OPEN_NNS
  */
 
 template<typename IntMat>
-static long LLL_FPInt(IntMat &B, double delta = 0.99,
-      long r = 0, long c = 0, Vec<double> *sqlen = 0);
+long LLL_FPInt(IntMat &B, const double delta = 0.99,
+      long r = 0, long c = 0, NTL::vector<double> *sqlen = 0);
 
 /**
  * This function is similar to `BKZ_FP` in NTL, with the same modifications
@@ -90,8 +87,8 @@ static long LLL_FPInt(IntMat &B, double delta = 0.99,
  */
 
 template<typename IntMat>
-static long BKZ_FPInt(IntMat &BB, double delta = 0.99,
-      long blocksize = 10, long prune = 0, long r = 0, long c = 0, Vec<double> *sqlen = 0);
+long BKZ_FPInt(IntMat &BB, const double delta = 0.99, long blocksize = 10,
+      long prune = 0, long r = 0, long c = 0, NTL::vector<double> *sqlen = 0);
 
 NTL_CLOSE_NNS
 
@@ -101,7 +98,7 @@ NTL_CLOSE_NNS
 // This implementation is modified from NTL.
 // Some array indices start at 1 in NTL and at 0 here, but not all of them.
 // Both here and in NTL, some indices start at 0 and others start at 1.
-// This makes the code complicated and not so easy to modify.
+ // This makes the code complicated and not so easy to modify.
 // This macro is defined in NTL/tools.h
 NTL_START_IMPL
 
@@ -1416,7 +1413,7 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
 }
 
 template<typename IntMat>
-long LLL_FPInt(IntMat &B, double delta, long m, long n, Vec<double> *sqlen) {
+long LLL_FPInt(IntMat &B, double delta, long m, long n, NTL::vector<double> *sqlen) {
    if (m == 0)
       m = B.NumRows();
    if (n == 0)
@@ -1549,8 +1546,8 @@ static void ComputeBKZThresh(double *c, long beta) {
 
 
 template<typename IntMat>
-long BKZ_FPInt(IntMat &BB, double delta,
-      long beta, long prune, long m, long n, vector<double> *sqlen) {
+long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune,
+        long m, long n, vector<double> *sqlen) {
    if (m == 0)
       m = BB.NumRows();
    if (n == 0)

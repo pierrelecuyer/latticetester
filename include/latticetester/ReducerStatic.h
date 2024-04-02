@@ -18,12 +18,12 @@
 #ifndef LATTICETESTER_REDUCERSTATIC_H
 #define LATTICETESTER_REDUCERSTATIC_H
 
-#include "NTL/LLL.h"
 #include "NTL/tools.h"
 #include "NTL/vector.h"
 #include "NTL/matrix.h"
 #include "NTL/ZZ.h"
 #include "NTL/RR.h"
+#include "NTL/LLL.h"
 
 #include "latticetester/EnumTypes.h"
 #include "latticetester/Util.h"
@@ -31,12 +31,9 @@
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/NTLWrap.h"
 #include "latticetester/LLL_FPInt.h"
-#include "latticetester/LLL_FP_lt.h"
-#include "latticetester/LLL_XD_lt.h"
-#include "latticetester/LLL_QP_lt.h"
-#include "latticetester/LLL_RR_lt.h"
-//#include "latticetester/LLL_lt.h"
+#include "latticetester/LLL_lt.h"
 
+/*
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -51,6 +48,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <type_traits>
+*/
 
 using namespace LatticeTester;
 
@@ -103,7 +101,7 @@ typedef NTL::matrix<Int> IntMat;
  * and their description is done in the module `LLL` of NTL.
  */
 template<typename IntMat, typename RealVec>
-static void redLLLNTL(IntMat &basis, double delta = 0.99999,
+static void redLLL(IntMat &basis, double delta = 0.99999,
         long dim = 0, RealVec* sqlen = 0);
 
 /**
@@ -112,7 +110,7 @@ static void redLLLNTL(IntMat &basis, double delta = 0.99999,
  * It does not take the `dim` and `sqlen` parameters (for now).
  */
 template<typename IntMat>
-static void redLLLNTLExact(IntMat &basis, double delta = 0.99999);
+static void redLLLExact(IntMat &basis, double delta = 0.99999);
 
 /**
  * This calls the NTL implementation of the floating point version of the
@@ -140,42 +138,42 @@ static void redBKZ(IntMat &basis, double delta = 0.99999,
 
 // General implementation.
 template<typename IntMat, typename RealVec>
-void redLLLNTL(IntMat &basis, double delta, long dim,
+void redLLL(IntMat &basis, double delta, long dim,
       RealVec* sqlen) {
-   MyExit(1, "redLLLNTL: General version not implemented.\n");
+   MyExit(1, "redLLL: General version not implemented.\n");
 }
 
 // A specialization for the case where Int = int64_t and Real = double.
 template<>
-void redLLLNTL(NTL::matrix<int64_t> &basis,
+void redLLL(NTL::matrix<int64_t> &basis,
       double delta, long dim, NTL::vector<double> *sqlen) {
    NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
    }
 
 // A specialization for the case where Int = ZZ and Real = double.
 template<>
-void redLLLNTL(NTL::matrix<NTL::ZZ> &basis,
+void redLLL(NTL::matrix<NTL::ZZ> &basis,
       double delta, long dim, NTL::vector<double> *sqlen) {
    NTL::LLL_FP_lt(basis, delta, dim, dim, sqlen);
    }
 
 // A specialization for the case where Int = ZZ and Real = xdouble.
 template<>
-void redLLLNTL(NTL::matrix<NTL::ZZ> &basis,
+void redLLL(NTL::matrix<NTL::ZZ> &basis,
       double delta, long dim, NTL::vector<xdouble> *sqlen) {
    NTL::LLL_XD_lt(basis, delta, dim, dim, sqlen);
    }
 
 // A specialization for the case where Int = ZZ and Real = quad_float.
 template<>
-void redLLLNTL(NTL::matrix<NTL::ZZ> &basis,
+void redLLL(NTL::matrix<NTL::ZZ> &basis,
       double delta, long dim, NTL::vector<quad_float> *sqlen) {
    NTL::LLL_QP_lt(basis, delta, dim, dim, sqlen);
    }
 
 // A specialization for the case where Int = ZZ and Real = RR.
 template<>
-void redLLLNTL(NTL::matrix<NTL::ZZ> &basis,
+void redLLL(NTL::matrix<NTL::ZZ> &basis,
       double delta, long dim, NTL::vector<NTL::RR> *sqlen) {
    NTL::LLL_RR_lt(basis, delta, dim, dim, sqlen);
    }
@@ -185,13 +183,13 @@ void redLLLNTL(NTL::matrix<NTL::ZZ> &basis,
 
 // Exact version for the general case.
 template<typename IntMat>
-void redLLLNTLExact(IntMat &basis, double delta) {
+void redLLLExact(IntMat &basis, double delta) {
    MyExit(1, "redLLLNTLExact works only for Int = ZZ");
 }
 
 // Exact version, for Int = ZZ.
 template<>
-void redLLLNTLExact(NTL::matrix<NTL::ZZ> &basis, double delta) {
+void redLLLExact(NTL::matrix<NTL::ZZ> &basis, double delta) {
    NTL::ZZ det(0);
    int64_t denum;
    denum = round(1.0 / (1.0 - delta)); // We want (denum-1)/denum \approx delta.

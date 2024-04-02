@@ -91,15 +91,13 @@ long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 const long numMeth = 6;    // Number of methods, and their names.
 std::string names[numMeth] = { "LLL5      ", "LLL9      ", "LLL99999  ",
         "LLL99999-R", "UppTri    ", "mDualUT   "};
-// PrecisionType prec = QUADRUPLE;  // QUADRUPLE, XDOUBLE, RR
-// PrecisionType prec = DOUBLE;
 
 // Here we use ctime directly for the timings, to minimize overhead.
 clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
 clock_t timer[numMeth][numSizes];
 Real sumSq[numMeth][numSizes];
-RealVec sqlen; // The length of this vector is set in the main.
+NTL::vector<Real> sqlen; // The length of this vector is set in the main.
 
 // Run speed test for dim = dimensions[d], with given matrices.
 static void transformBases (long d, long dim, IntMat &basis1, IntMat &basis2,

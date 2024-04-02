@@ -36,19 +36,16 @@
 #include "NTL/ZZ.h"
 #include "NTL/vec_ZZ.h"
 #include "NTL/mat_ZZ.h"
-#include "NTL/LLL.h"
+//#include "NTL/LLL.h"
 
 #include <latticetester/FlexTypes.h>
-#include "latticetester/NTLWrap.h"
+//#include "latticetester/NTLWrap.h"
 #include "latticetester/EnumTypes.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Util.h"
 #include "latticetester/Coordinates.h"
 #include "latticetester/LLL_FPInt.h"
-#include "latticetester/LLL_FP_lt.h"
-#include "latticetester/LLL_QP_lt.h"
-#include "latticetester/LLL_XD_lt.h"
-#include "latticetester/LLL_RR_lt.h"
+#include "latticetester/LLL_lt.h"
 
 using namespace LatticeTester;
 using namespace NTL;
@@ -115,7 +112,7 @@ namespace LatticeTester {
 
 //typedef NTL::vector<Int> IntVec;
 //typedef NTL::matrix<Int> IntMat;
-//typedef NTL::vector<Real> RealVec;
+typedef NTL::vector<Real> RealVec;
 
 
     /**
@@ -144,8 +141,8 @@ namespace LatticeTester {
      * explicitly beforehand to the set of generating vectors, or call the next method.
      */
 template<typename IntMat, typename RealVec>
-static long LLLConstruction0(IntMat &gen, const double delta = 0.9, long r = 0,
-        long c = 0, RealVec* sqlen = 0, PrecisionType precision = DOUBLE);
+long LLLConstruction0(IntMat &gen, const double delta = 0.9, long r = 0,
+        long c = 0, RealVec* sqlen = 0);
 
 /*
 template<typename IntMat>
@@ -161,8 +158,8 @@ static long LLLConstruction0(IntMat &gen, double delta = 0.9, long r = 0,
      * than the lattice dimension.
      */
 template<typename IntMat, typename Int, typename RealVec>
-static void LLLBasisConstruction(IntMat &gen, const Int &m, const double delta =
-            0.9, long r = 0, long c = 0, RealVec* sqlen = 0, PrecisionType precision = DOUBLE);
+void LLLBasisConstruction(IntMat &gen, const Int &m, const double delta =
+            0.9, long r = 0, long c = 0, RealVec* sqlen = 0);
 
     /**
      * Takes a set of generating vectors in the matrix `gen` and iteratively
@@ -307,36 +304,37 @@ static void projectionConstruction(const IntMat &inBasis, IntMat &projBasis,
 // The int64_t implementation.
 // This one works only for `precision == DOUBLE` and Real == double.
 template<>
-long LLLConstruction0(NTL::matrix<int64_t> &gen, const double delta,
-      long r, long c, NTL::vector<double> *sqlen, PrecisionType precision) {
+long LLLConstruction0(NTL::matrix<long> &gen, const double delta,
+      long r, long c, NTL::vector<double> *sqlen) {
+    //return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
     return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + double implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
-        const double delta, long r, long c, NTL::vector<double> *sqlen, PrecisionType precision) {
+        const double delta, long r, long c, NTL::vector<double> *sqlen) {
    return NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + quad_float implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
-        const double delta, long r, long c, NTL::vector<quad_float> *sqlen, PrecisionType precision) {
+        const double delta, long r, long c, NTL::vector<quad_float> *sqlen) {
    return NTL::LLL_QP_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + xdouble implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
-        const double delta, long r, long c, NTL::vector<xdouble> *sqlen, PrecisionType precision) {
+        const double delta, long r, long c, NTL::vector<xdouble> *sqlen) {
    return NTL::LLL_XD_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + RR implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, const double delta,
-       long r, long c, NTL::vector<NTL::RR> *sqlen, PrecisionType precision) {
+       long r, long c, NTL::vector<NTL::RR> *sqlen) {
    return NTL::LLL_RR_lt(gen, delta, r, c, sqlen);
 }
 
@@ -345,9 +343,9 @@ long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, const double delta,
 
 template<typename IntMat, typename Int, typename RealVec>
 void LLLBasisConstruction(IntMat &gen, const Int &m,
-        double delta, long r, long c, RealVec *sqlen, PrecisionType precision) {
+        double delta, long r, long c, RealVec *sqlen) {
     //std::cout << "LLLBasisConstruction, before LLL:  c = " << c << "\n";
-    int64_t rank = LLLConstruction0<IntMat, RealVec>(gen, delta, r, c, sqlen, precision);
+    int64_t rank = LLLConstruction0<IntMat, RealVec>(gen, delta, r, c, sqlen);
     //std::cout << "LLLBasisConstruction, after LLL:  c = " << c << ", rank = " << rank << "\n";
     //std::cout << "Basis: \n" << gen << "\n";
     if (c == 0)

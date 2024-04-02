@@ -1,14 +1,14 @@
 
-#include <latticetester/LLL_XD_lt.h>
 #include <NTL/fileio.h>
+#include <NTL/xdouble.h>
 #include <NTL/vec_xdouble.h>
 #include <NTL/vec_double.h>
-#include <NTL/xdouble.h>
 #include <NTL/LLL.h>
+#include <latticetester/LLL_lt.h>
 
 
+// This macro is defined in NTL/tools.h
 NTL_START_IMPL
-
 
 static xdouble InnerProduct(xdouble *a, xdouble *b, long n)
 {
@@ -901,7 +901,6 @@ long BKZ_XD_lt(mat_ZZ& BB, const xdouble delta, long beta, long prune,
 }
 
 // Here, `delta` is passed as a `double`.
-// template<>
 long BKZ_XD_lt(mat_ZZ& BB, double delta, long beta, long prune,
          long m, long n, vec_xdouble* sqlen) {
     return BKZ_XD_lt(BB, conv<xdouble>(delta), beta, prune, m, n, sqlen);

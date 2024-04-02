@@ -18,7 +18,9 @@
  **/
 
 //#define TYPES_CODE  LD     // int64_t + double
-#define TYPES_CODE  ZD     // ZZ + double
+#define TYPES_CODE  ZD     // Int = ZZ, Real = double
+//#define TYPES_CODE  ZQ     // Int = ZZ, Real = quad_float
+//#define TYPES_CODE  ZX     // Int = ZZ, Real = xdouble
 //#define TYPES_CODE  ZR     // ZZ + RR
 
 #include <iostream>
@@ -26,7 +28,7 @@
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
-#include "latticetester/FlexTypes.h"    // This defines Int = int64_t
+#include "latticetester/FlexTypes.h"  // This defines Int = int64_t
 #include "latticetester/EnumTypes.h"
 #include "latticetester/Util.h"
 #include "latticetester/Rank1Lattice.h"
@@ -35,6 +37,7 @@
 #include "latticetester/Coordinates.h"
 
 typedef NTL::vector<Real> RealVec;
+// typedef NTL::matrix<Int> IntMat;
 
 using namespace LatticeTester;
 
@@ -111,8 +114,8 @@ int main() {
     std::cout << "basisProj after projectMatrix (the generating vectors): \n" << basisProj << "\n";
     // LLLConstruction0<IntMat, RealVec>(basisProj, 0.5, dim, dimProj, sqlen);
     // std::cout << "Basis for this projection, with LLL proj0: \n" << basisProj << "\n";
-    LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.5, dim, dimProj);
-    std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
+  //LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.5, dim, dimProj);
+//    std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
 
     // This one tests the `buildProjection` method from `IntLattice`.
     Rank1Lattice<Int, Real> *korlat2;
@@ -145,7 +148,7 @@ int main() {
     std::cout << "Generating vectors for the projection of the dual: \n" << basisProj << "\n";
     // LLLConstruction0<IntMat, RealVec>(basisProj, 0.5, dim, dimProj, sqlen);
     // std::cout << "Basis for this projection, with LLL proj0: \n" << basisProj << "\n";
-    LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.99999, dim, dimProj, &sqlen);
+  //  LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.99999, dim, dimProj, &sqlen);
     std::cout << "Reduced basis for this projection, after LLL with delta=0.99999: \n" << basisProj << "\n";
     std::cout << "Square length of first m-dual basis vector: " << sqlen[0] << "\n\n";
 

@@ -7,6 +7,7 @@
 #ifndef NTL_LLL_RR_lt__H
 #define NTL_LLL_RR_lt__H
 
+/*
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -19,19 +20,21 @@
 #include <cstdlib>
 #include <cstdint>
 #include <type_traits>
-
+*/
 #include <NTL/tools.h>
 #include <NTL/fileio.h>
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
-#include <NTL/vec_double.h>
 #include <NTL/ZZ.h>
+#include <NTL/RR.h>
+#include <NTL/vec_RR.h>
 #include <NTL/mat_ZZ.h>
+#include <NTL/mat_RR.h>
 #include <NTL/LLL.h>
 
 #include <latticetester/FlexTypes.h>
 #include <latticetester/Util.h>
-#include <latticetester/LLL_RR_lt.h>
+#include <latticetester/LLL_lt.h>
 
 /**
  * This module is a slight modification of `LLL_RR.cpp` from NTL.
@@ -48,66 +51,7 @@
  * This differs from the `LLL_RR` functions, which returns the zero vectors at the top.
  */
 
-// typedef NTL::vector<Int> IntVec;
-// typedef NTL::matrix<Int> IntMat;
-
-// This macro is defined in NTL/tools.h
-// NTL_OPEN_NNS
-
-/**
- * These two functions are wrappers of `LLL_RR` in NTL, with a modified interface
- * similar to that of `LLL_FPInt`.  When `r` is positive, only the first `r`
- * rows of the matrix `B` are considered, and when `c` is positive, only the
- * first `c` columns of `B` are considered.
- * The other elements of `B` are ignored.
- * The LLL-reduced basis is returned in the upper left corner of `B`,
- * with the shortest basis vector always in the first row.
- * If `r=0`, then all the rows of the `IntMat` object are taken.
- * If `c=0`, then all the columns are taken.
- * The square lengths of the returned basis vectors are returned in the
- * vector pointed by `sqlen` if a nonzero pointer is given.
- * We give a default type to the default value because the compiler
- * needs to know which type to take in the template.
- * The functions return the dimension of the computed basis (the number of independent rows).
- */
-// template<typename RealVec>
-/*
-static long LLL_RR_lt(mat_ZZ& B, const RR& delta, long r = 0, long c = 0, vec_RR* sqlen = 0);
-
-static long LLL_RR_lt(mat_ZZ& B, const double delta = 0.99999, long r = 0, long c = 0, vec_RR* sqlen = 0);
-*/
-
-/*
-static long LLL_RR_lt(mat_ZZ& B, const RR& delta = conv<RR>(0.99999), long r = 0, long c = 0,
-        vec_RR* sqlen = 0);
-
-static long LLL_RR_lt(mat_ZZ &B, const double delta = 0.99999, long r = 0, long c = 0,
-        NTL::Vec<double>* sqlen = 0);
-*/
-/**
- * These two functions are wrappers of `BKZ_RR` in NTL, with the same modifications
- * as in `LLL_RR_lt` above.
- */
-// template<typename RealVec>
-/*
-static long BKZ_RR_lt(mat_ZZ& B, const RR& delta,
-      long blocksize = 10, long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
-
-static long BKZ_RR_lt(mat_ZZ& B, const double delta = 0.99999,
-      long blocksize = 10, long prune = 0, long r = 0, long c = 0, vec_RR* sqlen = 0);
-*/
-/*
-static long BKZ_RR_lt(mat_ZZ &BB, const RR& delta = conv<RR>(0.99999), long blocksize = 10,
-        long prune = 0, long r = 0, long c = 0, NTL::vec_RR* sqlen = 0);
-
-static long BKZ_RR_lt(mat_ZZ &BB, const double delta = 0.99999, long blocksize = 10,
-        long prune = 0, long r = 0, long c = 0, NTL::Vec<double>* sqlen = 0);
-*/
-
-// NTL_CLOSE_NNS
-
 /* ============================================================== */
-
 
 // This macro is defined in NTL/tools.h
 NTL_START_IMPL
@@ -580,7 +524,6 @@ void ComputeBKZThresh_RR(RR *c, long beta)
 }
 
 // This is for BKZ with RR.
-// template<>
 long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
         long m, long n, vec_RR* sqlen) {
 
