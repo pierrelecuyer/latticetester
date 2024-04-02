@@ -156,12 +156,12 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
        if (this->m_doingBKZ) {
           //BKZ_FPZZflex(lat.getDualBasis(), this->m_delta, this->m_blocksize, 
           //        j, j, this->m_sqlen);
-          redBKZ(lat.getDualBasis(), this->m_delta, 
-              this->m_blocksize, 0, j, &this->m_sqlen, this->m_prec);
+          redBKZ<IntMat, RealVec> (lat.getDualBasis(), this->m_delta, 
+              this->m_blocksize, 0, j, &this->m_sqlen);
        } else if (this->m_doingLLL) {
           //LLL_FPZZflex(lat.getDualBasis(), this->m_delta, j, j, this->m_sqlen);
-          redLLLNTL<IntMat, RealVec> (lat.getDualBasis(), this->m_delta, j, 
-              &this->m_sqlen, this->m_prec);
+          redLLL<IntMat, RealVec> (lat.getDualBasis(), this->m_delta, j, 
+              &this->m_sqlen);
        } else if (this->m_reductionMethod == PAIRBB) {
           this->m_red->redDieter(0);
           this->m_sqlen[0] = NTL::conv<double>(lat.getDualVecNorm(0));
@@ -210,13 +210,13 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
         if (this->m_doingBKZ) {
             //BKZ_FPZZflex(proj->getDualBasis(), this->m_delta, this->m_blocksize, 
             //        coord.size(), coord.size(), this->m_sqlen);
-          redBKZ(proj->getDualBasis(), this->m_delta, this->m_blocksize, 0, 
-              coord.size(), &this->m_sqlen, this->m_prec);
+          redBKZ<IntMat, RealVec> (proj->getDualBasis(), this->m_delta, this->m_blocksize, 0, 
+              coord.size(), &this->m_sqlen);
         } else if (this->m_doingLLL) {
             //LLL_FPZZflex(proj->getDualBasis(), this->m_delta, coord.size(), 
             //       coord.size(), this->m_sqlen);
-           redLLLNTL<IntMat, RealVec> (proj->getDualBasis(), this->m_delta, 
-               coord.size(), &this->m_sqlen, this->m_prec);
+           redLLL<IntMat, RealVec> (proj->getDualBasis(), this->m_delta, 
+               coord.size(), &this->m_sqlen);
          } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
             this->m_sqlen[0] = NTL::conv<double>(proj->getDualVecNorm(0));
