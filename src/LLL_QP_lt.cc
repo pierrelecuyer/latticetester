@@ -1,8 +1,8 @@
 
-#include <latticetester/LLL_QP_lt.h>
 #include <NTL/vec_quad_float.h>
 #include <NTL/fileio.h>
 #include <NTL/LLL.h>
+#include <latticetester/LLL_lt.h>
 
 
 NTL_START_IMPL

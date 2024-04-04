@@ -3,56 +3,17 @@
  *
  * TO REWRITE WHEN DONE AND STABLE:   *****
  *
- * GOALS:
- *
- * -- perform speed comparisons between the methods to construct a basis or m-dual basis
- *    for a general lattice, given a set of generating vectors for the primal.
- *    We want to do this for various numbers of dimensions, as done below.
- * -- comparing the speed with ZZ vs int64, with double vs RR, etc.
- * -- Show how much overhead there is when we resize the IntMat objects frequently.
- *
- *  ================
- * This reads matrices from files and builds a basis and a dual for an `IntLattice`
- * object. The files this is set to use are in the `bench.zip` archive. To
- * execute the program, the archive should be unziped and the `bench` folder
- * should be put in the same directory from which the executable is called.
-
- * The bases we used to showcase of BasisConstruction methods are in a folder named 
- * 'examples/bench/'. Each file in 'examples/bench/' folder contain a basis, and the 
- * file is nameed as follows: 'prime_dimBasis_exanpleNumber' where 'prime' is modulo 
- * value of the basis, 'dimBasis' is the dimension of the basis, and 'exampleNumber' 
- * is the number of the example for the bases of dimension 'dimBasis'.
- *
- * This example reads matrices from files and performs the different construction
- * algorithms in BasisConstruction on them. The program then prints the execution
- * time of the various algorithms. Note that the execution of the program is not
- * what you would expect in reality since bench contains random full matrices.
- *
- * We show a use of BasisContruction::upperTriangularBasis, 
- * BasisContruction::lowerTriangularBasis, BasisContruction::LLLConstruction with 
- * two differrent parametter of delta, BasisContruction::mDualUpperTriangular, 
- *  BasisContruction::mDualBasis
- *
- * In this example, we can compare the speed of BasisConstruction<Int>::calcDual method
- * which compute an m-dual basis using any basis in input,
- * and BasisConstruction::mDualUpperTriangular method which compute an m-dual basis
- * with an upper triangular basis.
- *
- * We can also compare the speed of 'BasisConstruction::upperTriangularBasis'
- * and the speed of 'BasisConstruction::LLLConstruction'
- *
- * Example of results with m = 1048573 (prime modulus near 2^{20}):
- *
- *  ***  These must be replaced  ***
+ * This one is to test using templates to avoid recompiling when
+ * changing the types codes.
  *
  **/
 
 // Select the flexible types Int and Real here.
-//#define TYPES_CODE  LD     // Int == int64_t
+#define TYPES_CODE  LD     // Int == int64_t
 //#define TYPES_CODE  ZD     // Int == ZZ, Real = double
 //#define TYPES_CODE  ZQ     // Int == ZZ, Real = quad_float
 //#define TYPES_CODE  ZX     // Int == ZZ, Real = xdouble
-#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
+//#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -67,6 +28,11 @@
 #include "latticetester/BasisConstruction.h"
 
 using namespace LatticeTester;
+
+
+template<typename Int, typename IntMat, typename Real>
+void testBC
+
 
 //Int m(1021);     // Modulus m = 1021
 Int m(1048573);  // Prime modulus near 2^{20}
@@ -91,6 +57,7 @@ Real sumSq[numMeth][numSizes];  // Sums of square lengths, in Real type.
 NTL::vector<Real> sqlen;        // This vector is created in the main.
 
 // Run a speed test for dim = dimensions[d], with given basis matrices.
+template<typename Int, typename IntMat, typename Real>
 void transformBases (long d, long dim, IntMat &basis1, IntMat &basis2,
         IntMat &basisdual) {
     CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
@@ -133,6 +100,7 @@ void transformBases (long d, long dim, IntMat &basis1, IntMat &basis2,
 
 // In this testing loop, new `Rank1Lattice` objects are created
 // and the  `IntMat` matrices are resized inside the loop.
+template<typename Int, typename IntMat, typename Real>
 void testLoopResize(long numRep) {
     long d, dim;
     IntMat basis1, basis2, basisdual;
@@ -164,6 +132,7 @@ void testLoopResize(long numRep) {
 
 // In this testing loop, we try to minimize the creation of objects.
 // The `IntMat` and `Rank1Lattice` objects are created only once.
+template<typename Int, typename IntMat, typename Real>
 static void testLoopNoResize(long numRep) {
     long d, dim;  // Index of dimension.
     IntMat basis1, basis2, basisdual;
@@ -224,6 +193,7 @@ static void printResults() {
 
 int main() {
     long numRep = 1000;   // Number of replications (multipliers) for each case.
+
     sqlen.SetLength(1);   // Done here because cannot be done in preamble.
     std::cout << "Types: " << strFlexTypes << "\n";
     // std::cout << "PrecisionType: " << prec << "\n\n";

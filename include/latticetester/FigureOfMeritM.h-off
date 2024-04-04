@@ -23,12 +23,12 @@
 
 #include "NTL/tools.h"
 #include "NTL/ZZ.h"
+#include <NTL/RR.h>
 #include "NTL/vec_ZZ.h"
 #include "NTL/mat_ZZ.h"
-#include "NTL/LLL.h"
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
-#include <NTL/RR.h>
+#include "NTL/LLL.h"
 
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"

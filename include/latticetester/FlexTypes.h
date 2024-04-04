@@ -28,7 +28,8 @@
 #include "latticetester/NTLWrap.h"  // This one is needed for the vector and matrix types.
 
 /**
- * See below for the meanings of these codes.
+ * There are five admissible combinations of types for (Int, Real).
+ * They are represented by the five codes given below.
  * For example, to use Int = NTL::ZZ, Real = double  in a program, one should put:
  *   #define TYPES_CODE  ZD
  * at the very beginning of the file.
@@ -36,11 +37,11 @@
 
 #define   LD  1
 #define   ZD  2
-#define   LQ  3
+//#define   LQ  3
 #define   ZQ  4
-#define   LX  5
+//#define   LX  5
 #define   ZX  6
-#define   LR  7
+//#define   LR  7
 #define   ZR  8
 
 // std::string strFlexTypes;
@@ -53,26 +54,14 @@
 	  typedef NTL::ZZ Int;
      typedef double Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = double";
-#elif  TYPES_CODE ==  LQ
-     typedef int64_t  Int;
-     typedef NTL::quad_float Real;
-     std::string strFlexTypes = "Int = int64_t, Real = quad_float";
 #elif  TYPES_CODE ==  ZQ
      typedef NTL::ZZ Int;
      typedef NTL::quad_float Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = quad_float";
-#elif  TYPES_CODE ==  LX
-     typedef int64_t  Int;
-     typedef NTL::xdouble Real;
-     std::string strFlexTypes = "Int = int64_t, Real = xdouble";
 #elif  TYPES_CODE ==  ZX
      typedef NTL::ZZ Int;
      typedef NTL::xdouble Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = xdouble";
-#elif  TYPES_CODE ==  LR
-	  typedef int64_t  Int;
-     typedef NTL::RR Real;
-     std::string strFlexTypes = "Int = int64_t, Real = NTL::RR";
 #elif  TYPES_CODE ==  ZR
      typedef NTL::ZZ Int;
      typedef NTL::RR Real;

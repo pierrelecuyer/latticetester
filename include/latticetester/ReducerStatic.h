@@ -154,6 +154,7 @@ void redLLL(NTL::matrix<int64_t> &basis,
 template<>
 void redLLL(NTL::matrix<NTL::ZZ> &basis,
       double delta, long dim, NTL::vector<double> *sqlen) {
+   //NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
    NTL::LLL_FP_lt(basis, delta, dim, dim, sqlen);
    }
 
