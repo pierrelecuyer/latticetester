@@ -17,7 +17,8 @@
  * line below), and with various choices of the modulus `m` and multiplier `a`.
  **/
 
-//#define TYPES_CODE  LD     // int64_t + double
+// The code to define the Int and Real types.
+//#define TYPES_CODE  LD     // Int = int64_t, Real = double
 #define TYPES_CODE  ZD     // Int = ZZ, Real = double
 //#define TYPES_CODE  ZQ     // Int = ZZ, Real = quad_float
 //#define TYPES_CODE  ZX     // Int = ZZ, Real = xdouble
@@ -28,7 +29,7 @@
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
-#include "latticetester/FlexTypes.h"  // This defines Int = int64_t
+#include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
 #include "latticetester/Util.h"
 #include "latticetester/Rank1Lattice.h"
@@ -36,7 +37,7 @@
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/Coordinates.h"
 
-typedef NTL::vector<Real> RealVec;
+//typedef NTL::vector<Real> RealVec;
 // typedef NTL::matrix<Int> IntMat;
 
 using namespace LatticeTester;
@@ -44,31 +45,30 @@ using namespace LatticeTester;
 Int m(101);      // Modulus m = 101
 //Int m(1021);     // Modulus m = 1021
 //Int m(1048573);  // Modulus m = 1048573 (prime number near 2^{20})
-Int a(33);       // The LCG multiplier
-const long dim = 5;  // Dimension of lattice.
-const long dimProj = 3;  // Dimension of projection.
+Int a(33);       // An LCG multiplier
+const long dim(5);  // Dimension of lattice.
+const long dimProj(3);  // Dimension of projection.
 
 int main() {
     std::cout << "Types: " << strFlexTypes << "\n";
     std::cout << "TestBasisConstructionSmall \n\n";
 
     // All the IntMat objects are created in 5 dimensions, but we may use less.
-    IntMat basis1, basis2, basisProj, basisDual, basisDualProj;
+    IntMat basis1, basis2, basisDual, basisProj, basisDualProj;
     basis1.SetDims(dim, dim);
     basis2.SetDims(dim, dim);
     basisDual.SetDims(dim, dim);
     basisProj.SetDims(dim, dimProj);
     basisDualProj.SetDims(dimProj, dimProj);
     Int sqlength;
-    RealVec sqlen;
+    RealVec sqlen;      // To recover square lengths of basis vector.
     sqlen.SetLength(1); // We only want to recover the length of the first basis vector.
 
     // We construct a Korobov lattice in dim dimensions.
     Rank1Lattice<Int, Real> *korlat;
-    korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, true);
-    korlat->buildBasis(dim);
+    korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, false);
+    korlat->buildBasis(dim);   // This initial basis is triangular.
     basis1 = korlat->getBasis();
-    // copy(korlat->getBasis(), basis1);  // This initial basis is triangular.
     std::cout << "Initial Korobov lattice basis (triangular) = \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
@@ -76,12 +76,10 @@ int main() {
     // We apply LLL to reduce basis1.
     LLLConstruction0<IntMat, RealVec>(basis1, 0.5, 0, 0, &sqlen);
     std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
-    //ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
 
     LLLConstruction0<IntMat, RealVec>(basis1, 0.99999, 0, 0, &sqlen);
     std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
-    //ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
 
     // We now transform basis1 to the upper-triangular basis2.
@@ -94,7 +92,6 @@ int main() {
     // We reduce this basisDual with LLL.
     LLLConstruction0<IntMat, RealVec>(basisDual, 0.99999, 0, 0, &sqlen);
     std::cout << "m-dual basis after LLL with delta=0.99999: \n" << basisDual << "\n";
-    //ProdScal<Int>(basisDual[0], basisDual[0], dim, sqlength);
     std::cout << "Square length of first dual basis vector: " << sqlen[0] << "\n\n";
 
     // We now investigate the projection over coordinates {1, 3, 5}.
@@ -109,47 +106,39 @@ int main() {
     std::cout << " to make the projection, then 3 rows and 3 columns for the basis.\n";
     std::cout << " When part of matrix is not used, it must be ignored.\n\n";
 
-    // Basis construction with LLL.
+    // We obtain in basisProj generating vectors for the projection of basis2.
     projectMatrix(basis2, basisProj, proj, dim);
     std::cout << "basisProj after projectMatrix (the generating vectors): \n" << basisProj << "\n";
-    // LLLConstruction0<IntMat, RealVec>(basisProj, 0.5, dim, dimProj, sqlen);
-    // std::cout << "Basis for this projection, with LLL proj0: \n" << basisProj << "\n";
-  //LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.5, dim, dimProj);
-//    std::cout << "Basis for this projection, with LLL: \n" << basisProj << "\n";
+    LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.5, dim, dimProj);
+    std::cout << "Basis for this projection (first 3 rows), obtained with LLL: \n" << basisProj << "\n";
 
     // This one tests the `buildProjection` method from `IntLattice`.
-    Rank1Lattice<Int, Real> *korlat2;
+    // It requires a new `Rank1Lattice` for the projection.
     Rank1Lattice<Int, Real> *projLattice2;
-    korlat2 = new Rank1Lattice<Int, Real>(m, a, dim, true, false);
     projLattice2 = new Rank1Lattice<Int, Real>(m, a, dimProj, true, false);
-    korlat2->buildProjection(projLattice2, proj, 0.5);
-    std::cout << "Basis for this projection, with `buildProjection`: \n"
+    korlat->buildProjection(projLattice2, proj, 0.5);
+    std::cout << "Triangular basis for this projection, with `buildProjection`: \n"
               << projLattice2->getBasis() << "\n";
 
-
-    // Basis construction with upper-triangular method, using dim rows.
+    // Basis construction with upper-triangular method, using `dim` rows.
     projectionConstructionUpperTri(basis2, basisProj, proj, m, dim);
-    std::cout << "Upper-triangular basis for this proj.: \n" << basisProj
-            << "\n";
+    std::cout << "Upper-triangular basis for this proj. (first 3 rows):\n" << basisProj << "\n";
 
     // Use first dimProj rows of `basisProj` basis matrix to construct an m-dual basis.
     mDualUpperTriangular(basisProj, basisDualProj, m, dimProj);
-    std::cout << "Triangular basis for the m-dual of this projection: \n"
+    std::cout << "Triangular basis for m-dual of this proj.: \n"
             << basisDualProj << "\n";
     LLLConstruction0<IntMat, RealVec>(basisDualProj, 0.99999, dimProj, dimProj, &sqlen);
     std::cout << "m-dual basis of proj after LLL with delta=0.99999: \n" << basisDualProj
             << "\n";
-    //ProdScal<Int>(basisDualProj[0], basisDualProj[0], dim, sqlength);
     std::cout << "Square length of first m-dual basis vector: " << sqlen[0] << "\n\n";
 
-    // We now project the dual lattice over coordinates {1, 3, 5}.
+    // We then project the dual lattice over coordinates {1, 3, 5}.
     projectMatrix(basisDual, basisProj, proj, dim);
     std::cout << "We now look at the direct projection of the dual over the coordinates in proj.\n";
     std::cout << "Generating vectors for the projection of the dual: \n" << basisProj << "\n";
-    // LLLConstruction0<IntMat, RealVec>(basisProj, 0.5, dim, dimProj, sqlen);
-    // std::cout << "Basis for this projection, with LLL proj0: \n" << basisProj << "\n";
-  //  LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.99999, dim, dimProj, &sqlen);
-    std::cout << "Reduced basis for this projection, after LLL with delta=0.99999: \n" << basisProj << "\n";
+    LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.99999, dim, dimProj, &sqlen);
+    std::cout << "Reduced basis for this projection (first 3 rows), after LLL with delta=0.99999: \n" << basisProj << "\n";
     std::cout << "Square length of first m-dual basis vector: " << sqlen[0] << "\n\n";
 
     std::cout << "We see that the dual of the projection differs from the projection of the dual! \n\n";

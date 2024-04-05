@@ -16,27 +16,28 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Select the flexible types Int and Real here.
 //#define TYPES_CODE  LD     // Int == int64_t
-//#define TYPES_CODE  ZD     // Int == ZZ, Real = double
+#define TYPES_CODE  ZD     // Int == ZZ, Real = double
 //#define TYPES_CODE  ZQ     // Int == ZZ, Real = quad_float
-#define TYPES_CODE  ZX     // Int == ZZ, Real = xdouble
+//#define TYPES_CODE  ZX     // Int == ZZ, Real = xdouble
 //#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
 //typedef long Int;
 //typedef NTL::ZZ Int;
 //typedef double Real;
 
+/*
 #include <iostream>
 #include <cstdint>
 #include <ctime>
 #include <type_traits>
 #include <typeinfo>
-
-#include <NTL/tools.h>
+*/
+//#include <NTL/tools.h>
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
 
-#include "latticetester/FlexTypes.h"    // This defines Int and Real
+#include "latticetester/FlexTypes.h" // This defines Int and Real
 #include "latticetester/EnumTypes.h"
 #include "latticetester/Util.h"
 #include "latticetester/Chrono.h"
@@ -49,10 +50,10 @@
 using namespace LatticeTester;
 
 //Int m(1021);     // Modulus m = 1021
-Int m(1048573);  // Prime modulus near 2^{20}
+//Int m(1048573);  // Prime modulus near 2^{20}
 //Int m(1073741827);  // Prime modulus near 2^{30}
 //Int m(2147483647);  // Prime modulus 2^{31}-1
-//Int m(1099511627791);  // Prime modulus near 2^{40}
+Int m(1099511627791);  // Prime modulus near 2^{40}
 //Int m(1125899906842597);  // Prime modulus near 2^{50}
 
 const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
@@ -115,7 +116,7 @@ static void reduceBasis(long d) {
    afterReduct(2, d);
 
 
-   if (dim < 12) {
+   if (dim < 2) {
       beforeReduct(dim);
       if (red->shortestVector())
          afterReduct(3, d);
@@ -177,7 +178,8 @@ static void reduceBasis(long d) {
       std::cout << " shortestVector failed for BKZ, delta = 0.99999 \n";
 
    beforeReduct(dim);
-   redLLL(korlat->getBasis(), 0.8, dim, &sqlen);
+   redLLL(korlat->getBasis(), 0.5, dim, &sqlen);
+   redLLL(korlat->getBasis(), 0.99, dim, &sqlen);
    redBKZ(korlat->getBasis(), 0.99999, 10, 0, dim, &sqlen);
    // sumSq[8][d] += sqlen[0];
    // afterReduct(8, d);
