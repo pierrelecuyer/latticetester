@@ -20,8 +20,8 @@
 // The code to define the Int and Real types.
 //#define TYPES_CODE  LD     // Int = int64_t, Real = double
 #define TYPES_CODE  ZD     // Int = ZZ, Real = double
-//#define TYPES_CODE  ZQ     // Int = ZZ, Real = quad_float
 //#define TYPES_CODE  ZX     // Int = ZZ, Real = xdouble
+//#define TYPES_CODE  ZQ     // Int = ZZ, Real = quad_float
 //#define TYPES_CODE  ZR     // ZZ + RR
 
 #include <iostream>

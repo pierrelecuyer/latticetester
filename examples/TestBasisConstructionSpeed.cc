@@ -1,124 +1,73 @@
 /**
- * This example illustrates the usage of the BasisConstruction module.
+ * This example makes speed comparisons with the BasisConstruction functions,
+ * with all five combinations of types.
+ * See the Lattice Tester guide for more explanations.
  *
- * TO REWRITE WHEN DONE AND STABLE:   *****
+ * ****  Add more explanations later.  *****
  *
- * GOALS:
- *
- * -- perform speed comparisons between the methods to construct a basis or m-dual basis
- *    for a general lattice, given a set of generating vectors for the primal.
- *    We want to do this for various numbers of dimensions, as done below.
- * -- comparing the speed with ZZ vs int64, with double vs RR, etc.
- * -- Show how much overhead there is when we resize the IntMat objects frequently.
- *
- *  ================
- * This reads matrices from files and builds a basis and a dual for an `IntLattice`
- * object. The files this is set to use are in the `bench.zip` archive. To
- * execute the program, the archive should be unziped and the `bench` folder
- * should be put in the same directory from which the executable is called.
-
- * The bases we used to showcase of BasisConstruction methods are in a folder named 
- * 'examples/bench/'. Each file in 'examples/bench/' folder contain a basis, and the 
- * file is nameed as follows: 'prime_dimBasis_exanpleNumber' where 'prime' is modulo 
- * value of the basis, 'dimBasis' is the dimension of the basis, and 'exampleNumber' 
- * is the number of the example for the bases of dimension 'dimBasis'.
- *
- * This example reads matrices from files and performs the different construction
- * algorithms in BasisConstruction on them. The program then prints the execution
- * time of the various algorithms. Note that the execution of the program is not
- * what you would expect in reality since bench contains random full matrices.
- *
- * We show a use of BasisContruction::upperTriangularBasis, 
- * BasisContruction::lowerTriangularBasis, BasisContruction::LLLConstruction with 
- * two differrent parametter of delta, BasisContruction::mDualUpperTriangular, 
- *  BasisContruction::mDualBasis
- *
- * In this example, we can compare the speed of BasisConstruction<Int>::calcDual method
- * which compute an m-dual basis using any basis in input,
- * and BasisConstruction::mDualUpperTriangular method which compute an m-dual basis
- * with an upper triangular basis.
- *
- * We can also compare the speed of 'BasisConstruction::upperTriangularBasis'
- * and the speed of 'BasisConstruction::LLLConstruction'
- *
- * Example of results with m = 1048573 (prime modulus near 2^{20}):
- *
- *  ***  These must be replaced  ***
  *
  **/
 
-// Select the flexible types Int and Real here.
-//#define TYPES_CODE  LD     // Int == int64_t
-//#define TYPES_CODE  ZD     // Int == ZZ, Real = double
-//#define TYPES_CODE  ZQ     // Int == ZZ, Real = quad_float
-//#define TYPES_CODE  ZX     // Int == ZZ, Real = xdouble
-#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
-
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
+#include <NTL/xdouble.h>
 #include <NTL/ZZ.h>
-
-#include "latticetester/FlexTypes.h"    // This defines Int and Real
-#include "latticetester/EnumTypes.h"
+#include <NTL/mat_ZZ.h>
+#include "latticetester/FlexTypes.h"
 #include "latticetester/Util.h"
-#include "latticetester/Chrono.h"
-#include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/BasisConstruction.h"
 
+using namespace NTL;
 using namespace LatticeTester;
 
-//Int m(1021);     // Modulus m = 1021
-Int m(1048573);  // Prime modulus near 2^{20}
-//Int m(1073741827);  // Prime modulus near 2^{30}
-//Int m(1099511627791);  // Prime modulus near 2^{40}
-//Int m(1125899906842597);  // Prime modulus near 2^{50}
-Int a;       // The LCG multiplier
-
-const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
-//const long dimensions[numSizes] = { 10, 15, 20, 25, 30 };
+// We cannot use Int or Real here, because they are not yet defined.
+const long numSizes = 5; // Number of matrix sizes (choices of dimension).
 const long dimensions[numSizes] = { 4, 6, 10, 20, 30 };
-long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 const long numMeth = 6;    // Number of methods to test, and their names.
 std::string names[numMeth] = { "LLL5      ", "LLL9      ", "LLL99999  ",
                                "LLL99999-R", "UppTri    ", "mDualUT   "};
-
 // We use `ctime` directly for the timings, to minimize overhead.
-clock_t tmp;
-clock_t totalTime;  // Global timer for total time.
+clock_t totalTime = clock(); // Global timer for total time.
 clock_t timer[numMeth][numSizes];
-Real sumSq[numMeth][numSizes];  // Sums of square lengths, in Real type.
-NTL::vector<Real> sqlen;        // This vector is created in the main.
+double sumSq[numMeth][numSizes];  // Sums of square lengths, in Real type.
+std::string stringTypes;  // To print the selected flexible types.
+
+void printResults();  // Must be declared, because it has no parameters.
 
 // Run a speed test for dim = dimensions[d], with given basis matrices.
-void transformBases (long d, long dim, IntMat &basis1, IntMat &basis2,
+template<typename Int, typename IntMat, typename Real>
+void transformBases (Int m, long d, long dim, IntMat &basis1, IntMat &basis2,
         IntMat &basisdual) {
-    CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
+    CopyPartMat<IntMat> (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
+    clock_t tmp;
+    NTL::vector<Real> sqlen; // Cannot be global variable because it depends on Real.
+    sqlen.SetLength(1);
 
     // We apply LLL to basis1 with different values of `delta`, incrementally.
     // We start with delta=0.5, then continue with 0.9, then with 0.99999.
     tmp = clock();
     LLLConstruction0(basis2, 0.5, dim, dim, &sqlen);
     timer[0][d] += clock() - tmp;
-    sumSq[0][d] += sqlen[0];
+    sumSq[0][d] += conv<double>(sqlen[0]);
 
     // We continue the LLL process with a larger `delta`.
     tmp = clock();
     LLLConstruction0(basis2,  0.9, dim, dim, &sqlen);
     timer[1][d] += clock() - tmp;
-    sumSq[1][d] += (sqlen)[0];
+    sumSq[1][d] += conv<double>(sqlen[0]);
 
     tmp = clock();
     LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen);
     timer[2][d] += clock() - tmp;
-    sumSq[2][d] += (sqlen)[0];
+    sumSq[2][d] += conv<double>(sqlen[0]);
 
     // Here we restart LLL from the initial triangular basis, with delta=0.99999.
     CopyPartMat (basis2, basis1, dim, dim);  // Copy basis1 to basis2.
     tmp = clock();
     LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen);
     timer[3][d] += clock() - tmp;
-    sumSq[3][d] += (sqlen)[0];
+    sumSq[3][d] += conv<double>(sqlen[0]);
 
     // We now construct an upper-triangular basis from basis2 into basis1.
     tmp = clock();
@@ -133,15 +82,20 @@ void transformBases (long d, long dim, IntMat &basis1, IntMat &basis2,
 
 // In this testing loop, new `Rank1Lattice` objects are created
 // and the  `IntMat` matrices are resized inside the loop.
-void testLoopResize(long numRep) {
+template<typename Int, typename IntMat, typename Real>
+void testLoopResize(NTL::ZZ mm, long numRep) {
     long d, dim;
+    Int m = conv<Int>(mm);
+    Int a;       // The LCG multiplier
     IntMat basis1, basis2, basisdual;
     Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
+    std::cout << "TestBasisConstructionSpeed with m = " << m << "\n";
+    std::cout << "Results for `testLoopResize` (many objects are created or resized)\n";
     for (d = 0; d < numSizes; d++)      // Reset timers and sums.
         for (int64_t meth = 0; meth < numMeth; meth++) {
-            timer[meth][d] = 0;   sumSq[meth][d] = 0.0;  // NTL::conv<Real>(0.0);
+           timer[meth][d] = 0;   sumSq[meth][d] = 0.0;  // NTL::conv<Real>(0.0);
         }
-    totalTime = clock();
+    totalTime = clock(); // Global timer for total time.
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
         //for (d = 0; d < 2; d++) {  // Each matrix size
@@ -153,10 +107,11 @@ void testLoopResize(long numRep) {
             korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, false);
             korlat->buildBasis(dim);
             basis1 = korlat->getBasis();
-            transformBases(d, dim, basis1, basis2, basisdual);
+            transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2, basisdual);
             delete korlat;
         }
     }
+    printResults();
     basis1.kill();  // Since we create objects repeatedly,
     basis2.kill();  // it is a good idea to release the memory when we are done.
     basisdual.kill();
@@ -164,20 +119,26 @@ void testLoopResize(long numRep) {
 
 // In this testing loop, we try to minimize the creation of objects.
 // The `IntMat` and `Rank1Lattice` objects are created only once.
-static void testLoopNoResize(long numRep) {
+template<typename Int, typename IntMat, typename Real>
+void testLoopNoResize(NTL::ZZ mm, long numRep) {
     long d, dim;  // Index of dimension.
+    Int m = conv<Int>(mm);
+    Int a;
     IntMat basis1, basis2, basisdual;
+    long maxdim = dimensions[numSizes - 1];   // Maximum dimension
     basis1.SetDims(maxdim, maxdim); // Will be initial triangular basis.
     basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
     basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
     Rank1Lattice<Int, Real> *korlat;  // We create a single Korobov lattice object.
     korlat = new Rank1Lattice<Int, Real>(m, maxdim, true, false);
+    std::cout << "TestBasisConstructionSpeed with m = " << m << "\n";
+    std::cout << "Results for `testLoop No Resize`\n";
 
     for (d = 0; d < numSizes; d++)   // Reset accumulators.
         for (int64_t meth = 0; meth < numMeth; meth++) {
             timer[meth][d] = 0;     sumSq[meth][d] = 0.0;  // NTL::conv<Real>(0.0);
         }
-    totalTime = clock();
+    totalTime = clock(); // Global timer for total time.
     for (int64_t r = 0; r < numRep; r++) {
         a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
         korlat->seta(a);
@@ -185,14 +146,30 @@ static void testLoopNoResize(long numRep) {
             dim = dimensions[d]; // The corresponding dimension.
             korlat->buildBasis(dim);
             // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
-            copy(korlat->getBasis(), basis1, dim, dim); // Triangular basis.
-            transformBases(d, dim, basis1, basis2, basisdual);
+            CopyPartMat<IntMat> (basis1, korlat->getBasis(), dim, dim); // Triangular basis.
+            transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2, basisdual);
         }
     }
+    printResults();
+    basis1.kill();
+    basis2.kill();
+    basisdual.kill();
 }
 
-static void printResults() {
+
+// This function runs the two types of test loops.
+template<typename Int, typename IntMat, typename Real>
+void testTwoLoops(NTL::ZZ mm, long numRep) {
+   strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
+   std::cout << "****************************************************\n";
+   std::cout << "Types: " << stringTypes << "\n\n";
+   testLoopResize<Int, IntMat, Real>(mm, numRep);
+   testLoopNoResize<Int, IntMat, Real>(mm, numRep);
+}
+
+void printResults() {
     long d;
+    std::cout << "Timings for different methods, in basic clock units (microseconds) \n\n";
     std::cout << " dim:    ";
     for (d = 0; d < numSizes; d++)
         std::cout << std::setw(8) << dimensions[d] << "  ";
@@ -223,17 +200,20 @@ static void printResults() {
 }
 
 int main() {
+   // Here, Int and Real are not yet defined.
+   //Int m = 1021;  // Prime modulus near 2^{10}
+    NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
+   //Int m = 1073741827;  // Prime modulus near 2^{30}
+   //Int m = 1099511627791;  // Prime modulus near 2^{40}
+   //Int m = 1125899906842597;  // Prime modulus near 2^{50}
+    //long mlong = mm;
     long numRep = 1000;   // Number of replications (multipliers) for each case.
-    sqlen.SetLength(1);   // Done here because cannot be done in preamble.
-    std::cout << "Types: " << strFlexTypes << "\n";
-    // std::cout << "PrecisionType: " << prec << "\n\n";
-    std::cout << "Results of TestBasisConstructionSpeed.cc with m = " << m << "\n";
-    std::cout << "Timings for different methods, in basic clock units \n\n";
-    testLoopResize(numRep);
-    std::cout << "Timings for `testLoop Resize` (many objects are created or resized)\n";
-    printResults();
-    testLoopNoResize(numRep);
-    std::cout << "Timings for `testLoop No Resize`\n";
-    printResults();
-}
+
+    testTwoLoops<long, NTL::matrix<long>, double>(mm, numRep);
+    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
+    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
+    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
+    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
+    return 0;
+};
 

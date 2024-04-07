@@ -33,22 +33,6 @@
 #include "latticetester/LLL_FPInt.h"
 #include "latticetester/LLL_lt.h"
 
-/*
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <limits>
-#include <cstdint>
-#include <iostream>
-#include <ctime>
-#include <string>
-#include <iomanip>
-#include <set>
-#include <map>
-#include <cmath>
-#include <cstdlib>
-#include <type_traits>
-*/
 
 using namespace LatticeTester;
 
@@ -75,8 +59,8 @@ namespace LatticeTester {
  * The same `IntMat` object can then be used for several lattices of different sizes.
  */
 
-typedef NTL::vector<Int> IntVec;
-typedef NTL::matrix<Int> IntMat;
+// typedef NTL::vector<Int> IntVec;  // Int is not defined!
+// typedef NTL::matrix<Int> IntMat;
 
 
 /**
@@ -127,14 +111,9 @@ static void redBKZ(IntMat &basis, double delta = 0.99999,
       int64_t blocksize = 10, long prune = 0, long dim = 0,
       RealVec* sqlen = 0);
 
-// }
 
 //============================================================================
 // Implementation
-
-//===========================================================================
-
-// namespace LatticeTester {
 
 // General implementation.
 template<typename IntMat, typename RealVec>
@@ -147,7 +126,7 @@ void redLLL(IntMat &basis, double delta, long dim,
 template<>
 void redLLL(NTL::matrix<int64_t> &basis,
       double delta, long dim, NTL::vector<double> *sqlen) {
-   NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
+   NTL::LLL_FPInt<long, NTL::matrix<long>>(basis, delta, dim, dim, sqlen);
    }
 
 // A specialization for the case where Int = ZZ and Real = double.
@@ -208,7 +187,7 @@ void redBKZ(IntMat &basis, double delta, long blocksize,
 template<>
 void redBKZ(NTL::matrix<int64_t> &basis, double delta, long blocksize,
       long prune, long dim,  NTL::vector<double> *sqlen) {
-   NTL::BKZ_FPInt(basis, delta, blocksize, prune, dim, dim, sqlen);
+   NTL::BKZ_FPInt<long, NTL::matrix<long>>(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = double.
