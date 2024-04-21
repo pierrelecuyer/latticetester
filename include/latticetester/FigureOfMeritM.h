@@ -23,12 +23,12 @@
 
 #include "NTL/tools.h"
 #include "NTL/ZZ.h"
-#include <NTL/RR.h>
 #include "NTL/vec_ZZ.h"
 #include "NTL/mat_ZZ.h"
+#include "NTL/LLL.h"
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
-#include "NTL/LLL.h"
+#include <NTL/RR.h>
 
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
@@ -405,11 +405,8 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
         coord.insert(j);
         lat.incDimBasis();
         if (m_doingBKZ) {
-            //BKZ_FPInt(lat.getBasis(), this->m_delta, this->m_blocksize, j, j,
-            //        this->m_sqlen);
-            redBKZ (lat.getBasis(), this->m_delta, this->m_blocksize, 0, j, &this->m_sqlen);
+            redBKZ<IntMat, RealVec> (lat.getBasis(), this->m_delta, this->m_blocksize, 0, j, &this->m_sqlen);
         } else if (m_doingLLL) {
-            //LLL_FPInt (lat.getBasis(), this->m_delta, j, j, this->m_sqlen);
             redLLL<IntMat, RealVec> (lat.getBasis(), this->m_delta, j, &this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
@@ -423,7 +420,6 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
                 NTL::conv(merit, this->m_sqlen[0] / this->m_norma->getBound(j));
             }
         } else {
-            //if (!m_red->shortestVector(lat))    return 0;
             m_red->setIntLattice(lat);
             if (!m_red->shortestVector())    return 0;
             NTL::conv(merit,
@@ -449,18 +445,12 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
 
     for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
         coord = *it;
-        //lat.buildProjection(proj, coord, this->m_delta); // Must have withDual = false   ***
-        proj->setDim (coord.size());
-        projectionConstructionLLL<IntMat, Int, NTL::vector<Real>>(lat.getBasis(),
-            proj->getBasis(), coord, lat.getModulo(), this->m_delta, coord.size());   
+        lat.buildProjection(proj, coord, this->m_delta); // Must have withDual = false   ***
+
         if (m_doingBKZ) {
-            //BKZ_FPInt(proj->getBasis(), this->m_delta, this->m_blocksize,
-            //        coord.size(), coord.size(), this->m_sqlen);
             redBKZ<IntMat, RealVec> (proj->getBasis(), this->m_delta, this->m_blocksize, 0, 
                 coord.size(), &this->m_sqlen);
         } else if (m_doingLLL) {
-            //LLL_FPInt(proj->getBasis(), this->m_delta, coord.size(),
-            //        coord.size(), this->m_sqlen);
             redLLL<IntMat, RealVec> (proj->getBasis(), this->m_delta, 
                 coord.size(), &this->m_sqlen);
         } else if (this->m_reductionMethod == PAIRBB) {
@@ -478,7 +468,6 @@ double FigureOfMeritM<Int>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
                                 / this->m_norma->getBound(coord.size()));
             }
         } else {
-            //if (!m_red->shortestVector(*proj)) return 0;
             m_red->setIntLattice(*proj);
             if (!m_red->shortestVector())    return 0;
             merit = NTL::conv<double>(
