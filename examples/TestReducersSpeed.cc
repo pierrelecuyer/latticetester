@@ -14,81 +14,49 @@
  */
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Select the flexible types Int and Real here.
-//#define TYPES_CODE  LD     // Int == int64_t
-#define TYPES_CODE  ZD     // Int == ZZ, Real = double
-//#define TYPES_CODE  ZQ     // Int == ZZ, Real = quad_float
-//#define TYPES_CODE  ZX     // Int == ZZ, Real = xdouble
-//#define TYPES_CODE  ZR     // Int == ZZ, Real = RR
 
-//typedef long Int;
-//typedef NTL::ZZ Int;
-//typedef double Real;
-
-/*
-#include <iostream>
-#include <cstdint>
-#include <ctime>
-#include <type_traits>
-#include <typeinfo>
-*/
-//#include <NTL/tools.h>
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
-
-#include "latticetester/FlexTypes.h" // This defines Int and Real
-#include "latticetester/EnumTypes.h"
+#include "latticetester/FlexTypes.h"
 #include "latticetester/Util.h"
-#include "latticetester/Chrono.h"
-#include "latticetester/IntLatticeExt.h"
 #include "latticetester/Rank1Lattice.h"
-// #include "latticetester/BasisConstruction.h"
 #include "latticetester/ReducerStatic.h"
 #include "latticetester/ReducerBB.h"
 
 using namespace LatticeTester;
 
-//Int m(1021);     // Modulus m = 1021
-//Int m(1048573);  // Prime modulus near 2^{20}
-//Int m(1073741827);  // Prime modulus near 2^{30}
-//Int m(2147483647);  // Prime modulus 2^{31}-1
-Int m(1099511627791);  // Prime modulus near 2^{40}
-//Int m(1125899906842597);  // Prime modulus near 2^{50}
-
+// We cannot use Int or Real here, because they are not yet defined.
 const long numSizes = 5;    // Number of matrix sizes (choices of dimension).
-//const long dimensions[numSizes] = { 3, 5 };
 const long dimensions[numSizes] = { 5, 10, 20, 30, 40 };
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 const long numMeth = 10;    // Number of methods, and their names.
 std::string names[numMeth] = { "LLL5        ", "LLL99999    ", "BKZ99999    ",
       "Direct BB   ", "Pairwise+BB ", "LLL5+BB     ", "LLL8+BB     ",
       "LLL99999+BB ", "BKZ99999+BB ", "LLL8+BKZ+BB " };
-// PrecisionType prec = QUADRUPLE;  // DOUBLE, QUADRUPLE, XDOUBLE, RR
-// PrecisionType prec = DOUBLE;
-
 // We use ctime directly for the timings, to minimize overhead.
 clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
 clock_t timer[numMeth][numSizes]; // Clock times in microseconds.
-Real sumSq[numMeth][numSizes]; // Sum of squares of vector lengths (for checking).
-RealVec sqlen; // Memory for this vector is reserved in the main.
-Rank1Lattice<Int, Real> *korlat;    // We create a single lattice object.
-ReducerBB<Int, Real> *red;          // Also a single ReducerBB object.
+double sumSq[numMeth][numSizes]; // Sum of squares of vector lengths (for checking).
+std::string stringTypes;  // To print the selected flexible types.
 
-inline void beforeReduct(long dim) {
+void printResults();  // Must be declared, because it has no parameters.
+
+
+// This builds the dual basis and dualizes to puts it in primal.
+template<typename Int, typename Real>
+inline void beforeReduct(long dim, Rank1Lattice<Int, Real> *korlat) {
    korlat->setPrimalFlag(false);
    korlat->setDualFlag(true);
-   korlat->buildDualBasis(dim);
+   korlat->buildDualBasis(dim);  // Here we build only the dual basis.
    korlat->dualize();   // This also exchanges the primal / dual flags.
    tmp = clock();
 }
 
-inline void afterReduct(long meth, long d) {
+inline void afterReduct(long meth, long d, double len2) {
    timer[meth][d] += clock() - tmp;
-   if (meth > 2)
-      sqlen[0] = korlat->getVecNorm(0);
-   sumSq[meth][d] += sqlen[0];
+   sumSq[meth][d] += len2;
    //std::cout << "Done with method = " << names[meth] << ",  dim = "
    //      << dimensions[d] << ",  sqlen[0] = " << sqlen[0] << "\n";
    // std::cout << "Matrix B = \n" << korlat->getBasis() << "\n";
@@ -96,36 +64,37 @@ inline void afterReduct(long meth, long d) {
 
 // Speed test for dim = dimensions[d], with given matrices.
 // We test several methods to reduce basis1 and find a shortest vector in its lattice.
-static void reduceBasis(long d) {
+template<typename Int, typename Real>
+static void reduceBasis(long d, Rank1Lattice<Int, Real> *korlat,
+         ReducerBB<Int, Real> *red) {
    long dim = dimensions[d];
+   NTL::vector<Real> sqlen; // Cannot be global because it depends on Real.
+   sqlen.SetLength(1);
 
-   beforeReduct(dim);  // Only pre-reductions.
+   beforeReduct(dim, korlat);  // This build the dual basis and puts it in primal.
    redLLL(korlat->getBasis(), 0.5, dim, &sqlen);
-   afterReduct(0, d);
+   afterReduct(0, d, conv<double>(sqlen[0]));
 
-   beforeReduct(dim);
+   beforeReduct(dim, korlat);
    redLLL(korlat->getBasis(), 0.99999, dim, &sqlen);
-   afterReduct(1, d);
+   afterReduct(1, d, conv<double>(sqlen[0]));
 
-   beforeReduct(dim);
-   //IntMat basisdual;
-   //basisdual.SetDims(dim, dim);
-   //CopyPartMat (basisdual, korlat->getBasis(), dim, dim);
-   //redBKZ(basisdual, 0.99999, 10, 0, dim, &sqlen);
+   beforeReduct(dim, korlat);
    redBKZ(korlat->getBasis(), 0.99999, 10, 0, dim, &sqlen);
-   afterReduct(2, d);
-
+   afterReduct(2, d, conv<double>(sqlen[0]));
 
    if (dim < 2) {
-      beforeReduct(dim);
+      beforeReduct(dim, korlat);
       if (red->shortestVector())
-         afterReduct(3, d);
+         afterReduct(3, d, conv<double>(korlat->getVecNorm(0)));
       else
          std::cout << " shortestVector failed with no pre-reduction, dim  = "
                << dim << "\n";
    }
 
 /*
+ * The redDieter  function does not seem to work, it gives errors.
+ *
    if (dim < 12) {
       // beforeReduct (dim);
       korlat->setPrimalFlag(true);
@@ -136,7 +105,7 @@ static void reduceBasis(long d) {
       red->redDieter(0);   // This function crashes.
       std::cout << " After redDieter(0) \n";
       if (red->shortestVector())
-         afterReduct(4, d);
+         afterReduct(4, d, conv<double>(korlat->getVecNorm(0)));
       else
          std::cout
                << " shortestVector failed for pairwise pre-reduction with dim  = "
@@ -145,39 +114,39 @@ static void reduceBasis(long d) {
    }
 */
 
-   beforeReduct(dim);
+   beforeReduct(dim, korlat);
    redLLL(korlat->getBasis(), 0.5, dim, &sqlen);
    if (red->shortestVector())
-      afterReduct(5, d);
+      afterReduct(5, d, conv<double>(korlat->getVecNorm(0)));
    else
       std::cout << " shortestVector failed for LLL, delta = 0.5 \n";
 
-   beforeReduct(dim);
+   beforeReduct(dim, korlat);
    redLLL(korlat->getBasis(), 0.8, dim, &sqlen);
    if (red->shortestVector())
-      afterReduct(6, d);
+      afterReduct(6, d, conv<double>(korlat->getVecNorm(0)));
    else
       std::cout << " shortestVector failed for LLL, delta = 0.8 \n";
 
-   beforeReduct(dim);
+   beforeReduct(dim, korlat);
    redLLL(korlat->getBasis(), 0.99999, dim, &sqlen);
    if (red->shortestVector())
-      afterReduct(7, d);
+      afterReduct(7, d, conv<double>(korlat->getVecNorm(0)));
    else
       std::cout << " shortestVector failed for LLL, delta = 0.99999 \n";
 
-   beforeReduct(dim);
+   beforeReduct(dim, korlat);
    // redLLLNTL(korlat->getBasis(), 0.99999, dim, &sqlen);
    redBKZ(korlat->getBasis(), 0.99999, 10, 0, dim, &sqlen);
    // sumSq[8][d] += sqlen[0];
    // afterReduct(8, d);
    //std::cout << "Matrix B = \n" << korlat->getBasis() << "\n";
    if (red->shortestVector())
-      afterReduct(8, d);
+      afterReduct(8, d, conv<double>(korlat->getVecNorm(0)));
    else
       std::cout << " shortestVector failed for BKZ, delta = 0.99999 \n";
 
-   beforeReduct(dim);
+   beforeReduct(dim, korlat);
    redLLL(korlat->getBasis(), 0.5, dim, &sqlen);
    redLLL(korlat->getBasis(), 0.99, dim, &sqlen);
    redBKZ(korlat->getBasis(), 0.99999, 10, 0, dim, &sqlen);
@@ -185,16 +154,26 @@ static void reduceBasis(long d) {
    // afterReduct(8, d);
    //std::cout << "Matrix B = \n" << korlat->getBasis() << "\n";
    if (red->shortestVector())
-      afterReduct(9, d);
+      afterReduct(9, d, conv<double>(korlat->getVecNorm(0)));
    else
       std::cout << " shortestVector failed for LLL8 + BKZ-0.99999 \n";
 }
 
-/**  
- *  In this testing loop, we generate `numRep` multipliers `a` and for each one
- */
-static void testLoop(long numRep) {
+// In this testing loop, we generate `numRep` multipliers `a` and for each one
+template<typename Int, typename Real>
+static void testLoop(Int m, long numRep) {
+   strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
+   std::cout << "****************************************************\n";
+   std::cout << "Types: " << stringTypes << "\n\n";
+   std::cout << "TestReducersSpeed with m = " << m << "\n";
+   std::cout << "Results for `testLoop`\n";
+   std::cout << "Timings (in microseconds) for different methods for " << numRep
+         << " replications \n\n";
    long d;  // dim = dimensions[d].
+   Rank1Lattice<Int, Real> *korlat; // We create a single lattice object.
+   korlat = new Rank1Lattice<Int, Real>(m, maxdim, false, true);
+   ReducerBB<Int, Real> *red;       // Also a single ReducerBB object.
+   red = new ReducerBB<Int, Real>(*korlat);
    Int a;        // The LCG multiplier
    // IntMat basisdual1, basisdual2;
    // basisdual1.SetDims(maxdim, maxdim); // Will be initial triangular dual basis.
@@ -206,20 +185,16 @@ static void testLoop(long numRep) {
       }
    totalTime = clock();
    for (int64_t r = 0; r < numRep; r++) {
-      //a = 742938285;
       a = (m / 5 + 13 * r) % m;   // The multiplier we use for this rep.
       korlat->seta(a);
       for (d = 0; d < numSizes; d++) {  // Each matrix size
-         //for (d = 0; d < numSizes; d++) {  // Each matrix size
-         // korlat->buildDualBasis(dim);
-         std::cout << "rep = " << r << ",  a = " << a << ",  dim = " << dimensions[d] << "\n";
-         // copy(korlat->getDualBasis(), dualbasis1, dim, dim); // Triangular basis.
-         reduceBasis(d);
+          reduceBasis<Int, Real>(d, korlat, red);
       }
    }
+   printResults();
 }
 
-static void printResults() {
+void printResults() {
    long d;
    std::cout << " dim:        ";
    for (d = 0; d < numSizes; d++)
@@ -251,17 +226,14 @@ static void printResults() {
 }
 
 int main() {
-   long numRep = 20;    // Number of replications (multipliers) for each case.
-   sqlen.SetLength(1);   // Done here because cannot be done in preamble.
-   korlat = new Rank1Lattice<Int, Real>(m, maxdim, false, true);
-   red = new ReducerBB<Int, Real>(*korlat);
+   // Here, Int and Real are not yet defined.
+   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   //Int m = 1099511627791;  // Prime modulus near 2^{40}
+   long numRep = 20;  // Number of replications (multipliers) for each case.
 
-   // std::cout << "Types: " << Int << Real << "\n";
-   std::cout << "Types: " << strFlexTypes << "\n";
-   std::cout << "maxdim = " << maxdim << "\n\n";
-   std::cout << "Results of TestReducersSpeed.cc with m = " << m << "\n";
-   std::cout << "Timings (in microseconds) for different methods for " << numRep
-         << " replications \n\n";
-   testLoop(numRep);
-   printResults();
+   testLoop<long, double>(conv<long>(m), numRep);
+   testLoop<NTL::ZZ, double>(m, numRep);
+   testLoop<NTL::ZZ, xdouble>(m, numRep);
+   testLoop<NTL::ZZ, quad_float>(m, numRep);
+   testLoop<NTL::ZZ, NTL::RR>(m, numRep);
 }

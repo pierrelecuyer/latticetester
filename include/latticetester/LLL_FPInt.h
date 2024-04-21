@@ -56,8 +56,8 @@
  * This differs from the `LLL_FP` functions, which returns the zero vectors at the top.
  */
 
-typedef NTL::vector<Int> IntVec;
-typedef NTL::matrix<Int> IntMat;
+//typedef NTL::vector<Int> IntVec;
+//typedef NTL::matrix<Int> IntMat;
 typedef NTL::vector<int64_t> vector64;
 
 // This macro is defined in NTL/tools.h
@@ -77,7 +77,7 @@ NTL_OPEN_NNS
  * The function returns the dimension of the computed basis (the number of independent rows).
  */
 
-template<typename IntMat>
+template<typename Int, typename IntMat>
 long LLL_FPInt(IntMat &B, const double delta = 0.99,
       long r = 0, long c = 0, NTL::vector<double> *sqlen = 0);
 
@@ -86,7 +86,7 @@ long LLL_FPInt(IntMat &B, const double delta = 0.99,
  * as in LLL_FPInt above.
  */
 
-template<typename IntMat>
+template<typename Int, typename IntMat>
 long BKZ_FPInt(IntMat &BB, const double delta = 0.99, long blocksize = 10,
       long prune = 0, long r = 0, long c = 0, NTL::vector<double> *sqlen = 0);
 
@@ -131,11 +131,11 @@ static double InnerProductD(double *a, double *b, long n) {
 }
 
 // Inner product of two vectors of integers a and b is returned in prod.
-template<typename IntVec, typename Int>
+template<typename Int, typename IntVec>
 static void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n);
 
 // The general case.
-template<typename IntVec, typename Int>
+template<typename Int, typename IntVec>
 void InnerProductV(Int &prod, const IntVec &a, const IntVec &b, long n) {
    LatticeTester::MyExit(1, "InnerProductV with types that do not match");
 }
@@ -215,7 +215,7 @@ static void RowTransformFinishInt(IntVec &A, double *a, long *in_a, long n) {
 // ----------------------------------------------------------
 // A = A - B*MU   for the first n vector entries only.
 // The change is on the vector A.
-template<typename IntVec, typename Int>
+template<typename Int, typename IntVec>
 static void RowTransformInt(IntVec &A, IntVec &B, const Int &MU1, long n);
 
 /*
@@ -294,13 +294,13 @@ void RowTransformInt(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
 // ---------------------------------------------------------
 // A = A - B*MU1  for the first n vector entries only.
 // The change is on the vector A.
-template<typename IntVec, typename Int>
+template<typename Int, typename IntVec>
 static void RowTransformInt(IntVec &A, IntVec &B, const Int &MU1, long n,
       double *a, double *b, long *in_a, double &max_a, double max_b,
       long &in_float);
 
 // The general case.
-template<typename IntVec, typename Int>
+template<typename Int, typename IntVec>
 static void RowTransformInt(IntVec &A, IntVec &B, const Int &MU1, long n,
       double *a, double *b, long *in_a, double &max_a, double max_b,
       long &in_float) {
@@ -524,11 +524,11 @@ void RowTransformInt(NTL::Vec<ZZ> &A, NTL::Vec<ZZ> &B, const NTL::ZZ &MU1, long 
 // -------------------------------------------------------
 // A = A + B*MU  for the first n vector entries only.
 // The change is on the vector A.  This is used once in BKZ.
-template<typename IntVec, typename Int>
+template<typename Int, typename IntVec>
 static void RowTransformAdd(IntVec &A, IntVec &B, const Int &MU1, long n);
 
 // The general case.
-template<typename IntVec, typename Int>
+template<typename Int, typename IntVec>
 static void RowTransformAdd(IntVec &A, IntVec &B, const Int &MU1, long n) {
    LatticeTester::MyExit(1,
          "RowTransformAdd: the general case is not implemented.");
@@ -604,7 +604,7 @@ void RowTransformAdd(vec_ZZ &A, vec_ZZ &B, const ZZ &MU1, long n) {
 // ----------------------------------------------------
 // This function computes mu[k] and c[k].
 // This version works with arrays of `double`.
-template<typename IntMat>
+template<typename Int, typename IntMat>
 static void ComputeGSInt(IntMat &B, double **B1, double **mu, double *b,
       double *c, long k, long n, double bound, long st, double *buf) {
    // The indices in B, B1, mu, b, c, buf, all start at 0.
@@ -706,7 +706,8 @@ static void inc_red_fudge() {
 
 // This function computes mu[k] and c[k].
 // This one is from NTL_RR, and modified.
-// It omputes Gramm-Schmidt data for B
+// It computes Gramm-Schmidt data for B
+// template<>
 void ComputeGSInt(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
       long k, long n, const RR &bound, long st, vec_RR &buf, const RR &bound2) {
    // Here, k, st, and the array indices are 1 less than in NTL.
@@ -744,14 +745,14 @@ void ComputeGSInt(const mat_ZZ &B, mat_RR &B1, mat_RR &mu, vec_RR &b, vec_RR &c,
 }
 
 // The general case, only a declaration.
-template<typename IntMat>
+template<typename Int, typename IntMat>
 static void RR_GSInt(IntMat &B, double **B1, double **mu, double *b, double *c,
       double *buf, long prec, long rr_st, long k, long m_orig, long n,
       mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b, vec_RR &rr_c);
 
 // Specialization for `Int = int64_t`.
 template<>
-void RR_GSInt(NTL::matrix<long> &B, double **B1, double **mu,
+void RR_GSInt<long, NTL::matrix<long>>(NTL::matrix<long> &B, double **B1, double **mu,
       double *b, double *c, double *buf, long prec, long rr_st, long k,
       long m_orig, long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b,
       vec_RR &rr_c) {
@@ -763,7 +764,7 @@ void RR_GSInt(NTL::matrix<long> &B, double **B1, double **mu,
 // Here they all start at 0.
 // Also init_k and k start at 1 in NTL and at 0 (they are one less) here.
 template<>
-void RR_GSInt(NTL::matrix<ZZ> &B, double **B1, double **mu,
+void RR_GSInt<NTL::ZZ, mat_ZZ>(mat_ZZ &B, double **B1, double **mu,
       double *b, double *c, double *buf, long prec, long rr_st, long k,
       long m_orig, long n, mat_RR &rr_B1, mat_RR &rr_mu, vec_RR &rr_b,
       vec_RR &rr_c) {
@@ -819,6 +820,7 @@ void RR_GSInt(NTL::matrix<ZZ> &B, double **B1, double **mu,
 }
 
 // Computes Gramm-Schmidt data for B, using RR matrices.
+//template<>
 void ComputeGSInt(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long m, long n) {
    mat_RR B1;
    vec_RR b;
@@ -848,7 +850,7 @@ void ComputeGSInt(const mat_ZZ &B, mat_RR &mu, vec_RR &c, long m, long n) {
 
 // The main LLL procedure.
 // m is the number of rows (generating vectors), same value as in NTL
-template<typename IntMat>
+template<typename Int, typename IntMat>
 static long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu,
       double *b, double *c, long m, long n, long init_k, long quit);
 
@@ -857,7 +859,7 @@ static long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu,
 // Here they all start at 0.
 // Also init_k and k start at 1 in NTL and at 0 (they are one less) here.
 template<>
-int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
+int64_t ll_LLL_FPInt<long, matrix<long>>(matrix<int64_t> &B, double delta, double **B1, double **mu,
       double *b, double *c, int64_t m, int64_t n, int64_t init_k, long quit) {
    int64_t i, j, k, Fc1;
    int64_t MU;
@@ -927,7 +929,7 @@ int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
          st[k + 1] = st[k];
 
       //std::cout << "LLL64: before ComputeGS, B1[k][1] = " << B1[k][1] << "\n";
-      ComputeGSInt(B, B1, mu, b, c, k, n, bound, st[k], buf);
+      ComputeGSInt<long, NTL::matrix<long>>(B, B1, mu, b, c, k, n, bound, st[k], buf);
       CheckFinite(&c[k]);
       st[k] = k;
       //std::cout << "After ComputeGSInt, mu[k] = " << mu[k][0] << "  " << mu[k][1] << "  " << mu[k][2] << "  " << mu[k][3] << "\n";
@@ -1049,7 +1051,7 @@ int64_t ll_LLL_FPInt(matrix<int64_t> &B, double delta, double **B1, double **mu,
             max_b[k] = max_abs(B1[k], n);
             b[k] = InnerProductD(B1[k], B1[k], n);
             CheckFinite(&b[k]);
-            ComputeGSInt(B, B1, mu, b, c, k, n, bound, 0, buf);
+            ComputeGSInt<long, matrix<long>>(B, B1, mu, b, c, k, n, bound, 0, buf);
             CheckFinite(&c[k]);
             rst = k;
             // std::cout << "After ComputeGS in (Fc1), rst = " << rst << ",  max_b[k]= "
@@ -1123,7 +1125,7 @@ void printBB1(IntMat &B, double **B1, long m) {
 }
 
 // This works for both ZZ and long.
-template<typename IntMat>
+template<typename Int, typename IntMat>
 long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
       double *c, long m, long n, long init_k, long quit) {
    // In NTL, the indices of B start at 0, but those of B1, b, c, st, start at 1.
@@ -1212,7 +1214,7 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
 // std::cout << "ll_LLL FPInt before computeGS \n";
 // This one uses only matrices of `double`.
       // All indices and k, st[k] are one less than in NTL.
-      ComputeGSInt(B, B1, mu, b, c, k, n, bound, st[k], buf);
+      ComputeGSInt<Int, IntMat>(B, B1, mu, b, c, k, n, bound, st[k], buf);
       CheckFinite(&c[k]);
       st[k] = k;
 
@@ -1412,7 +1414,7 @@ long ll_LLL_FPInt(IntMat &B, double delta, double **B1, double **mu, double *b,
    return m;
 }
 
-template<typename IntMat>
+template<typename Int, typename IntMat>
 long LLL_FPInt(IntMat &B, double delta, long m, long n, NTL::vector<double> *sqlen) {
    if (m == 0)
       m = B.NumRows();
@@ -1458,7 +1460,7 @@ long LLL_FPInt(IntMat &B, double delta, long m, long n, NTL::vector<double> *sql
    // std::cout << "LLL FPInt before ll_LLL  \n";
    // Indices in B1, mu, sqlen2 start at 0, which is 1 less than in NTL.
    // Note that the matrix B passed here may be larger than m x n.
-   new_m = ll_LLL_FPInt(B, delta, B1, mu, sqlen2, c, m, n, 0, quit);
+   new_m = ll_LLL_FPInt<Int, IntMat>(B, delta, B1, mu, sqlen2, c, m, n, 0, quit);
    // std::cout << "LLL FPInt after ll_LLL  \n";
 
    // In this version, we leave the zero rows at the bottom.
@@ -1545,7 +1547,7 @@ static void ComputeBKZThresh(double *c, long beta) {
 }
 
 
-template<typename IntMat>
+template<typename Int, typename IntMat>
 long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune,
         long m, long n, vector<double> *sqlen) {
    if (m == 0)
@@ -1643,7 +1645,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune,
       CheckFinite(&b[i]);
    }
 // Here we first perform LLL on the initial set of vectors.
-   m = ll_LLL_FPInt(B, delta, B1, mu, b, c, m, n, 0, quit);
+   m = ll_LLL_FPInt<Int, IntMat>(B, delta, B1, mu, b, c, m, n, 0, quit);
 
    unsigned long NumIterations = 0;
    unsigned long NumTrivial = 0;
@@ -1769,7 +1771,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune,
                }
                // cerr << "special case\n";
                // h is the same as in NTL.
-               new_m = ll_LLL_FPInt(B, delta, B1, mu, b, c, h, n, jj, quit);
+               new_m = ll_LLL_FPInt<Int, IntMat>(B, delta, B1, mu, b, c, h, n, jj, quit);
                if (new_m != h)
                   LogicError("BKZ_FPZZ: internal error, new_m != h");
                if (quit)
@@ -1814,7 +1816,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune,
                // cerr << "general case\n";
                // Here, jj starts at 0.
                // The matrices B and B1 must have one more row!
-               new_m = ll_LLL_FPInt(B, delta, B1, mu, b, c, kk + 1, n, jj,
+               new_m = ll_LLL_FPInt<Int, IntMat>(B, delta, B1, mu, b, c, kk + 1, n, jj,
                      quit);
                if (new_m != kk) {
                   //std::cout << " new_m = " << new_m << ", kk = " << kk << "\n";
@@ -1833,7 +1835,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune,
                }
                if (h > kk) {
                   // extend reduced basis
-                  new_m = ll_LLL_FPInt(B, delta, B1, mu, b, c, h, n, h - 1,
+                  new_m = ll_LLL_FPInt<Int, IntMat>(B, delta, B1, mu, b, c, h, n, h - 1,
                         quit);
                   if (new_m != h)
                      LogicError("BKZ_FPInt: internal error, new_m != h");
@@ -1843,7 +1845,7 @@ long BKZ_FPInt(IntMat &BB, double delta, long beta, long prune,
          } else {
             NumNoOps++;
             if (!clean) {
-               new_m = ll_LLL_FPInt(B, delta, B1, mu, b, c, h, n, h - 1, quit);
+               new_m = ll_LLL_FPInt<Int, IntMat>(B, delta, B1, mu, b, c, h, n, h - 1, quit);
                if (new_m != h)
                   LogicError("BKZ_FPInt: internal error, new_m != h");
             }

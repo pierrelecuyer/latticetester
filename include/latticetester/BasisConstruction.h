@@ -110,9 +110,10 @@ namespace LatticeTester {
  * illustrate how to use these functions and make speed comparisons.
  */
 
+// Cannot do this here because Int may be undefined.
 //typedef NTL::vector<Int> IntVec;
 //typedef NTL::matrix<Int> IntMat;
-typedef NTL::vector<Real> RealVec;
+//typedef NTL::vector<Real> RealVec;
 
 
     /**
@@ -307,7 +308,7 @@ template<>
 long LLLConstruction0(NTL::matrix<long> &gen, const double delta,
       long r, long c, NTL::vector<double> *sqlen) {
     //return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
-    return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
+    return NTL::LLL_FPInt<long, NTL::matrix<long>>(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + double implementation.
@@ -317,18 +318,18 @@ long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
    return NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
 }
 
-// The ZZ + quad_float implementation.
-template<>
-long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
-        const double delta, long r, long c, NTL::vector<quad_float> *sqlen) {
-   return NTL::LLL_QP_lt(gen, delta, r, c, sqlen);
-}
-
 // The ZZ + xdouble implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
         const double delta, long r, long c, NTL::vector<xdouble> *sqlen) {
    return NTL::LLL_XD_lt(gen, delta, r, c, sqlen);
+}
+
+// The ZZ + quad_float implementation.
+template<>
+long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen,
+        const double delta, long r, long c, NTL::vector<quad_float> *sqlen) {
+   return NTL::LLL_QP_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + RR implementation.

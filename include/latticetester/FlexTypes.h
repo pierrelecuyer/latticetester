@@ -28,24 +28,52 @@
 #include "latticetester/NTLWrap.h"  // This one is needed for the vector and matrix types.
 
 /**
- * There are five admissible combinations of types for (Int, Real).
+ * There are five admissible combinations of types for `(Int, Real)`.
  * They are represented by the five codes given below.
- * For example, to use Int = NTL::ZZ, Real = double  in a program, one should put:
+ * For example, to use Int = NTL::ZZ, Real = double in a program, it suffices o put:
  *   #define TYPES_CODE  ZD
- * at the very beginning of the file.
+ * at the very beginning of the file, *before* the present file is read.
+ *
+ * Another (more flexible) way of specifying the flexible types
+ * `(Int, Real)` is to pass the types we want to use in the class and
+ * function templates. See the guide and the examples to see how to do that.
 */
+
+
+/**
+ * This template function returns a character string that gives the values
+ * of `Int` and `Real`, usually for printing purposes.
+ * For example, `strTypes<NTL::ZZ,double>(str)` will return the string
+ * `Int = NTL::ZZ, Real = double` in `str`.
+ */
+template<typename Int, typename Real>
+void strTypes(std::string &str);
+
+template<typename Int, typename Real>
+void strTypes(std::string &str) {
+   str.clear();
+   if (std::is_same<Int, NTL::ZZ>::value) str += "Int = NTL::ZZ, ";
+   if (std::is_same<Int, long>::value) str += "Int = long, ";
+   if (std::is_same<Real, double>::value) str += "Real = double";
+   if (std::is_same<Real, NTL::xdouble>::value) str += "Real = xdouble";
+   if (std::is_same<Real, NTL::quad_float>::value) str += "Real = quad_float";
+   if (std::is_same<Real, NTL::RR>::value) str += "Real = NTL::RR";
+   // std::cout << "Types: " << str << "\n\n";
+}
+
 
 #define   LD  1
 #define   ZD  2
-//#define   LQ  3
-#define   ZQ  4
-//#define   LX  5
-#define   ZX  6
+//#define   LX  3
+#define   ZX  4
+//#define   LQ  5
+#define   ZQ  6
 //#define   LR  7
 #define   ZR  8
 
-// std::string strFlexTypes;
+// std::string strFlexTypes0;
 
+// For the following to be useful, TYPES_CODE must be defined before this file is read!
 #if    TYPES_CODE == LD
 	  typedef int64_t  Int;
      typedef double  Real;
@@ -54,14 +82,14 @@
 	  typedef NTL::ZZ Int;
      typedef double Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = double";
-#elif  TYPES_CODE ==  ZQ
-     typedef NTL::ZZ Int;
-     typedef NTL::quad_float Real;
-     std::string strFlexTypes = "Int = NTL::ZZ, Real = quad_float";
 #elif  TYPES_CODE ==  ZX
      typedef NTL::ZZ Int;
      typedef NTL::xdouble Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = xdouble";
+#elif  TYPES_CODE ==  ZQ
+     typedef NTL::ZZ Int;
+     typedef NTL::quad_float Real;
+     std::string strFlexTypes = "Int = NTL::ZZ, Real = quad_float";
 #elif  TYPES_CODE ==  ZR
      typedef NTL::ZZ Int;
      typedef NTL::RR Real;
@@ -75,4 +103,5 @@
      typedef NTL::matrix<Real> RealMat;
 #endif
 
+//     }
 #endif
