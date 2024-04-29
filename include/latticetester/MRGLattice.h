@@ -363,23 +363,30 @@ void MRGLattice<Int, Real>::incDimBasis() {
     assert(this->m_withPrimal);      // m_withPrimal must be true.
     int64_t d = 1 + this->getDim();  // New current dimension.
     assert(d <= this->m_maxDim);
-    this->setDim(d);
+    this->m_dim = d;
     int64_t i, j, k;
     Int m_add;
     
     
     // Add new row and new column of the primal basis.
+    
     for (j = 0; j < d - 1; j++)
         this->m_basis[d - 1][j] = 0;
-    this->m_basis[d - 1][d - 1] = this->m_modulo;
+    if (d-1 >= this->m_order) {
+        this->m_basis[d - 1][d - 1] = this->m_modulo;
+    } else this->m_basis[d - 1][d - 1] = 1;
+    
     for (i = 0; i < d - 1; i++) {
         this->m_basis[i][d-1] = 0;
-        for (k = 0; k < this->m_order; k++)
-           this->m_basis[i][d-1] +=  m_aCoeff[k] * this->m_basis[i][d-1-(k+1)] % this->m_modulo;
+        if (d-1 >= this->m_order) {
+            for (k = 0; k < this->m_order; k++)
+               this->m_basis[i][d-1] +=  m_aCoeff[k] * this->m_basis[i][d-1-(k+1)] % this->m_modulo;
+        }
         
     }
     this->setNegativeNorm();
-
+    
+    
     // If m-dual basis is maintained, we also increase its dimension.
     // Note: This is different from `incDimDualBasis`, because here we want this
     // m-dual to be the m-dual of the primal basis we just computed!
@@ -390,7 +397,8 @@ void MRGLattice<Int, Real>::incDimBasis() {
             this->m_dualbasis[i][d - 1] = 0;
             this->m_dualbasis[d - 1][i] = 0;
         }
-        this->m_dualbasis[d - 1][d - 1] = 1;
+        if (d-1 < this->m_order) { this->m_dualbasis[d-1][d-1] = this->m_modulo;
+        } else this->m_dualbasis[d-1][d-1] = 1;
         for (j = 0; j < d - 1; j++) {
             m_add = 0;
             for (int64_t i = 0; i < d - 1; i++) {
@@ -454,7 +462,8 @@ void MRGLattice<Int, Real>::incDimDualBasis() {
     // Add the new vector the dual basis
     for (i = 0; i < this->m_order; i++)
        this->m_dualbasis[d-1][i] = -m_aux_basis[i][d-1];
-    this->m_dualbasis[d-1][d-1] = 1;
+    if (d-1 < this->m_order) { this->m_dualbasis[d-1][d-1] = this->m_modulo;
+    } else this->m_dualbasis[d-1][d-1] = 1;
     
 }
 
@@ -478,6 +487,8 @@ void MRGLattice<Int, Real>::buildProjection(
        }
        else break;
     }
+    if (proj.size() < (unsigned)this->m_order)
+       case1 = false;
     // Need to construct an auxillary matrix
     for (i = 0; i < d; i++) {
         for (j = 0; j < d; j++) {
@@ -562,6 +573,7 @@ void MRGLattice<Int, Real>::buildProjection(
             }
         } else { 
             mDualUpperTriangular(basis, dualBasis, this->m_modulo, proj.size());
+            projLattice->setDim(proj.size());
         }
     }
 
