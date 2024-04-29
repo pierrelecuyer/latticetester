@@ -330,9 +330,12 @@ void FigureOfMeritM<Int>::setTVector(const NTL::vector<int64_t> &t,
     if (includeFirst)
         min_dim = 2;
     int64_t d = static_cast<int>(t.size()); // Number of orders for the projections.
-    for (int64_t i = 1; i < d; i++)
+    for (int64_t i = 1; i < d; i++) {
         // Adds the set of projections of order i.
-        m_coordRange->includeOrder(i + 1 - includeFirst, min_dim, t[i], includeFirst); // Change here *****
+        if (t[i] >= min_dim + i - includeFirst) {
+            m_coordRange->includeOrder(i + 1 - includeFirst, min_dim, t[i], includeFirst); // Change here *****
+        }
+    }
 }
 
 //=========================================================================
