@@ -371,6 +371,7 @@ double FigureOfMeritM<Int>::computeMerit(IntLatticeExt<Int, Real> &lat,
 
     //this->m_sqlen = new double[this->m_t.size() + 1];
     this->m_sqlen.SetLength(this->m_t.size() + 1);
+
     merit = computeMeritNonSucc(lat, proj);
     if (merit < minmerit)
         minmerit = merit;
@@ -400,6 +401,7 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
     Coordinates coord;    
     int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
     lat.buildBasis(lower_dim);
+    
     for (int64_t j = 1; j < lower_dim + 1; j++) coord.insert(j);
     for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
         coord.insert(j);
@@ -426,12 +428,13 @@ double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
                     m_red->getMinLength() / this->m_norma->getBound(j));
         }
         merit = merit * this->m_weights->getWeight(coord);
-        if (m_printDetails) std::cout << "Coordinates: {1,... " << j << "}, FoM: " << merit << "\n";
+        if (m_printDetails) std::cout << "Coordinates: {1,...," << j << "}, FoM: " << merit << "\n";
         if (merit < minmerit)
             minmerit = merit;
         if (minmerit <= this->m_lowbound)
             return 0;
     }
+    
     return minmerit;
 }
 
