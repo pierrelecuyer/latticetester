@@ -178,7 +178,7 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
            lat.dualize();
        }
        merit = merit * this->m_weights->getWeight(coord);
-       if (this->m_printDetails) std::cout << "Coordinates: {1,... " << j << "}, FoM: " << merit << "\n";
+       if (this->m_printDetails) std::cout << "Coordinates: {1,...," << j << "}, FoM: " << merit << "\n";
        if (merit < minmerit) minmerit = merit;
        if (minmerit <= this->m_lowbound) return 0;
    }
