@@ -154,14 +154,11 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
        coord.insert(j);
        lat.incDimDualBasis();
        if (this->m_doingBKZ) {
-          //BKZ_FPZZflex(lat.getDualBasis(), this->m_delta, this->m_blocksize, 
-          //        j, j, this->m_sqlen);
-          redBKZ(lat.getDualBasis(), this->m_delta, 
-              this->m_blocksize, 0, j, &this->m_sqlen, this->m_prec);
+          redBKZ<IntMat, RealVec> (lat.getDualBasis(), this->m_delta, 
+              this->m_blocksize, 0, j, &this->m_sqlen);
        } else if (this->m_doingLLL) {
-          //LLL_FPZZflex(lat.getDualBasis(), this->m_delta, j, j, this->m_sqlen);
-          redLLLNTL<IntMat, RealVec> (lat.getDualBasis(), this->m_delta, j, 
-              &this->m_sqlen, this->m_prec);
+          redLLL<IntMat, RealVec> (lat.getDualBasis(), this->m_delta, j, 
+              &this->m_sqlen);
        } else if (this->m_reductionMethod == PAIRBB) {
           this->m_red->redDieter(0);
           this->m_sqlen[0] = NTL::conv<double>(lat.getDualVecNorm(0));
@@ -175,14 +172,13 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
            
        } else {
            lat.dualize();
-           //if (!this->m_red->shortestVector(lat)) return 0;
            this->m_red->setIntLattice(lat);
            if (!this->m_red->shortestVector())    return 0;
            NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(j));
            lat.dualize();
        }
        merit = merit * this->m_weights->getWeight(coord);
-       if (this->m_printDetails) std::cout << "Coordinates: {1,... " << j << "}, FoM: " << merit << "\n";
+       if (this->m_printDetails) std::cout << "Coordinates: {1,...," << j << "}, FoM: " << merit << "\n";
        if (merit < minmerit) minmerit = merit;
        if (minmerit <= this->m_lowbound) return 0;
    }
@@ -199,30 +195,18 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
     
     for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end(); it++){
         coord = *it;
-        //lat.buildProjection(proj, coord, this->m_delta);
-        proj->setDim (coord.size());
-        projectionConstructionUpperTri(lat.getBasis(),
-                proj->getBasis(), coord, lat.getModulo(), lat.getDim());
-        mDualUpperTriangular(proj->getBasis(),
-               proj->getDualBasis(), lat.getModulo(), proj->getDim());
-        lat.setNegativeNorm();
-        lat.setDualNegativeNorm();
+        lat.buildProjection(proj, coord, this->m_delta);
         if (this->m_doingBKZ) {
-            //BKZ_FPZZflex(proj->getDualBasis(), this->m_delta, this->m_blocksize, 
-            //        coord.size(), coord.size(), this->m_sqlen);
-          redBKZ(proj->getDualBasis(), this->m_delta, this->m_blocksize, 0, 
-              coord.size(), &this->m_sqlen, this->m_prec);
+          redBKZ<IntMat, RealVec> (proj->getDualBasis(), this->m_delta, this->m_blocksize, 0, 
+              coord.size(), &this->m_sqlen);
         } else if (this->m_doingLLL) {
-            //LLL_FPZZflex(proj->getDualBasis(), this->m_delta, coord.size(), 
-            //       coord.size(), this->m_sqlen);
-           redLLLNTL<IntMat, RealVec> (proj->getDualBasis(), this->m_delta, 
-               coord.size(), &this->m_sqlen, this->m_prec);
+           redLLL<IntMat, RealVec> (proj->getDualBasis(), this->m_delta, 
+               coord.size(), &this->m_sqlen);
          } else if (this->m_reductionMethod == PAIRBB) {
             this->m_red->redDieter(0);
             this->m_sqlen[0] = NTL::conv<double>(proj->getDualVecNorm(0));
         }
         if (!this->m_doingBB) {
-            //proj->updateSingleDualVecNorm(0,coord.size());
             if (lat.getNormType() == L2NORM) {
                 NTL::conv(merit, sqrt(this->m_sqlen[0]) / this->m_norma->getBound(coord.size()));
             } else {
@@ -230,7 +214,6 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
             }
         } else {
             proj->dualize();
-            //if (!this->m_red->shortestVector(*proj)) return 0;
             this->m_red->setIntLattice(*proj);
             if (!this->m_red->shortestVector())    return 0;
             NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(coord.size()));
