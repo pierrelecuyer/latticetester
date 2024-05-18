@@ -74,7 +74,7 @@ public:
 
     /**
      * Sets the vector of multipliers. The order of the lattice is set equal to 
-     * the length of the vector. 
+     * the length of this vector.
      */
     void setaa(const IntVec &aa);
 
@@ -126,11 +126,11 @@ public:
      */
     std::string toStringCoef() const;
     
-    // Order of the lattice
+    // Order of this MRG.
     int m_order;
     
     /**
-     * The coefficients used for the recurrence. 
+     * The coefficients used for the MRG recurrence.
      */
     IntVec m_aCoeff;
 
@@ -142,7 +142,7 @@ protected:
      * They are stored for up to `maxDim()` dimensions.
      * The first coordinate has index 0.
      */
-    IntVec m_a;
+    // IntVec m_a;   // Not used!
     
     /**
      * This auxillary matrix contains the standard basis for the chosen maxDim. 

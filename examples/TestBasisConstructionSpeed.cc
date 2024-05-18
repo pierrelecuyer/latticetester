@@ -22,7 +22,8 @@ using namespace NTL;
 using namespace LatticeTester;
 
 // We cannot use Int or Real here, because they are not yet defined.
-const long numSizes = 5; // Number of matrix sizes (choices of dimension).
+// They are defined via template parameters when we call the functions.
+const long numSizes = 5; // Number of matrix sizes (choices of dimensions).
 const long dimensions[numSizes] = { 4, 6, 10, 20, 30 };
 const long numMeth = 6;    // Number of methods to test, and their names.
 std::string names[numMeth] = { "LLL5      ", "LLL9      ", "LLL99999  ",
@@ -44,7 +45,7 @@ void transformBases (Int m, long d, long dim, IntMat &basis1, IntMat &basis2,
     NTL::vector<Real> sqlen; // Cannot be global variable because it depends on Real.
     sqlen.SetLength(1);
 
-    // We apply LLL to basis1 with different values of `delta`, incrementally.
+    // We apply LLL to basis2 with different values of `delta`, incrementally.
     // We start with delta=0.5, then continue with 0.9, then with 0.99999.
     tmp = clock();
     LLLConstruction0(basis2, 0.5, dim, dim, &sqlen);

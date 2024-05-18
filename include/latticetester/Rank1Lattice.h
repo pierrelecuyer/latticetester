@@ -37,11 +37,11 @@ namespace LatticeTester {
  *   \mathbf{v}_1 & = \mathbf{a} \\
  *   \mathbf{v}_2 & = m \mathbf{e}_2 \\
  *   \vdots & \\
- *   \mathbf{v}_d & = m \mathbf{e}_d \\
+ *   \mathbf{v}_d & = m \mathbf{e}_dï¿½\\
  * \f}
  * where \f$\mathbf{e}_i\f$ is the \f$i^\text{th}\f$ unit vector.
  *
- * A condition that is often required when building a rank 1 lattice is that
+ * A condition often required when building a rank 1 lattice is that
  * \f$\gcd(a_j, m) = 1\f$ for \f$j =1, \dots,d\f$.  When this condition is
  * verified, each lower-dimensional projection of the lattice contains the same number
  * of points (has the same density \f$m\f$) as the full lattice.
@@ -72,7 +72,7 @@ public:
      * This constructor takes as input the modulus `m`, the generating vector `aa`,
      * and the norm used to measure the vector lengths.
      * The maximal dimension `maxDim` will be the length `d` of the vector `aa`.
-     * The coefficient @f$a_j@f$ will be `aa[j-1]`.
+     * The coefficient @f$a_j@f$ will be `aa[j-1]`. One must have `aa[0] = 1`.
      * The variable `withPrimal` indicates if the primal basis will be maintained or not,
      * and `withDual` indicates if the dual basis will be maintained or not.
      * This constructor does not build the basis, to leave
@@ -204,7 +204,7 @@ Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, const IntVec &aa,
         bool withPrimal, bool withDual, NormType norm) :
         IntLatticeExt<Int, Real>(m, aa.length(), withPrimal, withDual, norm) {
     this->m_maxDim = aa.length();
-    this->m_a = aa;
+    this->setaa(aa);
 }
 
 //============================================================================
@@ -252,7 +252,9 @@ Rank1Lattice<Int, Real>::Rank1Lattice(const Rank1Lattice<Int, Real> &lat) :
  */
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::setaa(const IntVec &aa) {
-    this->m_a = aa;
+   if (aa[0] != 1)
+       MyExit(1, "Rank1Lattice::setaa: must have aa[0] == 1.");
+   this->m_a = aa;
 }
 
 //============================================================================

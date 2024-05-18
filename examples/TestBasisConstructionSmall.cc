@@ -18,8 +18,8 @@
  **/
 
 // The code to define the Int and Real types.
-//#define TYPES_CODE  LD     // Int = int64_t, Real = double
-#define TYPES_CODE  ZD     // Int = ZZ, Real = double
+#define TYPES_CODE  LD     // Int = int64_t, Real = double
+//#define TYPES_CODE  ZD     // Int = ZZ, Real = double
 //#define TYPES_CODE  ZX     // Int = ZZ, Real = xdouble
 //#define TYPES_CODE  ZQ     // Int = ZZ, Real = quad_float
 //#define TYPES_CODE  ZR     // ZZ + RR
@@ -41,6 +41,7 @@
 // typedef NTL::matrix<Int> IntMat;
 
 using namespace LatticeTester;
+using namespace NTL;
 
 Int m(101);      // Modulus m = 101
 //Int m(1021);     // Modulus m = 1021
@@ -50,6 +51,8 @@ const long dim(5);  // Dimension of lattice.
 const long dimProj(3);  // Dimension of projection.
 
 int main() {
+    // std::string strFlexTypes;
+    // strTypes (strFlexTypes);
     std::cout << "Types: " << strFlexTypes << "\n";
     std::cout << "TestBasisConstructionSmall \n\n";
 

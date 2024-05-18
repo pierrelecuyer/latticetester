@@ -74,6 +74,8 @@ void strTypes(std::string &str) {
 // std::string strFlexTypes0;
 
 // For the following to be useful, TYPES_CODE must be defined before this file is read!
+// In this case, the types `Int` and `Real` are defined here, and also string `strFlexTypes`
+// used to print in outputs which flexible types we are using.
 #if    TYPES_CODE == LD
 	  typedef int64_t  Int;
      typedef double  Real;
