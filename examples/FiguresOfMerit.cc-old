@@ -13,7 +13,7 @@
  * It outputs only the figure of merit for the lattice for two
  * different normalizers. This is not really interesting in itself, hence it is
  * not included here (???). To get interesting informations on a figure of merit like
- * this one, it would be possible to store an few of the worst projections and
+ * this one, it would be possible to store a few of the worst projections and
  * print them after the test. 
  * */
 
