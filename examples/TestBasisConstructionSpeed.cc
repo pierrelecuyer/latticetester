@@ -25,9 +25,10 @@ using namespace LatticeTester;
 // They are defined via template parameters when we call the functions.
 const long numSizes = 5; // Number of matrix sizes (choices of dimensions).
 const long dimensions[numSizes] = { 4, 6, 10, 20, 30 };
-const long numMeth = 6;    // Number of methods to test, and their names.
-std::string names[numMeth] = { "LLL5      ", "LLL9      ", "LLL99999  ",
-                               "LLL99999-R", "UppTri    ", "mDualUT   "};
+const long numMeth = 8;    // Number of methods to test, and their names.
+std::string names[numMeth] = { "LLL5         ", "LLL9         ", "LLL99999     ",
+                               "LLL99999-new ", "UppTri       ", "mDualUT      ",
+                               "LLL9-dual    ", "LLL99999-dual"};
 // We use `ctime` directly for the timings, to minimize overhead.
 clock_t totalTime = clock(); // Global timer for total time.
 clock_t timer[numMeth][numSizes];
@@ -79,6 +80,18 @@ void transformBases (Int m, long d, long dim, IntMat &basis1, IntMat &basis2,
     tmp = clock();
     mDualUpperTriangular(basis1, basisdual, m, dim);
     timer[5][d] += clock() - tmp;
+
+    // We apply LLL to this m-dual basis, first with delta = 0.9
+    tmp = clock();
+    LLLConstruction0(basisdual, 0.9, dim, dim, &sqlen);
+    timer[6][d] += clock() - tmp;
+    sumSq[6][d] += conv<double>(sqlen[0]);
+
+    // Then continue with delta = 0.99999.
+    tmp = clock();
+    LLLConstruction0(basisdual, 0.99999, dim, dim, &sqlen);
+    timer[7][d] += clock() - tmp;
+    sumSq[7][d] += conv<double>(sqlen[0]);
 }
 
 // In this testing loop, new `Rank1Lattice` objects are created
@@ -90,7 +103,6 @@ void testLoopResize(NTL::ZZ mm, long numRep) {
     Int a;       // The LCG multiplier
     IntMat basis1, basis2, basisdual;
     Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
-    std::cout << "TestBasisConstructionSpeed with m = " << m << "\n";
     std::cout << "Results for `testLoopResize` (many objects are created or resized)\n";
     for (d = 0; d < numSizes; d++)      // Reset timers and sums.
         for (int64_t meth = 0; meth < numMeth; meth++) {
@@ -132,7 +144,6 @@ void testLoopNoResize(NTL::ZZ mm, long numRep) {
     basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
     Rank1Lattice<Int, Real> *korlat;  // We create a single Korobov lattice object.
     korlat = new Rank1Lattice<Int, Real>(m, maxdim, true, false);
-    std::cout << "TestBasisConstructionSpeed with m = " << m << "\n";
     std::cout << "Results for `testLoop No Resize`\n";
 
     for (d = 0; d < numSizes; d++)   // Reset accumulators.
@@ -164,6 +175,8 @@ void testTwoLoops(NTL::ZZ mm, long numRep) {
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
    std::cout << "****************************************************\n";
    std::cout << "Types: " << stringTypes << "\n\n";
+   std::cout << "TestBasisConstructionSpeed with m = " << mm << "\n";
+   std::cout << "Number of replications (different multipliers a): " << numRep << "\n\n";
    testLoopResize<Int, IntMat, Real>(mm, numRep);
    testLoopNoResize<Int, IntMat, Real>(mm, numRep);
 }
@@ -188,7 +201,7 @@ void printResults() {
     for (d = 0; d < numSizes; d++)
         std::cout << std::setw(13) << dimensions[d] << "  ";
     std::cout << "\n\n";
-    for (int meth = 0; meth < numMeth-2; meth++) {
+    for (int meth = 0; meth < numMeth; meth++) {
         std::cout << names[meth] << "  ";
         for (d = 0; d < numSizes; d++)
             std::cout << std::setw(14) << sumSq[meth][d] << " ";
@@ -202,19 +215,17 @@ void printResults() {
 
 int main() {
    // Here, Int and Real are not yet defined.
-   //Int m = 1021;  // Prime modulus near 2^{10}
-    NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
-   //Int m = 1073741827;  // Prime modulus near 2^{30}
-   //Int m = 1099511627791;  // Prime modulus near 2^{40}
-   //Int m = 1125899906842597;  // Prime modulus near 2^{50}
-    //long mlong = mm;
-    long numRep = 1000;   // Number of replications (multipliers) for each case.
+   NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
+   // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
+   // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
+   // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
+   long numRep = 1000;   // Number of replications (multipliers) for each case.
 
-    testTwoLoops<long, NTL::matrix<long>, double>(mm, numRep);
-    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
-    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
-    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
-    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
-    return 0;
+   testTwoLoops<long, NTL::matrix<long>, double>(mm, numRep);
+   testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
+   testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
+   testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
+   //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
+   return 0;
 };
 

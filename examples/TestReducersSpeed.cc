@@ -5,12 +5,7 @@
  * (pre-red. + BB) for various types of pre-reductions, with lattices that come
  * from Korobov lattice rules in 10 to 40 dimensions, with prime modulus `m`.
  * For the BB, we use the Cholesky decomposition.
- * The pre-reductions considered are:
- * none, pairwise, LLL with delta = 0.5, 0.8, and 0.99999, and BKZ with the
- * default parameters. We do this for two different prime values of `m`.
- * The timings are in terms of total number of clock ticks used by each method.
- *
- * Example of results:
+ * See the Lattice Tester Guide for more explanations and results.
  */
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +147,7 @@ static void testLoop(Int m, long numRep) {
 
 void printResults() {
    long d;
-   std::cout << " dim:        ";
+   std::cout << "Num. dimensions:";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(8) << dimensions[d] << "  ";
    std::cout << "\n\n";
@@ -166,7 +161,7 @@ void printResults() {
    }
    std::cout << "\n";
    std::cout << "Sums of square lengths of shortest basis vector:\n";
-   std::cout << " dim:     ";
+   std::cout << "Num. dimensions: ";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(10) << dimensions[d] << " ";
    std::cout << "\n\n";
@@ -174,7 +169,7 @@ void printResults() {
       if (sumSq[meth][0] > 0) {
          std::cout << names[meth];
          for (d = 0; d < numSizes; d++)
-            std::cout << std::setw(10) << sumSq[meth][d] << " ";
+            std::cout << std::setw(10) << std::setprecision(10) << sumSq[meth][d] << " ";
          std::cout << "\n";
       }
    }
@@ -187,13 +182,13 @@ void printResults() {
 
 int main() {
    // Here, Int and Real are not yet defined.
-   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
-   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    long numRep = 50;  // Number of replications (multipliers) for each case.
 
-   testLoop<long, double>(conv<long>(m), numRep);
+   // testLoop<long, double>(conv<long>(m), numRep);
    testLoop<NTL::ZZ, double>(m, numRep);
-   testLoop<NTL::ZZ, xdouble>(m, numRep);
-   testLoop<NTL::ZZ, quad_float>(m, numRep);
+   //testLoop<NTL::ZZ, xdouble>(m, numRep);
+   //testLoop<NTL::ZZ, quad_float>(m, numRep);
    // testLoop<NTL::ZZ, NTL::RR>(m, numRep);
 }
