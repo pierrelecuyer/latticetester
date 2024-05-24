@@ -60,15 +60,22 @@ void printResults();  // Must be declared, because it has no parameters.
  */
 template<typename Int, typename Real>
 void performReduction(Rank1Lattice<Int, Real> *korlat, ReducerBB<Int, Real> *red,
-      long d, long meth, double deltaLLL, double deltaBKZ, long k,
+      bool inDual, long d, long meth, double deltaLLL, double deltaBKZ, long k,
       bool BB, NTL::vector<Real> sqlen) {
    long dim = dimensions[d];
    double len2;
-   korlat->setPrimalFlag(false);
-   korlat->setDualFlag(true);
-   korlat->buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
-   korlat->dualize();   // This also exchanges the primal / dual flags.
-   tmp = clock();
+   if (inDual) {
+      korlat->setPrimalFlag(false);
+      korlat->setDualFlag(true);
+      korlat->buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
+      korlat->dualize();   // This also exchanges the primal / dual flags.
+   } else {
+      korlat->setPrimalFlag(true);
+      korlat->setDualFlag(false);
+      korlat->buildBasis(dim);  // Rebuild the dual basis (only) anew.
+   }
+
+  tmp = clock();
    if (deltaLLL > 0.0)
       redLLL(korlat->getBasis(), deltaLLL, dim, &sqlen);
    if (deltaBKZ > 0.0)
@@ -89,33 +96,34 @@ void performReduction(Rank1Lattice<Int, Real> *korlat, ReducerBB<Int, Real> *red
 // The same initial dual basis is rebuilt each time by `beforeReduct`.
 template<typename Int, typename Real>
 static void tryManyMethods(Rank1Lattice<Int, Real> *korlat,
-      ReducerBB<Int, Real> *red, long d) {
+      ReducerBB<Int, Real> *red, bool inDual, long d) {
    NTL::vector<Real> sqlen; // Cannot be global because it depends on Real.
    sqlen.SetLength(1);  // With store only the shortest vector square length.
 
-   performReduction(korlat, red, d, 0, 0.5, 0.0, 1, false, sqlen);
-   performReduction(korlat, red, d, 1, 0.99999, 0.0, 1, false, sqlen);
-   performReduction(korlat, red, d, 2, 0.0, 0.99999, 10, false, sqlen);
-   performReduction(korlat, red, d, 3, 0.5, 0.0, 1, true, sqlen);
-   performReduction(korlat, red, d, 4, 0.8, 0.0, 1, true, sqlen);
-   performReduction(korlat, red, d, 5, 0.99999, 0.0, 1, true, sqlen);
-   performReduction(korlat, red, d, 6, 0.0, 0.99999, 6, true, sqlen);
-   performReduction(korlat, red, d, 7, 0.0, 0.99999, 8, true, sqlen);
-   performReduction(korlat, red, d, 8, 0.0, 0.99999, 10, true, sqlen);
-   performReduction(korlat, red, d, 9, 0.0, 0.999, 6, true, sqlen);
-   performReduction(korlat, red, d, 10, 0.0, 0.999, 8, true, sqlen);
-   performReduction(korlat, red, d, 11, 0.0, 0.999, 10, true, sqlen);
-   performReduction(korlat, red, d, 12, 0.0, 0.999, 12, true, sqlen);
-   performReduction(korlat, red, d, 13, 0.8, 0.999, 10, true, sqlen);
-   performReduction(korlat, red, d, 14, 0.99, 0.999, 10, true, sqlen);
+   performReduction(korlat, red, inDual, d, 0, 0.5, 0.0, 1, false, sqlen);
+   performReduction(korlat, red, inDual, d, 1, 0.99999, 0.0, 1, false, sqlen);
+   performReduction(korlat, red, inDual, d, 2, 0.0, 0.99999, 10, false, sqlen);
+   performReduction(korlat, red, inDual, d, 3, 0.5, 0.0, 1, true, sqlen);
+   performReduction(korlat, red, inDual, d, 4, 0.8, 0.0, 1, true, sqlen);
+   performReduction(korlat, red, inDual, d, 5, 0.99999, 0.0, 1, true, sqlen);
+   performReduction(korlat, red, inDual, d, 6, 0.0, 0.99999, 6, true, sqlen);
+   performReduction(korlat, red, inDual, d, 7, 0.0, 0.99999, 8, true, sqlen);
+   performReduction(korlat, red, inDual, d, 8, 0.0, 0.99999, 10, true, sqlen);
+   performReduction(korlat, red, inDual, d, 9, 0.0, 0.999, 6, true, sqlen);
+   performReduction(korlat, red, inDual, d, 10, 0.0, 0.999, 8, true, sqlen);
+   performReduction(korlat, red, inDual, d, 11, 0.0, 0.999, 10, true, sqlen);
+   performReduction(korlat, red, inDual, d, 12, 0.0, 0.999, 12, true, sqlen);
+   performReduction(korlat, red, inDual, d, 13, 0.8, 0.999, 10, true, sqlen);
+   performReduction(korlat, red, inDual, d, 14, 0.99, 0.999, 10, true, sqlen);
 }
 
 // In this testing loop, we generate `numRep` multipliers `a` and for each one
 template<typename Int, typename Real>
-static void testLoop(Int m, long numRep) {
+static void testLoop(Int m, long numRep, bool inDual) {
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
    std::cout << "****************************************************\n";
-   std::cout << "Types: " << stringTypes << "\n\n";
+   std::cout << "Types: " << stringTypes << "\n";
+   std::cout << "Tests in dual lattice?  " << inDual << "\n\n";
    std::cout << "TestReducersSpeed with m = " << m << "\n";
    std::cout << "Results for `testLoop`\n";
    std::cout << "Timings (in microseconds) for different methods for " << numRep
@@ -139,7 +147,7 @@ static void testLoop(Int m, long numRep) {
       a = (m / 5 + 13 * r) % m;   // The multiplier we use for this rep.
       korlat->seta(a);
       for (d = 0; d < numSizes; d++) {  // Each matrix size
-         tryManyMethods<Int, Real>(korlat, red, d);
+         tryManyMethods<Int, Real>(korlat, red, inDual, d);
       }
    }
    printResults();
@@ -185,10 +193,11 @@ int main() {
    // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    long numRep = 50;  // Number of replications (multipliers) for each case.
+   bool inDual = true;  // Tests in dual lattice ?
 
-   // testLoop<long, double>(conv<long>(m), numRep);
-   testLoop<NTL::ZZ, double>(m, numRep);
-   //testLoop<NTL::ZZ, xdouble>(m, numRep);
-   //testLoop<NTL::ZZ, quad_float>(m, numRep);
-   // testLoop<NTL::ZZ, NTL::RR>(m, numRep);
+   // testLoop<long, double>(conv<long>(m), numRep, inDual);
+   testLoop<NTL::ZZ, double>(m, numRep, inDual);
+   //testLoop<NTL::ZZ, xdouble>(m, numRep, inDual);
+   //testLoop<NTL::ZZ, quad_float>(m, numRep, inDual);
+   // testLoop<NTL::ZZ, NTL::RR>(m, numRep, inDual);
 }
