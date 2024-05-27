@@ -38,86 +38,57 @@ std::string stringTypes;  // To print the selected flexible types.
 
 void printResults();  // Must be declared, because it has no parameters.
 
+/* This function applies LLL to `basis` in `dim` dimensions.
+ * It also updates the cumulative times and sums of square lengths.
+ */
+// template<typename IntMat, typename Real>
+template<typename IntMat, typename Real>
+void LLLTest (IntMat &basis, long d, long meth, double delta) {
+   long dim = dimensions[d];
+   NTL::vector<Real> sqlen; // Cannot be global variable because it depends on Real.
+   sqlen.SetLength(1);
+   clock_t tmp = clock();
+   LLLConstruction0(basis, delta, dim, dim, &sqlen);
+   timer[meth][d] += clock() - tmp;
+   sumSq[meth][d] += conv<double>(sqlen[0]);
+}
+
 // Run a speed test for dim = dimensions[d], with given basis matrices.
+// Only basis1 needs to be initialized; basis2 and basisdual are used only for copy.
 template<typename Int, typename IntMat, typename Real>
 void transformBases(Int m, long d, long dim, IntMat &basis1, IntMat &basis2,
       IntMat &basisdual) {
    CopyPartMat<IntMat>(basis2, basis1, dim, dim);  // Copy basis1 to basis2.
    clock_t tmp;
-   NTL::vector<Real> sqlen; // Cannot be global variable because it depends on Real.
-   sqlen.SetLength(1);
 
    // We apply LLL to basis2 with different values of `delta`, incrementally.
    // We start with delta=0.5, then continue with 0.9, then with 0.99999.
-   tmp = clock();
-   LLLConstruction0(basis2, 0.5, dim, dim, &sqlen);
-   timer[0][d] += clock() - tmp;
-   sumSq[0][d] += conv<double>(sqlen[0]);
-
-   // We continue the LLL process with a larger `delta`.
-   tmp = clock();
-   LLLConstruction0(basis2, 0.8, dim, dim, &sqlen);
-   timer[1][d] += clock() - tmp;
-   sumSq[1][d] += conv<double>(sqlen[0]);
-
-   // We continue the LLL process with a larger `delta`.
-   tmp = clock();
-   LLLConstruction0(basis2, 0.99, dim, dim, &sqlen);
-   timer[2][d] += clock() - tmp;
-   sumSq[2][d] += conv<double>(sqlen[0]);
-
-   tmp = clock();
-   LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen);
-   timer[3][d] += clock() - tmp;
-   sumSq[3][d] += conv<double>(sqlen[0]);
-
+   LLLTest<IntMat, Real>(basis2, d, 0, 0.5);
+   // We continue the LLL process with larger values of `delta`.
+   LLLTest<IntMat, Real>(basis2, d, 1, 0.8);
+   LLLTest<IntMat, Real>(basis2, d, 2, 0.99);
+   LLLTest<IntMat, Real>(basis2, d, 3, 0.99999);
    // Here we restart LLL from the initial triangular basis, with delta=0.99999.
    CopyPartMat(basis2, basis1, dim, dim);  // Copy basis1 to basis2.
-   tmp = clock();
-   LLLConstruction0(basis2, 0.99999, dim, dim, &sqlen);
-   timer[4][d] += clock() - tmp;
-   sumSq[4][d] += conv<double>(sqlen[0]);
+   LLLTest<IntMat, Real>(basis2, d, 4, 0.99999);
 
    // We now construct an upper-triangular basis from basis2 into basis1.
    tmp = clock();
    upperTriangularBasis(basis2, basis1, m, dim, dim);
    timer[5][d] += clock() - tmp;
-
    // We compute an m-dual basis to basis1.
    tmp = clock();
    mDualUpperTriangular(basis1, basisdual, m, dim);
    timer[6][d] += clock() - tmp;
 
-   // We apply LLL to this m-dual basis, first with delta = 0.5
-   tmp = clock();
-   LLLConstruction0(basisdual, 0.5, dim, dim, &sqlen);
-   timer[7][d] += clock() - tmp;
-   sumSq[7][d] += conv<double>(sqlen[0]);
-
-   // Then we continue with delta = 0.8
-   tmp = clock();
-   LLLConstruction0(basisdual, 0.8, dim, dim, &sqlen);
-   timer[8][d] += clock() - tmp;
-   sumSq[8][d] += conv<double>(sqlen[0]);
-
-   // Then we continue with delta = 0.99
-   tmp = clock();
-   LLLConstruction0(basisdual, 0.99, dim, dim, &sqlen);
-   timer[9][d] += clock() - tmp;
-   sumSq[9][d] += conv<double>(sqlen[0]);
-
-   // Then with delta = 0.99999.
-   tmp = clock();
-   LLLConstruction0(basisdual, 0.99999, dim, dim, &sqlen);
-   timer[10][d] += clock() - tmp;
-   sumSq[10][d] += conv<double>(sqlen[0]);
-
+   // We apply LLL to this m-dual basis, with delta = 0.5, 0.8, etc.
+   LLLTest<IntMat, Real>(basisdual, d, 7, 0.5);
+   LLLTest<IntMat, Real>(basisdual, d, 8, 0.8);
+   LLLTest<IntMat, Real>(basisdual, d, 9, 0.99);
+   LLLTest<IntMat, Real>(basisdual, d, 10, 0.99999);
    // Restart anew with delta = 0.99999.
    mDualUpperTriangular(basis1, basisdual, m, dim);
-   tmp = clock();
-   LLLConstruction0(basisdual, 0.99999, dim, dim, &sqlen);
-   timer[11][d] += clock() - tmp;
-   sumSq[11][d] += conv<double>(sqlen[0]);
+   LLLTest<IntMat, Real>(basisdual, d, 11, 0.99999);
 }
 
 // In this testing loop, new `Rank1Lattice` objects are created
@@ -208,7 +179,7 @@ void testTwoLoops(NTL::ZZ mm, long numRep) {
    std::cout << "TestBasisConstructionSpeed with m = " << mm << "\n";
    std::cout << "Number of replications (different multipliers a): " << numRep
          << "\n\n";
-   // testLoopResize<Int, IntMat, Real>(mm, numRep);
+   testLoopResize<Int, IntMat, Real>(mm, numRep);
    testLoopNoResize<Int, IntMat, Real>(mm, numRep);
 }
 
@@ -247,6 +218,7 @@ void printResults() {
          << " seconds\n\n\n";
 }
 
+
 int main() {
    // Here, Int and Real are not yet defined.
    // NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
@@ -255,12 +227,11 @@ int main() {
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
    long numRep = 1000;   // Number of replications (multipliers) for each case.
 
-   // testTwoLoops<long, NTL::matrix<long>, double>(mm, numRep);
+   //testTwoLoops<long, NTL::matrix<long>, double>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
    return 0;
 }
-;
 

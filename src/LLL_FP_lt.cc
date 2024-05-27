@@ -592,7 +592,8 @@ static void RR_GS(mat_ZZ& B, double **B1, double **mu,
    cerr << tt << " (" << RR_GS_time << ")\n";
 }
 
-void ComputeGS(const mat_ZZ& B, mat_RR& mu, vec_RR& c)
+/*
+void ComputeGS_RR(const mat_ZZ& B, mat_RR& mu, vec_RR& c)
 {
    long n = B.NumCols();
    long k = B.NumRows();
@@ -626,6 +627,8 @@ void ComputeGS(const mat_ZZ& B, mat_RR& mu, vec_RR& c)
    for (i = 1; i <= k; i++)
       ComputeGS(B, B1, mu, b, c, i, bound, 1, buf, bound2);
 }
+*/
+
 
 static
 long ll_LLL_FP(mat_ZZ& B, mat_ZZ* U, double delta, long deep, 
