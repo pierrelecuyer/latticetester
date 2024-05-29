@@ -221,17 +221,17 @@ void printResults() {
 
 int main() {
    // Here, Int and Real are not yet defined.
-   // NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
+   NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
-   NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
+   // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
    long numRep = 1000;   // Number of replications (multipliers) for each case.
 
-   //testTwoLoops<long, NTL::matrix<long>, double>(mm, numRep);
+   testTwoLoops<long, NTL::matrix<long>, double>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
-   testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
+   //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
    return 0;
 }
 

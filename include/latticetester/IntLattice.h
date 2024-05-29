@@ -974,7 +974,8 @@ void IntLattice<Int, Real>::sortPrimalBasis(int64_t d) {
 /*=========================================================================*/
 
 inline double sqrtReal(const double &a) { return std::sqrt(a); }
-
+inline xdouble sqrtReal(const xdouble &a) { return std::sqrt(a); }
+inline quad_float sqrtReal(const quad_float &a) { return std::sqrt(a); }
 inline NTL::RR sqrtReal(const NTL::RR &a) { return NTL::sqrt(a); }
 
 template<typename Int, typename Real>

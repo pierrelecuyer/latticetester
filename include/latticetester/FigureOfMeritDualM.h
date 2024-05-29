@@ -37,12 +37,12 @@
 #include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/IntLatticeExt.h"
-#include "latticetester/LLL_FPInt.h"
+#include "latticetester/LLL_lt.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/ReducerStatic.h"
 #include "latticetester/ReducerBB.h"
 #include "latticetester/Weights.h"
-#include "latticetester/WeightsOrderDependent.h"
+// #include "latticetester/WeightsOrderDependent.h"
 
 
 #include "latticetester/NormaBestLat.h"
@@ -65,12 +65,12 @@ namespace LatticeTester {
  * Note: The class works only for the case where  "PrecisionType == DOUBLE".   
  * This is a limitation.
  */
-template<typename Int>
-class FigureOfMeritDualM: public FigureOfMeritM<Int>  {
+template<typename Int, typename Real>
+class FigureOfMeritDualM: public FigureOfMeritM<Int, Real>  {
 
-private:
-    typedef NTL::vector<Int> IntVec;
-    typedef NTL::matrix<Int> IntMat;
+//private:
+//    typedef NTL::vector<Int> IntVec;
+//    typedef NTL::matrix<Int> IntMat;
 public:	
 
     /*
@@ -78,8 +78,8 @@ public:
      * and `includeFirst` variable,
      * then set the `Weights`, `ReductionType`, `Reducer`, and `Normalizer` to the given values.
      */
-     FigureOfMeritDualM(const NTL::vector<int64_t> & t, Weights & w, ReductionType & meth, 
-            ReducerBB<Int, Real> & red, Normalizer & norma, bool includeFirst = false);
+     FigureOfMeritDualM(const NTL::vector<int64_t> & t, Weights & w, Normalizer & norma,
+            ReducerBB<Int, Real> & red = 0, bool includeFirst = false);
 
 
     /*
@@ -110,15 +110,15 @@ public:
 
 //============================================================================
 // Implementation
-template<typename Int>
-FigureOfMeritDualM<Int>::FigureOfMeritDualM (const NTL::vector<int64_t> & t, 
-        Weights & w, ReductionType & meth, ReducerBB<Int, Real> & red, Normalizer & norma, 
-		bool includeFirst):
-            FigureOfMeritM<Int> (t, w, meth, red, norma, includeFirst) {};
+
+template<typename Int, typename Real>
+FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM (const NTL::vector<int64_t> & t,
+        Weights & w, Normalizer & norma, ReducerBB<Int, Real> & red, bool includeFirst):
+            FigureOfMeritM<Int, Real> (t, w, norma, red, includeFirst) {};
 
 //=========================================================================
-template<typename Int>
-double FigureOfMeritDualM<Int>::computeMeritDual (IntLatticeExt<Int, Real> & lat, 
+template<typename Int, typename Real>
+double FigureOfMeritDualM<Int, Real>::computeMeritDual (IntLatticeExt<Int, Real> & lat,
         IntLattice<Int, Real> *proj) {
    double merit = 0;
    double minmerit = 1.0;
@@ -141,8 +141,8 @@ double FigureOfMeritDualM<Int>::computeMeritDual (IntLatticeExt<Int, Real> & lat
 }
 
 //=========================================================================
-template<typename Int>
-double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> & lat, 
+template<typename Int, typename Real>
+double FigureOfMeritDualM<Int, Real>::computeMeritSuccDual (IntLatticeExt<Int, Real> & lat,
         IntLattice<Int, Real> *proj) {
    double merit = 0;
    double minmerit = 1.0;
@@ -153,31 +153,24 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
    for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
        coord.insert(j);
        lat.incDimDualBasis();
-       if (this->m_doingBKZ) {
-          redBKZ<IntMat, RealVec> (lat.getDualBasis(), this->m_delta, 
-              this->m_blocksize, 0, j, &this->m_sqlen);
-       } else if (this->m_doingLLL) {
-          redLLL<IntMat, RealVec> (lat.getDualBasis(), this->m_delta, j, 
-              &this->m_sqlen);
-       } else if (this->m_reductionMethod == PAIRBB) {
-          this->m_red->redDieter(0);
-          this->m_sqlen[0] = NTL::conv<double>(lat.getDualVecNorm(0));
-       }
-       if (!this->m_doingBB) {
+       if (this->m_deltaLLL > 0.0)
+           redLLL<IntMat, RealVec> (lat.getDualBasis(), this->m_deltaLLL, j, &this->m_sqlen);
+       if (this->m_deltaBKZ > 0.0)
+           redBKZ<IntMat, RealVec> (lat.getDualBasis(), this->m_deltaBKZ, this->m_blocksizeBKZ, 0, j, &this->m_sqlen);
+       if (!this->m_red) {
            if (lat.getNormType() == L2NORM) {
                NTL::conv(merit, sqrt(this->m_sqlen[0]) / this->m_norma->getBound(j));
            } else {
                NTL::conv(merit, this->m_sqlen[0] / this->m_norma->getBound(j));
            }
-           
-       } else {
+       } else {  // We do the BB
            lat.dualize();
            this->m_red->setIntLattice(lat);
-           if (!this->m_red->shortestVector())    return 0;
+           if (!this->m_red->shortestVector()) return 0;
            NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(j));
            lat.dualize();
        }
-       merit = merit * this->m_weights->getWeight(coord);
+       merit *= this->m_weights->getWeight(coord);
        if (this->m_printDetails) std::cout << "Coordinates: {1,...," << j << "}, FoM: " << merit << "\n";
        if (merit < minmerit) minmerit = merit;
        if (minmerit <= this->m_lowbound) return 0;
@@ -186,8 +179,8 @@ double FigureOfMeritDualM<Int>::computeMeritSuccDual (IntLatticeExt<Int, Real> &
 }
 
 //=========================================================================
-template<typename Int>
-double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real> & lat, 
+template<typename Int, typename Real>
+double FigureOfMeritDualM<Int, Real>::computeMeritNonSuccDual (IntLatticeExt<Int, Real> & lat,
         IntLattice<Int, Real> *proj) {
     double merit = 0;
     double minmerit = 1.0;
@@ -195,30 +188,25 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
     
     for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end(); it++){
         coord = *it;
-        lat.buildProjection(proj, coord, this->m_delta);
-        if (this->m_doingBKZ) {
-          redBKZ<IntMat, RealVec> (proj->getDualBasis(), this->m_delta, this->m_blocksize, 0, 
-              coord.size(), &this->m_sqlen);
-        } else if (this->m_doingLLL) {
-           redLLL<IntMat, RealVec> (proj->getDualBasis(), this->m_delta, 
-               coord.size(), &this->m_sqlen);
-         } else if (this->m_reductionMethod == PAIRBB) {
-            this->m_red->redDieter(0);
-            this->m_sqlen[0] = NTL::conv<double>(proj->getDualVecNorm(0));
-        }
-        if (!this->m_doingBB) {
+        int64_t j = coord.size();
+        lat.buildProjection(proj, coord, this->m_deltaProj);
+        if (this->m_deltaLLL > 0.0)
+            redLLL<IntMat, RealVec> (proj.getDualBasis(), this->m_deltaLLL, j, &this->m_sqlen);
+        if (this->m_deltaBKZ > 0.0)
+            redBKZ<IntMat, RealVec> (proj.getDualBasis(), this->m_deltaBKZ, this->m_blocksizeBKZ, 0, j, &this->m_sqlen);
+        if (!this->m_red) {
             if (lat.getNormType() == L2NORM) {
-                NTL::conv(merit, sqrt(this->m_sqlen[0]) / this->m_norma->getBound(coord.size()));
+                NTL::conv(merit, sqrt(this->m_sqlen[0]) / this->m_norma->getBound(j));
             } else {
-                NTL::conv(merit, this->m_sqlen[0]/ this->m_norma->getBound(coord.size()));
+                NTL::conv(merit, this->m_sqlen[0]/ this->m_norma->getBound(j));
             }
-        } else {
+        } else {  // We perform the BB here.
             proj->dualize();
             this->m_red->setIntLattice(*proj);
-            if (!this->m_red->shortestVector())    return 0;
-            NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(coord.size()));
+            if (!this->m_red->shortestVector())  return 0;
+            NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(j));
         }
-        merit = merit * this->m_weights->getWeight(coord);
+        merit *= this->m_weights->getWeight(coord);
         if (this->m_printDetails) std::cout << "Coordinates: " << coord << ", FoM: " << merit << "\n";
         if (merit < minmerit) minmerit = merit;
         if (minmerit <= this->m_lowbound) return 0;
@@ -228,8 +216,11 @@ double FigureOfMeritDualM<Int>::computeMeritNonSuccDual (IntLatticeExt<Int, Real
 
 //=========================================================================
 
-
-template class FigureOfMeritDualM<NTL::ZZ>;
+template class FigureOfMeritDualM<std::int64_t, double> ;
+template class FigureOfMeritDualM<NTL::ZZ, double> ;
+template class FigureOfMeritDualM<NTL::ZZ, xdouble> ;
+template class FigureOfMeritDualM<NTL::ZZ, quad_float> ;
+template class FigureOfMeritDualM<NTL::ZZ, NTL::RR> ;
 
 } // end namespace LatticeTester
 

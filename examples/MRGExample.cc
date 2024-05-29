@@ -1,13 +1,13 @@
 /**
- * This example shows how to use `LatticeTester` to calculate a figure of merit in practive
+ * This example shows how to use `LatticeTester` to calculate a figure of merit in practice
  * In a first loop an approximation of the FoM is calculated for many multipliers (numRep)
  * by using the chosen pre-reduction algorithm (meth). A chosen number (noBest) of the 
  * best multipliers according to this loop is stored. Afterwards the exact FoM for these 
  * stored multipliers is calculated by means of the BB algorihm.
  */
 
-//#define NTL_TYPES_CODE 2
-#define TYPES_CODE  ZQ
+#define TYPES_CODE  ZD   // ZZ + double
+
 #include <iostream>
 #include <cstdint>
 #include <algorithm>
@@ -26,7 +26,7 @@
 #include "latticetester/FigureOfMeritM.h"
 #include "latticetester/FigureOfMeritDualM.h"
 #include "latticetester/ReducerStatic.h"
-#include "latticetester/LLL_FPInt.h"
+#include "latticetester/LLL_lt.h"
 #include "latticetester/Weights.h"
 #include "latticetester/WeightsOrderDependent.h"
 
@@ -56,16 +56,16 @@ int main() {
   a[0] = a1;
   a[1] = a2;
   a[2] = a3;
-  int64_t m_dim = 12; // Dimension of the lattice
+  int64_t dim = 12; // Dimension of the lattice
   
   int64_t max_dim = 32; // Maximal allowed dimension of the lattice
-  double delta = 0.9999; // Delta for the pre-reduction algorithm
-  ReductionType meth = LatticeTester::LLL; // Sets the reduction type
+  // double delta = 0.9999; // Delta for the pre-reduction algorithm
+  // ReductionType meth = LatticeTester::LLL; // Sets the reduction type
   //The t-vector of the FOM, here M_{16,32,16,12}
   NTL::vector<int64_t> t(3); // length of the t-vector
   t[0] = 12;
-  t[1] = 2;
-  t[2] = 3;
+   t[1] = 2;
+   t[2] = 3;
 
   /*
    * The following variables are technical and shall not be changed by the user
@@ -80,25 +80,27 @@ int main() {
   Normalizer *norma; // Normalizer object (necessary to normalize FoMs)
   ReducerBB<Int, Real> *red; // Reducer object (necessary for BB)
   WeightsOrderDependent weights; // Object for the weights applied to the FoM
+  // WeightsUniform weights; // Object for the weights applied to the FoM
 
-  // Calculate the log-density and initilize the normalizer
+  // Calculate the log-density and initialize the normalizer
   double log_density=(double)(-log(abs(m)));
   norma = new NormaBestLat(log_density, a.length(), max_dim);
   // Initialize the Reducer
   red = new ReducerBB<Int, Real>(max_dim);
   // Set the default weight to 1
-  weights.setDefaultWeight(1);
+  weights.setDefaultWeight(1.0);
   // Initialize the FoM object
-  FigureOfMeritDualM<Int> fom(t, weights, meth, *red, *norma, true); 
+  // FigureOfMeritM<Int, Real> fom(t, weights, *norma, *red, true);
+  FigureOfMeritDualM<Int, Real> fom(t, weights, *norma, *red, true);
 
   //Here the MRG Lattices for the lattice and its projections are defined
-  lat = new MRGLattice<Int, Real>(m, a, m_dim, with_primal, with_dual);
-  proj = new MRGLattice<Int, Real>(m, a, m_dim, with_primal, with_dual);
+  lat = new MRGLattice<Int, Real>(m, a, dim, with_primal, with_dual);
+  proj = new MRGLattice<Int, Real>(m, a, dim, with_primal, with_dual);
   
-  meth = LLLBB;
-  fom.setReductionMethod(meth, delta);
+  // meth = LLLBB;
+  // fom.setReductionMethod(meth, delta);
   fom.setPrintDetails(true);
-  f = fom.computeMeritDual(*lat, proj);
+  f = fom.computeMerit(lat*, proj);
   std::cout << "Figure of merit is: " << f << "\n";
   return 0;
   

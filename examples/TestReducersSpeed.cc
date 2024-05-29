@@ -90,6 +90,8 @@ void performReduction(Rank1Lattice<Int, Real> *korlat, ReducerBB<Int, Real> *red
    sumSq[meth][d] += len2;
 }
 
+// Same as performReduction, but this one applies LLL three times in succession with
+// the three given values of $\delta$.
 template<typename Int, typename Real>
 void performReduction3LLL(Rank1Lattice<Int, Real> *korlat, ReducerBB<Int, Real> *red,
       bool inDual, long d, long meth, double deltaLLL1, double deltaLLL2, double deltaLLL3,
@@ -122,7 +124,6 @@ void performReduction3LLL(Rank1Lattice<Int, Real> *korlat, ReducerBB<Int, Real> 
    timer[meth][d] += clock() - tmp;
    sumSq[meth][d] += len2;
 }
-
 
 
 // Speed test for dim = dimensions[d], with given matrices.
@@ -161,8 +162,11 @@ static void testLoop(Int m, long numRep, bool inDual) {
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
    std::cout << "****************************************************\n";
    std::cout << "Types: " << stringTypes << "\n";
-   std::cout << "Tests in dual lattice?  " << inDual << "\n\n";
-   std::cout << "TestReducersSpeed with m = " << m << "\n";
+   std::cout << "TestReducersSpeed with m = " << m;
+   if (inDual)
+      std::cout << ", in the dual lattice. \n\n";
+   else
+	  std::cout << ", in the primal lattice. \n\n";
    std::cout << "Results for `testLoop`\n";
    std::cout << "Timings (in microseconds) for different methods for " << numRep
          << " replications \n\n";
@@ -172,9 +176,6 @@ static void testLoop(Int m, long numRep, bool inDual) {
    ReducerBB<Int, Real> *red;       // Also a single ReducerBB object.
    red = new ReducerBB<Int, Real>(*korlat);
    Int a;        // The LCG multiplier
-   // IntMat basisdual1, basisdual2;
-   // basisdual1.SetDims(maxdim, maxdim); // Will be initial triangular dual basis.
-   // basisdual2.SetDims(maxdim, maxdim); // m-dual basis passed to LLL, etc.
    for (d = 0; d < numSizes; d++)   // Reset accumulators.
       for (int64_t meth = 0; meth < numMeth; meth++) {
          timer[meth][d] = 0;

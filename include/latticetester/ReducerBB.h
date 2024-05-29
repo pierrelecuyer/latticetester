@@ -1985,7 +1985,9 @@ bool ReducerBB<Int, Real>::shortestVector(IntLattice<Int, Real> &lat) {
 
 template class ReducerBB<std::int64_t, double> ;
 template class ReducerBB<NTL::ZZ, double> ;
-template class ReducerBB<std::int64_t, NTL::RR> ;
+template class ReducerBB<NTL::ZZ, xdouble> ;
+template class ReducerBB<NTL::ZZ, quad_float> ;
+// template class ReducerBB<std::int64_t, NTL::RR> ;
 template class ReducerBB<NTL::ZZ, NTL::RR> ;
 
 }     // namespace LatticeTester

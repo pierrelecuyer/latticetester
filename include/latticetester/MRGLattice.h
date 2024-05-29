@@ -591,6 +591,8 @@ std::string MRGLattice<Int, Real>::toStringCoef() const {
 
 template class MRGLattice<std::int64_t, double> ;
 template class MRGLattice<NTL::ZZ, double> ;
+template class MRGLattice<NTL::ZZ, xdouble> ;
+template class MRGLattice<NTL::ZZ, quad_float> ;
 template class MRGLattice<NTL::ZZ, NTL::RR> ;
 
 } // End namespace LatticeTester
