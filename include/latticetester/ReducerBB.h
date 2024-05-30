@@ -227,6 +227,13 @@ public:
             int64_t dim = 0);
 
     /**
+     * Returns the *square Euclidean length* of the current shortest basis vector in the lattice.
+     */
+    Real getMinLength2() {
+        return m_lMin2;
+    }
+
+    /**
      * Returns the length of the current shortest basis vector in the lattice,
      * which is stored in a local variable.
      * This depends only on the lattice, but this length is stored and used in this class.
@@ -1987,7 +1994,6 @@ template class ReducerBB<std::int64_t, double> ;
 template class ReducerBB<NTL::ZZ, double> ;
 template class ReducerBB<NTL::ZZ, xdouble> ;
 template class ReducerBB<NTL::ZZ, quad_float> ;
-// template class ReducerBB<std::int64_t, NTL::RR> ;
 template class ReducerBB<NTL::ZZ, NTL::RR> ;
 
 }     // namespace LatticeTester

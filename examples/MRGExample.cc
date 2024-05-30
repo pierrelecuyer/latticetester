@@ -6,7 +6,7 @@
  * stored multipliers is calculated by means of the BB algorihm.
  */
 
-#define TYPES_CODE  ZD   // ZZ + double
+#define TYPES_CODE  ZX   // ZZ + double
 
 #include <iostream>
 #include <cstdint>
@@ -51,7 +51,7 @@ int main() {
   a1 = 1145902849652723;
   a2 = 0; 
   a3 = -1184153554609676;
-  IntVec a;
+  NTL::vector<Int>  a;
   a.SetLength(3);
   a[0] = a1;
   a[1] = a2;
@@ -62,10 +62,10 @@ int main() {
   // double delta = 0.9999; // Delta for the pre-reduction algorithm
   // ReductionType meth = LatticeTester::LLL; // Sets the reduction type
   //The t-vector of the FOM, here M_{16,32,16,12}
-  NTL::vector<int64_t> t(3); // length of the t-vector
+  NTL::vector<int64_t> t(1); // The t-vector
   t[0] = 12;
-   t[1] = 2;
-   t[2] = 3;
+  //t[1] = 2;
+  //t[2] = 3;
 
   /*
    * The following variables are technical and shall not be changed by the user
@@ -75,8 +75,6 @@ int main() {
   double f; // Variable for calculation current figure of merit
   bool with_primal = true; // Shall the primal lattice be calculated?
   bool with_dual = true; // Shall the dual lattice be calculated?
-  IntLattice<Int, Real> *proj; // The IntLattice used to store projections  
-  MRGLattice<Int, Real> *lat; // Rank1Lattice to store the current lattice for which the FoM is calculated
   Normalizer *norma; // Normalizer object (necessary to normalize FoMs)
   ReducerBB<Int, Real> *red; // Reducer object (necessary for BB)
   WeightsOrderDependent weights; // Object for the weights applied to the FoM
@@ -94,13 +92,15 @@ int main() {
   FigureOfMeritDualM<Int, Real> fom(t, weights, *norma, *red, true);
 
   //Here the MRG Lattices for the lattice and its projections are defined
+  MRGLattice<Int, Real> *proj; // The IntLattice used to store projections
+  MRGLattice<Int, Real> *lat; // MRGLattice to store the current lattice for which the FoM is calculated
   lat = new MRGLattice<Int, Real>(m, a, dim, with_primal, with_dual);
   proj = new MRGLattice<Int, Real>(m, a, dim, with_primal, with_dual);
   
   // meth = LLLBB;
   // fom.setReductionMethod(meth, delta);
   fom.setPrintDetails(true);
-  f = fom.computeMerit(lat*, proj);
+  f = fom.computeMerit(*lat, *proj);
   std::cout << "Figure of merit is: " << f << "\n";
   return 0;
   

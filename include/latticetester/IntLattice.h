@@ -154,7 +154,7 @@ public:
      * Note that representing each projection as an `IntLattice` object is required when
      * we want to call `Reducer::shortestVector` for several projections.
      */
-    virtual void buildProjection(IntLattice<Int, Real> *projLattice,
+    virtual void buildProjection(IntLattice<Int, Real> &projLattice,
             const Coordinates &proj, double delta = 0.99);
 
     /**
@@ -676,19 +676,19 @@ void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat,
 // template<typename Int>class BasisConstruction;  // Otherwise it does not compile.
 
 template<typename Int, typename Real>
-void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> *projLattice,
+void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
         const Coordinates &proj, double delta) {
     // We assume here that this and lattice have the same m.
-    projLattice->setDim (proj.size());  // Number of coordinates in the projection.
-    if (!projLattice->m_withDual) { // This builds only the primal basis.
+    projLattice.setDim (proj.size());  // Number of coordinates in the projection.
+    if (!projLattice.m_withDual) { // This builds only the primal basis.
         // NTL::vector<Real>* sqlen = 0;
         projectionConstructionLLL<NTL::matrix<Int>, Int, NTL::vector<Real>>(this->m_basis,
-                projLattice->m_basis, proj, this->m_modulo, delta, proj.size());
+                projLattice.m_basis, proj, this->m_modulo, delta, proj.size());
     } else { // The following builds both the primal and the m-dual bases.
         projectionConstructionUpperTri(this->m_basis,
-                projLattice->m_basis, proj, this->m_modulo, this->m_dim);
-        mDualUpperTriangular(projLattice->m_basis,
-               projLattice->m_dualbasis, this->m_modulo, projLattice->m_dim);
+                projLattice.m_basis, proj, this->m_modulo, this->m_dim);
+        mDualUpperTriangular(projLattice.m_basis,
+               projLattice.m_dualbasis, this->m_modulo, projLattice.m_dim);
         this->setNegativeNorm();
         this->setDualNegativeNorm();
     }
@@ -973,9 +973,9 @@ void IntLattice<Int, Real>::sortPrimalBasis(int64_t d) {
 
 /*=========================================================================*/
 
-inline double sqrtReal(const double &a) { return std::sqrt(a); }
-inline xdouble sqrtReal(const xdouble &a) { return std::sqrt(a); }
-inline quad_float sqrtReal(const quad_float &a) { return std::sqrt(a); }
+inline double sqrtReal(const double &a) { return NTL::sqrt(a); }
+inline xdouble sqrtReal(const xdouble &a) { return NTL::sqrt(a); }
+inline quad_float sqrtReal(const quad_float &a) { return NTL::sqrt(a); }
 inline NTL::RR sqrtReal(const NTL::RR &a) { return NTL::sqrt(a); }
 
 template<typename Int, typename Real>
@@ -1097,6 +1097,8 @@ std::string IntLattice<Int, Real>::toStringDualBasis() const {
 
 template class IntLattice<std::int64_t, double> ;
 template class IntLattice<NTL::ZZ, double> ;
+template class IntLattice<NTL::ZZ, xdouble> ;
+template class IntLattice<NTL::ZZ, quad_float> ;
 template class IntLattice<NTL::ZZ, NTL::RR> ;
 
 } // namespace LatticeTester

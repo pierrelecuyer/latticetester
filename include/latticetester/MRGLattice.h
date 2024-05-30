@@ -117,7 +117,7 @@ public:
      * and m-dual constructions are direct, just by selecting the rows and columns
      * whose indices are in `proj`. Otherwise an upper triangular basis is constructed.
      */
-    void buildProjection(IntLattice<Int, Real> *projLattice,
+    void buildProjection(IntLattice<Int, Real> &projLattice,
             const Coordinates &proj, double delta = 0.99) override;
 
     /**
@@ -297,7 +297,7 @@ void MRGLattice<Int, Real>::buildBasis(int64_t d) {
 
 //============================================================================
 
-// This one builds only the m-dual basis, also in a direct way.
+// This one builds only the m-dual basis, also in a direct way, in d dimensions.
 template<typename Int, typename Real>
 void MRGLattice<Int, Real>::buildDualBasis(int64_t d) {
        
@@ -386,7 +386,6 @@ void MRGLattice<Int, Real>::incDimBasis() {
     }
     this->setNegativeNorm();
     
-    
     // If m-dual basis is maintained, we also increase its dimension.
     // Note: This is different from `incDimDualBasis`, because here we want this
     // m-dual to be the m-dual of the primal basis we just computed!
@@ -470,13 +469,13 @@ void MRGLattice<Int, Real>::incDimDualBasis() {
 //============================================================================
 template<typename Int, typename Real>
 void MRGLattice<Int, Real>::buildProjection(
-        IntLattice<Int, Real> *projLattice, const Coordinates &proj,
+        IntLattice<Int, Real> &projLattice, const Coordinates &proj,
         double delta) {
         
     bool case1 = true;
     long d = proj.size();
-    IntMat &basis = projLattice->getBasis();  // Reference to basis.
-    IntMat &dualBasis = projLattice->getDualBasis();
+    IntMat &basis = projLattice.getBasis();  // Reference to basis.
+    IntMat &dualBasis = projLattice.getDualBasis();
     int64_t i, j, k;
     j = 0;
     // Check if the first m_order coordinates are part of the projection
@@ -523,7 +522,7 @@ void MRGLattice<Int, Real>::buildProjection(
         }
     }
     
-    if (projLattice->withPrimal()) { // Build a primal basis.
+    if (projLattice.withPrimal()) { // Build a primal basis.
         if (case1) { // We first compute the first m_order row.
             for (i = 0; i < this->m_order; i++) { 
                 j = 0;
@@ -552,7 +551,7 @@ void MRGLattice<Int, Real>::buildProjection(
             upperTriangularBasis(m_genTemp, basis, this->m_modulo, proj.size(), proj.size());
         }   
     }
-    if (projLattice->withDual()) {  
+    if (projLattice.withDual()) {
         if (case1) { // Compute m-dual basis directly. 
             for (j= 0; j < this->m_order; j++) {
                dualBasis[j][j] = this->m_modulo;
@@ -573,12 +572,9 @@ void MRGLattice<Int, Real>::buildProjection(
             }
         } else { 
             mDualUpperTriangular(basis, dualBasis, this->m_modulo, proj.size());
-            projLattice->setDim(proj.size());
+            projLattice.setDim(proj.size());
         }
     }
-
-
-    
 }
 
 //============================================================================

@@ -93,353 +93,384 @@ namespace LatticeTester {
  * The computation is stopped (early exit) as soon as we know that the value of the FOM
  * will be outside the interval `[low, high]`.  By default,
  * these two bounds are 0 and 1, but they can be changed via the function `setBounds`.
+ *
+ * *****  WARNING: For now, this class works only for the Euclidean norm!    *****
  */
 
 template<typename Int, typename Real>
 class FigureOfMeritM {
 
-//private:
-//    typedef NTL::vector<Int> IntVec;
-//    typedef NTL::matrix<Int> IntMat;
+private:
+	typedef NTL::vector<Int> IntVec;
+	typedef NTL::matrix<Int> IntMat;
+	// typedef NTL::vector<Real> RealVec;
 public:
 
-    /*
-     * This constructor will call `setTVector` with the given vector `t`
-     * and `includeFirst` variable,
-     * then set the 'Weights', `Normalizer`, and `ReducerBB` to the given values.
-     */
-    // template<typename Int, typename Real>
-    FigureOfMeritM(const NTL::vector<int64_t> &t, Weights &w, Normalizer &norma,
-    		// ReductionType &meth,
-            ReducerBB<Int, Real> &red = 0, bool includeFirst = false);
+	/*
+	 * This constructor will call `setTVector` with the given vector `t`
+	 * and `includeFirst` variable,
+	 * then set the 'Weights', `Normalizer`, and `ReducerBB` to the given values.
+	 */
+	// template<typename Int, typename Real>
+	FigureOfMeritM(const NTL::vector<int64_t> &t, Weights &w, Normalizer &norma,
+			ReducerBB<Int, Real> &red = 0, bool includeFirst = false);
 
-    /*
-     * Sets the vector @f$(t_1,..., t_d)@f$ in the FOM definition to the vector `t`.
-     * Note that the values of @f$t_1,..., t_d@f$ are taken from `t[0],...,t[d-1]`,
-     * respectively.  When `includeFirst` is `true`, we consider only the non-successive
-     * projections that contain coordinate 1.
-     * See the doc of the class `FromRanges` in `CoordinateSets` for more details.
-     */
-    void setTVector(const NTL::vector<int64_t> &t, bool includeFirst = false);
+	/*
+	 * Sets the vector @f$(t_1,..., t_d)@f$ in the FOM definition to the vector `t`.
+	 * Note that the values of @f$t_1,..., t_d@f$ are taken from `t[0],...,t[d-1]`,
+	 * respectively.  When `includeFirst` is `true`, we consider only the non-successive
+	 * projections that contain coordinate 1.
+	 * See the doc of the class `FromRanges` in `CoordinateSets` for more details.
+	 */
+	void setTVector(const NTL::vector<int64_t> &t, bool includeFirst = false);
 
-    /*
-     * Sets the weights used for calculating the FoM
-     */
-    void setWeights(Weights &w) {
-       m_weights = &w;
-    }
+	/*
+	 * Sets the weights used for calculating the FoM
+	 */
+	void setWeights(Weights &w) {
+		m_weights = &w;
+	}
 
-   /*
-    * Sets the normalizer to `norma`.
-    */
-   void setNormalizer(Normalizer &norma) {
-       m_norma = &norma;
-   }
+	/*
+	 * Sets the normalizer to `norma`.
+	 */
+	void setNormalizer(Normalizer &norma) {
+		m_norma = &norma;
+	}
 
-    /*
-     * Sets the parameters for the LLL reduction. If `delta = 0`, LLL is not applied.
-     */
-    void setLLL (double delta = 0.99999) {
-    	m_deltaLLL = delta;
-    }
+	/*
+	 * Sets the parameters for the LLL reduction. If `delta = 0`, LLL is not applied.
+	 */
+	void setLLL(double delta = 0.99999) {
+		m_deltaLLL = delta;
+	}
 
-    /*
-     * Sets the parameters for the BKZ reduction. If `delta = 0`, BKZ is not applied.
-     */
-    void setBKZ (double delta = 0.99999, int64_t blocksize = 10) {
-        m_deltaBKZ = delta;
-        m_blocksizeBKZ = blocksize;
-    }
+	/*
+	 * Sets the parameters for the BKZ reduction. If `delta = 0`, BKZ is not applied.
+	 */
+	void setBKZ(double delta = 0.99999, int64_t blocksize = 10) {
+		m_deltaBKZ = delta;
+		m_blocksizeBKZ = blocksize;
+	}
 
-    /*
-     * Sets the low and the high bound for the FOM.
-     * The FOM computation is stopped as soon as we know it is outside these bounds.
-     */
-    void setBounds(double &low, double &high) {
-        m_highbound = high;
-        m_lowbound = low;
-    }
+	/*
+	 * Sets the low and the high bound for the FOM.
+	 * The FOM computation is stopped as soon as we know it is outside these bounds.
+	 */
+	void setBounds(double &low, double &high) {
+		m_highbound = high;
+		m_lowbound = low;
+	}
 
-    /*
-     * Sets if details of FoM shall be printed on the screen
-     */
-    void setPrintDetails(bool print) {
-        m_printDetails = print;
-    }
+	/*
+	 * Sets if details of FoM shall be printed on the screen
+	 */
+	void setPrintDetails(bool print) {
+		m_printDetails = print;
+	}
 
+	/*
+	 * This function computes and returns the value of the FOM for the given lattice 'lat'.
+	 * The function returns 0 if the computation was not completed for some reason
+	 * (early exit, error, etc.).
+	 * The parameter `proj` points to a secondary `IntLattice` object used to store the
+	 * projections when computing the FOM.  The `maxDim` in this object must be large
+	 * enough so it can store any of the projections: `maxDim`\f$\ge \max(s,t_1)$\f.
+	 * Re-using this object permits one to avoid creating new objects internally.
+	 * We need a full `IntLattice` object (not only a basis) for when we apply BB to the projection.
+	 *
+	 * *** In this function and the two that follow, one lattice is passed by reference (&lat)
+	 *     and the other via a pointer (*proj).  Why is it different?  Is there a reason?
+	 *     It makes the code more complicated.                                            *****
+	 */
+	double computeMerit(IntLatticeExt<Int, Real> &lat,
+			IntLattice<Int, Real> &proj);
 
-    /*
-     * This function computes and returns the value of the FOM for the given lattice 'lat'.
-     * The function returns 0 if the computation was not completed for some reason
-     * (early exit, error, etc.).
-     * The parameter `proj` points to a secondary `IntLattice` object used to store the
-     * projections when computing the FOM.  The `maxDim` in this object must be large
-     * enough so it can store any of the projections: `maxDim`\f$\ge \max(s,t_1)$\f.
-     * Re-using this object permits one to avoid creating new objects internally.
-     * We need a full `IntLattice` object (not only a basis) for when we apply BB to the projection.
-     */
-    double computeMerit(IntLatticeExt<Int, Real> &lat,
-            IntLattice<Int, Real> *proj);
+	/*
+	 * This function computes and returns the FOM only for the projections
+	 * over sets of successive coordinates of the form
+	 * {1, 2, ..., m_t.size()} to {1, 2, ..., m_t[0]}.
+	 * It returns 0 if the computation was not completed for some reason.
+	 * The parameter `proj` is like for `computeMerit`.
+	 */
+	double computeMeritSucc(IntLatticeExt<Int, Real> &lat);
 
-    /*
-     * This function computes and returns the FOM only for the projections
-     * over sets of successive coordinates of the form
-     * {1, 2, ..., m_t.size()} to {1, 2, ..., m_t[0]}.
-     * It returns 0 if the computation was not completed for some reason.
-     * The parameter `proj` is like for `computeMerit`.
-     */
-    double computeMeritSucc(IntLatticeExt<Int, Real> &lat,
-            IntLattice<Int, Real> *proj);
+	/*
+	 * This function computes and returns the FOM only for the projections
+	 * over sets on non-successive coordinates determined by
+	 *  @f$S(s,t_s)@f$ or  @f$S^{(1)}(s,t_s)@f$.
+	 * It returns 0 if the computation was not completed for some reason.
+	 * The parameter `proj` is like for `computeMerit`.
+	 */
+	double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
+			IntLattice<Int, Real> &proj);
 
-    /*
-     * This function computes and returns the FOM only for the projections
-     * over sets on non-successive coordinates determined by
-     *  @f$S(s,t_s)@f$ or  @f$S^{(1)}(s,t_s)@f$.
-     * It returns 0 if the computation was not completed for some reason.
-     * The parameter `proj` is like for `computeMerit`.
-     */
-    double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
-            IntLattice<Int, Real> *proj);
+	/*
+	 * This function computes and returns the merit value for a single projection
+	 * represented in lattice `proj`, in `dim` dimensions.
+	 * It returns 0 if the computation is not completed for any reason.
+	 */
+	double computeMeritOneProj(IntLattice<Int, Real> &proj, const Coordinates &coord);
 
-protected:
+	/*
+	 * This 'm_t' specifies the set of projections for which the FOM is computed.
+	 * `m_t[s-1]` represents t_s, for s=1,...,d.
+	 */
+	NTL::vector<int64_t> m_t;
 
-    /*
-     * This 'm_t' specifies the set of projections for which the FOM is computed.
-     * `m_t[s-1]` represents t_s, for s=1,...,d.
-     */
-    NTL::vector<int64_t> m_t;
-    
-    /*
-     * Specifies the weights assigned to the projections.
-     */    
-    Weights *m_weights;
+	/*
+	 * Specifies the weights assigned to the projections.
+	 */
+	Weights *m_weights;
 
-    /*
-     * Internal normalizer object for storing normalizing values in FiguresOfMeritM class
-     */
-    Normalizer *m_norma;
+	/*
+	 * Internal normalizer object for storing normalizing values in FiguresOfMeritM class
+	 */
+	Normalizer *m_norma;
 
-    /*
-     * The parameters `delta` and `blocksize` for the LLL and BKZ reductions.
-     * When `delta = 0`, the method is not applied.
-     */
-    double m_deltaLLL = 0.0;
-    double m_deltaBKZ = 0.99999;
-    int64_t m_blocksizeBKZ = 10;
+	/*
+	 * The parameters `delta` and `blocksize` for the LLL and BKZ reductions.
+	 * When `delta = 0`, the method is not applied.
+	 */
+	double m_deltaLLL = 0.0;
+	double m_deltaBKZ = 0.99999;
+	int64_t m_blocksizeBKZ = 10;
 
-    /*
-     * The parameters `delta` used to build projections via LLL.
-     */
-    double m_deltaProj = 0.5;
+	/*
+	 * The parameters `delta` used to build projections via LLL.
+	 */
+	double m_deltaProj = 0.5;
 
-    /*
-     * Internal `CoordinateSets` object used to store the set of projections
-     * that are considered for the non-successive coordinates.
-     * It is constructed and populated by the `setTVector` function.
-     * This object specifies a set of projections of each order.
-     */
-    CoordinateSets::FromRanges *m_coordRange;
+	/*
+	 * Internal `CoordinateSets` object used to store the set of projections
+	 * that are considered for the non-successive coordinates.
+	 * It is constructed and populated by the `setTVector` function.
+	 * This object specifies a set of projections of each order.
+	 */
+	CoordinateSets::FromRanges *m_coordRange;
 
-    /*
-     * Internal `reducerBB` object used when we apply BB to find the shortest vector in a projection.
-     */
-    ReducerBB<Int, Real> *m_red;
+	/*
+	 * Internal `reducerBB` object used when we apply BB to find the shortest vector in a projection.
+	 * We define it as a pointer because we want to pass a null pointer if BB is not applied.
+	 */
+	ReducerBB<Int, Real> *m_red;
 
-    /*
-     * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
-     * after an LLL or BKZ pre-reduction via the static methods of `LLL_FP_lt`.
-     */
-    NTL::vector<Real> m_sqlen;
+	/*
+	 * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
+	 * after an LLL or BKZ pre-reduction via the static methods of `LLL_FP_lt`.
+	 */
+	NTL::vector<Real> m_sqlen;
 
-    /*
-     * Indicates if the first coordinate will always be included in all the projections
-     * over the non-successive coordinates.  If true, we use @f$S^{(1)}(s,t_s)@f$  in
-     * Section 10 of the user's guide, otherwise we use @f$S(s,t_s)@f$ and we therefore
-     * have a larger set of projections.
-     */
-    // bool m_firstCoordinateAlwaysIn = false;
-    /*
-     * As soon as we know the FOM is above this bound, its calculation is stopped.
-     */
-    double m_highbound = 1.0;
+	/*
+	 * Indicates if the first coordinate will always be included in all the projections
+	 * over the non-successive coordinates. This is used only when building  `*m_coordRange`,
+	 * but the variable could be useful for printouts of results.
+	 */
+	bool m_includeFirst = false;
 
-    /*
-     * As soon as we know the FOM is below this bound, its calculation is stopped.
-     */
-    double m_lowbound = 0.0;
+	/*
+	 * As soon as we know the FOM is above this bound, its calculation is stopped.
+	 */
+	double m_highbound = 1.0;
 
-    /*
-     * Indicates if details of FoM calculation are printed on the screen.
-     */
-    bool m_printDetails = false;
-    
+	/*
+	 * As soon as we know the FOM is below this bound, its calculation is stopped.
+	 */
+	double m_lowbound = 0.0;
+
+	/*
+	 * Indicates if details of FoM calculation are printed on the screen.
+	 */
+	bool m_printDetails = false;
+
 };
 
 //============================================================================
 // Implementation
 
 template<typename Int, typename Real>
-FigureOfMeritM<Int, Real>::FigureOfMeritM(const NTL::vector<int64_t> &t, Weights &w,
-		Normalizer &norma, ReducerBB<Int, Real> &red, bool includeFirst) {
-    setTVector(t, includeFirst);
-    this->m_weights = &w;
-    setNormalizer(norma);
-    m_red = &red;
+FigureOfMeritM<Int, Real>::FigureOfMeritM(const NTL::vector<int64_t> &t,
+		Weights &w, Normalizer &norma, ReducerBB<Int, Real> &red,
+		bool includeFirst) {
+	setTVector(t, includeFirst);
+	m_weights = &w;
+	setNormalizer(norma);
+	m_red = &red;
+	m_sqlen.SetLength(1);  // We will retrieve only the square length of the shortest.
 }
-
 
 //=========================================================================
 
 template<typename Int, typename Real>
-void FigureOfMeritM<Int, Real>::setTVector(const NTL::vector<int64_t> &t, bool includeFirst) {
-    m_t = t;
-    // m_includeFirst = includeFirst;
-    // Reconstructs the CoordinateSets object.
-    m_coordRange = new CoordinateSets::FromRanges;
-    /* Defines the lower bound for the range of coordinates that belong to a projection.
-     * It is 2 if the first coordinate belongs to all the projections, because we do
-     * not have to consider coordinate 1. Otherwise it is 1.
-     * In the first case, coordinate 1 is added to all the projections as an extra coord.
-     * See the doc of the class `FromRanges` in `CoordinateSets`.
-     */
-    int64_t min_dim = 1;
-    if (includeFirst)
-        min_dim = 2;
-    int64_t d = static_cast<int64_t>(t.size()); // Number of orders for the projections.
-    for (int64_t i = 1; i < d; i++) {
-        // Adds the set of projections of order i.
-        if (t[i] >= min_dim + i - includeFirst) {
-            m_coordRange->includeOrder(i + 1 - includeFirst, min_dim, t[i], includeFirst); // Change here *****
-        }
-    }
+void FigureOfMeritM<Int, Real>::setTVector(const NTL::vector<int64_t> &t,
+		bool includeFirst) {
+	m_t = t;
+	m_includeFirst = includeFirst;
+	// Reconstructs the CoordinateSets object.
+	m_coordRange = new CoordinateSets::FromRanges;
+	/* Defines the lower bound for the range of coordinates that belong to a projection.
+	 * It is 2 if the first coordinate belongs to all the projections, because we do
+	 * not have to consider coordinate 1. Otherwise it is 1.
+	 * In the first case, coordinate 1 is added to all the projections as an extra coord.
+	 * See the doc of the class `FromRanges` in `CoordinateSets`.
+	 */
+	int64_t min_dim = 1;
+	if (includeFirst)
+		min_dim = 2;
+	int64_t d = static_cast<int64_t>(t.size()); // Number of orders for the projections.
+	for (int64_t i = 1; i < d; i++) {
+		// Adds the set of projections of order i, if non-empty.
+		if (t[i] >= min_dim + i - includeFirst) {
+			m_coordRange->includeOrder(i + 1 - includeFirst, min_dim, t[i],
+					includeFirst);
+		}
+	}
 }
 
 //=========================================================================
 
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMerit(IntLatticeExt<Int, Real> &lat,
-        IntLattice<Int, Real> *proj) {
-    double merit = 0;
-    double minmerit = 1.0;
+		IntLattice<Int, Real> &proj) {
+	double merit = 0;
+	double minmerit = 1.0;
+	// this->m_sqlen.SetLength(1);
 
-    //this->m_sqlen = new double[this->m_t.size() + 1];
-    this->m_sqlen.SetLength(this->m_t.size() + 1);
+	merit = computeMeritNonSucc(lat, proj);
+	if (merit < minmerit)
+		minmerit = merit;
+	// If the calculation was stopped, we return 0.
+	if (minmerit == 0)
+		return 0;
 
-    merit = computeMeritNonSucc(lat, proj);
-    if (merit < minmerit)
-        minmerit = merit;
-    // In any of these cases the calculation is stopped
-    if (minmerit == 0)
-        return 0;
-
-    //this->m_sqlen = new double[this->m_t[0]]; 
-    this->m_sqlen.SetLength(this->m_t[0]);   
-    merit = computeMeritSucc(lat, proj);
-    if (merit < minmerit)
-        minmerit = merit;
-    // In any of these cases the calculation is stopped
-    if (minmerit == 0 || merit > this->m_highbound)
-        return 0;
-    return minmerit;
+	merit = computeMeritSucc(lat);
+	if (merit < minmerit)
+		minmerit = merit;
+	// In any of these cases the calculation is stopped.
+	if (minmerit == 0 || merit > m_highbound)
+		return 0;
+	return minmerit;
 }
 
+//=========================================================================
+// Computes the merit value for one projection in dim dimensions.
+template<typename Int, typename Real>
+double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &proj, const Coordinates &coord) {
+	int64_t dim = proj.getDim();
+	if (m_deltaLLL > 0.0)
+		redLLL<IntMat, NTL::vector<Real>>(proj.getBasis(), m_deltaLLL, dim,
+				&m_sqlen);
+	if (m_deltaBKZ > 0.0)
+		redBKZ<IntMat, NTL::vector<Real>>(proj.getBasis(), m_deltaBKZ,
+				m_blocksizeBKZ, 0, dim, &m_sqlen);
+	if (this->m_red) {  // If m_red is not a null pointer, we do the BB.
+		this->m_red->setIntLattice(proj); // Do we need to redo this each time?   Is this safe?   *****
+		if (!this->m_red->shortestVector())
+			return 0;
+		this->m_sqlen[0] = this->m_red->getMinLength2();
+	}
+	double merit = 0.0;
+	if (proj.getNormType() == L2NORM)
+		NTL::conv(merit, sqrt(this->m_sqlen[0]) / this->m_norma->getBound(dim));
+	else
+		// This is in case we use the L1 norm.
+		NTL::conv(merit, this->m_red->getMinLength() / this->m_norma->getBound(dim));
+	merit *= m_weights->getWeight(coord);
+	if (m_printDetails)
+		std::cout << "Coordinates: {1,...," << dim << "}, FoM: " << merit << "\n";
+	return merit;
+}
 
+//=========================================================================
+template<typename Int, typename Real>
+double FigureOfMeritM<Int, Real>::computeMeritSucc(
+		IntLatticeExt<Int, Real> &lat) {
+	double minmerit = 1.0;
+	double merit;
+	Coordinates coord;
+	int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
+	lat.buildBasis(lower_dim);
+	for (int64_t j = 1; j < lower_dim + 1; j++)
+		coord.insert(j);
+	for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+		coord.insert(j);
+		lat.incDimBasis();
+		merit = computeMeritOneProj (lat, coord);
+		if (merit < minmerit)
+			minmerit = merit;
+		if (minmerit <= this->m_lowbound)
+			return 0;
+	}
+	return minmerit;
+}
+
+/*
 //=========================================================================
 template<typename Int, typename Real>
 // double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
-double FigureOfMeritM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
-        IntLattice<Int, Real> *proj) {
-    double merit = 0;
-    double minmerit = 1.0;
-    Coordinates coord;    
-    int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
-    lat.buildBasis(lower_dim);
-    
-    for (int64_t j = 1; j < lower_dim + 1; j++) coord.insert(j);
-    for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
-        coord.insert(j);
-        lat.incDimBasis();
-        if (this->m_deltaLLL > 0.0)
-            redLLL<IntMat, RealVec> (lat.getBasis(), this->m_deltaLLL, j, &this->m_sqlen);
-        if (this->m_deltaBKZ > 0.0)
-            redBKZ<IntMat, RealVec> (lat.getBasis(), this->m_deltaBKZ, this->m_blocksizeBKZ, 0, j, &this->m_sqlen);
-        if (this->m_red) {
-            // We do the BB.
-        	this->m_red->setIntLattice(lat);
-            if (!this->m_red->shortestVector())  return 0;
-            NTL::conv(merit,
-                    this->m_red->getMinLength() / this->m_norma->getBound(j));
-        } else {
-            if (lat.getNormType() == L2NORM)
-                NTL::conv(merit,
-                        sqrt(this->m_sqlen[0]) / this->m_norma->getBound(j));
-            else
-                NTL::conv(merit, this->m_sqlen[0] / this->m_norma->getBound(j));
-        }
-        merit = merit * this->m_weights->getWeight(coord);
-        if (m_printDetails) std::cout << "Coordinates: {1,...," << j << "}, FoM: " << merit << "\n";
-        if (merit < minmerit)
-            minmerit = merit;
-        if (minmerit <= this->m_lowbound)
-            return 0;
-    }
-    return minmerit;
+double FigureOfMeritM<Int, Real>::computeMeritSuccOld(
+		IntLatticeExt<Int, Real> &lat) {
+	double merit = 0;
+	double minmerit = 1.0;
+	Coordinates coord;
+	int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
+	lat.buildBasis(lower_dim);
+
+	for (int64_t j = 1; j < lower_dim + 1; j++)
+		coord.insert(j);
+	for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+		coord.insert(j);
+		lat.incDimBasis();
+		if (this->m_deltaLLL > 0.0)
+			redLLL<IntMat, RealVec>(lat.getBasis(), this->m_deltaLLL, j,
+					&this->m_sqlen);
+		if (this->m_deltaBKZ > 0.0)
+			redBKZ<IntMat, RealVec>(lat.getBasis(), this->m_deltaBKZ,
+					this->m_blocksizeBKZ, 0, j, &this->m_sqlen);
+		if (this->m_red) {
+			// We do the BB.
+			this->m_red->setIntLattice(lat);
+			if (!this->m_red->shortestVector())
+				return 0;
+			NTL::conv(merit,
+					this->m_red->getMinLength() / this->m_norma->getBound(j));
+		} else {
+			if (lat.getNormType() == L2NORM)
+				NTL::conv(merit,
+						sqrt(this->m_sqlen[0]) / this->m_norma->getBound(j));
+			else
+				NTL::conv(merit, this->m_sqlen[0] / this->m_norma->getBound(j));
+		}
+		merit = merit * this->m_weights->getWeight(coord);
+		if (m_printDetails)
+			std::cout << "Coordinates: {1,...," << j << "}, FoM: " << merit
+					<< "\n";
+		if (merit < minmerit)
+			minmerit = merit;
+		if (minmerit <= this->m_lowbound)
+			return 0;
+	}
+	return minmerit;
 }
+*/
 
 //=========================================================================
 template<typename Int, typename Real>
-double FigureOfMeritM<Int, Real>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
-        IntLattice<Int, Real> *proj) {
-    double merit = 0;
-    double minmerit = 1.0;
-    Coordinates coord;
-
-    for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
-        coord = *it;
-        int64_t j = coord.size();
-        lat.buildProjection(proj, coord, this->m_deltaProj); // Must have withDual = false   ***
-        if (m_deltaLLL > 0.0)
-            redLLL<IntMat, RealVec> (proj.getBasis(), this->m_deltaLLL, j, &this->m_sqlen);
-        if (m_deltaBKZ > 0.0)
-            redBKZ<IntMat, RealVec> (proj.getBasis(), this->m_deltaBKZ, this->m_blocksizeBKZ, 0, j, &this->m_sqlen);
-        if (m_red) {
-            // We do the BB.
-        	m_red->setIntLattice(lat);
-            if (!m_red->shortestVector())  return 0;
-            NTL::conv(merit,
-                    m_red->getMinLength() / this->m_norma->getBound(j));
-        } else {
-            if (lat.getNormType() == L2NORM)
-                NTL::conv(merit,
-                        sqrt(this->m_sqlen[0]) / this->m_norma->getBound(j));
-            else
-                NTL::conv(merit, this->m_sqlen[0] / this->m_norma->getBound(j));
-        }
-        if (!m_red) {
-            if (lat.getNormType() == L2NORM) {
-                NTL::conv(merit,
-                        sqrt(this->m_sqlen[0])
-                                / this->m_norma->getBound(j));
-            } else {
-                NTL::conv(merit,
-                        this->m_sqlen[0]
-                                / this->m_norma->getBound(j));
-            }
-        } else {
-            m_red->setIntLattice(*proj);
-            if (!m_red->shortestVector())    return 0;
-            merit = NTL::conv<double>(
-                    m_red->getMinLength()
-                            / this->m_norma->getBound(j));
-        }
-        merit = merit * this->m_weights->getWeight(coord);
-        if (m_printDetails) std::cout << "Coordinates: " << coord << ", FoM: " << merit << "\n";
-        if (merit < minmerit)
-            minmerit = merit;
-        if (minmerit <= this->m_lowbound)
-            return 0;
-    }
-    return minmerit;
+double FigureOfMeritM<Int, Real>::computeMeritNonSucc(
+		IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj) {
+	double merit = 0;
+	double minmerit = 1.0;
+	Coordinates coord;
+	for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
+		coord = *it;
+		lat.buildProjection(proj, coord, this->m_deltaProj); // Done with LLL. Must have withDual = false   ***
+		merit = computeMeritOneProj (proj, coord);
+		if (merit < minmerit)
+			minmerit = merit;
+		if (minmerit <= this->m_lowbound)
+			return 0;
+	}
+	return minmerit;
 }
 
 template class FigureOfMeritM<std::int64_t, double> ;

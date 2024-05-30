@@ -168,7 +168,7 @@ public:
      * In contrast to the same method in the parent class, this specialized version
      * does not require that a basis for the whole lattice has been constructed before.
      */
-    void buildProjection(IntLattice<Int, Real> *projLattice,
+    void buildProjection(IntLattice<Int, Real> &projLattice,
             const Coordinates &proj, double delta = 0.99) override;
 
     /**
@@ -403,7 +403,7 @@ void Rank1Lattice<Int, Real>::incDimDualBasis() {
 //============================================================================
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::buildProjection(
-        IntLattice<Int, Real> *projLattice, const Coordinates &proj,
+        IntLattice<Int, Real> &projLattice, const Coordinates &proj,
         double delta) {
 
     // We use the method described in the Lattice Tester guide, section 5.5.
@@ -411,9 +411,9 @@ void Rank1Lattice<Int, Real>::buildProjection(
     bool case1 = m_a[*proj.begin() - 1] == 1; // We have a_{i_1} = 1.
     long i, j;
     long d = proj.size();     // Number of coordinates in the projection.
-    projLattice->setDim(d);
-    IntMat &basis = projLattice->getBasis();  // Reference to basis.
-    IntMat &dualBasis = projLattice->getDualBasis();
+    projLattice.setDim(d);
+    IntMat &basis = projLattice.getBasis();  // Reference to basis.
+    IntMat &dualBasis = projLattice.getDualBasis();
 
     Int c1, b1, b2; // c1 will be gcd(a_{i_1}, m). We should always have c1=1.
     if (!case1) {
@@ -422,7 +422,7 @@ void Rank1Lattice<Int, Real>::buildProjection(
         if (c1 > 1)
             MyExit(1, "Rank1Lattice::buildProjection: c1 > 1.");
     }
-    if (projLattice->withPrimal()) { // Build a primal basis.
+    if (projLattice.withPrimal()) { // Build a primal basis.
         // We first compute the first row.
         if (case1) {
             j = 0; 
@@ -449,7 +449,7 @@ void Rank1Lattice<Int, Real>::buildProjection(
             }
         }
     }
-    if (projLattice->withDual()) { // Compute m-dual basis directly.
+    if (projLattice.withDual()) { // Compute m-dual basis directly.
         if (case1) {
             dualBasis[0][0] = this->m_modulo;
             i = 1;
@@ -486,6 +486,8 @@ std::string Rank1Lattice<Int, Real>::toStringCoef() const {
 
 template class Rank1Lattice<std::int64_t, double> ;
 template class Rank1Lattice<NTL::ZZ, double> ;
+template class Rank1Lattice<NTL::ZZ, xdouble> ;
+template class Rank1Lattice<NTL::ZZ, quad_float> ;
 template class Rank1Lattice<NTL::ZZ, NTL::RR> ;
 
 } // End namespace LatticeTester

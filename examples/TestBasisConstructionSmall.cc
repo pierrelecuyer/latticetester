@@ -119,7 +119,7 @@ int main() {
     // It requires a new `Rank1Lattice` for the projection.
     Rank1Lattice<Int, Real> *projLattice2;
     projLattice2 = new Rank1Lattice<Int, Real>(m, a, dimProj, true, false);
-    korlat->buildProjection(projLattice2, proj, 0.5);
+    korlat->buildProjection(*projLattice2, proj, 0.5);
     std::cout << "Triangular basis for this projection, with `buildProjection`: \n"
               << projLattice2->getBasis() << "\n";
 

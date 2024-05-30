@@ -133,7 +133,7 @@ template<typename Int, typename Real>
 static void tryManyMethods(Rank1Lattice<Int, Real> *korlat,
       ReducerBB<Int, Real> *red, bool inDual, long d) {
    NTL::vector<Real> sqlen; // Cannot be global because it depends on Real.
-   sqlen.SetLength(1);  // With store only the shortest vector square length.
+   sqlen.SetLength(1);  // We retrieve only the shortest vector square length.
 
    performReduction(korlat, red, inDual, d, 0, 0.5, 0.0, 1, false, sqlen);
    performReduction(korlat, red, inDual, d, 1, 0.99999, 0.0, 1, false, sqlen);
