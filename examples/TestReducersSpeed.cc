@@ -59,32 +59,32 @@ void printResults();  // Must be declared, because it has no parameters.
  * The square length of the shortest basis vector is recovered in `len2`.
  */
 template<typename Int, typename Real>
-void performReduction(Rank1Lattice<Int, Real> *korlat, ReducerBB<Int, Real> *red,
+void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red,
       bool inDual, long d, long meth, double deltaLLL, double deltaBKZ, long k,
       bool BB, NTL::vector<Real> sqlen) {
    long dim = dimensions[d];
    double len2;
    if (inDual) {
-      korlat->setPrimalFlag(false);
-      korlat->setDualFlag(true);
-      korlat->buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
-      korlat->dualize();   // This also exchanges the primal / dual flags.
+      korlat.setPrimalFlag(false);
+      korlat.setDualFlag(true);
+      korlat.buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
+      korlat.dualize();   // This also exchanges the primal / dual flags.
    } else {
-      korlat->setPrimalFlag(true);
-      korlat->setDualFlag(false);
-      korlat->buildBasis(dim);  // Rebuild the dual basis (only) anew.
+      korlat.setPrimalFlag(true);
+      korlat.setDualFlag(false);
+      korlat.buildBasis(dim);  // Rebuild the dual basis (only) anew.
    }
 
    tmp = clock();
    if (deltaLLL > 0.0)
-      redLLL(korlat->getBasis(), deltaLLL, dim, &sqlen);
+      redLLL(korlat.getBasis(), deltaLLL, dim, &sqlen);
    if (deltaBKZ > 0.0)
-      redBKZ(korlat->getBasis(), deltaBKZ, k, 0, dim, &sqlen);
+      redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
    len2 = conv<double>(sqlen[0]);
    if (BB) {
-      if (!red->shortestVector())
+      if (!red.shortestVector())
          std::cout << " shortestVector failed for " << names[meth] << "\n";
-      len2 = conv<double>(korlat->getVecNorm(0));
+      len2 = conv<double>(korlat.getVecNorm(0));
    }
    timer[meth][d] += clock() - tmp;
    sumSq[meth][d] += len2;
@@ -93,33 +93,33 @@ void performReduction(Rank1Lattice<Int, Real> *korlat, ReducerBB<Int, Real> *red
 // Same as performReduction, but this one applies LLL three times in succession with
 // the three given values of $\delta$.
 template<typename Int, typename Real>
-void performReduction3LLL(Rank1Lattice<Int, Real> *korlat, ReducerBB<Int, Real> *red,
+void performReduction3LLL(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red,
       bool inDual, long d, long meth, double deltaLLL1, double deltaLLL2, double deltaLLL3,
 	  double deltaBKZ, long k,
       bool BB, NTL::vector<Real> sqlen) {
    long dim = dimensions[d];
    double len2;
    if (inDual) {
-      korlat->setPrimalFlag(false);
-      korlat->setDualFlag(true);
-      korlat->buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
-      korlat->dualize();   // This also exchanges the primal / dual flags.
+      korlat.setPrimalFlag(false);
+      korlat.setDualFlag(true);
+      korlat.buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
+      korlat.dualize();   // This also exchanges the primal / dual flags.
    } else {
-      korlat->setPrimalFlag(true);
-      korlat->setDualFlag(false);
-      korlat->buildBasis(dim);  // Rebuild the dual basis (only) anew.
+      korlat.setPrimalFlag(true);
+      korlat.setDualFlag(false);
+      korlat.buildBasis(dim);  // Rebuild the dual basis (only) anew.
    }
    tmp = clock();
-   redLLL(korlat->getBasis(), deltaLLL1, dim, &sqlen);
-   redLLL(korlat->getBasis(), deltaLLL2, dim, &sqlen);
-   redLLL(korlat->getBasis(), deltaLLL3, dim, &sqlen);
+   redLLL(korlat.getBasis(), deltaLLL1, dim, &sqlen);
+   redLLL(korlat.getBasis(), deltaLLL2, dim, &sqlen);
+   redLLL(korlat.getBasis(), deltaLLL3, dim, &sqlen);
    if (deltaBKZ > 0.0)
-      redBKZ(korlat->getBasis(), deltaBKZ, k, 0, dim, &sqlen);
+      redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
    len2 = conv<double>(sqlen[0]);
    if (BB) {
-      if (!red->shortestVector())
+      if (!red.shortestVector())
          std::cout << " shortestVector failed for " << names[meth] << "\n";
-      len2 = conv<double>(korlat->getVecNorm(0));
+      len2 = conv<double>(korlat.getVecNorm(0));
    }
    timer[meth][d] += clock() - tmp;
    sumSq[meth][d] += len2;
@@ -130,8 +130,8 @@ void performReduction3LLL(Rank1Lattice<Int, Real> *korlat, ReducerBB<Int, Real> 
 // We test several methods to approximate or find a shortest vector in the dual lattice.
 // The same initial dual basis is rebuilt each time by `beforeReduct`.
 template<typename Int, typename Real>
-static void tryManyMethods(Rank1Lattice<Int, Real> *korlat,
-      ReducerBB<Int, Real> *red, bool inDual, long d) {
+static void tryManyMethods(Rank1Lattice<Int, Real> &korlat,
+      ReducerBB<Int, Real> &red, bool inDual, long d) {
    NTL::vector<Real> sqlen; // Cannot be global because it depends on Real.
    sqlen.SetLength(1);  // We retrieve only the shortest vector square length.
 
@@ -171,12 +171,10 @@ static void testLoop(Int m, long numRep, bool inDual) {
    std::cout << "Timings (in microseconds) for different methods for " << numRep
          << " replications \n\n";
    long d;  // dim = dimensions[d].
-   Rank1Lattice<Int, Real> *korlat; // We create a single lattice object.
-   korlat = new Rank1Lattice<Int, Real>(m, maxdim, false, true);
-   ReducerBB<Int, Real> *red;       // Also a single ReducerBB object.
-   red = new ReducerBB<Int, Real>(*korlat);
+   Rank1Lattice<Int, Real> korlat(m, maxdim, false, true); // We use single lattice object.
+   ReducerBB<Int, Real> red(korlat);   // Also a single ReducerBB object.
    Int a;        // The LCG multiplier
-   for (d = 0; d < numSizes; d++)   // Reset accumulators.
+   for (d = 0; d < numSizes; d++)   // Reset the accumulators.
       for (int64_t meth = 0; meth < numMeth; meth++) {
          timer[meth][d] = 0;
          sumSq[meth][d] = 0.0;
@@ -184,8 +182,8 @@ static void testLoop(Int m, long numRep, bool inDual) {
    totalTime = clock();
    for (int64_t r = 0; r < numRep; r++) {
       a = (m / 5 + 13 * r) % m;   // The multiplier we use for this rep.
-      korlat->seta(a);
-      for (d = 0; d < numSizes; d++) {  // Each matrix size
+      korlat.seta(a);
+      for (d = 0; d < numSizes; d++) {  // Each matrix size.
          tryManyMethods<Int, Real>(korlat, red, inDual, d);
       }
    }
@@ -223,20 +221,21 @@ void printResults() {
    std::cout << "\n";
    std::cout << "Total time for everything: "
          << (double) (clock() - totalTime) / (CLOCKS_PER_SEC) << " seconds\n\n";
-   std::cout
-         << "We see that LLL or BKZ alone do not always find a shortest vector.\n\n\n";
+   //std::cout
+   //      << "We see that LLL or BKZ alone do not always find a shortest vector.\n\n\n";
 }
 
 int main() {
    // Here, Int and Real are not yet defined.
-   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
-   NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
-   long numRep = 50; // Number of replications (multipliers) for each case.
+   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   long numRep = 5; // Number of replications (multipliers) for each case.
    bool inDual = false;  // Tests in dual lattice ?
 
+   // These functions apply the tests with the desired types.
    //testLoop<long, double>(conv<long>(m), numRep, inDual);
    testLoop<NTL::ZZ, double>(m, numRep, inDual);
    testLoop<NTL::ZZ, xdouble>(m, numRep, inDual);
-   testLoop<NTL::ZZ, quad_float>(m, numRep, inDual);
-   testLoop<NTL::ZZ, NTL::RR>(m, numRep, inDual);
+   //testLoop<NTL::ZZ, quad_float>(m, numRep, inDual);
+   //testLoop<NTL::ZZ, NTL::RR>(m, numRep, inDual);
 }

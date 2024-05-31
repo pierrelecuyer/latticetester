@@ -17,7 +17,7 @@
  * line below), and with various choices of the modulus `m` and multiplier `a`.
  **/
 
-// The code to define the Int and Real types.
+// The code to define the Int and Real types.  Here we must recompile to change it.
 #define TYPES_CODE  LD     // Int = int64_t, Real = double
 //#define TYPES_CODE  ZD     // Int = ZZ, Real = double
 //#define TYPES_CODE  ZX     // Int = ZZ, Real = xdouble
@@ -37,9 +37,6 @@
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/Coordinates.h"
 
-//typedef NTL::vector<Real> RealVec;
-// typedef NTL::matrix<Int> IntMat;
-
 using namespace LatticeTester;
 using namespace NTL;
 
@@ -51,8 +48,6 @@ const long dim(5);  // Dimension of lattice.
 const long dimProj(3);  // Dimension of projection.
 
 int main() {
-    // std::string strFlexTypes;
-    // strTypes (strFlexTypes);
     std::cout << "Types: " << strFlexTypes << "\n";
     std::cout << "TestBasisConstructionSmall \n\n";
 
@@ -68,10 +63,9 @@ int main() {
     sqlen.SetLength(1); // We only want to recover the length of the first basis vector.
 
     // We construct a Korobov lattice in dim dimensions.
-    Rank1Lattice<Int, Real> *korlat;
-    korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, false);
-    korlat->buildBasis(dim);   // This initial basis is triangular.
-    basis1 = korlat->getBasis();
+    Rank1Lattice<Int, Real> korlat(m, a, dim, true, false);
+    korlat.buildBasis(dim);   // This initial basis is triangular.
+    basis1 = korlat.getBasis();
     std::cout << "Initial Korobov lattice basis (triangular) = \n" << basis1 << "\n";
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
@@ -100,10 +94,10 @@ int main() {
     // We now investigate the projection over coordinates {1, 3, 5}.
     // We first insert those three coordinates one by one in `proj`.
     // We then compute a basis for this projection in two ways.
-    Coordinates proj;
-    proj.insert(1);
-    proj.insert(3);
-    proj.insert(5);
+    Coordinates proj({1, 2, 3});
+    //proj.insert(1);
+    //proj.insert(3);
+    //proj.insert(5);
     std::cout << "Lattice projection over coordinates " << proj << ".\n";
     std::cout << "In the following basisProj matrices, we need 5 rows and 3 columns\n";
     std::cout << " to make the projection, then 3 rows and 3 columns for the basis.\n";
@@ -117,11 +111,12 @@ int main() {
 
     // This one tests the `buildProjection` method from `IntLattice`.
     // It requires a new `Rank1Lattice` for the projection.
-    Rank1Lattice<Int, Real> *projLattice2;
-    projLattice2 = new Rank1Lattice<Int, Real>(m, a, dimProj, true, false);
-    korlat->buildProjection(*projLattice2, proj, 0.5);
+    // Rank1Lattice<Int, Real> *projLattice2;   // Old style...
+    // projLattice2 = new Rank1Lattice<Int, Real>(m, a, dimProj, true, false);
+    Rank1Lattice<Int, Real> projLattice2(m, a, dimProj, true, false);
+    korlat.buildProjection(projLattice2, proj, 0.5);
     std::cout << "Triangular basis for this projection, with `buildProjection`: \n"
-              << projLattice2->getBasis() << "\n";
+              << projLattice2.getBasis() << "\n";
 
     // Basis construction with upper-triangular method, using `dim` rows.
     projectionConstructionUpperTri(basis2, basisProj, proj, m, dim);

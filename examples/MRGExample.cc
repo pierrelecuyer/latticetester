@@ -51,7 +51,7 @@ int main() {
   a1 = 1145902849652723;
   a2 = 0; 
   a3 = -1184153554609676;
-  NTL::vector<Int>  a;
+  NTL::vector<Int> a;
   a.SetLength(3);
   a[0] = a1;
   a[1] = a2;
@@ -69,39 +69,33 @@ int main() {
 
   /*
    * The following variables are technical and shall not be changed by the user
-  */ 
-  //double high = 1; // Higher bound when a multiplier is rejected (stays constant)
-  //double low = 0; // Lower bound when a multiplier is rejected (dynamically changes in the code)
-  double f; // Variable for calculation current figure of merit
+   */
   bool with_primal = true; // Shall the primal lattice be calculated?
   bool with_dual = true; // Shall the dual lattice be calculated?
-  Normalizer *norma; // Normalizer object (necessary to normalize FoMs)
-  ReducerBB<Int, Real> *red; // Reducer object (necessary for BB)
+  // Normalizer *norma; // Normalizer object (necessary to normalize FoMs)
+  // ReducerBB<Int, Real> *red; // Reducer object (necessary for BB)
   WeightsOrderDependent weights; // Object for the weights applied to the FoM
   // WeightsUniform weights; // Object for the weights applied to the FoM
 
   // Calculate the log-density and initialize the normalizer
-  double log_density=(double)(-log(abs(m)));
-  norma = new NormaBestLat(log_density, a.length(), max_dim);
+  double log_density = (double)(-log(abs(m)));
+  NormaBestLat norma(log_density, a.length(), max_dim);
   // Initialize the Reducer
-  red = new ReducerBB<Int, Real>(max_dim);
+  ReducerBB<Int, Real> red(max_dim);
   // Set the default weight to 1
   weights.setDefaultWeight(1.0);
   // Initialize the FoM object
-  // FigureOfMeritM<Int, Real> fom(t, weights, *norma, *red, true);
-  FigureOfMeritDualM<Int, Real> fom(t, weights, *norma, *red, true);
+  //FigureOfMeritM<Int, Real> fom(t, weights, norma, red, true);  // The FOM object.
+  FigureOfMeritDualM<Int, Real> fom(t, weights, norma, red, true);
 
-  //Here the MRG Lattices for the lattice and its projections are defined
-  MRGLattice<Int, Real> *proj; // The IntLattice used to store projections
-  MRGLattice<Int, Real> *lat; // MRGLattice to store the current lattice for which the FoM is calculated
-  lat = new MRGLattice<Int, Real>(m, a, dim, with_primal, with_dual);
-  proj = new MRGLattice<Int, Real>(m, a, dim, with_primal, with_dual);
+  // Current lattice for which the FoM is calculated
+  MRGLattice<Int, Real> lat(m, a, dim, with_primal, with_dual);
+  // Object used to store projections
+  MRGLattice<Int, Real> proj(m, a, dim, with_primal, with_dual);
   
-  // meth = LLLBB;
-  // fom.setReductionMethod(meth, delta);
   fom.setPrintDetails(true);
-  f = fom.computeMerit(*lat, *proj);
-  std::cout << "Figure of merit is: " << f << "\n";
+  double merit = fom.computeMerit(lat, proj);
+  std::cout << "Figure of merit is: " << merit << "\n";
   return 0;
   
 }

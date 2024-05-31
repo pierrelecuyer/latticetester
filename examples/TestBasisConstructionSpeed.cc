@@ -41,7 +41,6 @@ void printResults();  // Must be declared, because it has no parameters.
 /* This function applies LLL to `basis` in `dim` dimensions.
  * It also updates the cumulative times and sums of square lengths.
  */
-// template<typename IntMat, typename Real>
 template<typename IntMat, typename Real>
 void LLLTest (IntMat &basis, long d, long meth, double delta) {
    long dim = dimensions[d];
@@ -99,7 +98,8 @@ void testLoopResize(NTL::ZZ mm, long numRep) {
    Int m = conv<Int>(mm);
    Int a;       // The LCG multiplier
    IntMat basis1, basis2, basisdual;
-   Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
+   // Rank1Lattice<Int, Real> korlat;    // Will be a Korobov lattice.
+   // Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
    std::cout
          << "Results for `testLoopResize` (many objects are created or resized)\n";
    for (d = 0; d < numSizes; d++)      // Reset timers and sums.
@@ -116,12 +116,12 @@ void testLoopResize(NTL::ZZ mm, long numRep) {
          basis1.SetDims(dim, dim); // Will be initial triangular basis.
          basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
          basisdual.SetDims(dim, dim);  // m-dual basis.
-         korlat = new Rank1Lattice<Int, Real>(m, a, dim, true, false);
-         korlat->buildBasis(dim);
-         basis1 = korlat->getBasis();
+         Rank1Lattice<Int, Real> korlat(m, a, dim, true, false);
+         korlat.buildBasis(dim);
+         basis1 = korlat.getBasis();
          transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2,
                basisdual);
-         delete korlat;
+         // delete &korlat;
       }
    }
    printResults();
@@ -142,8 +142,8 @@ void testLoopNoResize(NTL::ZZ mm, long numRep) {
    basis1.SetDims(maxdim, maxdim); // Will be initial triangular basis.
    basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
    basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
-   Rank1Lattice<Int, Real> *korlat; // We create a single Korobov lattice object.
-   korlat = new Rank1Lattice<Int, Real>(m, maxdim, true, false);
+   // We create a single Korobov lattice object.
+   Rank1Lattice<Int, Real> korlat(m, maxdim, true, false);
    std::cout << "Results for `testLoop No Resize`\n";
 
    for (d = 0; d < numSizes; d++)   // Reset accumulators.
@@ -154,12 +154,12 @@ void testLoopNoResize(NTL::ZZ mm, long numRep) {
    totalTime = clock(); // Global timer for total time.
    for (int64_t r = 0; r < numRep; r++) {
       a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
-      korlat->seta(a);
+      korlat.seta(a);
       for (d = 0; d < numSizes; d++) {  // Each matrix size
          dim = dimensions[d]; // The corresponding dimension.
-         korlat->buildBasis(dim);
+         korlat.buildBasis(dim);
          // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
-         CopyPartMat<IntMat>(basis1, korlat->getBasis(), dim, dim); // Triangular basis.
+         CopyPartMat<IntMat>(basis1, korlat.getBasis(), dim, dim); // Triangular basis.
          transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2,
                basisdual);
       }
@@ -227,10 +227,11 @@ int main() {
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
    long numRep = 1000;   // Number of replications (multipliers) for each case.
 
+   // Here we can test with all combinations of types.
    testTwoLoops<long, NTL::matrix<long>, double>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
-   testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
+   //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
    //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
    return 0;
 }
