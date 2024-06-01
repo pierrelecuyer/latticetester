@@ -111,7 +111,6 @@ public:
 	 * and `includeFirst` variable,
 	 * then set the 'Weights', `Normalizer`, and `ReducerBB` to the given values.
 	 */
-	// template<typename Int, typename Real>
 	FigureOfMeritM(const NTL::vector<int64_t> &t, Weights &w, Normalizer &norma,
 			ReducerBB<Int, Real> &red = 0, bool includeFirst = false);
 

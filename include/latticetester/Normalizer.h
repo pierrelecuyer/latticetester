@@ -71,10 +71,7 @@ namespace LatticeTester {
  * The preferred usage for this class is to declare a pointer to a Normalizer
  * and to instantiate a subclass with dynamically allocated memory:
  * \code{.cpp}
- * Normalizer* norma;
- * norma = new NormaBestLat(logm, k, maxDim);
- *    ...
- * delete norma;
+ *   NormaBestLat norma(logm, k, maxDim);
  * \endcode
  *
  * When making a search and examining millions of lattices, it is important to re-use
@@ -101,10 +98,12 @@ public:
      * To compute bounds for the m-dual, pass `-logm` instead of `logm`.
      * The values of \f$\log m\f$ (in natural basis) and \f$k\f$ must be given as inputs.
      */
-    Normalizer(double logm, int64_t k, int64_t maxDim, std::string name,
+    Normalizer(double logm, int64_t k, int64_t maxDim, std::string name = "",
             NormType norm = L2NORM);
 
     /**
+     * *****  DEPRECATED  *****
+     *
      * This old (legacy) constructor assumes that the lattice is not rescaled.
      * It creates a `Normalizer` by assuming that the density is
      * \f$\eta=\exp(\text{logDensity})\f$ in all dimensions.
@@ -115,7 +114,7 @@ public:
      * The `name` parameter gives name that will be printed by the ToString() method.
      * The `norm` parameter is the `NormType` used by this object.
      */
-    Normalizer(double logDensity, int64_t maxDim, std::string name,
+    Normalizer(double logDensity, int64_t maxDim, std::string name = "",
             NormType norm = L2NORM);
 
     /**
@@ -123,7 +122,7 @@ public:
      * This is used in the case of rank 1 lattices in the `NormaPalpha`
      * class with a prime density.
      */
-    Normalizer(int64_t maxDim, std::string Name, NormType norm = L2NORM);
+    Normalizer(int64_t maxDim, std::string name, NormType norm = L2NORM);
 
     /**
      * Destructor.
@@ -133,7 +132,8 @@ public:
     }
 
     /**
-     * This method computes bounds by assuming that the log density is `logDensity`
+     * This method is rarely applicable!
+     * It computes bounds by assuming that the log density is `logDensity`
      * for all dimensions up to the maximal dimension `maxDim`.
      * It ignores all rescaling.  This will become the new `logDensity` in this object.
      * To compute bounds for the dual, use `-logDensity` instead of `logDensity`.
@@ -231,7 +231,7 @@ private:
     /**
      * Return the min between k et j
      */
-    int64_t min(int64_t k, int64_t j);
+    // int64_t min(int64_t k, int64_t j);
 
 }
 ;
@@ -246,6 +246,7 @@ Normalizer::Normalizer(int64_t maxDim, std::string name, NormType norm) :
 
 /*-------------------------------------------------------------------------*/
 
+// This one makes sense only when the density is the same in all dimensions.
 void Normalizer::computeBounds(double logDensity) {
     double x;
     for (int64_t j = 1; j <= m_maxDim; j++) {
@@ -262,17 +263,17 @@ void Normalizer::computeBounds(double logm, int64_t k) {
     double x;
     for (int64_t j = 1; j <= m_maxDim; j++) {
         x = 0.5 * log(getGamma(j)) - logm * ((k < j) ? (double) k / j : 1);
-        // x = 0.5 * log(getGamma(j)) - min(k, j) * logm / j;
-        if (logm > 0)
+        // x = 0.5 * log(getGamma(j)) - logm * min(k/j, 1);
+        if (logm > 0)   // Primal lattice: we need to add logm.
             x += logm;
         m_bounds[j] = exp(x);
     }
 }
 
 /*-------------------------------------------------------------------------*/
-int64_t Normalizer::min(int64_t k, int64_t j) {
-    return (k < j) ? k : j;
-}
+//int64_t Normalizer::min(int64_t k, int64_t j) {
+//    return (k < j) ? k : j;
+//}
 
 /*-------------------------------------------------------------------------*/
 

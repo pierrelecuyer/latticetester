@@ -3,10 +3,10 @@
  * In a first loop an approximation of the FoM is calculated for many multipliers (numRep)
  * by using the chosen pre-reduction algorithm (meth). A chosen number (noBest) of the 
  * best multipliers according to this loop is stored. Afterwards the exact FoM for these 
- * stored multipliers is calculated by means of the BB algorihm.
+ * stored multipliers is calculated by means of the BB algorithm.
  */
 
-#define TYPES_CODE  ZX   // ZZ + double
+#define TYPES_CODE  ZQ  // ZZ + quad_float
 
 #include <iostream>
 #include <cstdint>
@@ -36,66 +36,35 @@
 #include "latticetester/CoordinateSets.h"
 #include "latticetester/WeightsUniform.h"
 #include "latticetester/BasisConstruction.h"
-
 #include "latticetester/MRGLattice.h"
 
 using namespace LatticeTester;
 
-
 int main() {
   /*
-   * This defines the example from your paper with Raymond Couture
+   * This tests the MRG retained in Table VII of the LatMRG paper of L'Ecuyer and Couture (1997).
    */
+  int64_t order(3);
   Int m(9223372036854773561); 
-  Int a1, a2, a3;
-  a1 = 1145902849652723;
-  a2 = 0; 
-  a3 = -1184153554609676;
   NTL::vector<Int> a;
-  a.SetLength(3);
-  a[0] = a1;
-  a[1] = a2;
-  a[2] = a3;
+  a.SetLength(order);
+  a[0] = 1145902849652723;
+  a[1] = 0;
+  a[2] = -1184153554609676;
   int64_t dim = 12; // Dimension of the lattice
-  
-  int64_t max_dim = 32; // Maximal allowed dimension of the lattice
-  // double delta = 0.9999; // Delta for the pre-reduction algorithm
-  // ReductionType meth = LatticeTester::LLL; // Sets the reduction type
-  //The t-vector of the FOM, here M_{16,32,16,12}
   NTL::vector<int64_t> t(1); // The t-vector
   t[0] = 12;
-  //t[1] = 2;
-  //t[2] = 3;
 
-  /*
-   * The following variables are technical and shall not be changed by the user
-   */
-  bool with_primal = true; // Shall the primal lattice be calculated?
-  bool with_dual = true; // Shall the dual lattice be calculated?
-  // Normalizer *norma; // Normalizer object (necessary to normalize FoMs)
-  // ReducerBB<Int, Real> *red; // Reducer object (necessary for BB)
-  WeightsOrderDependent weights; // Object for the weights applied to the FoM
-  // WeightsUniform weights; // Object for the weights applied to the FoM
-
-  // Calculate the log-density and initialize the normalizer
-  double log_density = (double)(-log(abs(m)));
-  NormaBestLat norma(log_density, a.length(), max_dim);
-  // Initialize the Reducer
-  ReducerBB<Int, Real> red(max_dim);
-  // Set the default weight to 1
-  weights.setDefaultWeight(1.0);
-  // Initialize the FoM object
-  //FigureOfMeritM<Int, Real> fom(t, weights, norma, red, true);  // The FOM object.
+  bool with_primal = true;
+  bool with_dual = true;
+  WeightsUniform weights(1.0);
+  NormaBestLat norma(-log(m), order, dim);
+  ReducerBB<Int, Real> red(dim);
   FigureOfMeritDualM<Int, Real> fom(t, weights, norma, red, true);
-
-  // Current lattice for which the FoM is calculated
-  MRGLattice<Int, Real> lat(m, a, dim, with_primal, with_dual);
-  // Object used to store projections
-  MRGLattice<Int, Real> proj(m, a, dim, with_primal, with_dual);
-  
   fom.setPrintDetails(true);
-  double merit = fom.computeMerit(lat, proj);
+  MRGLattice<Int, Real> lat(m, a, dim, with_primal, with_dual);
+
+  double merit = fom.computeMeritSuccDual (lat);
   std::cout << "Figure of merit is: " << merit << "\n";
   return 0;
-  
 }
