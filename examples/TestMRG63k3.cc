@@ -75,9 +75,9 @@ int main() {
 
   t.SetLength(4);
   t[1] = 0;   t[2] = 0;  t[3] = 8;
-  fom.setTVector(t);
+  fomd.setTVector(t);
   MRGLattice<Int, Real> proj(m, a, dim, with_primal, with_dual);
-  merit = fom.computeMerit (lat, proj);
+  merit = fomd.computeMeritNonSucc (lat, proj);
   std::cout << "Figure of merit is: " << merit << "\n\n";
 
   return 0;
