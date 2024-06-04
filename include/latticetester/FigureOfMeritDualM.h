@@ -93,18 +93,18 @@ public:
      * at least \f$t_1$\f.
      * Re-using this object permits one to avoid creating new objects internally.
      */
-    double computeMeritDual (IntLatticeExt<Int, Real> & lat, 
-            IntLattice<Int, Real> &proj);
+    //double computeMeritDual (IntLatticeExt<Int, Real> & lat,
+    //        IntLattice<Int, Real> &proj);
     
     /*
      * Same as computeMeritSucc but for the m-dual lattice.
      */
-    double computeMeritSuccDual (IntLatticeExt<Int, Real> & lat);
+    double computeMeritSucc (IntLatticeExt<Int, Real> & lat);
     
     /*
      * Same as computeMeritNonSucc but for the m-dual lattice.
      */
-    double computeMeritNonSuccDual (IntLatticeExt<Int, Real> & lat, 
+    double computeMeritNonSucc (IntLatticeExt<Int, Real> & lat,
             IntLattice<Int, Real> &proj);
 };
 
@@ -116,43 +116,40 @@ FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM (const NTL::vector<int64_t> & 
         Weights & w, Normalizer & norma, ReducerBB<Int, Real> & red, bool includeFirst):
             FigureOfMeritM<Int, Real> (t, w, norma, red, includeFirst) {};
 
+/*
 //=========================================================================
 template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritDual (IntLatticeExt<Int, Real> &lat,
         IntLattice<Int, Real> &proj) {
-   double merit = 0;
    double minmerit = 1.0;
-
    // this->m_sqlen.SetLength(this->m_t.size() + 1);
-   merit = computeMeritNonSuccDual(lat, proj);
-   if (merit < minmerit) minmerit = merit;
+   minmerit = min (minmerit, computeMeritNonSuccDual(lat, proj));
+   // if (merit < minmerit) minmerit = merit;
    if (minmerit == 0) return 0;
-
    //this->m_sqlen.SetLength(this->m_t[0]);
-   merit = computeMeritSuccDual(lat);
-   if (merit < minmerit) minmerit = merit;
+   minmerit = min (minmerit, computeMeritSuccDual(lat));
+   // if (merit < minmerit) minmerit = merit;
    // In any of these cases the calcuation is stopped
    if (minmerit == 0 || minmerit > this->m_highbound) return 0;
-
    return minmerit; 
 }
+*/
 
 //=========================================================================
 template<typename Int, typename Real>
-double FigureOfMeritDualM<Int, Real>::computeMeritSuccDual (IntLatticeExt<Int, Real> &lat) {
-   double merit = 0;
+double FigureOfMeritDualM<Int, Real>::computeMeritSucc (IntLatticeExt<Int, Real> &lat) {
+   // double merit = 0;
    double minmerit = 1.0;
    Coordinates coord;    
-   int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.size());  // We start in d dimensions.
    lat.buildDualBasis(lower_dim);
    for (int64_t j = 1; j < lower_dim + 1; j++) coord.insert(j);
    for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
        coord.insert(j);
        lat.incDimDualBasis();
        lat.dualize();
-	   merit = this->computeMeritOneProj (lat, coord);
+	   minmerit = min (minmerit, this->computeMeritOneProj (lat, coord));
        lat.dualize();
-       if (merit < minmerit) minmerit = merit;
        if (minmerit <= this->m_lowbound) return 0;
    }
    return minmerit;
@@ -160,20 +157,19 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSuccDual (IntLatticeExt<Int, R
 
 //=========================================================================
 template<typename Int, typename Real>
-double FigureOfMeritDualM<Int, Real>::computeMeritNonSuccDual (IntLatticeExt<Int, Real> &lat,
+double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc (IntLatticeExt<Int, Real> &lat,
         IntLattice<Int, Real> &proj) {
-    double merit = 0;
+    // double merit = 0;
     double minmerit = 1.0;
     Coordinates coord;
-    
     for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end(); it++){
         coord = *it;
-        // int64_t j = coord.size();
+        // The following builds a triangular basis for proj, takes its dual, and dualize.
+        // For this, both withPrimal and withDual must be true for proj.    *****
         lat.buildProjection(proj, coord, this->m_deltaProj);
         proj.dualize();
- 	    merit = this->computeMeritOneProj (proj, coord);
+ 	    minmerit = min (minmerit, this->computeMeritOneProj (proj, coord));
         proj.dualize();
-        if (merit < minmerit) minmerit = merit;
         if (minmerit <= this->m_lowbound) return 0;
     }
     return minmerit;
