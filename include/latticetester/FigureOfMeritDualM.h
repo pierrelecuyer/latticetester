@@ -30,7 +30,6 @@
 #include <NTL/matrix.h>
 #include <NTL/RR.h>
 
-
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
 #include "latticetester/BasisConstruction.h"
@@ -43,7 +42,6 @@
 #include "latticetester/ReducerBB.h"
 #include "latticetester/Weights.h"
 // #include "latticetester/WeightsOrderDependent.h"
-
 
 #include "latticetester/NormaBestLat.h"
 #include "latticetester/NormaBestBound.h"
@@ -66,113 +64,118 @@ namespace LatticeTester {
  * This is a limitation.
  */
 template<typename Int, typename Real>
-class FigureOfMeritDualM: public FigureOfMeritM<Int, Real>  {
+class FigureOfMeritDualM: public FigureOfMeritM<Int, Real> {
 
 private:
-    typedef NTL::vector<Int> IntVec;
-    typedef NTL::matrix<Int> IntMat;
-    // typedef NTL::vector<Real> RealVec;
-public:	
+	typedef NTL::vector<Int> IntVec;
+	typedef NTL::matrix<Int> IntMat;
+	// typedef NTL::vector<Real> RealVec;
+public:
 
-    /*
-     * This constructor will call `setTVector` with the given vector `t`
-     * and `includeFirst` variable,
-     * then set the `Weights`, `ReductionType`, `Reducer`, and `Normalizer` to the given values.
-     */
-     FigureOfMeritDualM(const NTL::vector<int64_t> & t, Weights & w, Normalizer & norma,
-            ReducerBB<Int, Real> & red = 0, bool includeFirst = false);
+	/*
+	 * This constructor will call `setTVector` with the given vector `t`
+	 * and `includeFirst` variable,
+	 * then set the `Weights`, `ReductionType`, `Reducer`, and `Normalizer` to the given values.
+	 */
+	FigureOfMeritDualM(const NTL::vector<int64_t> &t, Weights &w,
+			Normalizer &norma, ReducerBB<Int, Real> &red = 0,
+			bool includeFirst = false);
 
+	/*
+	 * This function computes and returns the value of the FOM for the dual of the
+	 * given lattice 'lat'. The function returns 0 if the computation was not completed
+	 * for some reason (early exit, error, etc.).
+	 * The parameter `proj` points to an `IntLattice` object that is used to store the
+	 * projections when computing the FOM. The `maxDim` in this object must be large
+	 * enough so it can store any of the projections: it must be at least \f$d$\f and
+	 * at least \f$t_1$\f.
+	 * Re-using this object permits one to avoid creating new objects internally.
+	 */
+	//double computeMeritDual (IntLatticeExt<Int, Real> & lat,
+	//        IntLattice<Int, Real> &proj);
+	/*
+	 * Same as computeMeritSucc but for the m-dual lattice.
+	 */
+	double computeMeritSucc(IntLatticeExt<Int, Real> &lat) override;
 
-    /*
-     * This function computes and returns the value of the FOM for the dual of the 
-     * given lattice 'lat'. The function returns 0 if the computation was not completed 
-     * for some reason (early exit, error, etc.).
-     * The parameter `proj` points to an `IntLattice` object that is used to store the
-     * projections when computing the FOM. The `maxDim` in this object must be large
-     * enough so it can store any of the projections: it must be at least \f$d$\f and
-     * at least \f$t_1$\f.
-     * Re-using this object permits one to avoid creating new objects internally.
-     */
-    //double computeMeritDual (IntLatticeExt<Int, Real> & lat,
-    //        IntLattice<Int, Real> &proj);
-    
-    /*
-     * Same as computeMeritSucc but for the m-dual lattice.
-     */
-    double computeMeritSucc (IntLatticeExt<Int, Real> & lat);
-    
-    /*
-     * Same as computeMeritNonSucc but for the m-dual lattice.
-     */
-    double computeMeritNonSucc (IntLatticeExt<Int, Real> & lat,
-            IntLattice<Int, Real> &proj);
+	/*
+	 * Same as computeMeritNonSucc but for the m-dual lattice.
+	 */
+	double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
+			IntLattice<Int, Real> &proj) override;
 };
 
 //============================================================================
 // Implementation
 
 template<typename Int, typename Real>
-FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM (const NTL::vector<int64_t> & t,
-        Weights & w, Normalizer & norma, ReducerBB<Int, Real> & red, bool includeFirst):
-            FigureOfMeritM<Int, Real> (t, w, norma, red, includeFirst) {};
+FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::vector<int64_t> &t,
+		Weights &w, Normalizer &norma, ReducerBB<Int, Real> &red,
+		bool includeFirst) :
+		FigureOfMeritM<Int, Real>(t, w, norma, red, includeFirst) {
+}
+;
 
 /*
-//=========================================================================
-template<typename Int, typename Real>
-double FigureOfMeritDualM<Int, Real>::computeMeritDual (IntLatticeExt<Int, Real> &lat,
-        IntLattice<Int, Real> &proj) {
-   double minmerit = 1.0;
-   // this->m_sqlen.SetLength(this->m_t.size() + 1);
-   minmerit = min (minmerit, computeMeritNonSuccDual(lat, proj));
-   // if (merit < minmerit) minmerit = merit;
-   if (minmerit == 0) return 0;
-   //this->m_sqlen.SetLength(this->m_t[0]);
-   minmerit = min (minmerit, computeMeritSuccDual(lat));
-   // if (merit < minmerit) minmerit = merit;
-   // In any of these cases the calcuation is stopped
-   if (minmerit == 0 || minmerit > this->m_highbound) return 0;
-   return minmerit; 
-}
-*/
+ //=========================================================================
+ template<typename Int, typename Real>
+ double FigureOfMeritDualM<Int, Real>::computeMeritDual (IntLatticeExt<Int, Real> &lat,
+ IntLattice<Int, Real> &proj) {
+ double minmerit = 1.0;
+ // this->m_sqlen.SetLength(this->m_t.size() + 1);
+ minmerit = min (minmerit, computeMeritNonSuccDual(lat, proj));
+ // if (merit < minmerit) minmerit = merit;
+ if (minmerit == 0) return 0;
+ //this->m_sqlen.SetLength(this->m_t[0]);
+ minmerit = min (minmerit, computeMeritSuccDual(lat));
+ // if (merit < minmerit) minmerit = merit;
+ // In any of these cases the calcuation is stopped
+ if (minmerit == 0 || minmerit > this->m_highbound) return 0;
+ return minmerit;
+ }
+ */
 
 //=========================================================================
 template<typename Int, typename Real>
-double FigureOfMeritDualM<Int, Real>::computeMeritSucc (IntLatticeExt<Int, Real> &lat) {
-   // double merit = 0;
-   double minmerit = 1.0;
-   Coordinates coord;    
-   int64_t lower_dim = static_cast<int64_t>(this->m_t.size());  // We start in d dimensions.
-   lat.buildDualBasis(lower_dim);
-   for (int64_t j = 1; j < lower_dim + 1; j++) coord.insert(j);
-   for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
-       coord.insert(j);
-       lat.incDimDualBasis();
-       lat.dualize();
-	   minmerit = min (minmerit, this->computeMeritOneProj (lat, coord));
-       lat.dualize();
-       if (minmerit <= this->m_lowbound) return 0;
-   }
-   return minmerit;
+double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
+		IntLatticeExt<Int, Real> &lat) {
+	double minmerit = 1.0;
+	Coordinates coord;
+	int64_t lower_dim = static_cast<int64_t>(this->m_t.size()); // We start in d dimensions.
+	lat.buildDualBasis(lower_dim);
+	for (int64_t j = 1; j < lower_dim + 1; j++)
+		coord.insert(j);
+	for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+		coord.insert(j);
+		lat.incDimDualBasis();
+		lat.dualize();
+		minmerit = min(minmerit, this->computeMeritOneProj(lat, coord));
+		lat.dualize();
+		if (minmerit <= this->m_lowbound)
+			return 0;
+	}
+	return minmerit;
 }
 
 //=========================================================================
 template<typename Int, typename Real>
-double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc (IntLatticeExt<Int, Real> &lat,
-        IntLattice<Int, Real> &proj) {
-    // double merit = 0;
-    double minmerit = 1.0;
-    Coordinates coord;
-    for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end(); it++){
-        coord = *it;
-        // The following builds a triangular basis for proj, takes its dual, and dualize.
-        // For this, both withPrimal and withDual must be true for proj.    *****
-        lat.buildProjection(proj, coord, this->m_deltaProj);
-        proj.dualize();
- 	    minmerit = min (minmerit, this->computeMeritOneProj (proj, coord));
-        proj.dualize();
-        if (minmerit <= this->m_lowbound) return 0;
-    }
-    return minmerit;
+double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
+		IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj) {
+	double minmerit = 1.0;
+	Coordinates coord;
+	for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end();
+			it++) {
+		coord = *it;
+		// The following builds a triangular basis for proj, takes its dual, and dualize.
+		// For this, both withPrimal and withDual must be true for proj.    *****
+		lat.buildProjectionDual(proj, coord);
+		proj.dualize();
+		minmerit = min(minmerit, this->computeMeritOneProj(proj, coord));
+		proj.dualize();
+		if (minmerit <= this->m_lowbound)
+			return 0;
+	}
+	return minmerit;
 }
 
 //=========================================================================

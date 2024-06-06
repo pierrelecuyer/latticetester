@@ -190,7 +190,7 @@ public:
 	 * {1, 2, ..., m_t.size()} to {1, 2, ..., m_t[0]}, and returns the minimum.
 	 * It returns 0 if the computation was not completed for some reason.
 	 */
-	double computeMeritSucc(IntLatticeExt<Int, Real> &lat);
+	virtual double computeMeritSucc(IntLatticeExt<Int, Real> &lat);
 
 	/*
 	 * This function computes and returns the FOM only for the projections
@@ -199,7 +199,7 @@ public:
 	 * It returns 0 if the computation was not completed for some reason.
 	 * The parameter `proj` is like for `computeMerit`.
 	 */
-	double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
+	virtual double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
 			IntLattice<Int, Real> &proj);
 
 	/*
@@ -232,11 +232,6 @@ public:
 	double m_deltaLLL = 0.0;
 	double m_deltaBKZ = 0.99999;
 	int64_t m_blocksizeBKZ = 10;
-
-	/*
-	 * The parameters `delta` used to build projections via LLL.
-	 */
-	double m_deltaProj = 0.5;
 
 	/*
 	 * Internal `CoordinateSets` object used to store the set of projections
@@ -331,8 +326,8 @@ void FigureOfMeritM<Int, Real>::setTVector(const NTL::vector<int64_t> &t,
 // Computes the merit value for one projection in dim dimensprintions.
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &proj, const Coordinates &coord) {
-	int64_t dim = proj.getDim();
-	if (m_deltaLLL > 0.0)
+	int64_t dim = coord.size();  // Dimension of the projection.
+ 	if (m_deltaLLL > 0.0)
 		redLLL<IntMat, NTL::vector<Real>>(proj.getBasis(), m_deltaLLL, dim,
 				&m_sqlen);
 	if (m_deltaBKZ > 0.0)
@@ -400,9 +395,9 @@ double FigureOfMeritM<Int, Real>::computeMeritNonSucc(
 	Coordinates coord;
 	for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
 		coord = *it;
-        projectionConstructionLLL<NTL::matrix<Int>, Int, NTL::vector<Real>>(lat.getBasis(),
-                proj.getBasis(), coord, lat.getModulo(), m_deltaProj, coord.size());
-        // lat.buildProjection(proj, coord, this->m_deltaProj); // Done with LLL. Must have withDual = false ***
+        //projectionConstructionLLL<NTL::matrix<Int>, Int, NTL::vector<Real>>(lat.getBasis(),
+        //    proj.getBasis(), coord, lat.getModulo(), m_deltaProj, coord.size());
+        lat.buildProjection (proj, coord);
 		minmerit = min (minmerit, computeMeritOneProj (proj, coord));
 		if (minmerit <= this->m_lowbound)
 			return 0;

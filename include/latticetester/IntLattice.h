@@ -137,25 +137,42 @@ public:
     void overwriteLattice(const IntLattice<Int, Real> &lat, long d);
 
     /**
-     * Takes the projection of the lattice represented by the present object
-     * over the set of coordinates determined by `proj`, finds a set of generating
-     * vectors for that projection, and builds a basis and perhaps its m-dual basis
-     * (if maintained) for the projection. After that, the `IntLattice` object
-     * given by `projLattice` will represent the projection. It is assumed that the basis
-     * of the present lattice is already available and contains all the coordinates in `proj`.
-     * If `projLattice.withDual() == true`, the primal basis of the projection is obtained by
-     * a triangularization method and a lower-triangular basis of the m-dual is also computed.
-     * Otherwise, only the primal basis is computed, using LLL with the parameter `delta`.
-     * The modulus `m` is assumed to be the same for `projLattice` and for the current object.
+     * Constructs a set of generating vectors for the projection of the present lattice,
+     * over the set of coordinates determined by `proj`, and builds a basis for that
+     * projection using an LLL procedure from `BasisConstruction`.
+     * It is assumed that a basis for the present lattice is already available and contains
+     * all the coordinates in `proj`.
      * The `maxDim` of the `projLattice` object must be large enough so it can holds the projection.
-     * The variables associated with the projection (dimension, norms, etc.) are also updated.
-     * This method can be called several times with the same `projLattice` object
+     * The modulus `m` is assumed to be the same for `projLattice` and for the current object.
+     * This function can be called several times with the same `projLattice` object
      * to examine several different projections.
      * Note that representing each projection as an `IntLattice` object is required when
      * we want to call `Reducer::shortestVector` for several projections.
+     * This function can be overridden by more efficient ones in certain classes.
+     */
+    virtual void buildProjectionLLL(IntLattice<Int, Real> &projLattice,
+            const Coordinates &proj, double delta = 0.5);
+
+    /**
+     * Builds a basis for the projection of the present lattice over the set of coordinates
+     * determined by `proj`.  By default, it uses an upper-triangular construction.
+     * It is assumed that a basis for the present lattice is already available and contains
+     * all the coordinates in `proj`.
      */
     virtual void buildProjection(IntLattice<Int, Real> &projLattice,
-            const Coordinates &proj, double delta = 0.99);
+    		  const Coordinates &proj);
+
+    /**
+     * Similar to `buildProjectionLLL`, except that it builds an upper-triangular basis
+     * for the primal and a lower-triangular basis for the $m$-dual of the projection.
+     * We should use this function when we need a basis for the $m$-dual of the rojection.
+     */
+    virtual void buildProjectionDual(IntLattice<Int, Real> &projLattice,
+            const Coordinates &proj);
+
+    // This old function is deprecated.  It was hiding too much information.
+    // virtual void buildProjection(IntLattice<Int, Real> &projLattice,
+    //        const Coordinates &proj, double delta = 0.99);
 
     /**
      * Returns the `IntMat` object that contains the basis of this lattice.
@@ -673,8 +690,45 @@ void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat,
 
 //===========================================================================
 
-// template<typename Int>class BasisConstruction;  // Otherwise it does not compile.
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::buildProjectionLLL (IntLattice<Int, Real> &projLattice,
+        const Coordinates &proj, double delta) {
+    // We assume here that this and lattice have the same scaling factor m.
+    projLattice.setDim (proj.size());  // Number of coordinates in the projection.
+    projectionConstructionLLL<NTL::matrix<Int>, Int, NTL::vector<Real>>(this->m_basis,
+         projLattice.m_basis, proj, this->m_modulo, delta, proj.size());
+}
 
+//===========================================================================
+
+// This one builds both the primal and the m-dual bases.
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
+        const Coordinates &proj) {
+    // We assume here that this and lattice have the same m.
+    projLattice.setDim (proj.size());  // Number of coordinates in the projection.
+    projectionConstructionUpperTri(this->m_basis,
+                projLattice.m_basis, proj, this->m_modulo, this->m_dim);
+}
+
+//===========================================================================
+
+// This one builds both the primal and the m-dual bases.
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLattice,
+        const Coordinates &proj) {
+    // We assume here that this and lattice have the same m.
+    projLattice.setDim (proj.size());  // Number of coordinates in the projection.
+    projectionConstructionUpperTri(this->m_basis,
+                projLattice.m_basis, proj, this->m_modulo, this->m_dim);
+    mDualUpperTriangular(projLattice.m_basis,
+               projLattice.m_dualbasis, this->m_modulo, projLattice.m_dim);
+    // this->setNegativeNorm();  / Not needed here: will be done by BB if needed.
+    // this->setDualNegativeNorm();
+}
+
+//===========================================================================
+/*
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
         const Coordinates &proj, double delta) {
@@ -693,6 +747,7 @@ void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
         this->setDualNegativeNorm();
     }
 }
+*/
 
 /*=========================================================================*/
 

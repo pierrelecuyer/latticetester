@@ -114,7 +114,7 @@ int main() {
     // Rank1Lattice<Int, Real> *projLattice2;   // Old style...
     // projLattice2 = new Rank1Lattice<Int, Real>(m, a, dimProj, true, false);
     Rank1Lattice<Int, Real> projLattice2(m, a, dimProj, true, false);
-    korlat.buildProjection(projLattice2, proj, 0.5);
+    korlat.buildProjection(projLattice2, proj);
     std::cout << "Triangular basis for this projection, with `buildProjection`: \n"
               << projLattice2.getBasis() << "\n";
 
