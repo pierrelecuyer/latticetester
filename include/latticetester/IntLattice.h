@@ -170,7 +170,7 @@ public:
     virtual void buildProjectionDual(IntLattice<Int, Real> &projLattice,
             const Coordinates &proj);
 
-    // This old function is deprecated.  It was hiding too much information.
+    // This older version is deprecated.  It was hiding too much information.
     // virtual void buildProjection(IntLattice<Int, Real> &projLattice,
     //        const Coordinates &proj, double delta = 0.99);
 

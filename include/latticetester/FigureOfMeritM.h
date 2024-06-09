@@ -76,7 +76,7 @@ namespace LatticeTester {
  * a `Weights` object that gives a weight to each projection,
  * a `Normalizer` object used to normalize the merit values,
  * a `ReducerBB` object used for the reduction in case we want to apply BB, and the
- * `includeFirst` parameter in case we want to put it to `true`.
+ * `includeFirst` parameter in case we want to change it to `false`.
  * The last two parameters are optional.
  * The BB is applied if and only if a (nonzero) `ReducerBB` is given.
  * Otherwise, we just use static methods for the reduction and need no `Reducer`.
@@ -112,7 +112,11 @@ public:
 	 * then set the 'Weights', `Normalizer`, and `ReducerBB` to the given values.
 	 */
 	FigureOfMeritM(const NTL::vector<int64_t> &t, Weights &w, Normalizer &norma,
-			ReducerBB<Int, Real> &red = 0, bool includeFirst = false);
+			ReducerBB<Int, Real> *red = 0, bool includeFirst = true);
+
+	//===========================================================================
+
+	virtual ~FigureOfMeritM();
 
 	/*
 	 * Sets the vector @f$(t_1,..., t_d)@f$ in the FOM definition to the vector `t`.
@@ -121,7 +125,7 @@ public:
 	 * projections that contain coordinate 1.
 	 * See the doc of the class `FromRanges` in `CoordinateSets` for more details.
 	 */
-	void setTVector(const NTL::vector<int64_t> &t, bool includeFirst = false);
+	void setTVector(const NTL::vector<int64_t> &t, bool includeFirst = true);
 
 	/*
 	 * Sets the weights used for calculating the FoM
@@ -153,6 +157,20 @@ public:
 	}
 
 	/*
+	 * The BB method will be applied iff this flag is set to true (the default value).
+	 */
+	void setBB(bool redBB) {
+		m_redBB = redBB;
+	}
+
+	/*
+	 * Sets the `ReducerBB` object that will be used for BB.
+	 */
+	void setReducerBB(ReducerBB<Int, Real> *red) {
+		*m_red = *red;
+	}
+
+	/*
 	 * Sets the low and the high bound for the FOM.
 	 * The FOM computation is stopped as soon as we know it is outside these bounds.
 	 * The default values are 0 and 2.
@@ -167,7 +185,7 @@ public:
 	 * The default value is 0 (minimal output).
 	 * Values from 1 to 4 give increasingly more details.
 	 */
-	void setVerbosity (int64_t verbose) {
+	void setVerbosity(int64_t verbose) {
 		m_verbose = verbose;
 	}
 
@@ -207,7 +225,8 @@ public:
 	 * represented in lattice `proj`, in `dim` dimensions.
 	 * It returns 0 if the computation is not completed for any reason.
 	 */
-	double computeMeritOneProj(IntLattice<Int, Real> &proj, const Coordinates &coord);
+	double computeMeritOneProj(IntLattice<Int, Real> &proj,
+			const Coordinates &coord);
 
 	/*
 	 * This 'm_t' specifies the set of projections for which the FOM is computed.
@@ -234,6 +253,11 @@ public:
 	int64_t m_blocksizeBKZ = 10;
 
 	/*
+	 * The BB is applied iff this flag is set to true.
+	 */
+	bool m_redBB = true;
+
+	/*
 	 * Internal `CoordinateSets` object used to store the set of projections
 	 * that are considered for the non-successive coordinates.
 	 * It is constructed and populated by the `setTVector` function.
@@ -258,15 +282,15 @@ public:
 	 * over the non-successive coordinates. This is used only when building  `*m_coordRange`,
 	 * but the variable could be useful for printouts of results.
 	 */
-	bool m_includeFirst = false;
+	bool m_includeFirst = true;
 
 	/*
 	 * As soon as we know the FOM is above this bound, its calculation is stopped.
-	 * The default value is 2 to make sure that it is never exceeded.
+	 * The default value is 1000 to make sure that it is never exceeded.
 	 * Values slightly larger than 1 might be possible because the normalizers
 	 * provide only approximations in some cases.
 	 */
-	double m_highbound = 2.0;
+	double m_highbound = 1000.0;
 
 	/*
 	 * As soon as we know the FOM is below this bound, its calculation is stopped.
@@ -285,13 +309,19 @@ public:
 
 template<typename Int, typename Real>
 FigureOfMeritM<Int, Real>::FigureOfMeritM(const NTL::vector<int64_t> &t,
-		Weights &w, Normalizer &norma, ReducerBB<Int, Real> &red,
+		Weights &w, Normalizer &norma, ReducerBB<Int, Real> *red,
 		bool includeFirst) {
 	setTVector(t, includeFirst);
 	m_weights = &w;
 	setNormalizer(norma);
-	m_red = &red;
-	m_sqlen.SetLength(1);  // We will retrieve only the square length of the shortest.
+	m_red = red;
+	m_sqlen.SetLength(1); // We will retrieve only the square length of the shortest.
+}
+
+//===========================================================================
+
+template<typename Int, typename Real>
+FigureOfMeritM<Int, Real>::~FigureOfMeritM() {
 }
 
 //=========================================================================
@@ -315,26 +345,28 @@ void FigureOfMeritM<Int, Real>::setTVector(const NTL::vector<int64_t> &t,
 	int64_t d = static_cast<int64_t>(t.size()); // Number of orders for the projections.
 	for (int64_t i = 1; i < d; i++) {
 		// Adds the set of projections of order i, if non-empty.
-		if (t[i] >= min_dim + i - includeFirst) {
+		if (t[i] >= min_dim + i - includeFirst)
 			m_coordRange->includeOrder(i + 1 - includeFirst, min_dim, t[i],
 					includeFirst);
-		}
 	}
 }
 
 //=========================================================================
 // Computes the merit value for one projection in dim dimensprintions.
 template<typename Int, typename Real>
-double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &proj, const Coordinates &coord) {
+double FigureOfMeritM<Int, Real>::computeMeritOneProj(
+		IntLattice<Int, Real> &proj, const Coordinates &coord) {
 	int64_t dim = coord.size();  // Dimension of the projection.
- 	if (m_deltaLLL > 0.0)
+	if (m_deltaLLL > 0.0)
 		redLLL<IntMat, NTL::vector<Real>>(proj.getBasis(), m_deltaLLL, dim,
 				&m_sqlen);
 	if (m_deltaBKZ > 0.0)
 		redBKZ<IntMat, NTL::vector<Real>>(proj.getBasis(), m_deltaBKZ,
 				m_blocksizeBKZ, 0, dim, &m_sqlen);
-	if (m_red) {       // If m_red is not a null pointer, we do the BB.
-		m_red->setIntLattice(proj); // Do we need to redo this each time?   Is this safe?   *****
+	if (m_red) {       // We do the BB.
+		// If `proj` is already the internal lattice for `m_red`, the following does nothing.
+		// Otherwise it just sets a pointer to `proj`, and enlarges the arrays in m_red if needed.
+		m_red->setIntLattice(proj);
 		if (!m_red->shortestVector())
 			return 0;
 		m_sqlen[0] = m_red->getMinLength2();
@@ -346,114 +378,70 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
 		// This is in case we use the L1 norm.
 		NTL::conv(merit, m_red->getMinLength() / m_norma->getBound(dim));
 	merit *= m_weights->getWeight(coord);
-	if (m_verbose > 0)
-		// std::cout << "Coordinates: {1,...," << dim << "}, FoM: " << merit << "\n";
-	    std::cout << "Coordinates: " << coord << ",  FoM: " << merit << "\n";
-	return merit;
+	if (m_verbose > 1) {
+		if (coord.size() < 8)
+			std::cout << merit << "   " << coord << "\n";
+		else
+			std::cout << merit << "   {1,...," << dim << "} \n";
+	}
+return merit;
 }
 
 //=========================================================================
 
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMerit(IntLatticeExt<Int, Real> &lat,
-		IntLattice<Int, Real> &proj) {
-	double minmerit = 1.0;
-	minmerit = min (minmerit, this->computeMeritNonSucc(lat, proj));
-	if (minmerit == 0)
-		return 0;
-	minmerit = min (minmerit, this->computeMeritSucc(lat));
-	if (minmerit > this->m_highbound)
-		return 0;
-	return minmerit;
+	IntLattice<Int, Real> &proj) {
+double minmerit = 1000.0;
+minmerit = min(minmerit, this->computeMeritNonSucc(lat, proj));
+if (minmerit == 0)
+	return 0;
+minmerit = min(minmerit, this->computeMeritSucc(lat));
+if (minmerit > this->m_highbound)
+	return 0;   // Maybe this could be removed.
+return minmerit;
 }
 
 //=========================================================================
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritSucc(
-		IntLatticeExt<Int, Real> &lat) {
-	double minmerit = 1.0;
-	Coordinates coord;
-	int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
-	lat.buildBasis(lower_dim);
-	for (int64_t j = 1; j < lower_dim + 1; j++)
-		coord.insert(j);
-	for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
-		coord.insert(j);
-		lat.incDimBasis();
-		minmerit = min (minmerit, computeMeritOneProj (lat, coord));
-		if (minmerit <= this->m_lowbound)
-			return 0;
-	}
-	return minmerit;
+	IntLatticeExt<Int, Real> &lat) {
+if (m_verbose > 1)
+      std::cout << "  merit             Coordinates \n";
+double minmerit = 1000.0;
+Coordinates coord;
+int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
+lat.buildBasis(lower_dim);
+for (int64_t j = 1; j < lower_dim + 1; j++)
+	coord.insert(j);
+for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+	coord.insert(j);
+	lat.incDimBasis();
+	minmerit = min(minmerit, computeMeritOneProj(lat, coord));
+	if (minmerit <= this->m_lowbound)
+		return 0;
+}
+return minmerit;
 }
 
 //=========================================================================
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritNonSucc(
-		IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj) {
-	double minmerit = 1.0;
-	Coordinates coord;
-	for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
-		coord = *it;
-        //projectionConstructionLLL<NTL::matrix<Int>, Int, NTL::vector<Real>>(lat.getBasis(),
-        //    proj.getBasis(), coord, lat.getModulo(), m_deltaProj, coord.size());
-        lat.buildProjection (proj, coord);
-		minmerit = min (minmerit, computeMeritOneProj (proj, coord));
-		if (minmerit <= this->m_lowbound)
-			return 0;
-	}
-	return minmerit;
+	IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj) {
+if (m_verbose > 1)
+   std::cout << "  merit    Coordinates \n";
+double minmerit = 1000.0;
+Coordinates coord;
+for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
+	coord = *it;
+	lat.buildProjection(proj, coord);
+	minmerit = min(minmerit, computeMeritOneProj(proj, coord));
+	if (minmerit <= this->m_lowbound)
+		return 0;
+}
+return minmerit;
 }
 
-/*
-//=========================================================================
-template<typename Int, typename Real>
-// double FigureOfMeritM<Int>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
-double FigureOfMeritM<Int, Real>::computeMeritSuccOld(
-		IntLatticeExt<Int, Real> &lat) {
-	double merit = 0;
-	double minmerit = 1.0;
-	Coordinates coord;
-	int64_t lower_dim = static_cast<int64_t>(this->m_t.size());
-	lat.buildBasis(lower_dim);
-
-	for (int64_t j = 1; j < lower_dim + 1; j++)
-		coord.insert(j);
-	for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
-		coord.insert(j);
-		lat.incDimBasis();
-		if (this->m_deltaLLL > 0.0)
-			redLLL<IntMat, RealVec>(lat.getBasis(), this->m_deltaLLL, j,
-					&this->m_sqlen);
-		if (this->m_deltaBKZ > 0.0)
-			redBKZ<IntMat, RealVec>(lat.getBasis(), this->m_deltaBKZ,
-					this->m_blocksizeBKZ, 0, j, &this->m_sqlen);
-		if (this->m_red) {
-			// We do the BB.
-			this->m_red->setIntLattice(lat);
-			if (!this->m_red->shortestVector())
-				return 0;
-			NTL::conv(merit,
-					this->m_red->getMinLength() / this->m_norma->getBound(j));
-		} else {
-			if (lat.getNormType() == L2NORM)
-				NTL::conv(merit,
-						sqrt(this->m_sqlen[0]) / this->m_norma->getBound(j));
-			else
-				NTL::conv(merit, this->m_sqlen[0] / this->m_norma->getBound(j));
-		}
-		merit = merit * this->m_weights->getWeight(coord);
-		if (m_printDetails)
-			std::cout << "Coordinates: {1,...," << j << "}, FoM: " << merit
-					<< "\n";
-		if (merit < minmerit)
-			minmerit = merit;
-		if (minmerit <= this->m_lowbound)
-			return 0;
-	}
-	return minmerit;
-}
-*/
 
 template class FigureOfMeritM<std::int64_t, double> ;
 template class FigureOfMeritM<NTL::ZZ, double> ;

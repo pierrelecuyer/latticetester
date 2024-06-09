@@ -49,99 +49,99 @@ namespace LatticeTester {
 template<typename Int, typename Real>
 class IntLatticeExt: public IntLattice<Int, Real> {
 private:
-    typedef NTL::vector<Int> IntVec;
-    typedef NTL::matrix<Int> IntMat;
-    typedef NTL::vector<Real> RealVec;
-    typedef NTL::matrix<Real> RealMat;
+	typedef NTL::vector<Int> IntVec;
+	typedef NTL::matrix<Int> IntMat;
+	typedef NTL::vector<Real> RealVec;
+	typedef NTL::matrix<Real> RealMat;
 
 public:
 
-    /**
-     * A constructor that initializes the primal and dual bases with the
-     * identity matrix. The dimension of the lattice is set to `maxDim`
-     * and the norm type is set to `norm`.
-     * @param m The scaling factor `m` for the integer coordinates
-     * @param maxDim The maximal dimension for which this lattice can be
-     * expanded/tested
-     * @param withDual Specifies whether this object contains a dual or not
-     * @param norm  The norm type to measure the vector lengths.
-     */
-    IntLatticeExt(Int m, int64_t maxDim, bool withPrimal = false,
-            bool withDual = false, NormType norm = L2NORM);
+	/**
+	 * A constructor that initializes the primal and dual bases with the
+	 * identity matrix. The dimension of the lattice is set to `maxDim`
+	 * and the norm type is set to `norm`.
+	 * @param m The scaling factor `m` for the integer coordinates
+	 * @param maxDim The maximal dimension for which this lattice can be
+	 * expanded/tested
+	 * @param withDual Specifies whether this object contains a dual or not
+	 * @param norm  The norm type to measure the vector lengths.
+	 */
+	IntLatticeExt(Int m, int64_t maxDim, bool withPrimal = false,
+			bool withDual = false, NormType norm = L2NORM);
 
-    /**
-     * Copy constructor that makes a copy of `lat`. The maximal dimension
-     * of the created basis is set equal to the current maximal dimension in `lat`.
-     */
-    IntLatticeExt(const IntLatticeExt<Int, Real> &lat);
+	/**
+	 * Copy constructor that makes a copy of `lat`. The maximal dimension
+	 * of the created basis is set equal to the current maximal dimension in `lat`.
+	 */
+	IntLatticeExt(const IntLatticeExt<Int, Real> &lat);
 
-    /**
-     * Makes a copy of `lattice` into this object. It copies the
-     * internal vectors and matrices using the NTL assign operator =
-     * (see https://libntl.org/doc/matrix.cpp.html).
-     */
-    void copy(const IntLatticeExt<Int, Real> &lat);
+	/**
+	 * Makes a copy of `lattice` into this object. It copies the
+	 * internal vectors and matrices using the NTL assign operator =
+	 * (see https://libntl.org/doc/matrix.cpp.html).
+	 */
+	void copy(const IntLatticeExt<Int, Real> &lat);
 
-    /**
-     * Destructor. Depends on the specific subclass.
-     */
-    virtual ~IntLatticeExt();
+	/**
+	 * Destructor. Depends on the specific subclass.
+	 */
+	virtual ~IntLatticeExt();
 
-    /**
-     * This returns the rank (order) of the lattice.   Needed?
-     */
-    // int64_t getOrder() const { return m_order; }
-    /**
-     * This virtual method builds a basis for the lattice in `dim` dimensions,
-     * and store it in the upper-left part of the internal `m_basis` variable,
-     * which is assumed to be an `IntMat` object of dimensions maxDim x maxDim.
-     * The parameter `dim` must not exceed `maxDim`.
-     * If `withDual` is true, it also builds an m-dual basis.
-     */
-    virtual void buildBasis(int64_t dim) {
-    }
-    ;
+	/**
+	 * This returns the rank (order) of the lattice.   Needed?
+	 */
+	// int64_t getOrder() const { return m_order; }
+	/**
+	 * This virtual method builds a basis for the lattice in `dim` dimensions,
+	 * and store it in the upper-left part of the internal `m_basis` variable,
+	 * which is assumed to be an `IntMat` object of dimensions maxDim x maxDim.
+	 * The parameter `dim` must not exceed `maxDim`.
+	 * If `withDual` is true, it also builds an m-dual basis.
+	 */
+	virtual void buildBasis(int64_t dim) {
+	}
+	;
 
-    /**
-     * Similar to `buildBasis`, but builds only the m-dual basis, in `dim` dimensions.
-     * This `dim` must not exceed `maxDim`. The flag  `withDual` is assumed to be true.
-     */
-    virtual void buildDualBasis(int64_t dim) {
-    }
-    ;
+	/**
+	 * Similar to `buildBasis`, but builds only the m-dual basis, in `dim` dimensions.
+	 * This `dim` must not exceed `maxDim`. The flag  `withDual` is assumed to be true.
+	 */
+	virtual void buildDualBasis(int64_t dim) {
+	}
+	;
 
-    /**
-     * Increments the dimension `dim` of the basis by one. One coordinate is added
-     * to each basis vector and one new basis vector is added as well.
-     * Usually, the other coordinates are left unchanged.
-     * If `withDual` is true, then the dimension of the m-dual is also increased by 1.
-     */
-    virtual void incDimBasis() {
-    }
-    ;
+	/**
+	 * Increments the dimension `dim` of the basis by one. One coordinate is added
+	 * to each basis vector and one new basis vector is added as well.
+	 * Usually, the other coordinates are left unchanged.
+	 * If `withDual` is true, then the dimension of the m-dual is also increased by 1.
+	 */
+	virtual void incDimBasis() {
+	}
+	;
 
-    /**
-     * Similar to `incDimBasis`. Increments the dimension `dim` by 1, but only for the dual basis.
-     */
-    virtual void incDimDualBasis() {
-    }
-    ;
+	/**
+	 * Similar to `incDimBasis`. Increments the dimension `dim` by 1, but only for the dual basis.
+	 */
+	virtual void incDimDualBasis() {
+	}
+	;
 
-    /**
-     * Returns a string describing this lattice.
-     */
-    virtual std::string toString() const {
-        return "";
-    }
-    ;
+	/**
+	 * Returns a string describing this lattice.
+	 */
+	virtual std::string toString() const {
+		return "";
+	}
+	;
 
 protected:
 
-    /**
-     * \copydoc LatticeTester::IntLattice::kill()
-     *  ** USEFUL ? **
-     */
-    virtual void kill();
+	/**
+	 * \copydoc LatticeTester::IntLattice::kill()
+	 *  ** USEFUL ? **
+	 */
+	virtual void kill();
 
 };
 // Class IntLatticeExt
@@ -150,57 +150,57 @@ protected:
 
 template<typename Int, typename Real>
 IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, bool withPrimal,
-        bool withDual, NormType norm) :
-        IntLattice<Int, Real>(m, maxDim, withPrimal, withDual, norm) {
-    if (withPrimal) {
-        this->m_basis.resize(this->m_maxDim, this->m_maxDim);
-        this->m_vecNorm.resize(this->m_maxDim);
-        this->setNegativeNorm();
-        if (withDual) {
-            this->m_dualbasis.resize(this->m_maxDim, this->m_maxDim);
-            this->m_dualvecNorm.resize(this->m_maxDim);
-            this->setDualNegativeNorm();
-        }
-    }
+		bool withDual, NormType norm) :
+		IntLattice<Int, Real>(m, maxDim, withPrimal, withDual, norm) {
+	if (withPrimal) {
+		this->m_basis.resize(this->m_maxDim, this->m_maxDim);
+		this->m_vecNorm.resize(this->m_maxDim);
+		this->setNegativeNorm();
+		if (withDual) {
+			this->m_dualbasis.resize(this->m_maxDim, this->m_maxDim);
+			this->m_dualvecNorm.resize(this->m_maxDim);
+			this->setDualNegativeNorm();
+		}
+	}
 }
 //===========================================================================
 
 template<typename Int, typename Real>
 IntLatticeExt<Int, Real>::IntLatticeExt(const IntLatticeExt<Int, Real> &lat) :
-        IntLattice<Int, Real>(lat) {
-    // this->m_withDual = lat.m_withDual;
-    if (this->m_withPrimal)
-        this->setNegativeNorm();
-    if (this->m_withDual)
-        this->setDualNegativeNorm();
+		IntLattice<Int, Real>(lat) {
+	// this->m_withDual = lat.m_withDual;
+	if (this->m_withPrimal)
+		this->setNegativeNorm();
+	if (this->m_withDual)
+		this->setDualNegativeNorm();
 }
 
 //===========================================================================
 
 template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::kill() {
-    // IntLattice<Int, Real>::kill();
+	// IntLattice<Int, Real>::kill();
 }
 
 //===========================================================================
 
 template<typename Int, typename Real>
 IntLatticeExt<Int, Real>::~IntLatticeExt() {
-    //this->m_basisProj.kill();
-    //this->m_dualbasisProj.kill();
-    // IntLatticeExt<Int, Real>::~IntLatticeExt();
+	//this->m_basisProj.kill();
+	//this->m_dualbasisProj.kill();
+	// IntLatticeExt<Int, Real>::~IntLatticeExt();
 }
 
 //===========================================================================
 
 template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
-    // Uses the NTL assignment operator = to make a copy of the bases.
-    this->m_modulo = lat.m_modulo;
-    if (lat.m_withPrimal)
-        this->m_basis = lat.m_basis;
-    if (lat.m_withDual)
-        this->m_dualbasis = lat.m_dualbasis;
+	// Uses the NTL assignment operator = to make a copy of the bases.
+	this->m_modulo = lat.m_modulo;
+	if (lat.m_withPrimal)
+		this->m_basis = lat.m_basis;
+	if (lat.m_withDual)
+		this->m_dualbasis = lat.m_dualbasis;
 }
 
 //===========================================================================

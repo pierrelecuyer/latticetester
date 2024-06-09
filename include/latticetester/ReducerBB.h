@@ -273,10 +273,12 @@ public:
     void setBoundL2(const RealVec &thresholds, int64_t dim1, int64_t dim2);
 
     /**
-     * Sets the `IntLattice` object on which this object will be working.
-     * If the dimension of this lattice is larger than the max dimension for
+     * Sets to `lat` the `IntLattice` object on which this reducer object will be working.
+     * If it is already `lat`, nothing is done.
+     * If the dimension of `lat` is larger than the max dimension for
      * this `ReducerBB`, the latter is increased and the `ReducerBB` is re-initialized
      * with new internal variables having the appropriate dimensions.
+     * Otherwise, the internal variables are left unchanged.
      */
     void setIntLattice(IntLattice<Int, Real> &lat) {
         m_lat = &lat;

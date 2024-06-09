@@ -78,7 +78,7 @@ public:
 	 * then set the `Weights`, `ReductionType`, `Reducer`, and `Normalizer` to the given values.
 	 */
 	FigureOfMeritDualM(const NTL::vector<int64_t> &t, Weights &w,
-			Normalizer &norma, ReducerBB<Int, Real> &red = 0,
+			Normalizer &norma, ReducerBB<Int, Real> *red = 0,
 			bool includeFirst = false);
 
 	/*
@@ -110,7 +110,7 @@ public:
 
 template<typename Int, typename Real>
 FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::vector<int64_t> &t,
-		Weights &w, Normalizer &norma, ReducerBB<Int, Real> &red,
+		Weights &w, Normalizer &norma, ReducerBB<Int, Real> *red,
 		bool includeFirst) :
 		FigureOfMeritM<Int, Real>(t, w, norma, red, includeFirst) {
 }
