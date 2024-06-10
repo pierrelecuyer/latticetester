@@ -105,7 +105,8 @@ public:
      * Constructor of a `ReducerBB` than can handle up to `maxDim` dimensions.
      * Space will be reserved once for all for the internal `IntMat` objects such as
      * the Gram and Cholesky matrices. These same matrices will be re-used over and over
-     * to avoid repeated space reallocation.
+     * to avoid repeated space reallocation.  It is recommended to create a reducer with
+     * a large enough max dim in the first place, using this constructor.
      */
     ReducerBB(int64_t maxDim);
 
@@ -155,15 +156,15 @@ public:
     bool shortestVector();
 
     /**
-     * Deprecated.
      * In this version, the lattice is passed as a parameter.
      * It will become the new `IntLattice` of this `ReducerBB` object.
      * This method calls `setIntLattice(lat)`, so if the max dimension for the
      * ReducerBB is not large enough for `lat`, all the internal variables of this
      * reducer will be reset and the vectors and matrices will be automatically enlarged.
-     * In particular, the bounds set by `setBoundL2` will have to be reset.
+     * In particular, the bounds set by `setBoundL2` have to be reset.   *****
+     * If the max dimension is large enough, only a pointer is changed.
      */
-    // bool shortestVector(IntLattice<Int, Real> &lat);
+    bool shortestVector(IntLattice<Int, Real> &lat);
 
     /**
      * Reduces the current basis to a Minkowski-reduced basis with respect
@@ -176,12 +177,11 @@ public:
     bool reductMinkowski(int64_t d = 0);
 
     /**
-     * Deprecated.
      * In this version, the lattice is passed as a parameter.
      * It will become the new `IntLattice` of this `ReducerBB` object,
      * exactly as in `shortestVector(IntLattice)`.
      */
-    // bool reductMinkowski(IntLattice<Int, Real> &lat, int64_t d = 0);
+    bool reductMinkowski(IntLattice<Int, Real> &lat, int64_t d = 0);
 
     /**
      * This method performs pairwise reduction sequentially on all vectors
@@ -279,6 +279,7 @@ public:
      * this `ReducerBB`, the latter is increased and the `ReducerBB` is re-initialized
      * with new internal variables having the appropriate dimensions.
      * Otherwise, the internal variables are left unchanged.
+     * It is recommended to create the reducer with a large enough max dim in the first place.
      */
     void setIntLattice(IntLattice<Int, Real> &lat) {
         m_lat = &lat;
@@ -899,7 +900,8 @@ void ReducerBB<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[])
             std::cout << " redDieter, in modifFlag \n";
             m_countDieter = 0;
             ++m_cpt;
-            if (m_lat->withDual()) {
+//            if (m_lat->withDual()) {
+            if (false) {
                 //NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), i);
                 NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), j);
                 ModifVect(row1, row2, m_bs, dim);
@@ -983,7 +985,7 @@ template<typename Int, typename Real>
 void ReducerBB<Int, Real>::redDieter(int64_t d, bool taboo[]) {
     std::int64_t BoundCount;
     const int64_t dim = m_lat->getDim();
-    bool withDual = m_lat->withDual();
+    bool withDual = false;   // m_lat->withDual();
     //std::cout << " redDieter, withDual = " << withDual << "\n";
 
     m_lat->updateScalL2Norm(d, dim);
@@ -1011,7 +1013,7 @@ template<typename Int, typename Real>
 void ReducerBB<Int, Real>::redDieterRandomized(int64_t d, int64_t seed) {
     std::int64_t BoundCount;
     const int64_t dim = m_lat->getDim();
-    bool withDual = m_lat->withDual();
+    bool withDual = false;  // m_lat->withDual();
 
     m_lat->updateScalL2Norm(d, dim);
     //m_lat->getDualBasis ().updateScalL2Norm (d, dim);
@@ -1048,7 +1050,7 @@ void ReducerBB<Int, Real>::reductionFaible(int64_t i, int64_t j) {
      */
     Real cte;
     std::int64_t cteLI;
-    //bool withDual = m_lat->withDual();
+    // bool withDual = false;  // m_lat->withDual();
     cte = m_cho2[i][j] / m_cho2[i][i];
 
     const int64_t dim = m_lat->getDim();
@@ -1101,7 +1103,7 @@ void ReducerBB<Int, Real>::transformStage3Mink(std::vector<std::int64_t> &z,
     int64_t j, i;
     std::int64_t q;
     const int64_t dim = m_lat->getDim();
-    bool withDual = m_lat->withDual();
+    bool withDual = false;  // m_lat->withDual();
 
     j = dim - 1;
     while (z[j] == 0)
@@ -1380,7 +1382,7 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage,
      * nodes in the branch-and-bound tree.  When succeeds, returns true.
      * Assumes that the norm is Euclidean.
      */
-    bool withDual = m_lat->withDual();
+    bool withDual = false;  // m_lat->withDual();
     const int64_t dim = m_lat->getDim();
     IntMat VTemp(dim, dim), WTemp(dim, dim);
     bool TabooTemp[dim];
@@ -1790,7 +1792,7 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
 // This works only for the L2 norm.
 template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::reductMinkowski(int64_t d) {
-    bool withDual = m_lat->withDual();
+    bool withDual = false;  //  m_lat->withDual();
     const int64_t dim = m_lat->getDim();
     int64_t i;
     std::int64_t totalNodes = 0;
@@ -1874,7 +1876,7 @@ void ReducerBB<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
     // Effectue la pre-reduction de B au sens de Lenstra-Lenstra-Lovasz. N'utilise
     // pas les vecteurs m_lat->getBasis().vecNorm et  Wm_lat->getDualBasis().
 
-    //bool withDual = m_lat->withDual();
+    // bool withDual = false;   // m_lat->withDual();
     const int64_t REDBAS_e = 40;
     int64_t i, j, k, h;
     Real Cho0ij;
@@ -1966,14 +1968,12 @@ void ReducerBB<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
 
 //=========================================================================
 
-/*
 template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::reductMinkowski(IntLattice<Int, Real> &lat,
         int64_t d) {
     setIntLattice(lat);
     return ReducerBB<Int, Real>::reductMinkowski(d);
 }
-*/
 
 //=========================================================================
 
@@ -1982,13 +1982,11 @@ bool ReducerBB<Int, Real>::shortestVector() {
     return ReducerBB<Int, Real>::redBBShortVec();
 }
 
-/*
 template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::shortestVector(IntLattice<Int, Real> &lat) {
     setIntLattice(lat);
     return ReducerBB<Int, Real>::redBBShortVec();
 }
-*/
 
 //============================================================================
 

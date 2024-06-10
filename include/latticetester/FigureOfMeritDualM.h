@@ -139,7 +139,7 @@ FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::vector<int64_t> &t,
 template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
 		IntLatticeExt<Int, Real> &lat) {
-	double minmerit = 1.0;
+	double minmerit = 1000.0;
 	Coordinates coord;
 	int64_t lower_dim = static_cast<int64_t>(this->m_t.size()); // We start in d dimensions.
 	lat.buildDualBasis(lower_dim);
@@ -161,13 +161,12 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
 template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
 		IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj) {
-	double minmerit = 1.0;
+	double minmerit = 1000.0;
 	Coordinates coord;
 	for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end();
 			it++) {
 		coord = *it;
 		// The following builds a triangular basis for proj, takes its dual, and dualize.
-		// For this, both withPrimal and withDual must be true for proj.    *****
 		lat.buildProjectionDual(proj, coord);
 		proj.dualize();
 		minmerit = min(minmerit, this->computeMeritOneProj(proj, coord));

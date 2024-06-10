@@ -65,13 +65,9 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
    long dim = dimensions[d];
    double len2;
    if (inDual) {
-      korlat.setPrimalFlag(false);
-      korlat.setDualFlag(true);
       korlat.buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
       korlat.dualize();   // This also exchanges the primal / dual flags.
    } else {
-      korlat.setPrimalFlag(true);
-      korlat.setDualFlag(false);
       korlat.buildBasis(dim);  // Rebuild the dual basis (only) anew.
    }
 
@@ -100,13 +96,9 @@ void performReduction3LLL(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> 
    long dim = dimensions[d];
    double len2;
    if (inDual) {
-      korlat.setPrimalFlag(false);
-      korlat.setDualFlag(true);
       korlat.buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
       korlat.dualize();   // This also exchanges the primal / dual flags.
    } else {
-      korlat.setPrimalFlag(true);
-      korlat.setDualFlag(false);
       korlat.buildBasis(dim);  // Rebuild the dual basis (only) anew.
    }
    tmp = clock();
@@ -171,7 +163,7 @@ static void testLoop(Int m, long numRep, bool inDual) {
    std::cout << "Timings (in microseconds) for different methods for " << numRep
          << " replications \n\n";
    long d;  // dim = dimensions[d].
-   Rank1Lattice<Int, Real> korlat(m, maxdim, false, true); // We use single lattice object.
+   Rank1Lattice<Int, Real> korlat(m, maxdim); // We use single lattice object.
    ReducerBB<Int, Real> red(korlat);   // Also a single ReducerBB object.
    Int a;        // The LCG multiplier
    for (d = 0; d < numSizes; d++)   // Reset the accumulators.
@@ -233,7 +225,7 @@ int main() {
    bool inDual = false;  // Tests in dual lattice ?
 
    // These functions apply the tests with the desired types.
-   //testLoop<long, double>(conv<long>(m), numRep, inDual);
+   // testLoop<int64_t, double>(conv<int64_t>(m), numRep, inDual);
    testLoop<NTL::ZZ, double>(m, numRep, inDual);
    testLoop<NTL::ZZ, xdouble>(m, numRep, inDual);
    //testLoop<NTL::ZZ, quad_float>(m, numRep, inDual);

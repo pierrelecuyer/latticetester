@@ -66,8 +66,7 @@ public:
 	 * @param withDual Specifies whether this object contains a dual or not
 	 * @param norm  The norm type to measure the vector lengths.
 	 */
-	IntLatticeExt(Int m, int64_t maxDim, bool withPrimal = false,
-			bool withDual = false, NormType norm = L2NORM);
+	IntLatticeExt(Int m, int64_t maxDim, NormType norm = L2NORM);
 
 	/**
 	 * Copy constructor that makes a copy of `lat`. The maximal dimension
@@ -149,31 +148,20 @@ protected:
 //===========================================================================
 
 template<typename Int, typename Real>
-IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, bool withPrimal,
-		bool withDual, NormType norm) :
-		IntLattice<Int, Real>(m, maxDim, withPrimal, withDual, norm) {
-	if (withPrimal) {
+IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, NormType norm) :
+		IntLattice<Int, Real>(m, maxDim, norm) {
 		this->m_basis.resize(this->m_maxDim, this->m_maxDim);
 		this->m_vecNorm.resize(this->m_maxDim);
-		this->setNegativeNorm();
-		if (withDual) {
+		// this->setNegativeNorm();
 			this->m_dualbasis.resize(this->m_maxDim, this->m_maxDim);
 			this->m_dualvecNorm.resize(this->m_maxDim);
-			this->setDualNegativeNorm();
-		}
-	}
+		// this->setDualNegativeNorm();
 }
 //===========================================================================
 
 template<typename Int, typename Real>
 IntLatticeExt<Int, Real>::IntLatticeExt(const IntLatticeExt<Int, Real> &lat) :
-		IntLattice<Int, Real>(lat) {
-	// this->m_withDual = lat.m_withDual;
-	if (this->m_withPrimal)
-		this->setNegativeNorm();
-	if (this->m_withDual)
-		this->setDualNegativeNorm();
-}
+		IntLattice<Int, Real>(lat) { }
 
 //===========================================================================
 
@@ -197,9 +185,7 @@ template<typename Int, typename Real>
 void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
 	// Uses the NTL assignment operator = to make a copy of the bases.
 	this->m_modulo = lat.m_modulo;
-	if (lat.m_withPrimal)
 		this->m_basis = lat.m_basis;
-	if (lat.m_withDual)
 		this->m_dualbasis = lat.m_dualbasis;
 }
 

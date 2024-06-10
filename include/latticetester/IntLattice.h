@@ -86,11 +86,8 @@ public:
     /**
      * Constructs a lattice whose basis is the identity, in `maxDim` dimensions,
      * with the specified norm type, and the scaling factor `m`.
-     * The parameter `withPrimal` and `withDual` indicate if the primal basis and the m-dual
-     * basis are maintained and updated (or not).  At least one of them must be `true`.
      */
-    IntLattice(const Int m, const int64_t maxDim, bool withPrimal = true,
-            bool withDual = false, NormType norm = L2NORM);
+    IntLattice(const Int m, const int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Similar to the previous constructor, except that the primal basis is given in
@@ -99,7 +96,7 @@ public:
      * only if `withDual == true`.
      */
     IntLattice(const IntMat basis, const Int m, const int64_t maxDim,
-            bool withDual = false, NormType norm = L2NORM);
+            NormType norm = L2NORM);
 
     /**
      * Constructs a lattice with the given basis and given m-dual basis for the given `m`,
@@ -186,15 +183,13 @@ public:
      * Does not change `maxDim`.
      */
     void setBasis(const IntMat basis, const Int m, const int64_t dim,
-            bool withDual = false, NormType norm = L2NORM) {
+            NormType norm = L2NORM) {
         assert(this->m_maxDim == basis.NumRows());
         this->m_modulo = m;
-        this->m_withPrimal = true;
-        this->m_withDual = withDual;
         this->m_norm = norm;
         this->m_dim = dim;
         this->m_basis = basis;
-        setNegativeNorm();
+        // setNegativeNorm();
     }
 
     /**
@@ -205,7 +200,7 @@ public:
         assert(this->m_maxDim == basis.NumRows());
         this->m_dim = dim;
         this->m_basis = basis;
-        setNegativeNorm();
+        // setNegativeNorm();
     }
 
     /**
@@ -298,38 +293,6 @@ public:
      */
     void setDualVecNorm(const Real &value, const int64_t &i) {
         m_dualvecNorm[i] = value;
-    }
-
-    /**
-     * Returns `true` iff we maintain a primal basis.
-     */
-    bool withPrimal() {
-        return m_withPrimal;
-    }
-
-    /**
-     * Sets the `withPrimal` flag to `flag`. This flag indicates whether or
-     * not we maintain a primal basis for this `IntLattice`.  It is the flag
-     * returned by `withPrimal()`.
-     */
-    void setPrimalFlag(bool flag) {
-        m_withPrimal = flag;
-    }
-
-    /**
-     * Returns `true` iff we maintain an m-dual basis.
-     */
-    bool withDual() {
-        return m_withDual;
-    }
-
-    /**
-     * Sets the `withDual` flag to `flag`. This flag indicates whether or
-     * not we maintain an `m`-dual basis for this `IntLattice`. It is the flag
-     * returned by `withDual()`.
-     */
-    void setDualFlag(bool flag) {
-        m_withDual = flag;
     }
 
     /**
@@ -522,23 +485,13 @@ protected:
     int64_t m_dim;
 
     /**
-     * This variable is `true` iff a primal basis is available.
-     */
-    bool m_withPrimal;
-
-    /**
-     * This variable is `true` iff an m-dual basis is available.
-     */
-    bool m_withDual;
-
-    /**
      * The rows of the m_dim x m_dim upper left corner of this matrix are the primal basis vectors.
      */
     IntMat m_basis;
 
     /**
      * The rows of the m_dim x m_dim upper left corner this matrix are the m-dual basis vectors.
-     * May not be initialized.  When m_withDual = true, it must be initialized.
+     * May not be initialized.
      */
     IntMat m_dualbasis;
 
@@ -567,21 +520,16 @@ protected:
 //===========================================================================
 
 template<typename Int, typename Real>
-IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim,
-        bool withPrimal, bool withDual, NormType norm) {
-//		: m_modulo(m), m_dim(dim), m_withDual(withDual), m_norm(norm) {
+IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType norm) {
+//		: m_modulo(m), m_dim(dim), m_norm(norm) {
     this->m_modulo = m;
     this->m_maxDim = maxDim;
     this->m_dim = maxDim;
-    this->m_withPrimal = withPrimal;
-    this->m_withDual = withDual;
     this->m_norm = norm;
     this->m_basis.resize(maxDim, maxDim);
     this->m_vecNorm.resize(maxDim);
-    if (withDual) {
-    	m_dualbasis.resize(maxDim, maxDim);
-    	m_dualvecNorm.resize(maxDim);
-    }
+    m_dualbasis.resize(maxDim, maxDim);
+    m_dualvecNorm.resize(maxDim);
     setNegativeNorm();
 }
 
@@ -589,21 +537,17 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim,
 
 template<typename Int, typename Real>
 IntLattice<Int, Real>::IntLattice(const IntMat basis, const Int m,
-        const int64_t maxDim, bool withDual, NormType norm) {
-//		: m_basis(basis), m_modulo(m), m_dim(dim), m_withDual(withDual), m_norm(norm) {
+        const int64_t maxDim, NormType norm) {
+//		: m_basis(basis), m_modulo(m), m_dim(dim), m_norm(norm) {
     this->m_modulo = m;
     this->m_maxDim = maxDim;
     this->m_dim = maxDim;
-    this->m_withPrimal = true;
-    this->m_withDual = withDual;
     this->m_norm = norm;
     assert(basis.NumRows() == maxDim);
     this->m_basis = basis;
     this->m_vecNorm.resize(maxDim);
-    if (withDual) {
-    	m_dualbasis.resize(maxDim, maxDim);
-    	m_dualvecNorm.resize(maxDim);
-    }
+    m_dualbasis.resize(maxDim, maxDim);
+    m_dualvecNorm.resize(maxDim);
     setNegativeNorm();
 }
 
@@ -613,10 +557,8 @@ template<typename Int, typename Real>
 IntLattice<Int, Real>::IntLattice(const IntMat primalbasis,
         const IntMat dualbasis, const Int m, const int64_t maxDim,
         NormType norm) :
-        IntLattice<Int, Real>(primalbasis, m, maxDim, true, norm) {
+        IntLattice<Int, Real>(primalbasis, m, maxDim, norm) {
     assert(dualbasis.NumRows() == maxDim);
-    this->m_withPrimal = true;
-    this->m_withDual = true;
     this->m_dualbasis = dualbasis;
     this->m_dualvecNorm.resize(maxDim);
     setDualNegativeNorm();
@@ -650,7 +592,6 @@ void IntLattice<Int, Real>::copyLattice(const IntLattice<Int, Real> &lat) {
     this->m_basis = IntMat(lat.m_basis);
     this->m_norm = lat.m_norm;
     this->m_vecNorm = RealVec(lat.m_vecNorm);
-    this->m_withDual = lat.m_withDual;
     this->m_dualbasis = IntMat(lat.m_dualbasis);
     this->m_dualvecNorm = RealVec(lat.m_dualvecNorm);
 }
@@ -663,30 +604,13 @@ void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat,
     if (dim <= this->m_maxDim) {
         CopyMatr(this->m_basis, lat.m_basis, dim);
         CopyVect(this->m_vecNorm, lat.m_vecNorm, dim);
-        this->m_withDual = lat.m_withDual;
-        if (this->m_withDual) {
-            // We want to avoid resizing!
-            // this->m_dualbasis.resize(this->m_basis.size1(),
-            //		this->m_basis.size1());
-            // this->m_dualvecNorm.resize(this->m_basis.size1());
-            CopyMatr(this->m_dualbasis, lat.m_dualbasis, dim);
-            CopyVect(this->m_dualvecNorm, lat.m_dualvecNorm, dim);
-        }
+        CopyMatr(this->m_dualbasis, lat.m_dualbasis, dim);
+        CopyVect(this->m_dualvecNorm, lat.m_dualvecNorm, dim);
         this->m_modulo = lat.m_modulo;
     } else
         std::cout << "IntLattice::overwriteLattice: dim > m_maxDim"
                 << std::endl;
 }
-
-//===========================================================================
-//		this->m_dualbasisProj.resize(dim, dim);
-//		// double temp;   // Used only for m_lgVolDual2.
-//		// NTL::conv (temp, this->m_modulo);
-//		// m_lgVolDual2 = new double[dim+1];
-//		// m_lgm2 = 2.0 * Lg (temp);
-//		// m_lgVolDual2[1] = m_lgm2;
-//	}
-//}
 
 //===========================================================================
 
@@ -724,30 +648,7 @@ void IntLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLatti
     mDualUpperTriangular(projLattice.m_basis,
                projLattice.m_dualbasis, this->m_modulo, projLattice.m_dim);
     // this->setNegativeNorm();  / Not needed here: will be done by BB if needed.
-    // this->setDualNegativeNorm();
 }
-
-//===========================================================================
-/*
-template<typename Int, typename Real>
-void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
-        const Coordinates &proj, double delta) {
-    // We assume here that this and lattice have the same m.
-    projLattice.setDim (proj.size());  // Number of coordinates in the projection.
-    if (!projLattice.m_withDual) { // This builds only the primal basis.
-        // NTL::vector<Real>* sqlen = 0;
-        projectionConstructionLLL<NTL::matrix<Int>, Int, NTL::vector<Real>>(this->m_basis,
-                projLattice.m_basis, proj, this->m_modulo, delta, proj.size());
-    } else { // The following builds both the primal and the m-dual bases.
-        projectionConstructionUpperTri(this->m_basis,
-                projLattice.m_basis, proj, this->m_modulo, this->m_dim);
-        mDualUpperTriangular(projLattice.m_basis,
-               projLattice.m_dualbasis, this->m_modulo, projLattice.m_dim);
-        this->setNegativeNorm();
-        this->setDualNegativeNorm();
-    }
-}
-*/
 
 /*=========================================================================*/
 
@@ -816,7 +717,6 @@ void IntLattice<Int, Real>::updateSingleVecNorm(const int64_t &d,
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d) {
     assert(d >= 0);
-    assert(this->m_withDual);
     for (int64_t i = d; i < this->m_dim; i++) {
         NTL::matrix_row<IntMat> row(this->m_dualbasis, i);
         if (this->m_norm == L2NORM) {
@@ -834,7 +734,6 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d,
         const int64_t &c) {
     assert(d >= 0);
-    assert(this->m_withDual);
     for (int64_t i = 0; i < d + 1; i++) {
         NTL::matrix_row<IntMat> row(this->m_dualbasis, i);
         if (this->m_norm == L2NORM) {
@@ -852,7 +751,6 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateSingleDualVecNorm(const int64_t &d,
         const int64_t &c) {
     assert(d >= 0);
-    assert(this->m_withDual);
     NTL::matrix_row<IntMat> row(this->m_dualbasis, d);
     if (this->m_norm == L2NORM) {
         ProdScal<Int>(row, row, c, this->m_dualvecNorm[d]);
@@ -905,14 +803,10 @@ void IntLattice<Int, Real>::permute(int64_t i, int64_t j) {
         return;
     for (int64_t k = 0; k < this->m_dim; k++) {
         swap9(this->m_basis(j, k), this->m_basis(i, k));
-        if (this->m_withDual) {
-            swap9(this->m_dualbasis(j, k), this->m_dualbasis(i, k));
-        }
+        swap9(this->m_dualbasis(j, k), this->m_dualbasis(i, k));
     }
     swap9(this->m_vecNorm[i], this->m_vecNorm[j]);
-    if (this->m_withDual) {
-        swap9(this->m_dualvecNorm[i], this->m_dualvecNorm[j]);
-    }
+    swap9(this->m_dualvecNorm[i], this->m_dualvecNorm[j]);
 }
 
 /*=========================================================================*/
@@ -933,20 +827,12 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::dualize() {
     std::swap(this->m_basis, this->m_dualbasis);
     std::swap(this->m_vecNorm, this->m_dualvecNorm);
-    bool temp = this->m_withPrimal;
-    this->m_withPrimal = this->m_withDual;
-    this->m_withDual = temp;
 }
 
 /*=========================================================================*/
 
 template<typename Int, typename Real>
 bool IntLattice<Int, Real>::checkDuality() {
-    if (!this->m_withDual) {
-        std::cout << "Calling IntLattice::checkDuality with undefined m-dual"
-                << std::endl;
-        return false;
-    }
     Int S;
     int64_t dim = getDim();
     for (int64_t i = 0; i < dim; i++) {
@@ -1047,19 +933,19 @@ std::string IntLattice<Int, Real>::toString() const {
     }
     os << "\nm-Dual basis vectors:\n";
     for (int64_t i = 0; i < this->m_dim; i++) {
-        if (this->m_withDual) {
+        // if (this->m_withDual) {
             os << this->m_dualbasis[i];
             //for (int64_t j = 0; j < this->m_dim; j++) {
             //  os << this->m_dualbasis(i,j);
             //}
             os << "\n";
-        }
+        // }
     }
     os << "\n";
     os << "Norm used: " << toStringNorm(this->m_norm) << "\n" << std::endl;
     os << "Norm of each Basis vector: \n";
     os << "Primal";
-    if (this->m_withDual)
+    // if (this->m_withDual)
         os << "\t\tDual\n";
     os << "\n";
 
@@ -1074,7 +960,7 @@ std::string IntLattice<Int, Real>::toString() const {
             }
         }
         os << "\t";
-        if (this->m_withDual) {
+        // if (this->m_withDual) {
             if (this->m_dualvecNorm[i] < 0)
                 os << "NaN OR Not computed";
             else {
@@ -1084,7 +970,7 @@ std::string IntLattice<Int, Real>::toString() const {
                     os << this->m_dualvecNorm[i];
                 }
             }
-        }
+        // }
         os << "\n";
     }
     os << std::endl;

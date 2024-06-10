@@ -7,6 +7,7 @@
  *
  *
  **/
+// #define TYPES_CODE  ZD  // ZZ + double
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -116,7 +117,7 @@ void testLoopResize(NTL::ZZ mm, long numRep) {
          basis1.SetDims(dim, dim); // Will be initial triangular basis.
          basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
          basisdual.SetDims(dim, dim);  // m-dual basis.
-         Rank1Lattice<Int, Real> korlat(m, a, dim, true, false);
+         Rank1Lattice<Int, Real> korlat(m, a, dim);
          korlat.buildBasis(dim);
          basis1 = korlat.getBasis();
          transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2,
@@ -143,7 +144,7 @@ void testLoopNoResize(NTL::ZZ mm, long numRep) {
    basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
    basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
    // We create a single Korobov lattice object.
-   Rank1Lattice<Int, Real> korlat(m, maxdim, true, false);
+   Rank1Lattice<Int, Real> korlat(m, maxdim);
    std::cout << "Results for `testLoop No Resize`\n";
 
    for (d = 0; d < numSizes; d++)   // Reset accumulators.
@@ -221,6 +222,7 @@ void printResults() {
 
 int main() {
    // Here, Int and Real are not yet defined.
+   //NTL::ZZ mm(1021);  // Prime modulus near 2^{10}
    NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
    // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
@@ -228,10 +230,10 @@ int main() {
    long numRep = 1000;   // Number of replications (multipliers) for each case.
 
    // Here we can test with all combinations of types.
-   testTwoLoops<long, NTL::matrix<long>, double>(mm, numRep);
+   //testTwoLoops<int64_t, NTL::matrix<int64_t>, double>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
-   //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
+   testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
    //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
    return 0;
 }

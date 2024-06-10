@@ -54,9 +54,7 @@ int main() {
   NTL::vector<int64_t> t(1); // The t-vector
   t[0] = 20;  // We look at successive coordinates in up to 12 dimensions.
 
-  bool with_primal = true;  // Needed?
-  bool with_dual = true;
-  MRGLattice<Int, Real> lat(m, a, dim, true, true);
+  MRGLattice<Int, Real> lat(m, a, dim);
 
   WeightsUniform weights(1.0);
   NormaBestLat norma(log(m), order, dim);  // Factors will be computed for primal.
@@ -84,7 +82,7 @@ int main() {
   t.SetLength(4);
   t[1] = 2;   t[2] = 4;  t[3] = 4;
   fomd.setTVector(t);
-  MRGLattice<Int, Real> proj(m, a, dim, with_primal, with_dual);
+  MRGLattice<Int, Real> proj(m, a, dim);
   merit = fomd.computeMeritNonSucc (lat, proj);
   std::cout << "Figure of merit with fomd (dual) is: " << merit << "\n\n";
 
