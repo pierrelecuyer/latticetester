@@ -699,6 +699,17 @@ static void inc_red_fudge() {
       ResourceError("LLL_FP: too much loss of precision...stop!");
 }
 
+template<typename IntMat>
+void printBB1(IntMat &B, double **B1, long m) {
+   std::cout << " Matrix B = \n" << B << "\n";
+   for (int i = 0; i < m; i++) {
+      std::cout << " B1[" << i << "] = [" << B1[i][0] << ", " << B1[i][1]
+            << ", " << B1[i][2];
+      std::cout << ", " << B1[i][3] << ", " << B1[i][4] << ", " << B1[i][5]
+            << " ...\n";
+   }
+}
+
 // #if ((TYPES_CODE  ==  ZD) || (TYPES_CODE  ==  ZR))
 
 // The following functions always use RR matrices.
@@ -959,7 +970,8 @@ int64_t ll_LLL_FPInt<long, matrix<long>>(matrix<int64_t> &B, double delta, doubl
                      << " not smaller; infinite loop? \n";
                cerr << "new_sz = " << new_sz << ",  counter = " << counter
                      << ",  k = " << k << "\n";
-               //  abort();
+               std::cout << " Matrix B = \n" << B << "\n";
+               abort();
             }
          }
          Fc1 = 0;
@@ -1111,17 +1123,6 @@ int64_t ll_LLL_FPInt<long, matrix<long>>(matrix<int64_t> &B, double delta, doubl
       }
    }
    return m;
-}
-
-template<typename IntMat>
-void printBB1(IntMat &B, double **B1, long m) {
-   std::cout << " Matrix B = \n" << B << "\n";
-   for (int i = 0; i < m; i++) {
-      std::cout << " B1[" << i << "] = [" << B1[i][0] << ", " << B1[i][1]
-            << ", " << B1[i][2];
-      std::cout << ", " << B1[i][3] << ", " << B1[i][4] << ", " << B1[i][5]
-            << " ...\n";
-   }
 }
 
 // This works for both ZZ and long.

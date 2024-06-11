@@ -186,8 +186,7 @@ protected:
 //============================================================================
 
 template<typename Int, typename Real>
-Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, int64_t maxDim,
-      NormType norm) :
+Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, int64_t maxDim, NormType norm) :
       IntLatticeExt<Int, Real>(m, maxDim, norm) {
    this->m_a.SetLength(maxDim);
 }
@@ -230,7 +229,7 @@ Rank1Lattice<Int, Real>& Rank1Lattice<Int, Real>::operator=(const Rank1Lattice<I
 
 template<typename Int, typename Real>
 Rank1Lattice<Int, Real>::Rank1Lattice(const Rank1Lattice<Int, Real> &lat) :
-      IntLatticeExt<Int, Real>(lat.m_modulo, lat.getDim(), lat.getNormType()) {
+      IntLatticeExt<Int, Real>(lat.m_modulo, lat.m_maxDim, lat.getNormType()) {
    this->m_a = lat.m_a;
    // Should also copy the basis and all other variables?
 }
@@ -283,7 +282,7 @@ void Rank1Lattice<Int, Real>::buildBasis(int64_t d) {
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::buildDualBasis(int64_t d) {
    // assert(d <= this->m_maxDim);
-   this->setDim(d);   // Same dim variable for both the primal and dual.
+   this->setDimDual(d);
    int64_t i, j;
    this->m_dualbasis[0][0] = this->m_modulo;
    for (j = 1; j < d; j++)
@@ -301,7 +300,6 @@ void Rank1Lattice<Int, Real>::buildDualBasis(int64_t d) {
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::incDimBasis() {
    int64_t d = 1 + this->getDim();  // New current dimension.
-         // assert(d <= this->m_maxDim);
    this->setDim(d);
    int64_t i, j;
    // Add new row and new column of the primal basis.
@@ -311,7 +309,7 @@ void Rank1Lattice<Int, Real>::incDimBasis() {
    for (i = 0; i < d - 1; i++) {
       this->m_basis[i][d - 1] = (this->m_a[d - 1] * this->m_basis[i][0]) % this->m_modulo;
    }
-   this->setNegativeNorm();
+   // this->setNegativeNorm();
 }
 
 //============================================================================
@@ -319,7 +317,7 @@ void Rank1Lattice<Int, Real>::incDimBasis() {
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::incDimDualBasis() {
    int64_t d = 1 + this->getDim();
-   this->setDim(d);
+   this->setDimDual(d);
    // Add one extra coordinate to each vector.
    for (int64_t i = 0; i < d; i++) {
       this->m_dualbasis[i][d - 1] = 0;
@@ -327,7 +325,7 @@ void Rank1Lattice<Int, Real>::incDimDualBasis() {
    }
    this->m_dualbasis[d - 1][0] = -m_a[d - 1];
    this->m_dualbasis[d - 1][d - 1] = 1;
-   this->setDualNegativeNorm();
+   // this->setDualNegativeNorm();
 }
 
 //============================================================================
@@ -374,6 +372,7 @@ void Rank1Lattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLat
    long i, j;
    long d = proj.size();     // Number of coordinates in the projection.
    projLattice.setDim(d);
+   projLattice.setDimDual(d);
    IntMat &dualBasis = projLattice.getDualBasis();
    dualBasis[0][0] = this->m_modulo;
    i = 1;

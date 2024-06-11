@@ -1022,7 +1022,7 @@ void ReducerBB<Int, Real>::redDieterRandomized(int64_t d, int64_t seed) {
     m_cpt = 0;
     m_countDieter = 0;
     BoundCount = 2 * dim - d;
-    srand(seed);   // We use a simple RNG from the standard C library.
+    srand(seed);   // We use a simple RNG from the standard C library.rimal
     do {
         pairwiseRedPrimal(rand() % dim, d);
         if (i > d && withDual)
@@ -1180,7 +1180,7 @@ void ReducerBB<Int, Real>::transformStage3ShortVec(std::vector<std::int64_t> &z,
             }
             // Permutation.
             std::swap(z[i], z[j]);
-            m_lat->permutePrimal(i, j);
+            m_lat->permute(i, j);
         }
         j = i;
     }
@@ -1680,7 +1680,7 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
     // Here we sort the basis by L2 lengths, otherwise Cholesky will fail more rapidly
     // due to floating-point errors.
     m_lat->updateScalL2Norm(0, dim);
-    m_lat->sortPrimalBasis(0);
+    m_lat->sortBasis(0);
 
     // Approximate the square norm of the current shortest vector.
     if (norm == L2NORM) {
@@ -1770,19 +1770,19 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
          m_lat->getBasis()(0). */
         /* In the case of L1NORM, we must check if it is really smaller.  */
         if (norm == L2NORM)
-            m_lat->permutePrimal(k, 0);
+            m_lat->permute(k, 0);
         else {
             NTL::matrix_row<IntMat> row5(m_lat->getBasis(), k);
             CalcNorm(row5, dim, x, norm);
             if (x < m_lMin) {
                 m_lMin = x;
                 m_lMin2 = m_lMin * m_lMin;
-                m_lat->permutePrimal(k, 0);
+                m_lat->permute(k, 0);
             }
         }
     }
     m_lat->updateVecNorm();
-    m_lat->sortPrimalBasis(0);
+    m_lat->sortBasis(0);
     //std::cout << " redBBShortVec, before exit \n";
     return true;
 }
@@ -1916,7 +1916,7 @@ void ReducerBB<Int, Real>::redLLLOld(double delta, std::int64_t maxcpt,
                 + (m_cho2[h][h + 1]) / m_cho2[h][h]
                         * (m_cho2[h][h + 1] / m_cho2[h][h]) < delta) {
             ++cpt;
-            m_lat->permutePrimal(h, h + 1);
+            m_lat->permute(h, h + 1);
             permuteGramVD(h, h + 1, dim);
             m_cho2[h][h] = m_gramVD[h][h];
             for (i = 0; i < h; i++) {

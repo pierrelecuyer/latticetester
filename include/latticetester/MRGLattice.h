@@ -223,6 +223,7 @@ void MRGLattice<Int, Real>::setaa(const IntVec &aa) {
    m_aCoeff = aa;
    m_order = aa.length();
    this->m_dim = 0;  // Current basis is now invalid.
+   this->m_dimdual = 0;
    this->m_dim0 = 0;
 }
 
@@ -276,7 +277,7 @@ void MRGLattice<Int, Real>::buildDualBasis(int64_t d) {
       this->buildBasis0(this->m_basis0, d);
       m_dim0 = d;
    }
-   this->setDim(d);  // Same dim variable for both primal and dual..
+   this->setDimDual(d);
    int64_t dk = min(d, m_order);
    int64_t i, j;
    for (i = 0; i < dk; i++)
@@ -284,7 +285,7 @@ void MRGLattice<Int, Real>::buildDualBasis(int64_t d) {
          this->m_dualbasis[i][j] = (i == j) * this->m_modulo;
    for (i = dk; i < d; i++) {
       for (j = 0; j < dk; j++)
-         this->m_dualbasis[i][j] = -this->m_dualbasis[j][i];
+         this->m_dualbasis[i][j] = -this->m_basis[j][i];
       for (j = dk; j < d; j++)
          this->m_dualbasis[i][j] = (i == j);
    }
@@ -297,7 +298,6 @@ template<typename Int, typename Real>
 void MRGLattice<Int, Real>::incDimBasis0(IntMat &basis, int64_t d) {
    // int64_t d = 1 + this->getDim();  // New current dimension.
    assert(d <= this->m_maxDim);
-   // this->m_dim = d;
    int64_t i, j, k;
    // Add new row and new column of the primal basis.
    for (j = 0; j < d - 1; j++)
@@ -326,8 +326,8 @@ void MRGLattice<Int, Real>::incDimBasis() {
 
 template<typename Int, typename Real>
 void MRGLattice<Int, Real>::incDimDualBasis() {
-   int64_t d = 1 + this->getDim();  // New current dimension.
-   this->setDim(d);
+   int64_t d = 1 + this->getDimDual();  // New current dimension.
+   this->setDimDual(d);
    while (m_dim0 < d) {  // Increase m_basis0 if needed.
       m_dim0++;
       this->incDimBasis0(m_basis0, m_dim0);
@@ -398,6 +398,7 @@ void MRGLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
    // assert (proj.end() <= unsigned(this->m_dim));
    // IntMat &pbasis = projLattice.getBasis(); // We want to construct this basis of the projection.
    this->buildProjection0 (this->m_basis, projLattice.getBasis(), proj);
+   projLattice.setDim(proj.size());
 }
 
 //============================================================================
@@ -411,6 +412,8 @@ void MRGLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLatti
 
    // We first build a basis for the primal projection.
    this->buildProjection0 (this->m_basis0, pbasis, proj);
+   projLattice.setDim(d);
+
    // Then we compute its m-dual.
 /*
    int64_t i, j, k;
@@ -431,7 +434,7 @@ void MRGLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLatti
    } else {
 */
       mDualUpperTriangular(pbasis, dualBasis, this->m_modulo, d);
-      projLattice.setDim(d);
+      projLattice.setDimDual(d);
 //   }
 }
 

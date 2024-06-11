@@ -64,6 +64,7 @@ void transformBases(Int m, long d, long dim, IntMat &basis1, IntMat &basis2,
    // We apply LLL to basis2 with different values of `delta`, incrementally.
    // We start with delta=0.5, then continue with 0.9, then with 0.99999.
    LLLTest<IntMat, Real>(basis2, d, 0, 0.5);
+   //std::cout << "First LLL done with basis2 \n";
    // We continue the LLL process with larger values of `delta`.
    LLLTest<IntMat, Real>(basis2, d, 1, 0.8);
    LLLTest<IntMat, Real>(basis2, d, 2, 0.99);
@@ -89,12 +90,13 @@ void transformBases(Int m, long d, long dim, IntMat &basis1, IntMat &basis2,
    // Restart anew with delta = 0.99999.
    mDualUpperTriangular(basis1, basisdual, m, dim);
    LLLTest<IntMat, Real>(basisdual, d, 11, 0.99999);
+   //std::cout << "TransformBases completed, with dim = " << dim << "\n\n";
 }
 
 // In this testing loop, new `Rank1Lattice` objects are created
 // and the  `IntMat` matrices are resized inside the loop.
 template<typename Int, typename IntMat, typename Real>
-void testLoopResize(NTL::ZZ mm, long numRep) {
+void testLoopResize(Int mm, long numRep) {
    long d, dim;
    Int m = conv<Int>(mm);
    Int a;       // The LCG multiplier
@@ -117,11 +119,16 @@ void testLoopResize(NTL::ZZ mm, long numRep) {
          basis1.SetDims(dim, dim); // Will be initial triangular basis.
          basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
          basisdual.SetDims(dim, dim);  // m-dual basis.
-         Rank1Lattice<Int, Real> korlat(m, a, dim);
+
+         // *** The following does not work well with LLL_FPInt.h (when Int == int64_t).      *******
+         Rank1Lattice<Int, Real> korlat(m, a, dim);  // Create a new one.
+         // Rank1Lattice<Int, Real> *korlat = new Rank1Lattice<Int, Real> (m, a, dim);  // Create a new one.
+
+         // std::cout << "Just created a new korlat \n";
          korlat.buildBasis(dim);
          basis1 = korlat.getBasis();
-         transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2,
-               basisdual);
+         std::cout << " Basis B = \n" << basis1 << "\n";
+         transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2, basisdual);
          // delete &korlat;
       }
    }
@@ -134,7 +141,7 @@ void testLoopResize(NTL::ZZ mm, long numRep) {
 // In this testing loop, we try to minimize the creation of objects.
 // The `IntMat` and `Rank1Lattice` objects are created only once.
 template<typename Int, typename IntMat, typename Real>
-void testLoopNoResize(NTL::ZZ mm, long numRep) {
+void testLoopNoResize(Int mm, long numRep) {
    long d, dim;  // Index of dimension.
    Int m = conv<Int>(mm);
    Int a;
@@ -159,6 +166,7 @@ void testLoopNoResize(NTL::ZZ mm, long numRep) {
       for (d = 0; d < numSizes; d++) {  // Each matrix size
          dim = dimensions[d]; // The corresponding dimension.
          korlat.buildBasis(dim);
+         // std::cout << " Basis B = \n" << basis1 << "\n";
          // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
          CopyPartMat<IntMat>(basis1, korlat.getBasis(), dim, dim); // Triangular basis.
          transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2,
@@ -173,14 +181,14 @@ void testLoopNoResize(NTL::ZZ mm, long numRep) {
 
 // This function runs the two types of test loops.
 template<typename Int, typename IntMat, typename Real>
-void testTwoLoops(NTL::ZZ mm, long numRep) {
+void testTwoLoops(Int mm, long numRep) {
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
    std::cout << "****************************************************\n";
    std::cout << "Types: " << stringTypes << "\n\n";
    std::cout << "TestBasisConstructionSpeed with m = " << mm << "\n";
    std::cout << "Number of replications (different multipliers a): " << numRep
          << "\n\n";
-   testLoopResize<Int, IntMat, Real>(mm, numRep);
+   //testLoopResize<Int, IntMat, Real>(mm, numRep);
    testLoopNoResize<Int, IntMat, Real>(mm, numRep);
 }
 
@@ -222,7 +230,8 @@ void printResults() {
 
 int main() {
    // Here, Int and Real are not yet defined.
-   //NTL::ZZ mm(1021);  // Prime modulus near 2^{10}
+   //int64_t m(1021);  // Prime modulus near 2^{10}
+   int64_t m(1048573);  // Prime modulus near 2^{20}
    NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
    // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
@@ -230,10 +239,11 @@ int main() {
    long numRep = 1000;   // Number of replications (multipliers) for each case.
 
    // Here we can test with all combinations of types.
-   //testTwoLoops<int64_t, NTL::matrix<int64_t>, double>(mm, numRep);
+
+   testTwoLoops<int64_t, NTL::matrix<int64_t>, double>(m, numRep);
    testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
-   testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
-   testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
+   //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
+   //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
    //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
    return 0;
 }
