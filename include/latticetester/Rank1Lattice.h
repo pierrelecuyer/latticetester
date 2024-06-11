@@ -272,7 +272,7 @@ void Rank1Lattice<Int, Real>::buildBasis(int64_t d) {
       this->m_basis[0][j] = this->m_a[j];
    for (i = 1; i < d; i++)
       for (j = 0; j < d; j++)
-         this->m_basis[i][i] = this->m_modulo * (i == j);
+         this->m_basis[i][j] = this->m_modulo * (i == j);
    this->setNegativeNorm();
 }
 
@@ -290,7 +290,7 @@ void Rank1Lattice<Int, Real>::buildDualBasis(int64_t d) {
    for (i = 1; i < d; i++) {
       this->m_dualbasis[i][0] = -this->m_a[i];
       for (j = 1; j < d; j++)
-         this->m_dualbasis[i][i] = (i == j);
+         this->m_dualbasis[i][j] = (i == j);
    }
    this->setDualNegativeNorm();
 }
