@@ -359,7 +359,7 @@ void Rank1Lattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice
    // Then the other rows.
    for (i = 1; i < d; i++)
       for (j = 0; j < d; j++)
-         basis[i][i] = this->m_modulo * (i == j);
+         basis[i][j] = this->m_modulo * (i == j);
 }
 
 //============================================================================
@@ -391,7 +391,7 @@ void Rank1Lattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLat
    }
    for (i = 0; i < d; i++)
       for (j = 1; j < d; j++)
-         dualBasis[i][i] = (i == j);
+         dualBasis[i][j] = (i == j);
 }
 
 //============================================================================

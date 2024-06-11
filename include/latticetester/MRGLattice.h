@@ -376,7 +376,7 @@ void MRGLattice<Int, Real>::buildProjection0(IntMat &basis, IntMat &pbasis,
       // Then the other rows.
       for (i = m_order; i < d; i++)
          for (j = 0; j < d; j++)
-            pbasis[i][i] = this->m_modulo * (i == j);
+            pbasis[i][j] = this->m_modulo * (i == j);
    } else {
       // In this case we need to use the generic algorithm
       j = 0;
