@@ -119,6 +119,16 @@ public:
    void buildProjectionDual(IntLattice<Int, Real> &projLattice, const Coordinates &proj) override;
 
    /**
+    * These variants take the basis as a parameter for more flexibility.
+    * They are used inside buildBais, buildBasisDual, incDimBasis, etc., with either `m_basis` or `m_basis0`.
+    */
+   void buildBasis0(IntMat &basis, int64_t d);
+
+   void incDimBasis0(IntMat &basis, int64_t d);
+
+   void buildProjection0(IntMat &basis, IntMat &pbasis, const Coordinates &proj);
+
+   /**
     * Returns the first `dim` components of the generating vector \f$\ba\f$ as a string,
     * where `dim` is the current lattice dimension.
     */
@@ -134,15 +144,6 @@ public:
 
 protected:
 
-   /**
-    * These variants take the basis as a parameter for more flexibility.
-    * They are used inside buildBais, buildBasisDual, incDimBasis, etc., with either `m_basis` or `m_basis0`.
-    */
-   void buildBasis0(IntMat &basis, int64_t d);
-
-   void incDimBasis0(IntMat &basis, int64_t d);
-
-   void buildProjection0(IntMat &basis, IntMat &pbasis, const Coordinates &proj);
 
    /**
     * This matrix contains the initial basis V for the MRG lattice as defined in
@@ -352,12 +353,14 @@ template<typename Int, typename Real>
 void MRGLattice<Int, Real>::buildProjection0(IntMat &basis, IntMat &pbasis,
       const Coordinates &proj) {
    int64_t d = proj.size();
-   // assert (proj.end() <= unsigned(this->m_dim));
+   // assert (*proj.end() <= unsigned(this->m_dim));
    // IntMat &pbasis = projLattice.getBasis(); // We want to construct this basis of the projection.
    int64_t i, j;
+   projCase1 = false;
    // Check if we are in case 1.
    //  *** This seems to assume that the coordinates of the projection are always in increasing order, right?   ******
-   projCase1 = true; // This holds if the first m_order coordinates are all in `proj`.
+/*
+    projCase1 = true; // This holds if the first m_order coordinates are all in `proj`.
    if (d < (unsigned) m_order) projCase1 = false;
    else {
       j = 0;
@@ -378,24 +381,25 @@ void MRGLattice<Int, Real>::buildProjection0(IntMat &basis, IntMat &pbasis,
          for (j = 0; j < d; j++)
             pbasis[i][j] = this->m_modulo * (i == j);
    } else {
-      // In this case we need to use the generic algorithm
+*/
+     // In this case we need to use the generic algorithm
       j = 0;
       for (auto it = proj.begin(); it != proj.end(); it++, j++) {
          for (i = 0; i < unsigned(d); i++)
             m_genTemp[i][j] = this->m_basis[i][*it - 1];
       }
       upperTriangularBasis(m_genTemp, pbasis, this->m_modulo, d, d);
-   }
+//   }
 }
 
 //============================================================================
 
-// This cannot use m_basis0, only m_basis, because basis0 may not exist.
+// Here we cannot use m_basis0, only m_basis, because basis0 may not exist.
 template<typename Int, typename Real>
 void MRGLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
       const Coordinates &proj) {
    // int64_t d = proj.size();
-   // assert (proj.end() <= unsigned(this->m_dim));
+   assert (*proj.end() <= uint64_t(this->m_dim));
    // IntMat &pbasis = projLattice.getBasis(); // We want to construct this basis of the projection.
    this->buildProjection0 (this->m_basis, projLattice.getBasis(), proj);
    projLattice.setDim(proj.size());
@@ -406,7 +410,11 @@ template<typename Int, typename Real>
 void MRGLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLattice,
       const Coordinates &proj) {
    int64_t d = proj.size();
-   // assert (proj.end() <= unsigned(this->m_dim0));
+   // If m_basis0 is not large enough, we increase it.
+   while (*proj.end() > uint64_t(this->m_dim0)) {
+      this->m_dim0++;
+      this->incDimBasis0(this->m_basis0, m_dim0);
+   }
    IntMat &pbasis = projLattice.getBasis();  // Reference to basis of projection.
    IntMat &dualBasis = projLattice.getDualBasis();   // And its m-dual.
 

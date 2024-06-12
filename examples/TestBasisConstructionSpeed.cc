@@ -127,7 +127,7 @@ void testLoopResize(Int mm, long numRep) {
          // std::cout << "Just created a new korlat \n";
          korlat.buildBasis(dim);
          basis1 = korlat.getBasis();
-         std::cout << " Basis B = \n" << basis1 << "\n";
+         // std::cout << " Basis B = \n" << basis1 << "\n";
          transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2, basisdual);
          // delete &korlat;
       }
@@ -188,7 +188,7 @@ void testTwoLoops(Int mm, long numRep) {
    std::cout << "TestBasisConstructionSpeed with m = " << mm << "\n";
    std::cout << "Number of replications (different multipliers a): " << numRep
          << "\n\n";
-   //testLoopResize<Int, IntMat, Real>(mm, numRep);
+   testLoopResize<Int, IntMat, Real>(mm, numRep);
    testLoopNoResize<Int, IntMat, Real>(mm, numRep);
 }
 
