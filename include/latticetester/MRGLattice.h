@@ -334,6 +334,8 @@ void MRGLattice<Int, Real>::incDimDualBasis() {
       m_dim0++;
       this->incDimBasis0(m_basis0, m_dim0);
    }
+   std::cout << "\n Dimension to be increased in dual, new dim0 = " << m_dim0 << "\n";
+   std::cout << " Dual basis just before dim increase: \n" << this->m_dualbasis << "\n";
    int64_t i;
    // Add one extra 0 coordinate to each vector of the m-dual basis.
    for (i = 0; i < d - 1; i++) {
