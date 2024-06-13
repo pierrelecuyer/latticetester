@@ -6,7 +6,7 @@
  * stored multipliers is calculated by means of the BB algorithm.
  */
 
-#define TYPES_CODE  ZX  // ZZ + quad_float
+#define TYPES_CODE  ZQ  // ZZ + quad_float
 
 #include <iostream>
 #include <cstdint>
@@ -50,44 +50,38 @@ int main() {
   a[0] = 1145902849652723;
   a[1] = 0;
   a[2] = -1184153554609676;
-  int64_t dim = 8;  // Maximum dimension of the lattice
+  int64_t maxdim = 8;  // Maximum dimension of the lattice
   NTL::vector<int64_t> t0(1); // The t-vector
   t0[0] = 8;  // We look at successive coordinates in up to t[0] dimensions.
   double merit;
 
-  MRGLattice<Int, Real> lat(m, a, dim);
+  MRGLattice<Int, Real> lat(m, a, maxdim);
   MRGLattice<Int, Real> proj(m, a, 4);
 
   WeightsUniform weights(1.0);
-  NormaBestLat norma(log(m), order, dim);  // Factors will be computed for primal.
-  ReducerBB<Int, Real> red(dim);   // Reducer created for up to dim dimensions.
-  // ReducerBB<Int, Real> red;   // To pass no red, it would need to be a pointer.
-  FigureOfMeritM<Int, Real> fom(t0, weights, norma, 0);
+  NormaBestLat norma(log(m), order, maxdim);  // Factors will be computed for primal.
+  ReducerBB<Int, Real> red(maxdim);   // Reducer created for up to dim dimensions.
+  FigureOfMeritM<Int, Real> fom(t0, weights, norma, &red);
   fom.setVerbosity(2);
-  fom.setLLL(0.5);
-  fom.setBKZ(0.0, 0);
   merit = fom.computeMeritSucc (lat);
-  std::cout << "Figure of merit primal succ, only LLL: " << merit << "\n\n";
-
-  // FigureOfMeritM<Int, Real> fom2(t, weights, norma, &red);
-  FigureOfMeritM<Int, Real> fom2(t0, weights, norma, 0);
-  fom2.setVerbosity(2);
-  // fom2.setReducerBB(nullptr);
-  merit = fom2.computeMeritSucc (lat);
-  std::cout << "Figure of merit primal succ with BB: " << merit << "\n\n";
+  std::cout << "Figure of merit primal succ, with BB: " << merit << "\n\n";
 
   NTL::vector<int64_t> t(4); // Another t-vector
   // t.SetLength(4);
   t[0] = 8;  t[1] = 4;   t[2] = 4;  t[3] = 4;
-  fom2.setTVector(t);
+  fom.setTVector(t);
 
-  lat.buildBasis(dim);
-  merit = fom2.computeMeritNonSucc (lat, proj);
+  lat.buildBasis(maxdim);
+  merit = fom.computeMeritNonSucc (lat, proj);
   std::cout << "Figure of merit primal succ + non-succ, with BB: " << merit << "\n\n";
 
-  NormaBestLat normadual (-log(m), order, dim);  // Factors will be computed for dual.
+  // Now the m-dual
+  NormaBestLat normadual (-log(m), order, maxdim);  // Factors will be computed for m-dual.
   FigureOfMeritDualM<Int, Real> fomdual (t0, weights, normadual, &red);
+  fomdual.setLLL(0.8);
+  fomdual.setBKZ(0.9999999, 12);
   fomdual.setVerbosity(2);
+  // lat.buildDualBasis(maxdim);
   merit = fomdual.computeMeritSucc (lat);
   std::cout << "Figure of merit for dual: " << merit << "\n\n";
 

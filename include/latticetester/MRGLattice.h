@@ -119,16 +119,6 @@ public:
    void buildProjectionDual(IntLattice<Int, Real> &projLattice, const Coordinates &proj) override;
 
    /**
-    * These variants take the basis as a parameter for more flexibility.
-    * They are used inside buildBais, buildBasisDual, incDimBasis, etc., with either `m_basis` or `m_basis0`.
-    */
-   void buildBasis0(IntMat &basis, int64_t d);
-
-   void incDimBasis0(IntMat &basis, int64_t d);
-
-   void buildProjection0(IntMat &basis, IntMat &pbasis, const Coordinates &proj);
-
-   /**
     * Returns the first `dim` components of the generating vector \f$\ba\f$ as a string,
     * where `dim` is the current lattice dimension.
     */
@@ -144,6 +134,15 @@ public:
 
 protected:
 
+   /**
+    * These variants take the basis as a parameter for more flexibility.
+    * They are used inside buildBais, buildBasisDual, incDimBasis, etc., with either `m_basis` or `m_basis0`.
+    */
+   void buildBasis0(IntMat &basis, int64_t d);
+
+   void incDimBasis0(IntMat &basis, int64_t d);
+
+   void buildProjection0(IntMat &basis, IntMat &pbasis, const Coordinates &proj);
 
    /**
     * This matrix contains the initial basis V for the MRG lattice as defined in
@@ -267,6 +266,7 @@ template<typename Int, typename Real>
 void MRGLattice<Int, Real>::buildBasis(int64_t d) {
    this->setDim(d);
    this->buildBasis0(this->m_basis, d);
+   this->setNegativeNorm();
 }
 
 //============================================================================
@@ -286,10 +286,11 @@ void MRGLattice<Int, Real>::buildDualBasis(int64_t d) {
          this->m_dualbasis[i][j] = (i == j) * this->m_modulo;
    for (i = dk; i < d; i++) {
       for (j = 0; j < dk; j++)
-         this->m_dualbasis[i][j] = -this->m_basis[j][i];
+         this->m_dualbasis[i][j] = -this->m_basis0[j][i];
       for (j = dk; j < d; j++)
          this->m_dualbasis[i][j] = (i == j);
    }
+   this->setDualNegativeNorm();
 }
 
 //============================================================================
@@ -334,16 +335,22 @@ void MRGLattice<Int, Real>::incDimDualBasis() {
       this->incDimBasis0(m_basis0, m_dim0);
    }
    int64_t i;
-   // Add one extra coordinate to each vector.
+   // Add one extra 0 coordinate to each vector of the m-dual basis.
    for (i = 0; i < d - 1; i++) {
       this->m_dualbasis[i][d - 1] = 0;
       this->m_dualbasis[d - 1][i] = 0;
    }
    // Add the new vector the dual basis
-   for (i = 0; i < m_order; i++)
-      this->m_dualbasis[d - 1][i] = -this->m_basis0[i][d - 1];
-   if (d - 1 < m_order) this->m_dualbasis[d - 1][d - 1] = this->m_modulo;
-   else this->m_dualbasis[d - 1][d - 1] = 1;
+   if (d <= m_order) this->m_dualbasis[d - 1][d - 1] = this->m_modulo;
+   else {
+      this->m_dualbasis[d - 1][d - 1] = 1;
+      for (i = 0; i < m_order; i++)
+         this->m_dualbasis[d - 1][i] = -this->m_basis0[i][d - 1];
+   }
+   std::cout << "\n Dimension just increased in dual, new dim = " << d << "\n";
+   std::cout << " Dual basis just after dim increase: \n" << this->m_dualbasis << "\n";
+
+   this->setDualNegativeNorm();   // just for testing ...  not needed.
 }
 
 //============================================================================

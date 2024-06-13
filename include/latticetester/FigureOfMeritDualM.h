@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <cstdint>
+#include <float.h>
 
 #include "NTL/tools.h"
 #include "NTL/ZZ.h"
@@ -96,13 +97,13 @@ public:
 	/*
 	 * Same as computeMeritSucc but for the m-dual lattice.
 	 */
-	double computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit = 1000.0) override;
+	double computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit = DBL_MAX) override;
 
 	/*
 	 * Same as computeMeritNonSucc but for the m-dual lattice.
 	 */
 	double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
-			IntLattice<Int, Real> &proj, double minmerit = 1000.0) override;
+			IntLattice<Int, Real> &proj, double minmerit = DBL_MAX) override;
 };
 
 //============================================================================
@@ -140,22 +141,23 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
 		IntLatticeExt<Int, Real> &lat, double minmerit) {
    this->m_minMerit = minmerit;
 	Coordinates coord;
-	int64_t lower_dim = static_cast<int64_t>(this->m_t.size()); // We start in d dimensions.
+   if (this->m_verbose > 1) std::cout << "\n coordinates    merit           sqlen   minmerit  \n";
+	int64_t lower_dim = static_cast<int64_t>(this->m_t.size()) + 1; // We start in d+1 dimensions.
 	lat.buildDualBasis(lower_dim);
-	for (int64_t j = 1; j < lower_dim + 1; j++)
-		coord.insert(j);
-
-	//  ******   We should build the basis directly for the first merit value we want !  *********
-
-	for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+   for (int64_t j = 1; j <= lower_dim; j++)
+      coord.insert(j);
+   lat.buildDualBasis(lower_dim);
+   lat.dualize();
+   this->computeMeritOneProj(lat, coord, this->m_minMerit);
+   lat.dualize();
+   if (this->m_minMerit < this->m_lowbound) return 0;
+   for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
 		coord.insert(j);
 		lat.incDimDualBasis();
 		lat.dualize();
-		// minmerit = min(minmerit, this->computeMeritOneProj(lat, coord, minmerit));
       this->computeMeritOneProj(lat, coord, this->m_minMerit);
 		lat.dualize();
-		if (this->m_minMerit <= this->m_lowbound)
-			return 0;
+		if (this->m_minMerit <= this->m_lowbound)  return 0;
 	}
 	return this->m_minMerit;
 }
@@ -166,13 +168,13 @@ double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
 		IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj, double minmerit) {
    this->m_minMerit = minmerit;
 	Coordinates coord;
+   if (this->m_verbose > 1) std::cout << "\n coordinates    merit           sqlen   minmerit  \n";
 	for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end();
 			it++) {
 		coord = *it;
 		// The following builds a triangular basis for proj, takes its dual, and dualize.
 		lat.buildProjectionDual(proj, coord);
 		proj.dualize();
-		// minmerit = min(minmerit, this->computeMeritOneProj(proj, coord, minmerit));
       this->computeMeritOneProj(lat, coord, this->m_minMerit);
 		proj.dualize();
 		if (this->m_minMerit <= this->m_lowbound)
