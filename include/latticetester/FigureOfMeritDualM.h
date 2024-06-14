@@ -141,9 +141,8 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
 		IntLatticeExt<Int, Real> &lat, double minmerit) {
    this->m_minMerit = minmerit;
 	Coordinates coord;
-   if (this->m_verbose > 1) std::cout << "\n coordinates    merit           sqlen   minmerit  \n";
+   if (this->m_verbose > 1) std::cout << "coordinates    merit           sqlen   minmerit  \n";
 	int64_t lower_dim = static_cast<int64_t>(this->m_t.size()) + 1; // We start in d+1 dimensions.
-	lat.buildDualBasis(lower_dim);
    for (int64_t j = 1; j <= lower_dim; j++)
       coord.insert(j);
    lat.buildDualBasis(lower_dim);
@@ -168,14 +167,16 @@ double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
 		IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj, double minmerit) {
    this->m_minMerit = minmerit;
 	Coordinates coord;
-   if (this->m_verbose > 1) std::cout << "\n coordinates    merit           sqlen   minmerit  \n";
+   if (this->m_verbose > 1) std::cout << "coordinates    merit           sqlen   minmerit  \n";
 	for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end();
 			it++) {
 		coord = *it;
 		// The following builds a triangular basis for proj, takes its dual, and dualize.
 		lat.buildProjectionDual(proj, coord);
+		assert (proj.getDim() == proj.getDimDual());
+      assert (proj.getDim() == (unsigned)coord.size());
 		proj.dualize();
-      this->computeMeritOneProj(lat, coord, this->m_minMerit);
+      this->computeMeritOneProj(proj, coord, this->m_minMerit);
 		proj.dualize();
 		if (this->m_minMerit <= this->m_lowbound)
 			return 0;

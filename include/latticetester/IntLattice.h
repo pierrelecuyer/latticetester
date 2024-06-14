@@ -420,8 +420,7 @@ public:
     void permuteDual(int64_t i, int64_t j);
 
     /**
-     * Exchanges the primal and m-dual bases and vector norms, and the indicator variables
-     * `withPrimal` and `withDual`.
+     * Exchanges the primal and m-dual bases, their dimensions, and vector norms.
      */
     void dualize();
 
@@ -843,6 +842,7 @@ void IntLattice<Int, Real>::permuteDual(int64_t i, int64_t j) {
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::dualize() {
     std::swap(this->m_basis, this->m_dualbasis);
+    std::swap(this->m_dim, this->m_dimdual);
     std::swap(this->m_vecNorm, this->m_dualvecNorm);
 }
 

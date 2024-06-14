@@ -372,10 +372,14 @@ void FigureOfMeritM<Int, Real>::setTVector(const NTL::vector<int64_t> &t, bool i
 
 //=========================================================================
 // Computes the merit value for one projection in dim dimensions.
+// The primal dimension of proj must equal the size of coord.
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &proj,
       const Coordinates &coord, double minmerit) {
    int64_t dim = coord.size();  // Dimension of the projection.
+   if (dim != proj.getDim())
+      std::cout << "Error computeMeritOneProj:  size of coord = " << dim << ",  dim of projection = " <<  proj.getDim() << "\n";
+   // assert (dim == proj.getDim());  // The dimensions must agree.  ******
    if (m_deltaLLL > 0.0)
       redLLL<IntMat, NTL::vector<Real>>(proj.getBasis(), m_deltaLLL, dim, &m_sqlen);
    if (m_deltaBKZ > 0.0)
@@ -384,19 +388,17 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
    if (m_red) {       // We do the BB.
       if (m_blocksizeBKZ > 10) {
          // std::cout << "deltaBKZ = " << m_deltaBKZ << ",  block size = " <<  m_blocksizeBKZ << "\n";
-         std::cout << "dim = " << dim << ",  sqlen before BB = " << "  " << m_sqlen[0] << "\n";
-         std::cout << " Basis B before BB: \n" << proj.getBasis() << "\n";
+         //std::cout << "dim = " << dim << ",  sqlen before BB = " << "  " << m_sqlen[0] << "\n";
+         //std::cout << " Basis B before BB: \n" << proj.getBasis() << "\n";
       }
-
       // If `proj` is already the internal lattice for `m_red`, the following does nothing.
       // Otherwise it just sets a pointer to `proj`, and enlarges the arrays in m_red if needed.
       // m_red->setIntLattice(proj);
-
       if (!m_red->shortestVector(proj)) m_sqlen[0] = 0;
       else m_sqlen[0] = m_red->getMinLength2();
       //  std::cout << "Done with BB, sqlen after BB = " << "  " << m_sqlen[0] << "\n";
    }
-   double merit = 0.0;
+   double merit;
    if (proj.getNormType() == L2NORM) NTL::conv(merit, sqrt(m_sqlen[0]) / m_norma->getBound(dim));
    else NTL::conv(merit, m_red->getMinLength() / m_norma->getBound(dim)); // For L1 norm.
    merit *= m_weights->getWeight(coord);
@@ -410,7 +412,7 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
    if (m_verbose > 1) {
       if (dim < 8) std::cout << coord << std::setw(15 - 2 * dim) << " ";
       else std::cout << std::left << std::setw(2) << "{1,...," << dim << "}       ";
-      std::cout << merit << "  " << m_sqlen[0] << "  " << minmerit << "\n";
+      std::cout << merit  << std::setw(8) << "  " << m_sqlen[0] << "  " << m_minMerit << "\n";
    }
    return merit;
 }
@@ -432,12 +434,13 @@ double FigureOfMeritM<Int, Real>::computeMerit(IntLatticeExt<Int, Real> &lat,
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit) {
    m_minMerit = minmerit;
-   if (m_verbose > 1) std::cout << "\n coordinates    merit           sqlen   minmerit \n";
+   if (m_verbose > 1) std::cout << "coordinates      merit           sqlen   minmerit \n";
    Coordinates coord;
    int64_t lower_dim = static_cast<int64_t>(this->m_t.size()) + 1;  // We start in d+1 dimensions.
    for (int64_t j = 1; j <= lower_dim; j++)
       coord.insert(j);
    lat.buildBasis(lower_dim);
+   // The dimension of lat here is always equal to the size of coord.
    computeMeritOneProj(lat, coord, m_minMerit);
    if (m_minMerit < this->m_lowbound) return 0;
    for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
@@ -454,16 +457,17 @@ template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
       IntLattice<Int, Real> &proj, double minmerit) {
    m_minMerit = minmerit;
-   if (m_verbose > 1) std::cout << "\n coordinates    merit           sqlen   minmerit  \n";
+   if (m_verbose > 1) std::cout << "coordinates      merit           sqlen   minmerit  \n";
    // std::cout << "proj.getDim = " << proj.getDim() << ",  m_tsize = " << m_tsize << "\n";
    // assert (proj.getMaxDim() > m_tsize);
    Coordinates coord;
    for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
       coord = *it;
-      // We must make sure that we have all the required coordinates in the basis.
+      // We must make sure that we have all the required coordinates in the basis lat.
       while (*coord.end() > uint64_t(lat.getDim()))
          lat.incDimBasis();
       lat.buildProjection(proj, coord);
+      // Here, the dimensions of proj and coord must agree!
       // std::cout << " Basis B = \n" << proj.getBasis() << "\n";
       // minmerit = min(minmerit, computeMeritOneProj(proj, coord));
       computeMeritOneProj(proj, coord, m_minMerit);

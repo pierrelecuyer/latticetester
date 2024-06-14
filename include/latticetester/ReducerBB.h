@@ -152,6 +152,7 @@ public:
      * on the target `IntLattice` object.
      * It is strongly recommended to use `redBKZ` or `redLLLNTL` to pre-reduce
      * the basis before invoking this method; this is not done automatically.
+     * It is assumed that `getDim` returns the correct dimension of the internal lattice.
      */
     bool shortestVector();
 

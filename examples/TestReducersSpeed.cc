@@ -164,7 +164,7 @@ static void testLoop(Int m, long numRep, bool inDual) {
          << " replications \n\n";
    long d;  // dim = dimensions[d].
    Rank1Lattice<Int, Real> korlat(m, maxdim); // We use single lattice object.
-   ReducerBB<Int, Real> red(korlat);   // Also a single ReducerBB object.
+   ReducerBB<Int, Real> red(korlat);   // Single ReducerBB with internal lattice `korlat`.
    Int a;        // The LCG multiplier
    for (d = 0; d < numSizes; d++)   // Reset the accumulators.
       for (int64_t meth = 0; meth < numMeth; meth++) {

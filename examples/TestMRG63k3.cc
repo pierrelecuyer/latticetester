@@ -63,17 +63,18 @@ int main() {
   ReducerBB<Int, Real> red(maxdim);   // Reducer created for up to dim dimensions.
   FigureOfMeritM<Int, Real> fom(t0, weights, norma, &red);
   fom.setVerbosity(2);
+  std::cout << "\nFigure of merit primal succ, with BB.\n";
   merit = fom.computeMeritSucc (lat);
-  std::cout << "Figure of merit primal succ, with BB: " << merit << "\n\n";
+  std::cout << "FOM value: " << merit << "\n\n";
 
   NTL::vector<int64_t> t(4); // Another t-vector
   // t.SetLength(4);
   t[0] = 8;  t[1] = 4;   t[2] = 4;  t[3] = 4;
   fom.setTVector(t);
-
   lat.buildBasis(maxdim);
+  std::cout << "\nFigure of merit primal succ + non-succ, with BB.\n";
   merit = fom.computeMeritNonSucc (lat, proj);
-  std::cout << "Figure of merit primal succ + non-succ, with BB: " << merit << "\n\n";
+  std::cout << "FOM value: " << merit << "\n\n";
 
   // Now the m-dual
   NormaBestLat normadual (-log(m), order, maxdim);  // Factors will be computed for m-dual.
@@ -82,12 +83,14 @@ int main() {
   fomdual.setBKZ(0.9999999, 12);
   fomdual.setVerbosity(2);
   // lat.buildDualBasis(maxdim);
+  std::cout << "\nFigure of merit for dual.\n";
   merit = fomdual.computeMeritSucc (lat);
-  std::cout << "Figure of merit for dual: " << merit << "\n\n";
+  std::cout << "FOM value: " << merit << "\n\n";
 
   fomdual.setTVector(t);
-  merit = fomdual.computeMeritNonSucc (lat, proj);
-  std::cout << "Figure of merit dual non-succ, with BB: " << merit << "\n\n";
+  std::cout << "\nFigure of merit dual non-succ, with BB.\n";
+  merit = fomdual.computeMeritNonSucc (lat, proj, 1000.0);
+  std::cout << "FOM value: " << merit << "\n\n";
 
   return 0;
 }
