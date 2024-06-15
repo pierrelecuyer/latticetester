@@ -30,14 +30,11 @@ const long numSizes = 5;   // Number of matrix sizes (choices of dimension).
 long maxdim = dimensions[numSizes - 1];   // Maximum dimension
 
 const long numMeth = 18;   // Number of methods, and their short names.
-std::string names[] = {
-      "LLL5           ", "LLL99999       ", "BKZ99999-10    ", "L5+8+99+BKZ-10 ",
+std::string names[] = { "LLL5           ", "LLL99999       ", "BKZ99999-10    ", "L5+8+99+BKZ-10 ",
 //      "Direct-BB     ", "Pairwise+BB   ",
-      "LLL5+BB        ", "LLL8+BB        ", "LLL99999+BB    ",
-      "BKZ99999-6+BB  ", "BKZ99999-8+BB  ", "BKZ99999-10+BB ", "BKZ99999-12+BB ",
-      "BKZ999-6+BB    ", "BKZ999-8+BB    ", "BKZ999-10+BB   ",
-      "BKZ999-12+BB   ", "L8+BKZ-10+BB   ", "L5+8+99+BKZ-10+BB ", "L5+8+99+BKZ-12+BB ",
-};
+      "LLL5+BB        ", "LLL8+BB        ", "LLL99999+BB    ", "BKZ99999-6+BB  ", "BKZ99999-8+BB  ",
+      "BKZ99999-10+BB ", "BKZ99999-12+BB ", "BKZ999-6+BB    ", "BKZ999-8+BB    ", "BKZ999-10+BB   ",
+      "BKZ999-12+BB   ", "L8+BKZ-10+BB   ", "L5+8+99+BKZ-10+BB ", "L5+8+99+BKZ-12+BB ", };
 
 // We use ctime directly for the timings, to minimize overhead.
 clock_t tmp;
@@ -59,9 +56,9 @@ void printResults();  // Must be declared, because it has no parameters.
  * The square length of the shortest basis vector is recovered in `len2`.
  */
 template<typename Int, typename Real>
-void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red,
-      bool inDual, long d, long meth, double deltaLLL, double deltaBKZ, long k,
-      bool BB, NTL::vector<Real> sqlen) {
+void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
+      long d, long meth, double deltaLLL, double deltaBKZ, long k, bool BB,
+      NTL::vector<Real> sqlen) {
    long dim = dimensions[d];
    double len2;
    if (inDual) {
@@ -72,14 +69,11 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
    }
 
    tmp = clock();
-   if (deltaLLL > 0.0)
-      redLLL(korlat.getBasis(), deltaLLL, dim, &sqlen);
-   if (deltaBKZ > 0.0)
-      redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
+   if (deltaLLL > 0.0) redLLL(korlat.getBasis(), deltaLLL, dim, &sqlen);
+   if (deltaBKZ > 0.0) redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
    len2 = conv<double>(sqlen[0]);
    if (BB) {
-      if (!red.shortestVector())
-         std::cout << " shortestVector failed for " << names[meth] << "\n";
+      if (!red.shortestVector()) std::cout << " shortestVector failed for " << names[meth] << "\n";
       len2 = conv<double>(korlat.getVecNorm(0));
    }
    timer[meth][d] += clock() - tmp;
@@ -89,10 +83,9 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
 // Same as performReduction, but this one applies LLL three times in succession with
 // the three given values of $\delta$.
 template<typename Int, typename Real>
-void performReduction3LLL(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red,
-      bool inDual, long d, long meth, double deltaLLL1, double deltaLLL2, double deltaLLL3,
-	  double deltaBKZ, long k,
-      bool BB, NTL::vector<Real> sqlen) {
+void performReduction3LLL(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
+      long d, long meth, double deltaLLL1, double deltaLLL2, double deltaLLL3, double deltaBKZ,
+      long k, bool BB, NTL::vector<Real> sqlen) {
    long dim = dimensions[d];
    double len2;
    if (inDual) {
@@ -105,25 +98,22 @@ void performReduction3LLL(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> 
    redLLL(korlat.getBasis(), deltaLLL1, dim, &sqlen);
    redLLL(korlat.getBasis(), deltaLLL2, dim, &sqlen);
    redLLL(korlat.getBasis(), deltaLLL3, dim, &sqlen);
-   if (deltaBKZ > 0.0)
-      redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
+   if (deltaBKZ > 0.0) redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
    len2 = conv<double>(sqlen[0]);
    if (BB) {
-      if (!red.shortestVector())
-         std::cout << " shortestVector failed for " << names[meth] << "\n";
+      if (!red.shortestVector()) std::cout << " shortestVector failed for " << names[meth] << "\n";
       len2 = conv<double>(korlat.getVecNorm(0));
    }
    timer[meth][d] += clock() - tmp;
    sumSq[meth][d] += len2;
 }
 
-
 // Speed test for dim = dimensions[d], with given matrices.
 // We test several methods to approximate or find a shortest vector in the dual lattice.
 // The same initial dual basis is rebuilt each time by `beforeReduct`.
 template<typename Int, typename Real>
-static void tryManyMethods(Rank1Lattice<Int, Real> &korlat,
-      ReducerBB<Int, Real> &red, bool inDual, long d) {
+static void tryManyMethods(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
+      long d) {
    NTL::vector<Real> sqlen; // Cannot be global because it depends on Real.
    sqlen.SetLength(1);  // We retrieve only the shortest vector square length.
 
@@ -155,10 +145,8 @@ static void testLoop(Int m, long numRep, bool inDual) {
    std::cout << "****************************************************\n";
    std::cout << "Types: " << stringTypes << "\n";
    std::cout << "TestReducersSpeed with m = " << m;
-   if (inDual)
-      std::cout << ", in the dual lattice. \n\n";
-   else
-	  std::cout << ", in the primal lattice. \n\n";
+   if (inDual) std::cout << ", in the dual lattice. \n\n";
+   else std::cout << ", in the primal lattice. \n\n";
    std::cout << "Results for `testLoop`\n";
    std::cout << "Timings (in microseconds) for different methods for " << numRep
          << " replications \n\n";
@@ -211,8 +199,8 @@ void printResults() {
       }
    }
    std::cout << "\n";
-   std::cout << "Total time for everything: "
-         << (double) (clock() - totalTime) / (CLOCKS_PER_SEC) << " seconds\n\n";
+   std::cout << "Total time for everything: " << (double) (clock() - totalTime) / (CLOCKS_PER_SEC)
+         << " seconds\n\n";
    //std::cout
    //      << "We see that LLL or BKZ alone do not always find a shortest vector.\n\n\n";
 }

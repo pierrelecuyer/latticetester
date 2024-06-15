@@ -33,7 +33,6 @@
 #include "latticetester/LLL_FPInt.h"
 #include "latticetester/LLL_lt.h"
 
-
 using namespace LatticeTester;
 
 namespace LatticeTester {
@@ -62,7 +61,6 @@ namespace LatticeTester {
 // typedef NTL::vector<Int> IntVec;  // Int is not defined!
 // typedef NTL::matrix<Int> IntMat;
 
-
 /**
  * This function uses the NTL implementation of the LLL reduction algorithm
  * with factor `delta`, presented in \cite mSCH91a (see also  \cite iLEC22l).
@@ -85,8 +83,7 @@ namespace LatticeTester {
  * and their description is done in the module `LLL` of NTL.
  */
 template<typename IntMat, typename RealVec>
-static void redLLL(IntMat &basis, double delta = 0.99999,
-        long dim = 0, RealVec* sqlen = 0);
+static void redLLL(IntMat &basis, double delta = 0.99999, long dim = 0, RealVec *sqlen = 0);
 
 /**
  * This static function implements an exact algorithm from NTL to perform the original LLL reduction.
@@ -107,57 +104,48 @@ static void redLLLExact(IntMat &basis, double delta = 0.99999);
  * A `blocksize` of 2 is equivalent to LLL reduction.
  */
 template<typename IntMat, typename RealVec>
-static void redBKZ(IntMat &basis, double delta = 0.99999,
-      int64_t blocksize = 10, long prune = 0, long dim = 0,
-      RealVec* sqlen = 0);
-
+static void redBKZ(IntMat &basis, double delta = 0.99999, int64_t blocksize = 10, long prune = 0,
+      long dim = 0, RealVec *sqlen = 0);
 
 //============================================================================
 // Implementation
 
 // General implementation.
 template<typename IntMat, typename RealVec>
-void redLLL(IntMat &basis, double delta, long dim,
-      RealVec* sqlen) {
+void redLLL(IntMat &basis, double delta, long dim, RealVec *sqlen) {
    MyExit(1, "redLLL: General version not implemented.\n");
 }
 
 // A specialization for the case where Int = int64_t and Real = double.
 template<>
-void redLLL(NTL::matrix<int64_t> &basis,
-      double delta, long dim, NTL::vector<double> *sqlen) {
+void redLLL(NTL::matrix<int64_t> &basis, double delta, long dim, NTL::vector<double> *sqlen) {
    NTL::LLL_FPInt<long, NTL::matrix<long>>(basis, delta, dim, dim, sqlen);
-   }
+}
 
 // A specialization for the case where Int = ZZ and Real = double.
 template<>
-void redLLL(NTL::matrix<NTL::ZZ> &basis,
-      double delta, long dim, NTL::vector<double> *sqlen) {
+void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::vector<double> *sqlen) {
    //NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
    NTL::LLL_FP_lt(basis, delta, dim, dim, sqlen);
-   }
+}
 
 // A specialization for the case where Int = ZZ and Real = xdouble.
 template<>
-void redLLL(NTL::matrix<NTL::ZZ> &basis,
-      double delta, long dim, NTL::vector<xdouble> *sqlen) {
+void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::vector<xdouble> *sqlen) {
    NTL::LLL_XD_lt(basis, delta, dim, dim, sqlen);
-   }
+}
 
 // A specialization for the case where Int = ZZ and Real = quad_float.
 template<>
-void redLLL(NTL::matrix<NTL::ZZ> &basis,
-      double delta, long dim, NTL::vector<quad_float> *sqlen) {
+void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::vector<quad_float> *sqlen) {
    NTL::LLL_QP_lt(basis, delta, dim, dim, sqlen);
-   }
+}
 
 // A specialization for the case where Int = ZZ and Real = RR.
 template<>
-void redLLL(NTL::matrix<NTL::ZZ> &basis,
-      double delta, long dim, NTL::vector<NTL::RR> *sqlen) {
+void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::vector<NTL::RR> *sqlen) {
    NTL::LLL_RR_lt(basis, delta, dim, dim, sqlen);
-   }
-
+}
 
 //=========================================================================
 
@@ -180,43 +168,42 @@ void redLLLExact(NTL::matrix<NTL::ZZ> &basis, double delta) {
 
 // BKZ, general case.
 template<typename IntMat, typename RealVec>
-void redBKZ(IntMat &basis, double delta, long blocksize,
-      long prune, long dim, RealVec* sqlen);
+void redBKZ(IntMat &basis, double delta, long blocksize, long prune, long dim, RealVec *sqlen);
 
 // Specialization for Int = int64_t.
 template<>
-void redBKZ(NTL::matrix<int64_t> &basis, double delta, long blocksize,
-      long prune, long dim,  NTL::vector<double> *sqlen) {
+void redBKZ(NTL::matrix<int64_t> &basis, double delta, long blocksize, long prune, long dim,
+      NTL::vector<double> *sqlen) {
    NTL::BKZ_FPInt<long, NTL::matrix<long>>(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = double.
 template<>
-void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
-      long prune, long dim, NTL::vector<double> *sqlen) {
+void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
+      NTL::vector<double> *sqlen) {
    NTL::BKZ_FP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = xdouble.   `precision` is not used.
 template<>
-void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
-      long prune, long dim, NTL::vector<xdouble> *sqlen) {
+void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
+      NTL::vector<xdouble> *sqlen) {
    NTL::BKZ_XD_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
-   }
+}
 
 // Specialization for Int = ZZ and Real = quad_float.   `precision` is not used.
 template<>
-void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
-      long prune, long dim, NTL::vector<quad_float> *sqlen) {
+void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
+      NTL::vector<quad_float> *sqlen) {
    NTL::BKZ_QP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
-   }
+}
 
 // Specialization for Int = ZZ and Real = RR.   `precision` is not used.
 template<>
-void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize,
-      long prune, long dim, NTL::vector<NTL::RR> *sqlen) {
+void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
+      NTL::vector<NTL::RR> *sqlen) {
    NTL::BKZ_RR_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
-   }
+}
 
 }   // namespace LatticeTester
 

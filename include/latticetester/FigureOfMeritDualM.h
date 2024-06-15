@@ -172,12 +172,12 @@ double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
 			it++) {
 		coord = *it;
 		// The following builds a triangular basis for proj, takes its dual, and dualize.
-		lat.buildProjectionDual(proj, coord);
-		assert (proj.getDim() == proj.getDimDual());
-      assert (proj.getDim() == (unsigned)coord.size());
-		proj.dualize();
+      lat.buildProjectionDual(proj, coord);
+      assert(proj.getDim() == proj.getDimDual());
+      assert(proj.getDim() == (unsigned) coord.size());
+      proj.dualize();
       this->computeMeritOneProj(proj, coord, this->m_minMerit);
-		proj.dualize();
+      proj.dualize();
 		if (this->m_minMerit <= this->m_lowbound)
 			return 0;
 	}

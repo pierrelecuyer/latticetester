@@ -8,7 +8,6 @@
  *
  **/
 // #define TYPES_CODE  ZD  // ZZ + double
-
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/xdouble.h>
@@ -27,10 +26,9 @@ using namespace LatticeTester;
 const long numSizes = 5; // Number of matrix sizes (choices of dimensions).
 const long dimensions[numSizes] = { 4, 6, 10, 20, 30 };
 const long numMeth = 12;    // Number of methods to test, and their names.
-std::string names[numMeth] = { "LLL5         ", "LLL8         ",
-      "LLL99        ", "LLL99999     ", "LLL99999-new ", "UppTri       ",
-      "mDualUT      ", "LLL5-dual    ", "LLL8-dual    ", "LLL99-dual   ",
-      "LLL99999-dual", "LLL99999-new " };
+std::string names[numMeth] = { "LLL5         ", "LLL8         ", "LLL99        ", "LLL99999     ",
+      "LLL99999-new ", "UppTri       ", "mDualUT      ", "LLL5-dual    ", "LLL8-dual    ",
+      "LLL99-dual   ", "LLL99999-dual", "LLL99999-new " };
 // We use `ctime` directly for the timings, to minimize overhead.
 clock_t totalTime = clock(); // Global timer for total time.
 clock_t timer[numMeth][numSizes];
@@ -43,7 +41,7 @@ void printResults();  // Must be declared, because it has no parameters.
  * It also updates the cumulative times and sums of square lengths.
  */
 template<typename IntMat, typename Real>
-void LLLTest (IntMat &basis, long d, long meth, double delta) {
+void LLLTest(IntMat &basis, long d, long meth, double delta) {
    long dim = dimensions[d];
    NTL::vector<Real> sqlen; // Cannot be global variable because it depends on Real.
    sqlen.SetLength(1);
@@ -56,8 +54,7 @@ void LLLTest (IntMat &basis, long d, long meth, double delta) {
 // Run a speed test for dim = dimensions[d], with given basis matrices.
 // Only basis1 needs to be initialized; basis2 and basisdual are used only for copy.
 template<typename Int, typename IntMat, typename Real>
-void transformBases(Int m, long d, long dim, IntMat &basis1, IntMat &basis2,
-      IntMat &basisdual) {
+void transformBases(Int m, long d, long dim, IntMat &basis1, IntMat &basis2, IntMat &basisdual) {
    CopyPartMat<IntMat>(basis2, basis1, dim, dim);  // Copy basis1 to basis2.
    clock_t tmp;
 
@@ -103,8 +100,7 @@ void testLoopResize(Int mm, long numRep) {
    IntMat basis1, basis2, basisdual;
    // Rank1Lattice<Int, Real> korlat;    // Will be a Korobov lattice.
    // Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
-   std::cout
-         << "Results for `testLoopResize` (many objects are created or resized)\n";
+   std::cout << "Results for `testLoopResize` (many objects are created or resized)\n";
    for (d = 0; d < numSizes; d++)      // Reset timers and sums.
       for (int64_t meth = 0; meth < numMeth; meth++) {
          timer[meth][d] = 0;
@@ -169,8 +165,7 @@ void testLoopNoResize(Int mm, long numRep) {
          // std::cout << " Basis B = \n" << basis1 << "\n";
          // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
          CopyPartMat<IntMat>(basis1, korlat.getBasis(), dim, dim); // Triangular basis.
-         transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2,
-               basisdual);
+         transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2, basisdual);
       }
    }
    printResults();
@@ -186,16 +181,14 @@ void testTwoLoops(Int mm, long numRep) {
    std::cout << "****************************************************\n";
    std::cout << "Types: " << stringTypes << "\n\n";
    std::cout << "TestBasisConstructionSpeed with m = " << mm << "\n";
-   std::cout << "Number of replications (different multipliers a): " << numRep
-         << "\n\n";
+   std::cout << "Number of replications (different multipliers a): " << numRep << "\n\n";
    testLoopResize<Int, IntMat, Real>(mm, numRep);
    testLoopNoResize<Int, IntMat, Real>(mm, numRep);
 }
 
 void printResults() {
    long d;
-   std::cout
-         << "Timings for different methods, in basic clock units (microseconds) \n\n";
+   std::cout << "Timings for different methods, in basic clock units (microseconds) \n\n";
    std::cout << " dim:    ";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(8) << dimensions[d] << "  ";
@@ -222,11 +215,9 @@ void printResults() {
       }
    }
    std::cout << "\n";
-   std::cout << "Total time: "
-         << (double) (clock() - totalTime) / (CLOCKS_PER_SEC)
+   std::cout << "Total time: " << (double) (clock() - totalTime) / (CLOCKS_PER_SEC)
          << " seconds\n\n\n";
 }
-
 
 int main() {
    // Here, Int and Real are not yet defined.

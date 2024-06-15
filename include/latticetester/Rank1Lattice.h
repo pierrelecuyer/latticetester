@@ -340,7 +340,7 @@ void Rank1Lattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice
    projLattice.setDim(d);
    IntMat &basis = projLattice.getBasis();  // Reference to the projection basis.
    bool case1 = m_a[*proj.begin() - 1] == 1; // We have a_{i_1} = 1.
-   // We first compute the first row.
+   // We first compute the first row of the basis matrix.
    if (case1) {  // The easy (usual) case.
       j = 0;
       for (auto it = proj.begin(); it != proj.end(); it++, j++)
@@ -378,6 +378,7 @@ void Rank1Lattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLat
    i = 1;
    auto it = proj.begin();
    bool case1 = m_a[*proj.begin() - 1] == 1; // We have a_{i_1} = 1.
+   // We first compute the first column of the m-dual basis.
    if (case1) {
       for (it++; it != proj.end(); ++it, ++i)
          dualBasis[i][0] = m_a[*it - 1]; // First column.
@@ -389,6 +390,7 @@ void Rank1Lattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLat
       for (it++; it != proj.end(); it++, i++)
          dualBasis[i][0] = -(m_a[*it - 1] * b1 % this->m_modulo);
    }
+   // Then we initialize all the other columns.
    for (i = 0; i < d; i++)
       for (j = 1; j < d; j++)
          dualBasis[i][j] = (i == j);

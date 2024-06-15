@@ -142,7 +142,7 @@ protected:
 
    void incDimBasis0(IntMat &basis, int64_t d);
 
-   void buildProjection0(IntMat &basis, int64_t dimbasis, IntMat &pbasis, const Coordinates &proj);
+   bool buildProjection0(IntMat &basis, int64_t dimbasis, IntMat &pbasis, const Coordinates &proj);
 
    /**
     * This matrix contains the initial basis V for the MRG lattice as defined in
@@ -165,8 +165,7 @@ protected:
     * Hidden variable used across the `buildProjection` functions, to avoid recomputing it.
     * This variable is `true` if the first m_order coordinates are all in `proj`.
     */
-   bool projCase1 = true; // Tif the first m_order coordinates are all in current `proj`.
-
+   // bool projCase1 = true; // True if the first m_order coordinates are all in current `proj`.
 };
 
 //============================================================================
@@ -205,8 +204,7 @@ MRGLattice<Int, Real>& MRGLattice<Int, Real>::operator=(const MRGLattice<Int, Re
 
 template<typename Int, typename Real>
 MRGLattice<Int, Real>::MRGLattice(const MRGLattice<Int, Real> &lat) :
-      IntLatticeExt<Int, Real>(lat.m_modulo, lat.getDim(),
-            lat.getNormType()) {
+      IntLatticeExt<Int, Real>(lat.m_modulo, lat.getDim(), lat.getNormType()) {
    m_aCoeff = lat.m_aCoeff;
    m_order = lat.m_order;
    m_basis0 = lat.m_basis0;
@@ -334,8 +332,6 @@ void MRGLattice<Int, Real>::incDimDualBasis() {
       m_dim0++;
       this->incDimBasis0(m_basis0, m_dim0);
    }
-   //std::cout << "\n Dimension to be increased in dual, new dim0 = " << m_dim0 << "\n";
-   // std::cout << " Dual basis just before dim increase: \n" << this->m_dualbasis << "\n";
    int64_t i;
    // Add one extra 0 coordinate to each vector of the m-dual basis.
    for (i = 0; i < d - 1; i++) {
@@ -349,27 +345,24 @@ void MRGLattice<Int, Real>::incDimDualBasis() {
       for (i = 0; i < m_order; i++)
          this->m_dualbasis[d - 1][i] = -this->m_basis0[i][d - 1];
    }
-   //std::cout << "\n Dimension just increased in dual, new dim = " << d << "\n";
-   // std::cout << " Dual basis just after dim increase: \n" << this->m_dualbasis << "\n";
-
-   this->setDualNegativeNorm();   // just for testing ...  not needed.
+   //  this->setDualNegativeNorm();   // just for testing ...  not needed.
 }
 
 //============================================================================
 
-// We must be able to do this with either m_basis or m_basis0.
+// We must be able to do this with basis equal to either m_basis or m_basis0.
+// We use the columns of basis to construct generating vectors and a pbasis for the projection.
+// This function returns the value of `projCase`, which is `true` iff the first m_order coordinates
+// are all in the projection.
 template<typename Int, typename Real>
-void MRGLattice<Int, Real>::buildProjection0(IntMat &basis, int64_t dimbasis, IntMat &pbasis,
+bool MRGLattice<Int, Real>::buildProjection0(IntMat &basis, int64_t dimbasis, IntMat &pbasis,
       const Coordinates &proj) {
    int64_t d = proj.size();
-   // assert (*proj.end() <= unsigned(this->m_dim));
-   // IntMat &pbasis = projLattice.getBasis(); // We want to construct this basis of the projection.
    int64_t i, j;
-   projCase1 = false;
+   // projCase1 = false;
    // Check if we are in case 1.
-   //  *** This seems to assume that the coordinates of the projection are always in increasing order, right?   ******
-/*
-    projCase1 = true; // This holds if the first m_order coordinates are all in `proj`.
+   // This assumes that the coordinates of each projection are always in increasing order!  ***
+   bool projCase1 = true; // This holds if the first m_order coordinates are all in `proj`.
    if (d < (unsigned) m_order) projCase1 = false;
    else {
       j = 0;
@@ -379,28 +372,29 @@ void MRGLattice<Int, Real>::buildProjection0(IntMat &basis, int64_t dimbasis, In
          } else break;
       }
    }
-   if (projCase1) { // We first compute the first m_order rows of the projection basis.
+   if (projCase1) {
+      // We first compute the first m_order rows of the projection basis.
       for (i = 0; i < m_order; i++) {
          j = 0;
          for (auto it = proj.begin(); it != proj.end(); it++, j++)
-            pbasis[i][j] = this->m_basis[i][*it - 1];
+            pbasis[i][j] = basis[i][*it - 1];
       }
       // Then the other rows.
       for (i = m_order; i < d; i++)
          for (j = 0; j < d; j++)
             pbasis[i][j] = this->m_modulo * (i == j);
    } else {
-*/
-     // In this case we need to use the generic algorithm
+      // In this case we need to use the more general algorithm.
       j = 0;
       for (auto it = proj.begin(); it != proj.end(); it++, j++) {
+         // Set column j of all generating vectors, for (j+1)-th coordinate of proj.
          for (i = 0; i < dimbasis; i++)
-            // Set column j of generating vectors, for j-th coordinate of proj.
-            m_genTemp[i][j] = this->m_basis[i][*it - 1];
+            m_genTemp[i][j] = basis[i][*it - 1];
       }
       // std::cout << " Generating vectors: \n" << m_genTemp << "\n";
       upperTriangularBasis(m_genTemp, pbasis, this->m_modulo, dimbasis, d);
-//   }
+   }
+   return projCase1;
 }
 
 //============================================================================
@@ -413,14 +407,15 @@ template<typename Int, typename Real>
 void MRGLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
       const Coordinates &proj) {
    // int64_t d = proj.size();
-   assert (*proj.end() <= uint64_t(this->m_dim));
+   assert(*proj.end() <= uint64_t(this->m_dim));
    // IntMat &pbasis = projLattice.getBasis(); // We want to construct this basis of the projection.
    projLattice.setDim(proj.size());
-   this->buildProjection0 (this->m_basis, this->m_dim, projLattice.getBasis(), proj);
+   this->buildProjection0(this->m_basis, this->m_dim, projLattice.getBasis(), proj);
 }
 
 //============================================================================
 // The number of generating vectors here will be m_dim0.
+// We must use m_basis0 because m_basis may not exist.
 template<typename Int, typename Real>
 void MRGLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLattice,
       const Coordinates &proj) {
@@ -431,34 +426,36 @@ void MRGLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLatti
       this->incDimBasis0(this->m_basis0, m_dim0);
    }
    IntMat &pbasis = projLattice.getBasis();  // Reference to basis of projection.
-   IntMat &dualBasis = projLattice.getDualBasis();   // And its m-dual.
-
-   // We first build a basis for the primal basis of the projection.
+   IntMat &pdualBasis = projLattice.getDualBasis();   // And its m-dual.
    projLattice.setDim(d);
-   this->buildProjection0 (this->m_basis0, this->m_dim0, pbasis, proj);
+   projLattice.setDimDual(d);
+
+   // We first build a basis for the primal basis of the projection in basis0.
+   bool projCase1 = this->buildProjection0(this->m_basis0, this->m_dim0, pbasis, proj);
+   // After this function call, the class variable `projCase1` is set.
 
    // Then we compute its m-dual.
-/*
    int64_t i, j, k;
-   if (projCase1) { // Compute the m-dual basis directly.    ***  Is it really faster and worthwhile?   ****
+   if (projCase1) { // Get the m-dual basis directly. ** Is it really faster and worthwhile?   ****
+      // Get the first k columns directly from m_basis0.
       for (j = 0; j < m_order; j++) {
-         dualBasis[j][j] = this->m_modulo;
+         pdualBasis[j][j] = this->m_modulo;
          i = m_order;
          auto it = proj.begin();
          for (k = 0; k < m_order - 1; k++)
             it++;
          for (it++; it != proj.end(); ++it, ++i) {
-            dualBasis[i][j] = -this->m_basis0[j][*it - 1]; // First column.
+            pdualBasis[i][j] = -this->m_basis0[j][*it - 1]; // First column.
          }
       }
+      // The other columns are trivial.
       for (i = 0; i < d; i++)
          for (j = m_order; j < d; j++)
-            dualBasis[i][j] = (i == j);  // ???
+            pdualBasis[i][j] = (i == j);
    } else {
-*/
-      mDualUpperTriangular(pbasis, dualBasis, this->m_modulo, d);
-      projLattice.setDimDual(d);
-//   }
+      // We invert pbasis to get the m-dual.
+      mDualUpperTriangular(pbasis, pdualBasis, this->m_modulo, d);
+   }
 }
 
 //============================================================================
