@@ -141,7 +141,7 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
 		IntLatticeExt<Int, Real> &lat, double minmerit) {
    this->m_minMerit = minmerit;
 	Coordinates coord;
-   if (this->m_verbose > 1) std::cout << "coordinates    merit           sqlen   minmerit  \n";
+   if (this->m_verbose > 1) std::cout << "coordinates      merit        sqlen   minmerit  \n";
 	int64_t lower_dim = static_cast<int64_t>(this->m_t.size()) + 1; // We start in d+1 dimensions.
    for (int64_t j = 1; j <= lower_dim; j++)
       coord.insert(j);
@@ -167,7 +167,7 @@ double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
 		IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj, double minmerit) {
    this->m_minMerit = minmerit;
 	Coordinates coord;
-   if (this->m_verbose > 1) std::cout << "coordinates    merit           sqlen   minmerit  \n";
+   if (this->m_verbose > 1) std::cout << "coordinates      merit        sqlen   minmerit  \n";
 	for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end();
 			it++) {
 		coord = *it;
