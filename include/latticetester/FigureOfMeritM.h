@@ -91,8 +91,8 @@ namespace LatticeTester {
  *
  * The method `computeMerit` computes the FOM for a given lattice.
  * The computation is stopped (early exit) as soon as we know that the value of the FOM
- * will be outside the interval `[low, high]`.  By default, these two bounds are 0 and 2
- * so there is no early stopping, but they can be changed via the function `setBounds`.
+ * will be below the lower bound, whose value can be changed via `setLowBound`.
+ * The default value is 0.
  *
  * *****  WARNING: For now, this class works only for the Euclidean norm, right?    *****
  */
@@ -112,7 +112,7 @@ public:
     * then set the 'Weights', `Normalizer`, and `ReducerBB` to the given values.
     */
    FigureOfMeritM(const NTL::vector<int64_t> &t, Weights &w, Normalizer &norma,
-         ReducerBB<Int, Real> *red = 0, bool includeFirst = true);
+         ReducerBB<Int, Real> *red = 0, bool includeFirst = false);
 
    //===========================================================================
 
@@ -125,7 +125,7 @@ public:
     * projections that contain coordinate 1.
     * See the doc of the class `FromRanges` in `CoordinateSets` for more details.
     */
-   void setTVector(const NTL::vector<int64_t> &t, bool includeFirst = true);
+   void setTVector(const NTL::vector<int64_t> &t, bool includeFirst = false);
 
    /*
     * Sets the weights used for calculating the FoM
@@ -171,12 +171,11 @@ public:
    }
 
    /*
-    * Sets the low and the high bound for the FOM.
-    * The FOM computation is stopped as soon as we know it is outside these bounds.
-    * The default values are 0 and 2.
+    * Sets the low bound for the FOM.
+    * The FOM computation is stopped as soon as we know it is below this bound.
+    * The default value is 0.
     */
-   void setBounds(double &low, double &high) {
-      m_highbound = high;
+   void setLowBound(double &low) {
       m_lowbound = low;
    }
 
@@ -292,15 +291,15 @@ public:
     * over the non-successive coordinates. This is used only when building  `*m_coordRange`,
     * but the variable could be useful for printouts of results.
     */
-   bool m_includeFirst = true;
+   bool m_includeFirst = false;
 
    /*
     * As soon as we know the FOM is above this bound, its calculation is stopped.
-    * The default value is 1000 to make sure that it is never exceeded.
-    * Values slightly larger than 1 might be possible because the normalizers
+    * The default value is `infinite` to make sure that it is never exceeded.
+    * Values larger than 1 might be possible because the normalizers
     * provide only approximations in some cases.
     */
-   double m_highbound = 1000.0;
+   //  double m_highbound = DBL_MAX;
 
    /*
     * As soon as we know the FOM is below this bound, its calculation is stopped.
@@ -310,7 +309,7 @@ public:
    /*
     * Variables to save the values at which the min merit is reached.
     */
-   double m_minMerit = 1000.0;
+   double m_minMerit = DBL_MAX;
    double m_minMeritSqlen = 0;  // Square length of worst-case vector.
    Coordinates m_minMeritProj;  // Initialized to empty set of coordinates.
 
@@ -427,7 +426,7 @@ double FigureOfMeritM<Int, Real>::computeMerit(IntLatticeExt<Int, Real> &lat,
    this->computeMeritNonSucc(lat, proj, minmerit);
    if (m_minMerit == 0) return 0;
    this->computeMeritSucc(lat, m_minMerit);
-   // if (m_minMerit > this->m_highbound) return 0;   // Maybe this could be removed.
+   // if (m_minMerit > this->m_highbound) return 0; // Removed. We want to see the large values!
    return m_minMerit;
 }
 

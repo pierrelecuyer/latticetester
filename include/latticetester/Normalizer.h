@@ -63,16 +63,13 @@ namespace LatticeTester {
  * to obtain standardized measures that lie between 0 and 1.
  * For the best lattices, these measures should be close to 1.
  *
+ * The bounds that we actually use are a bit different and are described
+ * in Section 9 of the guide.                                              ******
+ *
  * In subclasses, it suffices to implement the `getGamma(int) const` function
  * and the specialized constructors.
  * The constructors in the present abstract class do not compute any bounds,
  * they basically just reserve the space (an array) for the bounds.
- *
- * The preferred usage for this class is to declare a pointer to a Normalizer
- * and to instantiate a subclass with dynamically allocated memory:
- * \code{.cpp}
- *   NormaBestLat norma(logm, k, maxDim);
- * \endcode
  *
  * When making a search and examining millions of lattices, it is important to re-use
  * the same `Normalizer` object, and *not* construct a new one (and recompute the constants)
@@ -249,31 +246,30 @@ Normalizer::Normalizer(int64_t maxDim, std::string name, NormType norm) :
 // This one makes sense only when the density is the same in all dimensions.
 void Normalizer::computeBounds(double logDensity) {
     double x;
-    for (int64_t j = 1; j <= m_maxDim; j++) {
-        x = 0.5 * log(getGamma(j)) - logDensity / j;
-        m_bounds[j] = exp(x);
+    for (int64_t s = 1; s <= m_maxDim; s++) {
+        x = 0.5 * log(getGamma(s)) - logDensity / s;
+        m_bounds[s] = exp(x);
     }
 }
 
 /*-------------------------------------------------------------------------*/
 
 void Normalizer::computeBounds(double logm, int64_t k) {
-    // The bounds \f$ d_t^*(\eta_t/m^t)\f$ (for primal) or \f$ \ell_t^*(\eta_t)\f$ (for dual).
+    // This function uses the bounds given in Section 9 of the user's guide.
+    // For t > k, they are \f$ \tilde d_t^*(\eta_t/m^t)\f$ (for primal) or \f$ \ell_t^*(\eta_t)\f$ (for dual).
     // These are the bounds when the primal lattice is *rescaled* by a factor m.
     double x;
-    for (int64_t j = 1; j <= m_maxDim; j++) {
-        x = 0.5 * log(getGamma(j)) - logm * ((k < j) ? (double) k / j : 1);
-        // x = 0.5 * log(getGamma(j)) - logm * min(k/j, 1);
+    for (int64_t s = 1; s <= m_maxDim; s++) {
+        x = - logm;
+        if (s > k)  {
+           x *= (double) (k / s);
+           x += 0.5 * log(getGamma(s));
+        }
         if (logm > 0)   // Primal lattice: we need to add logm.
             x += logm;
-        m_bounds[j] = exp(x);
+        m_bounds[s] = exp(x);
     }
 }
-
-/*-------------------------------------------------------------------------*/
-//int64_t Normalizer::min(int64_t k, int64_t j) {
-//    return (k < j) ? k : j;
-//}
 
 /*-------------------------------------------------------------------------*/
 
