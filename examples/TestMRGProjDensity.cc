@@ -41,7 +41,7 @@ void testProjectionsMRG (const Int m, const NTL::vector<Int> a, const NTL::vecto
    WeightsUniform weights(1.0);
    NormaBestLat norma(log(m), order, maxdim);  // Factors will be computed for primal.
    ReducerBB<Int, Real> red(maxdim);   // Reducer created for up to dim dimensions.
-   FigureOfMeritM<Int, Real> fom(t, weights, norma, &red);
+   FigureOfMeritM<Int, Real> fom(t, weights, norma, &red, true);
    fom.setVerbosity(2);
    std::cout << "\nFigure of merit primal succ, with BB.\n";
    merit = fom.computeMeritSucc(lat);
@@ -60,7 +60,7 @@ void testProjectionsMRG (const Int m, const NTL::vector<Int> a, const NTL::vecto
    std::cout << "===================================================\n";
    std::cout << "We now examine the m-dual lattice, first for successive coordinates.\n";
    NormaBestLat normadual(-log(m), order, maxdim);  // Factors will be computed for m-dual.
-   FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red);
+   FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red, true);
    fomdual.setVerbosity(2);
    std::cout << "\nFigure of merit for dual.\n";
    merit = fomdual.computeMeritSucc(lat);
