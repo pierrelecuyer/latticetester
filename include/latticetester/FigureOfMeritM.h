@@ -322,6 +322,11 @@ public:
     * Indicates how much detailed information is collected.
     */
    int64_t m_collectLevel = 0;
+   
+   /*
+    * Variable to store the projection with the smallest FoM
+   */
+   Coordinates m_worstproj;
 
 };
 
@@ -407,6 +412,7 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
       m_minMeritProj = coord;
       NTL::conv(m_minMeritSqlen, m_sqlen[0]);
       if (m_collectLevel > 0) {
+         m_worstproj = coord;
       };   // Maybe store the shortest vector.
    }
    if (m_verbose > 1) {
