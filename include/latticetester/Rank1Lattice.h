@@ -316,7 +316,7 @@ void Rank1Lattice<Int, Real>::incDimBasis() {
 
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::incDimDualBasis() {
-   int64_t d = 1 + this->getDim();
+   int64_t d = 1 + this->getDimDual();
    this->setDimDual(d);
    // Add one extra coordinate to each vector.
    for (int64_t i = 0; i < d; i++) {

@@ -199,6 +199,22 @@ public:
    }
 
    /*
+    * Returns the square length of the shortest vector for the worst-case projection.
+    * The returned value is valid only if the collection level was at least 1.
+    */
+   double getMinMeritSqlen () {
+      return m_minMeritSqlen;
+   }
+
+   /*
+    * Returns the projection that gives the worst merit value.
+    * The returned value is valid only if the collection level was at least 1.
+    */
+   Coordinates getMinMeritProj() {
+      return m_minMeritProj;
+   }
+
+   /*
     * This function computes and returns the value of the FOM for the given lattice 'lat'.
     * The function returns 0 if the computation was not completed for some reason
     * (early exit, error, etc.).
@@ -236,6 +252,10 @@ public:
     */
    double computeMeritOneProj(IntLattice<Int, Real> &proj, const Coordinates &coord,
          double minmerit = DBL_MAX);
+
+
+// The following variables should not not accessed directly.
+//protected:
 
    /*
     * This 'm_t' specifies the set of projections for which the FOM is computed.
@@ -309,9 +329,14 @@ public:
    /*
     * Variables to save the values at which the min merit is reached.
     */
-   double m_minMerit = DBL_MAX;
+   double m_minMerit = DBL_MAX; // The worst merit value.
    double m_minMeritSqlen = 0;  // Square length of worst-case vector.
-   Coordinates m_minMeritProj;  // Initialized to empty set of coordinates.
+   Coordinates m_minMeritProj;  // Stores the worst-case projection..
+
+   /*
+    * Variable to store the projection with the smallest FoM
+   */
+   Coordinates m_worstproj;
 
    /*
     * Indicates how much details of FoM calculations are printed on the screen.
@@ -322,11 +347,6 @@ public:
     * Indicates how much detailed information is collected.
     */
    int64_t m_collectLevel = 0;
-   
-   /*
-    * Variable to store the projection with the smallest FoM
-   */
-   Coordinates m_worstproj;
 
 };
 
@@ -412,8 +432,8 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
       m_minMeritProj = coord;
       NTL::conv(m_minMeritSqlen, m_sqlen[0]);
       if (m_collectLevel > 0) {
-         m_worstproj = coord;
-      };   // Maybe store the shortest vector.
+         m_worstproj = coord;                       // This is the same as minMeritProj !!!!!!
+      };   // Maybe store also the shortest vector.
    }
    if (m_verbose > 1) {
       if (dim < 8) std::cout << coord << std::setw(15 - 2 * dim) << " ";

@@ -273,7 +273,7 @@ public:
     * Sets the dimension of the primal basis to `dim`. This does not change `maxDim` nor any of the
     * basis vectors, but only the dimension variable.
     */
-   void setDim(const int64_t &dim) {
+   void setDim(const int64_t dim) {
       assert(dim <= this->m_maxDim);
       // if (dim > 0)
       m_dim = dim;
@@ -283,7 +283,8 @@ public:
     * Sets the dimension of the primal basis to `dim`. This does not change `maxDim` nor any of the
     * basis vectors, but only the dimension variable.
     */
-   void setDimDual(const int64_t &dim) {
+   void setDimDual(const int64_t dim) {
+      // std::cout << "IntLattice::setDimDual: dim = " << dim << ", maxdim = " << this->m_maxDim << std::endl;
       assert(dim <= this->m_maxDim);
       // if (dim > 0)
       m_dimdual = dim;

@@ -94,7 +94,8 @@ int main() {
     // We now investigate the projection over coordinates {1, 3, 5}.
     // We first insert those three coordinates one by one in `proj`.
     // We then compute a basis for this projection in two ways.
-    Coordinates proj({1, 2, 3});
+    //Coordinates proj({1, 2, 3});
+    Coordinates proj({1, 3, 5});
     //proj.insert(1);
     //proj.insert(3);
     //proj.insert(5);

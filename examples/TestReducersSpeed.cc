@@ -111,6 +111,7 @@ static void tryManyMethods(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real>
 }
 
 // In this testing loop, we generate `numRep` multipliers `a` and for each one
+// we call tryManyMathods.
 template<typename Int, typename Real>
 static void testLoop(Int m, long numRep, bool inDual) {
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes

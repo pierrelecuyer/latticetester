@@ -260,9 +260,9 @@ void Normalizer::computeBounds(double logm, int64_t k) {
     // These are the bounds when the primal lattice is *rescaled* by a factor m.
     double x;
     for (int64_t s = 1; s <= m_maxDim; s++) {
-        x = - logm;
+        x = -logm;
         if (s > k)  {
-           x *= (double) (k / s);
+           x *= (double)(k) / (double)(s);
            x += 0.5 * log(getGamma(s));
         }
         if (logm > 0)   // Primal lattice: we need to add logm.

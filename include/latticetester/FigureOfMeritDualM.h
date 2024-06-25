@@ -152,6 +152,7 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
    if (this->m_minMerit < this->m_lowbound) return 0;
    for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
 		coord.insert(j);
+		// std::cout << "inDimDualBasis with j = " << j << ", dim = " << lat.getDim() << ", maxdim = " << lat.getMaxDim() << "\n";
 		lat.incDimDualBasis();
 		lat.dualize();
       this->computeMeritOneProj(lat, coord, this->m_minMerit);
