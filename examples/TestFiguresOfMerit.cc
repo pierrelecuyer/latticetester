@@ -37,18 +37,17 @@
 
 using namespace LatticeTester;
 
+
   //These variables are global at the moment but some of them may be turned local at some point  
   Int m(1048573); // Modulus
-  int64_t dim = 32; // Dimension of the lattice
+  int64_t dim = 16; // Maximal dimension of the lattice
   Int a(91); // Primitive element mod 1048573
-  const int noBest = 5; // The number of best multipliers to keep
-  double bestFoms[noBest]; // Array to store the best FoMs
-  Int bestMultipliers[noBest]; // Array to store the multipliers corresponding to the best FoMs
+  const int maxnobest = 1000; // The maximal number of best multipliers to keep
   bool early_discard;
   int numRep = 1000; // Total number of multipliers to check 
   
-  Rank1Lattice<Int, Real> lat(m, a, dim); // Rank1Lattice to store the current lattice for which the FoM is calculated 
-  Rank1Lattice<Int, Real> proj(m, a, dim); // The IntLattice used to store projections  
+  Rank1Lattice<Int, Real> lat(m, dim); // Rank1Lattice to store the current lattice for which the FoM is calculated 
+  Rank1Lattice<Int, Real> proj(m, dim); // The IntLattice used to store projections  
   
   NTL::vector<int64_t> worstdims(dim); // vector to store the worst dims per lattice
   
@@ -71,7 +70,8 @@ static void testLoopDim(FigureOfMeritM<Int, Real> fom, int numMult) {
    double merit;
    double maxmerit = 0;
    Int currMultiplier;
-   currMultiplier = a;      
+   currMultiplier = a;  
+   Int b;    
   
    fom.setCollectLevel(2);
    // Empty vector for worst dimensions
@@ -80,11 +80,13 @@ static void testLoopDim(FigureOfMeritM<Int, Real> fom, int numMult) {
   
    // Here we collect the worst dimensions for the primal/dual lattice
    for (int64_t j = 0; j < numMult; j++) {
+      //b = (m / 5 + 1021 * j) % m;   // The multiplier we use for this rep.
       lat.seta(currMultiplier);       
       merit = fom.computeMerit (lat, proj);
       maxmerit = max(merit, maxmerit);
       fom.setLowBound(maxmerit);
-      worstdims[fom.m_worstproj.size()-1] += 1;    
+      std::cout << fom.getMinMeritProj();
+      worstdims[fom.getMinMeritProj().size()-1] += 1;    
       currMultiplier = currMultiplier * a % m;
    }
 }
@@ -93,10 +95,10 @@ static void testLoopDim(FigureOfMeritM<Int, Real> fom, int numMult) {
 /*
 * This function calculates the figure of merit 'fom' for all multipliers from the
 * list of multipliers 'List'. Its output art the best FoM and the value of the best
-* multiplier from the list.
+* multiplier from the list of length 'noBest'.
 */
 template<typename Int, typename Real>
-static void testLoopBestFromList(FigureOfMeritM<Int, Real> fom, Int List[]) {
+static void testLoopBestFromList(FigureOfMeritM<Int, Real> fom, Int List[], int noBest) {
    double merit;
    double maxmerit;
    Int winner;
@@ -111,7 +113,7 @@ static void testLoopBestFromList(FigureOfMeritM<Int, Real> fom, Int List[]) {
          winner = List[j];
       }
    }
-   std::cout << "Best FoM: " << merit << "\n";
+   std::cout << "Best FoM: " << maxmerit << "\n";
    std::cout << "Best mulitplier: " << winner << "\n\n";
  
 }
@@ -120,14 +122,20 @@ static void testLoopBestFromList(FigureOfMeritM<Int, Real> fom, Int List[]) {
 * This function loops over 'numMult' many powers of the primitive element a and 
 * calculates the figure of merit 'fom' for each of them. The 'noBest' number of
 * best multipliers and their Foms are stored in the variables 'bestFoms' and 'bestMultipliers'.
+* If 'fom2' is set, then the best of the multipliers is identified by applying
+* fom2. A typcially example is that fom only applies the LLL algorithm and fom2 includes the BB algorithm.
 */
 
 template<typename Int, typename Real>
-static void testLoopBestFoms(FigureOfMeritM<Int, Real> fom, int numMult) {
+static void testLoopBestFoms(FigureOfMeritM<Int, Real> fom, int numMult, int noBest, FigureOfMeritM<Int, Real> *fom2 = 0) {
    double merit;
    Int currMultiplier;
-   currMultiplier = a;
-  
+   currMultiplier = a; 
+    
+   
+   Int bestMultipliers[noBest]; // Array to store the multipliers corresponding to the best FoMs
+
+   double bestFoms[maxnobest]; // Array to store the best FoMs
    
    // Remove information from prior calculations
    for (int i = 0; i < noBest; i++) {
@@ -136,13 +144,15 @@ static void testLoopBestFoms(FigureOfMeritM<Int, Real> fom, int numMult) {
    }
    // Initialize variables for minimum elements of the noBest largest FoMs, get the corresponding index
    // and also get the maximal value.
+   
    auto mini = std::min_element(bestFoms, bestFoms + noBest);
-   auto index = std::distance(std::begin(bestFoms), mini);
+   auto index = std::distance(bestFoms, mini);
    index = 0;
   
    clock_t tmp; // Variables for measuring time elapsed
 
    tmp = clock();   
+   
    for (int64_t j = 0; j < numMult; j++) {
       lat.seta(currMultiplier);
       merit = fom.computeMerit(lat, proj);
@@ -155,7 +165,7 @@ static void testLoopBestFoms(FigureOfMeritM<Int, Real> fom, int numMult) {
           bestMultipliers[index] = currMultiplier;
           // Get the new smallest FoM in the list
           mini = std::min_element(bestFoms, bestFoms + noBest);
-          index = std::distance(std::begin(bestFoms), mini);
+          index = std::distance(bestFoms, mini);
           // Set the lower bound to the current smallest FoM of the stored ones  
          if (early_discard)
             fom.setLowBound(*mini);
@@ -172,6 +182,9 @@ static void testLoopBestFoms(FigureOfMeritM<Int, Real> fom, int numMult) {
      std::cout << bestFoms[j] << ", ";
    std::cout << "\n";
    std::cout << "Running Time: " << (double) tmp / (CLOCKS_PER_SEC) << "s \n\n";
+   
+   if (fom2)
+     testLoopBestFromList<NTL::ZZ, double>(*fom2, bestMultipliers, noBest); 
  
 }
 
@@ -206,10 +219,10 @@ static void testDim(NTL::vector<int64_t> t, int numMult) {
 /*
 * This functions tests the effect of early discaring. If we use early discarding then the calculation of the 
 * figures merit is much faster because usually few dimensions suffice to see that the FoM is not the best
-* one. 
+* one. The 'noBest' number of best multipliers are stored.
 */
 template<typename Int, typename Real>
-static void testBestFoms(NTL::vector<int64_t> t, int numMult) {
+static void testBestFoms(NTL::vector<int64_t> t, int numMult, int noBest) {
   
   FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red); // FoM for the primal lattice with reducer
   FigureOfMeritM<Int, Real> fomprimal_wo_red(t, weights, norma, 0); //FoM for the primal without reducer
@@ -217,7 +230,7 @@ static void testBestFoms(NTL::vector<int64_t> t, int numMult) {
   FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red); // FoM for the dual lattice with reducer
   FigureOfMeritDualM<Int, Real> fomdual_wo_red(t, weights, normadual, 0); // FoM for the dual lattice without reducer
   
-    early_discard = true;
+  early_discard = true;
   std::cout << "###########################" << "\n"; 
   std::cout << "  USE OF EARLY DISCARDING  " << "\n";
   std::cout << "###########################" << "\n\n"; 
@@ -225,27 +238,27 @@ static void testBestFoms(NTL::vector<int64_t> t, int numMult) {
   std::cout << "RESULTS FOR PRIMAL LATTICE" << "\n\n";
   early_discard = true;
   std::cout << "WITH BB and WITH EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(fomprimal, numMult);  
+  testLoopBestFoms<NTL::ZZ, double>(fomprimal, numMult, noBest);  
   std::cout << "WITHOUT BB and WITH EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(fomprimal_wo_red, numMult);  
+  testLoopBestFoms<NTL::ZZ, double>(fomprimal_wo_red, numMult, noBest);  
   early_discard = false;
   std::cout << "WITH BB and WITHOUT EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(fomprimal, numMult);  
+  testLoopBestFoms<NTL::ZZ, double>(fomprimal, numMult, noBest);  
   std::cout << "WITHOUT BB and WITHOUT EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(fomprimal_wo_red, numMult);
+  testLoopBestFoms<NTL::ZZ, double>(fomprimal_wo_red, numMult, noBest);
   
  
   std::cout << "RESULTS FOR DUAL LATTICE" << "\n\n";
   early_discard = true;
   std::cout << "WITH BB and WITH EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(fomdual, numMult);  
+  testLoopBestFoms<NTL::ZZ, double>(fomdual, numMult, noBest);  
   std::cout << "WITHOUT BB and WITH EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(fomdual_wo_red, numMult);  
+  testLoopBestFoms<NTL::ZZ, double>(fomdual_wo_red, numMult, noBest);  
   early_discard = false;
   std::cout << "WITH BB and WITHOUT EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(fomdual, numMult);  
+  testLoopBestFoms<NTL::ZZ, double>(fomdual, numMult, noBest);  
   std::cout << "WITHOUT BB and WITHOUT EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(fomdual_wo_red, numMult);
+  testLoopBestFoms<NTL::ZZ, double>(fomdual_wo_red, numMult, noBest);
 
 }
 
@@ -257,14 +270,14 @@ static void testBestFoms(NTL::vector<int64_t> t, int numMult) {
 */
 
 template<typename Int, typename Real>
-static void testSearch(NTL::vector<int64_t> t, int numMult) {
+static void testSearch(NTL::vector<int64_t> t, int numMult, int noBest) {
   
   FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red); // FoM for the primal lattice with reducer
   FigureOfMeritM<Int, Real> fomprimal_wo_red(t, weights, norma, 0); //FoM for the primal without reducer
   
   FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red); // FoM for the dual lattice with reducer
-  FigureOfMeritDualM<Int, Real> fomdual_wo_red(t, weights, normadual, 0); // FoM for the dual lattice without reducer
-  
+  FigureOfMeritDualM<Int, Real> fomdual_wo_red(t, weights, normadual, 0); // FoM for the dual lattice without reducer  
+    
   std::cout << "####################################################" << "\n"; 
   std::cout << "  EFFICIENT SEARCH - FIRST LLL THEN BEST FROM LIST  " << "\n";
   std::cout << "####################################################" << "\n"; 
@@ -272,16 +285,13 @@ static void testSearch(NTL::vector<int64_t> t, int numMult) {
   std::cout << "RESULTS FOR PRIMAL LATTICE" << "\n\n";
   
   std::cout << "WITHOUT BB and WITH EARLY DISCARDING for " << numMult << " multipliers" << "\n";
-  testLoopBestFoms<NTL::ZZ, double>(fomprimal_wo_red, numMult);
-  
-  testLoopBestFromList<NTL::ZZ, double>(fomprimal, bestMultipliers); 
+  testLoopBestFoms<NTL::ZZ, double>(fomprimal_wo_red, numMult, noBest, &fomprimal);
   
   std::cout << "RESULTS FOR DUAL LATTICE" << "\n\n";  
   
   std::cout << "WITHOUT BB and WITH EARLY DISCARDING for all multipliers" << "\n";
-  testLoopBestFoms<NTL::ZZ, double>(fomdual_wo_red, numMult);
+  testLoopBestFoms<NTL::ZZ, double>(fomdual_wo_red, numMult, noBest, &fomdual);
   
-  testLoopBestFromList<NTL::ZZ, double>(fomdual, bestMultipliers); 
 }
 
 
@@ -289,15 +299,25 @@ static void testSearch(NTL::vector<int64_t> t, int numMult) {
 int main() {
   
 
-  NTL::vector<int64_t> t(4); // length of the t-vector
-  t[0] = 16;  t[1] = 32;  t[2] = 16;  t[3] = 12;  
+  //NTL::vector<int64_t> t(4); // length of the t-vector
+  //t[0] = 16;  t[1] = 32;  t[2] = 16;  t[3] = 12;  
+   NTL::vector<int64_t> t(4); // The t-vector for the FOM.
+   t[0] = 16;    // We look at successive coordinates in up to t[0] dimensions.
+   t[1] = 16;    
+   t[2] = 12;
+   t[3] = 10;
+   
+  testDim<NTL::ZZ, double>(t, 500);
   
-  testDim<NTL::ZZ, double>(t, 10000);
+  testBestFoms<NTL::ZZ, double>(t, 100, 5);
   
-  testBestFoms<NTL::ZZ, double>(t, 1000);
-  
-  testSearch<NTL::ZZ, double>(t, 1000);
+  testSearch<NTL::ZZ, double>(t, 1000, 5);
 
 
   return 0;
 }
+
+
+  // TODO
+  // 1. Implement remaining tests
+  // 6. OPEN: SCATTER PLOT => Mail to Pierre
