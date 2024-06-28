@@ -431,9 +431,6 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
       m_minMerit = merit;
       m_minMeritProj = coord;
       NTL::conv(m_minMeritSqlen, m_sqlen[0]);
-      if (m_collectLevel > 0) {
-         m_worstproj = coord;                       // This is the same as minMeritProj !!!!!!
-      };   // Maybe store also the shortest vector.
    }
    if (m_verbose > 1) {
       if (dim < 8) std::cout << coord << std::setw(15 - 2 * dim) << " ";
