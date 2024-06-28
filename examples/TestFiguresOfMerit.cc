@@ -67,11 +67,10 @@ using namespace LatticeTester;
 template<typename Int, typename Real>
 static void testLoopDim(FigureOfMeritM<Int, Real> fom, int numMult) {
    Int g; // Variable to store the greatest common divisor
-   double merit;
+   double merit = 0;
    double maxmerit = 0;
    Int currMultiplier;
    currMultiplier = a;  
-   Int b;    
   
    fom.setCollectLevel(2);
    // Empty vector for worst dimensions
@@ -86,7 +85,7 @@ static void testLoopDim(FigureOfMeritM<Int, Real> fom, int numMult) {
       maxmerit = max(merit, maxmerit);
       fom.setLowBound(maxmerit);
       std::cout << fom.getMinMeritProj();
-      worstdims[fom.getMinMeritProj().size()-1] += 1;    
+      worstdims[fom.getMinMeritProj().size()-1]++;    
       currMultiplier = currMultiplier * a % m;
    }
 }
@@ -198,8 +197,8 @@ template<typename Int, typename Real>
 static void testDim(NTL::vector<int64_t> t, int numMult) {
   
   
-  FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red); // FoM for the primal lattice with reducer
-  FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red); // FoM for the dual lattice with reducer
+  FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red, true); // FoM for the primal lattice with reducer
+  FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red, true); // FoM for the dual lattice with reducer
   
  
   //numRep = 1048573;
@@ -224,11 +223,11 @@ static void testDim(NTL::vector<int64_t> t, int numMult) {
 template<typename Int, typename Real>
 static void testBestFoms(NTL::vector<int64_t> t, int numMult, int noBest) {
   
-  FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red); // FoM for the primal lattice with reducer
-  FigureOfMeritM<Int, Real> fomprimal_wo_red(t, weights, norma, 0); //FoM for the primal without reducer
+  FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red, true); // FoM for the primal lattice with reducer
+  FigureOfMeritM<Int, Real> fomprimal_wo_red(t, weights, norma, 0, true); //FoM for the primal without reducer
   
-  FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red); // FoM for the dual lattice with reducer
-  FigureOfMeritDualM<Int, Real> fomdual_wo_red(t, weights, normadual, 0); // FoM for the dual lattice without reducer
+  FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red, true); // FoM for the dual lattice with reducer
+  FigureOfMeritDualM<Int, Real> fomdual_wo_red(t, weights, normadual, 0, true); // FoM for the dual lattice without reducer
   
   early_discard = true;
   std::cout << "###########################" << "\n"; 
@@ -272,11 +271,11 @@ static void testBestFoms(NTL::vector<int64_t> t, int numMult, int noBest) {
 template<typename Int, typename Real>
 static void testSearch(NTL::vector<int64_t> t, int numMult, int noBest) {
   
-  FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red); // FoM for the primal lattice with reducer
-  FigureOfMeritM<Int, Real> fomprimal_wo_red(t, weights, norma, 0); //FoM for the primal without reducer
+  FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red, true); // FoM for the primal lattice with reducer
+  FigureOfMeritM<Int, Real> fomprimal_wo_red(t, weights, norma, 0, true); //FoM for the primal without reducer
   
-  FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red); // FoM for the dual lattice with reducer
-  FigureOfMeritDualM<Int, Real> fomdual_wo_red(t, weights, normadual, 0); // FoM for the dual lattice without reducer  
+  FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red, true); // FoM for the dual lattice with reducer
+  FigureOfMeritDualM<Int, Real> fomdual_wo_red(t, weights, normadual, 0, true); // FoM for the dual lattice without reducer  
     
   std::cout << "####################################################" << "\n"; 
   std::cout << "  EFFICIENT SEARCH - FIRST LLL THEN BEST FROM LIST  " << "\n";
