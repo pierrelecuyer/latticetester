@@ -131,6 +131,7 @@ static void testLoopBestFoms(FigureOfMeritM<Int, Real> *fom, int numMult, int no
    double merit;
    Int currMultiplier;
    currMultiplier = a; 
+   double lb = 0;
     
    
    Int bestMultipliers[noBest]; // Array to store the multipliers corresponding to the best FoMs
@@ -153,21 +154,23 @@ static void testLoopBestFoms(FigureOfMeritM<Int, Real> *fom, int numMult, int no
 
    tmp = clock();   
    
+   fom->setLowBound(lb);
+   
    for (int64_t j = 0; j < numMult; j++) {
       lat.seta(currMultiplier);
       merit = fom->computeMerit(lat, proj);
          
       if (merit > bestFoms[index]) {
           // Overwrite the currently smallest FoM in the stored list
-          mini = std::min_element(bestFoms, bestFoms + noBest);
-          index = std::distance(std::begin(bestFoms), mini);
+          // mini = std::min_element(bestFoms, bestFoms + noBest);
+          //index = std::distance(std::begin(bestFoms), mini);
           bestFoms[index] = merit;
           bestMultipliers[index] = currMultiplier;
           // Get the new smallest FoM in the list
           mini = std::min_element(bestFoms, bestFoms + noBest);
           index = std::distance(bestFoms, mini);
           // Set the lower bound to the current smallest FoM of the stored ones  
-         if (early_discard)
+          if (early_discard)
             fom->setLowBound(*mini);
       }
       currMultiplier = currMultiplier * a % m;;
@@ -235,7 +238,6 @@ static void testBestFoms(NTL::vector<int64_t> t, int numMult, int noBest) {
   FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red, true); // FoM for the dual lattice with reducer
   FigureOfMeritDualM<Int, Real> fomdual_wo_red(t, weights, normadual, 0, true); // FoM for the dual lattice without reducer
   
-  early_discard = true;
   std::cout << "###########################" << "\n"; 
   std::cout << "  USE OF EARLY DISCARDING  " << "\n";
   std::cout << "###########################" << "\n\n"; 
@@ -308,11 +310,11 @@ int main() {
    t[2] = 12;
    t[3] = 10;
    
-  testDim<NTL::ZZ, double>(t, 500);
+  testDim<NTL::ZZ, double>(t, 10000);
   
-  testBestFoms<NTL::ZZ, double>(t, 100, 5);
+  testBestFoms<NTL::ZZ, double>(t, 5000, 5);
   
-  testSearch<NTL::ZZ, double>(t, 1000, 5);  
+  testSearch<NTL::ZZ, double>(t, 100000, 5);  
 
   return 0;
 }
