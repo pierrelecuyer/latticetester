@@ -38,13 +38,11 @@
 using namespace LatticeTester;
 
 
-  //These variables are global at the moment but some of them may be turned local at some point  
+  //These variables are global
   Int m(1048573); // Modulus
-  int64_t dim = 16; // Maximal dimension of the lattice
   Int a(91); // Primitive element mod 1048573
+  int64_t dim = 16; // Maximal dimension of the lattice
   const int maxnobest = 1000; // The maximal number of best multipliers to keep
-  bool early_discard;
-  int numRep = 1000; // Total number of multipliers to check 
   
   Rank1Lattice<Int, Real> lat(m, dim); // Rank1Lattice to store the current lattice for which the FoM is calculated 
   Rank1Lattice<Int, Real> proj(m, dim); // The IntLattice used to store projections  
@@ -121,13 +119,14 @@ static void testLoopBestFromList(FigureOfMeritM<Int, Real> *fom, Int List[], int
 /*
 * This function loops over 'numMult' many powers of the primitive element a and 
 * calculates the figure of merit 'fom' for each of them. The 'noBest' number of
-* best multipliers and their Foms are stored in the variables 'bestFoms' and 'bestMultipliers'.
-* If 'fom2' is set, then the best of the multipliers is identified by applying
+* best multipliers and their FoMs are stored. If 'early_discard' is set, then 
+* the lower bound of the figure of merit is regularly updated to the minimal value in the list of 
+* best figurs of merit. If 'fom2' is set, then the best of the multipliers is identified by applying
 * fom2. A typcially example is that fom only applies the LLL algorithm and fom2 includes the BB algorithm.
 */
 
 template<typename Int, typename Real>
-static void testLoopBestFoms(FigureOfMeritM<Int, Real> *fom, int numMult, int noBest, FigureOfMeritM<Int, Real> *fom2 = 0) {
+static void testLoopBestFoms(FigureOfMeritM<Int, Real> *fom, int numMult, int noBest, bool early_discard, FigureOfMeritM<Int, Real> *fom2 = 0) {
    double merit;
    Int currMultiplier;
    currMultiplier = a; 
@@ -193,9 +192,8 @@ static void testLoopBestFoms(FigureOfMeritM<Int, Real> *fom, int numMult, int no
 
 /*
 * This function calls 'testLoopDim' for the primal and the dual lattice. The vector 't'
-* used to define the figure of merit and the numbers of multipliers are parameters set by 
-* the user (at a later point we might to decide to have more parameters). The BB algorithm
-* is always apppied.
+* used to define the figure of merit and the numbers of multipliers 'numMult' are parameters set by 
+* the user  The BB algorithm is always apppied.
 */
 template<typename Int, typename Real>
 static void testDim(NTL::vector<int64_t> t, int numMult) {
@@ -225,9 +223,9 @@ static void testDim(NTL::vector<int64_t> t, int numMult) {
 }
 
 /*
-* This functions tests the effect of early discaring. If we use early discarding then the calculation of the 
-* figures merit is much faster because usually few dimensions suffice to see that the FoM is not the best
-* one. The 'noBest' number of best multipliers are stored.
+* This functions tests the effect of early discarding. If we use early discarding then the calculation 
+* of the figures merit is much faster because usually few dimensions suffice to see that the FoM for 
+* the vector 't' is not the best one. The 'noBest' number of best multipliers of total 'numMult' multipliers are stored.
 */
 template<typename Int, typename Real>
 static void testBestFoms(NTL::vector<int64_t> t, int numMult, int noBest) {
@@ -243,36 +241,33 @@ static void testBestFoms(NTL::vector<int64_t> t, int numMult, int noBest) {
   std::cout << "###########################" << "\n\n"; 
   
   std::cout << "RESULTS FOR PRIMAL LATTICE" << "\n\n";
-  early_discard = true;
   std::cout << "WITH BB and WITH EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomprimal, numMult, noBest);  
+  testLoopBestFoms<NTL::ZZ, double>(&fomprimal, numMult, noBest, true);  
   std::cout << "WITHOUT BB and WITH EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomprimal_wo_red, numMult, noBest);  
-  early_discard = false;
+  testLoopBestFoms<NTL::ZZ, double>(&fomprimal_wo_red, numMult, noBest, true);  
   std::cout << "WITH BB and WITHOUT EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomprimal, numMult, noBest);  
+  testLoopBestFoms<NTL::ZZ, double>(&fomprimal, numMult, noBest, false);  
   std::cout << "WITHOUT BB and WITHOUT EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomprimal_wo_red, numMult, noBest);  
+  testLoopBestFoms<NTL::ZZ, double>(&fomprimal_wo_red, numMult, noBest, false);  
  
   std::cout << "RESULTS FOR DUAL LATTICE" << "\n\n";
-  early_discard = true;
   std::cout << "WITH BB and WITH EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomdual, numMult, noBest);  
+  testLoopBestFoms<NTL::ZZ, double>(&fomdual, numMult, noBest, true);  
   std::cout << "WITHOUT BB and WITH EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomdual_wo_red, numMult, noBest);  
-  early_discard = false;
+  testLoopBestFoms<NTL::ZZ, double>(&fomdual_wo_red, numMult, noBest, true);  
   std::cout << "WITH BB and WITHOUT EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomdual, numMult, noBest);  
+  testLoopBestFoms<NTL::ZZ, double>(&fomdual, numMult, noBest, false);  
   std::cout << "WITHOUT BB and WITHOUT EARLY DISCARDING for " << numMult << " multipliers \n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomdual_wo_red, numMult, noBest);
+  testLoopBestFoms<NTL::ZZ, double>(&fomdual_wo_red, numMult, noBest, false);
 
 }
 
 /*
-* This functtions demonstrates a fast way to search for the mutliplier with the largest FoM.
-* At first we calcualte the Figure Of Merit without applying the BB algorithm but only using
-* LLL as prereduction. The best 'noBest' FoMs and multipliers are stored. Afterwards the BB algorithm 
-* is applied to detect the best multiplier among them.
+* This functions demonstrates a fast way to search for the mutliplier with the largest FoM 
+* among 'numMult' many multipliers. At first we calcualte the Figure Of Merit for the vector 
+* 't' without applying the BB algorithm but only using LLL as prereduction. The best 'noBest' 
+* FoMs and multipliers are stored. Afterwards the BB algorithm is applied to detect the best 
+* multiplier among them.
 */
 
 template<typename Int, typename Real>
@@ -287,16 +282,15 @@ static void testSearch(NTL::vector<int64_t> t, int numMult, int noBest) {
   std::cout << "####################################################" << "\n"; 
   std::cout << "  EFFICIENT SEARCH - FIRST LLL THEN BEST FROM LIST  " << "\n";
   std::cout << "####################################################" << "\n"; 
-  early_discard = true;
   std::cout << "RESULTS FOR PRIMAL LATTICE" << "\n\n";
   
   std::cout << "WITHOUT BB and WITH EARLY DISCARDING for " << numMult << " multipliers" << "\n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomprimal_wo_red, numMult, noBest, &fomprimal);
+  testLoopBestFoms<NTL::ZZ, double>(&fomprimal_wo_red, numMult, noBest, true, &fomprimal);
   
   std::cout << "RESULTS FOR DUAL LATTICE" << "\n\n";  
   
   std::cout << "WITHOUT BB and WITH EARLY DISCARDING for " << numMult << " multipliers" << "\n";
-  testLoopBestFoms<NTL::ZZ, double>(&fomdual_wo_red, numMult, noBest, &fomdual);
+  testLoopBestFoms<NTL::ZZ, double>(&fomdual_wo_red, numMult, noBest, true, &fomdual);
   
 }
 
