@@ -24,19 +24,14 @@
 
 using namespace LatticeTester;
 
-
-// Applies some tests to an LCG with modulus m and multiplier a, for projections specified by t.
-// A trace is printed on the terminal.
+// Here we compute the FOM for an LCG with modulus m and multiplier a, for projections specified by t.
+// We first generate `numRepVerb` multipliers `a` and for each one we compute and display
+// (on the terminal) the FOM and the worst projection in both the primal and m-dual.
+// Then we generate `numRepStat` different multipliers and we count how many times
+// the worst-case proj. has s dimensions, for each s, for both the primal and m-dual.
+// We also print in a file the pairs (primal FOM, dual FOM) for each a, to make a scatter plot.
 template<typename Int, typename Real>
-//void testOneLCG (const Int m, const NTL::vector<Int> a, const NTL::vector<int64_t> t) {
-void testOneLCG (Rank1Lattice<Int, Real> korlat, FigureOfMeritM<Int, Real> fomprimal,
-       FigureOfMeritDualM<Int, Real> fomdual) {
-}
-
-// In this testing loop, we generate `numRep` multipliers `a` and for each one
-// we call `testOneLCG`.
-template<typename Int, typename Real>
-void testLoop (const Int m, const NTL::vector<int64_t> t, long numRep) {
+void testLoop (const Int m, const NTL::vector<int64_t> t, long numRepVerb, long numRepStat) {
    std::string stringTypes;  // To print the selected flexible types.
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
    std::cout << "****************************************************\n";
@@ -55,52 +50,66 @@ void testLoop (const Int m, const NTL::vector<int64_t> t, long numRep) {
    normadual.computeBounds (-log(m), 1);
    FigureOfMeritM<Int, Real> fomprimal (t, weights, normaprimal, &red, true);
    FigureOfMeritDualM<Int, Real> fomdual (t, weights, normadual, &red, true);
-   fomprimal.setVerbosity(2);
-   fomdual.setVerbosity(2);
+   // fomprimal.setVerbosity(2);
+   // fomdual.setVerbosity(2);
    IntLattice<Int, Real> proj(m, t.size());
    Int a;        // The LCG multiplier
    double merit;
-   for (int64_t r = 0; r < numRep; r++) {
-      // a = (m / 5 + 13 * r) % m;   // The multiplier we use for this rep.
-      a = 33;
+
+   // This part is to visualize the FOM values for a few multipliers a.
+   for (int64_t r = 0; r < numRepVerb; r++) {
+      a = (m / 5 + 1021 * r) % m;   // The multiplier we use for this rep.
       korlat.seta(a);
       std::cout << "a = " << a << "\n";
-      korlat.buildBasis(maxdim);
-      korlat.buildDualBasis(maxdim);
-
       merit = fomprimal.computeMerit(korlat, proj);
-      std::cout << "FOM value in primal: " << merit << ",  worst projection: " << fomprimal.getMinMeritProj() << "\n\n";
-      // merit = fomdual.computeMeritSucc(korlat);
-      std::cout << "Primal basis of korlat: \n" << korlat.getBasis() << "\n";
-      std::cout << "Primal basis of last projection: \n" << proj.getBasis() << "\n";
-
+      std::cout << "FOM in primal: " << merit << ",  worst projection: " << fomprimal.getMinMeritProj() << "\n";
       merit = fomdual.computeMerit(korlat, proj);
-      std::cout << "FOM value in dual: " << merit << ",  worst projection: " << fomdual.getMinMeritProj() << "\n\n";
-      // testOneLCG (korlat, fomprimal, fomdual);
-      std::cout << "m-Dual basis of korlat: \n" << korlat.getDualBasis() << "\n";
-      std::cout << "m-Dual basis of last projection (1,2): \n" << proj.getDualBasis() << "\n";
-    }
+      std::cout << "FOM in dual: " << merit << ",  worst projection: " << fomdual.getMinMeritProj() << "\n\n";
+   }
+
+   // This part is to collect statistics for a larger sample of values of a.
+   // int64_t countDimOfMinPrimal[maxdim+1];  // Vectors to store the counts.
+   NTL::vector<int64_t> countDimOfMinPrimal(maxdim);
+   NTL::vector<int64_t> countDimOfMinDual(maxdim);
+   for (int64_t j = 0; j <= maxdim; j++) {
+      countDimOfMinPrimal[j] = 0;
+      countDimOfMinDual[j] = 0;
+   }
+   ofstream pairsFile;
+   pairsFile.open ("pairsPrimalDualFOM.txt");
+
+   for (int64_t r = numRepVerb; r < numRepVerb + numRepStat; r++) {
+      a = (m / 5 + 1021 * r) % m;   // The multiplier we use for this rep.
+      korlat.seta(a);
+      merit = fomprimal.computeMerit(korlat, proj);
+      countDimOfMinPrimal[(fomprimal.getMinMeritProj()).size()-2]++;
+      pairsFile << merit << "  ";
+      merit = fomdual.computeMerit(korlat, proj);
+      countDimOfMinDual[(fomdual.getMinMeritProj()).size()-2]++;
+      pairsFile << merit << "\n";
+   }
+   std::cout << "Counts for dimension of worst-case projection (starts at 2):" << "\n";
+   std::cout << "  primal lattice: " << countDimOfMinPrimal << "\n";
+   std::cout << "  dual lattice:   " << countDimOfMinDual << "\n";
+   pairsFile.close();
 }
 
 int main() {
 
-   NTL::vector<int64_t> t(2); // The t-vector for the FOM.
-   t[0] = 5;    // We look at successive coordinates in up to t[0] dimensions.
-   t[1] = 3;    // Then pairs and triples up to coord. 5.
-   //t[2] = 3;
+   NTL::vector<int64_t> t(4); // The t-vector for the FOM.
+   t[0] = 16;    // We look at successive coordinates in up to t[0] dimensions.
+   t[1] = 16;    // Then pairs and triples up to coord. 5.
+   t[2] = 12;
+   t[3] = 10;
 
-   // Here, Int and Real are not yet defined, they will be passed as template parameters.
+   // Here, Int and Real are passed as template parameters.
    std::cout << "Types: NTL::ZZ, double \n";
-   NTL::ZZ m(101);  // Prime modulus near 100
-   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   // NTL::ZZ m(101);  // Prime modulus near 100
+   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
-   long numRep = 1; // Number of replications (multipliers) for each case.
-   // bool inDual = true;  // Tests in dual lattice ?
 
    // These functions apply the tests with the desired types.
    // testLoop<int64_t, double>(conv<int64_t>(m), numRep, inDual);
-   testLoop<NTL::ZZ, double>(m, t, numRep);
-   //testLoop<NTL::ZZ, xdouble>(m, t, numRep);
+   testLoop<NTL::ZZ, double>(m, t, 20, 1000);
    //testLoop<NTL::ZZ, quad_float>(m, numRep, inDual);
-   //testLoop<NTL::ZZ, NTL::RR>(m, numRep, inDual);
 }
