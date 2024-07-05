@@ -103,8 +103,6 @@ static void testLoopBestFromList(FigureOfMeritM<Int, Real> *fom, Int List[], int
 
    for (int64_t j = 0; j < noBest; j++) {
       lat.seta(List[j]);
-      //lat.buildBasis(dim);
-      //lat.buildDualBasis(dim);
       merit = fom->computeMerit(lat, proj);   
       if (merit > maxmerit) {
          maxmerit = merit;
@@ -131,10 +129,8 @@ static void testLoopBestFoms(FigureOfMeritM<Int, Real> *fom, int numMult, int no
    Int currMultiplier;
    currMultiplier = a; 
    double lb = 0;
-    
    
    Int bestMultipliers[noBest]; // Array to store the multipliers corresponding to the best FoMs
-
    double bestFoms[maxnobest]; // Array to store the best FoMs
    
    // Remove information from prior calculations
@@ -201,23 +197,19 @@ static void testDim(NTL::vector<int64_t> t, int numMult) {
   
   
   FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red, true); // FoM for the primal lattice with reducer
-  FigureOfMeritDualM<Int, Real> fomdualx(t, weights, normadual, &red, true); // FoM for the dual lattice with reducer
+  FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red, true); // FoM for the dual lattice with reducer
   
  
   std::cout << "##################################" << "\n"; 
   std::cout << "  WORST OR ELIMINATION DIMENSIONS " << "\n"; 
   std::cout << "##################################" << "\n\n";
-   
-   
-   
-  // Something goes wrong here - needs to be checked!
   
   std::cout << "RESULTS FOR PRIMAL LATTICE" << "\n\n"; 
   testLoopDim<Int, Real>(&fomprimal, numMult);
   std::cout << worstdims << "\n\n";
   
   std::cout << "RESULTS FOR DUAL LATTICE" << "\n\n";
-  testLoopDim<Int, Real>(&fomdualx, numMult);
+  testLoopDim<Int, Real>(&fomdual, numMult);
   std::cout << worstdims << "\n\n";
   
 }
@@ -294,6 +286,45 @@ static void testSearch(NTL::vector<int64_t> t, int numMult, int noBest) {
   
 }
 
+/*
+* This function calculates the points for a scatter plot, where the figure of
+* merit for the primal lattice is plotted against the figure of merit for the dual lattice.
+* The vector 't' of the FoM as well as the number of multipliers 'numMult' may be chosen by
+* the user.
+*/
+template<typename Int, typename Real>
+static void testScatter(NTL::vector<int64_t> t, int numMult) { 
+
+   double merit;
+   Int currMultiplier;
+   currMultiplier = a;   
+  
+   FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red, true); // FoM for the primal lattice with reducer
+   FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red, true); // FoM for the dual lattice with reducer
+   fomprimal.setCollectLevel(2);
+   fomdual.setCollectLevel(2);
+
+   std::cout << "####################################" << "\n"; 
+   std::cout << "  CREATING OUTPUT FOR SCATTER PLOT " << "\n"; 
+   std::cout << "####################################" << "\n\n";
+
+   ofstream pairsFile;
+   pairsFile.open ("pairsPrimalDualFOM.txt");
+   
+   for (int64_t j = 0; j < numMult; j++) {
+      lat.seta(currMultiplier);      
+      merit = fomprimal.computeMerit(lat, proj);
+      pairsFile << merit << "  ";
+      merit = fomdual.computeMerit(lat, proj);
+      pairsFile << merit << "\n";    
+      currMultiplier = currMultiplier * a % m;
+   }   
+   
+   pairsFile.close();  
+   std::cout << "DONE\n\n";
+  
+}
+
 
 
 int main() {
@@ -305,6 +336,8 @@ int main() {
    t[3] = 10;
    
   testDim<NTL::ZZ, double>(t, 10000);
+  
+  testScatter<NTL::ZZ, double>(t, 1000);
   
   testBestFoms<NTL::ZZ, double>(t, 5000, 5);
   
