@@ -75,12 +75,10 @@ public:
 
 	/*
 	 * This constructor will call `setTVector` with the given vector `t`
-	 * and `includeFirst` variable,
-	 * then set the `Weights`, `ReductionType`, `Reducer`, and `Normalizer` to the given values.
+	 * and `includeFirst` variable, then set the `Weights`, `Normalizer` and `ReducerBB` to the given values.
 	 */
-	FigureOfMeritDualM(const NTL::vector<int64_t> &t, Weights &w,
-			Normalizer &norma, ReducerBB<Int, Real> *red = 0,
-			bool includeFirst = true);
+	FigureOfMeritDualM(const NTL::vector<int64_t> &t, Weights &w, Normalizer &norma,
+	      ReducerBB<Int, Real> *red = 0, bool includeFirst = false);
 
 	/*
 	 * This function computes and returns the value of the FOM for the dual of the
@@ -113,27 +111,7 @@ template<typename Int, typename Real>
 FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::vector<int64_t> &t,
 		Weights &w, Normalizer &norma, ReducerBB<Int, Real> *red, bool includeFirst) :
 		FigureOfMeritM<Int, Real>(t, w, norma, red, includeFirst) {
-}
-;
-
-/*
- //=========================================================================
- template<typename Int, typename Real>
- double FigureOfMeritDualM<Int, Real>::computeMeritDual (IntLatticeExt<Int, Real> &lat,
- IntLattice<Int, Real> &proj) {
- double minmerit = 1.0;
- // this->m_sqlen.SetLength(this->m_t.size() + 1);
- minmerit = min (minmerit, computeMeritNonSuccDual(lat, proj));
- // if (merit < minmerit) minmerit = merit;
- if (minmerit == 0) return 0;
- //this->m_sqlen.SetLength(this->m_t[0]);
- minmerit = min (minmerit, computeMeritSuccDual(lat));
- // if (merit < minmerit) minmerit = merit;
- // In any of these cases the calcuation is stopped
- if (minmerit == 0 || minmerit > this->m_highbound) return 0;
- return minmerit;
- }
- */
+};
 
 //=========================================================================
 template<typename Int, typename Real>

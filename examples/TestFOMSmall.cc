@@ -55,6 +55,7 @@ void testLoop (const Int m, const NTL::vector<int64_t> t, long numRepVerb, long 
    IntLattice<Int, Real> proj(m, t.size());
    Int a;        // The LCG multiplier
    double merit;
+   int64_t dimMerit;  // The dimension of the worst-case projection.
 
    // This part is to visualize the FOM values for a few multipliers a.
    for (int64_t r = 0; r < numRepVerb; r++) {
@@ -77,16 +78,19 @@ void testLoop (const Int m, const NTL::vector<int64_t> t, long numRepVerb, long 
    }
    ofstream pairsFile;
    pairsFile.open ("pairsPrimalDualFOM.txt");
-
+   pairsFile << " primalDim  primalFOM  dualDim  dualFOM  sameProj \n";
    for (int64_t r = numRepVerb; r < numRepVerb + numRepStat; r++) {
       a = (m / 5 + 1021 * r) % m;   // The multiplier we use for this rep.
       korlat.seta(a);
       merit = fomprimal.computeMerit(korlat, proj);
-      countDimOfMinPrimal[(fomprimal.getMinMeritProj()).size()-2]++;
-      pairsFile << merit << "  ";
+      dimMerit = (fomprimal.getMinMeritProj()).size();
+      countDimOfMinPrimal[dimMerit-2]++;
+      pairsFile << "      " << dimMerit << "    " << merit << "      ";
       merit = fomdual.computeMerit(korlat, proj);
-      countDimOfMinDual[(fomdual.getMinMeritProj()).size()-2]++;
-      pairsFile << merit << "\n";
+      dimMerit = (fomdual.getMinMeritProj()).size();
+      countDimOfMinDual[dimMerit-2]++;
+      bool sameProj = (fomprimal.getMinMeritProj() == fomdual.getMinMeritProj());
+      pairsFile << dimMerit << "    " << merit << "    " << sameProj << "\n";
    }
    std::cout << "Counts for dimension of worst-case projection (starts at 2):" << "\n";
    std::cout << "  primal lattice: " << countDimOfMinPrimal << "\n";
