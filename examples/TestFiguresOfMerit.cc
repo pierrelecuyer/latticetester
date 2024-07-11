@@ -38,7 +38,7 @@
 using namespace LatticeTester;
 
 
-  //These variables are global
+  //These variables are global.   ****  This make the code inflexible: same values must be used for all examples. ***
   Int m(1048573); // Modulus
   Int a(91); // Primitive element mod 1048573
   int64_t dim = 16; // Maximal dimension of the lattice
@@ -48,6 +48,7 @@ using namespace LatticeTester;
   Rank1Lattice<Int, Real> proj(m, dim); // The IntLattice used to store projections  
   
   NTL::vector<int64_t> worstdims(dim); // vector to store the worst dims per lattice
+                                       //  ....   does not store worst dims, but counts  *****
   
   NormaBestLat norma(log(m), 1, dim);  // Normalization factors computed for primal lattice
   NormaBestLat normadual(-log(m), 1, dim);  // Normalization Factors computed for dual lattice
