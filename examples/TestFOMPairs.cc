@@ -109,7 +109,7 @@ int main() {
    // Here, Int and Real are passed as template parameters.
    std::cout << "Types: NTL::ZZ, double \n";
    NTL::ZZ m(1048573); // Prime modulus near 2^{20}
-   NTL::ZZ a0(91);     // This a0 and all of its powers are primitive elements mod m=1048573.
+   NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
    NTL::vector<int64_t> t(4); // The t-vector for the FOM.

@@ -174,7 +174,7 @@ public:
     * The FOM computation is stopped as soon as we know it is below this bound.
     * The default value is 0.
     */
-   void setLowBound(double &low) {
+   void setLowBound(double low) {
       m_lowbound = low;
    }
 
