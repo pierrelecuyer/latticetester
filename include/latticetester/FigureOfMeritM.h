@@ -107,8 +107,7 @@ private:
 public:
 
    /*
-    * This constructor will call `setTVector` with the given vector `t`
-    * and `includeFirst` variable,
+    * This constructor will call `setTVector (t, includeFirst)`,
     * then set the 'Weights', `Normalizer`, and `ReducerBB` to the given values.
     */
    FigureOfMeritM(const NTL::vector<int64_t> &t, Weights &w, Normalizer &norma,

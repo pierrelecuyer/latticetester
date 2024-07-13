@@ -55,7 +55,7 @@ void testLoop(const Int &m, Int &a0, const NTL::vector<int64_t> t, long numRepVe
    WeightsUniform weights(1.0);
    NormaBestLat normaPrimal(log(m), 1, maxdim);  // Factors computed for primal.
    NormaBestLat normaDual(-log(m), 1, maxdim);  // Factors computed for dual.
-   normaDual.computeBounds(-log(m), 1);
+   // normaDual.computeBounds(-log(m), 1);
    FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
    FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true);
    IntLattice<Int, Real> proj(m, t.size());
