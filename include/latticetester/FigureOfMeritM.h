@@ -166,7 +166,7 @@ public:
     * Sets the `ReducerBB` object that will be used for BB.
     */
    void setReducerBB(ReducerBB<Int, Real> *red) {
-      *m_red = *red;
+      m_red = red;
    }
 
    /*
@@ -410,17 +410,11 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
       redBKZ<IntMat, NTL::vector<Real>>(proj.getBasis(), m_deltaBKZ, m_blocksizeBKZ, 0, dim,
             &m_sqlen);
    if (m_red) {       // We do the BB.
-      if (m_blocksizeBKZ > 10) {
-         // std::cout << "deltaBKZ = " << m_deltaBKZ << ",  block size = " <<  m_blocksizeBKZ << "\n";
-         //std::cout << "dim = " << dim << ",  sqlen before BB = " << "  " << m_sqlen[0] << "\n";
-         //std::cout << " Basis B before BB: \n" << proj.getBasis() << "\n";
-      }
       // If `proj` is already the internal lattice for `m_red`, the following does nothing.
       // Otherwise it just sets a pointer to `proj`, and enlarges the arrays in m_red if needed.
       // m_red->setIntLattice(proj);
       if (!m_red->shortestVector(proj)) m_sqlen[0] = 0;
       else m_sqlen[0] = m_red->getMinLength2();
-      //  std::cout << "Done with BB, sqlen after BB = " << "  " << m_sqlen[0] << "\n";
    }
    double merit;
    if (proj.getNormType() == L2NORM) NTL::conv(merit, sqrt(m_sqlen[0]) / m_norma->getBound(dim));
