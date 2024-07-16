@@ -116,6 +116,7 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
    std::cout << std::boolalpha << "Discard: " << earlyDiscard << ",  from List: " << fromList;
    std::cout << ",  method: " << strMethod << "\n";
    std::cout << "Number of multipliers a examined: " << numMult << "\n";
+   std::cout << "Number retained: " << numBest << "\n";
    std::cout << "Running Time in seconds: " << (double) tmp / (CLOCKS_PER_SEC) << "\n";
    if (verbose) {
       std::cout << "\nBest " << numBest << " multipliers `a` found, and their FOMs:\n";
@@ -142,38 +143,48 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
 template<typename Int, typename Real>
 static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, const Int a0,
       const NTL::vector<int64_t> t, const NTL::vector<int64_t> t0, int64_t numMultLong,
-      int64_t numMultShort, int64_t numBest1, int64_t numBest2) {
+      int64_t numMultShort, int64_t numBest0, int64_t numBest) {
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    // WeightsUniform weights(1.0);
    Rank1Lattice<Int, Real> lat(m, maxdim);  // The current lattice for which the FoM is calculated.
    IntLattice<Int, Real> proj(m, t.size()); // Lattice used for projections.
-   ReducerBB<Int, Real> red(lat);  // Single ReducerBB with internal lattice `lat`.
-   fom->setReducerBB(&red);
    Int emptyList[0];
-   Int inList[numBest1];
-   Int outList[numBest1];
+   Int inList[numBest0];
+   Int outList[numBest0];
 
-   // Full computation (no discard), with default BKZ + BB, for primal.
-   findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest2,
+   // 1. Full computation (no discard), with default BKZ + BB.
+   findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
          true, "BKZ + BB");
-   // Early discard, with BKZ + BB, for primal.
-   findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest2, true,
+
+   // 2. Early discard, with BKZ + BB.
+   findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
          "BKZ + BB");
+
    fom->setLLL(0.99999);
    fom->setBKZ(0.0);
    fom->setBB(false);
-   // Early discard, with LLL only, for primal.
-   findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest2, true,
+   // 3. Early discard, approximation with LLL only.
+   findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
          "LLL only");
-   // Early discard, two stages, LLL only, put numBest1 best in inList for the next stage.
-   findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, inList, numBest1, false,
-         "LLL only");
-   fom->setBB(true);  // We use LLL + BB on second stage, only for the numBest1 retained.
-   findBestFOMs(m, a0, lat, proj, fom, true, true, inList, numBest1, outList, numBest2, true,
-         "LLL + BB");
+
+   // 4. Early discard, two stages, retain numBest0 in inList, with LLL only in first stage.
+   findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, inList, numBest0, false,
+         "LLL only, stage 1, with vector t");
+   // We use LLL + BB on second stage, only for the numBest0 retained.
+   fom->setBB(true);
+   findBestFOMs(m, a0, lat, proj, fom, true, true, inList, numBest0, outList, numBest, true,
+         "LLL + BB, stage 2");
+
+   // 5. Early discard, two stages, retain numBest0 in inList, with LLL only and vector `t0` in first stage.
+   fom->setTVector(t0);
+   findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, inList, numBest0, false,
+         "LLL only, stage 1 with vector t0");
+   // We use LLL + BB on second stage, only for the numBest0 retained.
+   fom->setTVector(t);   fom->setBB(true);
+   findBestFOMs(m, a0, lat, proj, fom, true, true, inList, numBest0, outList, numBest, true,
+         "LLL + BB, stage 2");
 }
 
-// Now we first select a list using t1, then compute the FOM
 int main() {
    typedef NTL::ZZ Int;
    typedef double Real;
@@ -183,41 +194,42 @@ int main() {
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
-   NTL::vector<int64_t> t0(4); // The first t-vector for the FOM.
-   t0[0] = 16;    // We look at successive coordinates in up to t[0] dimensions.
-   t0[1] = 16;    // Then pairs, triples, etc.
-   t0[2] = 12;
-   t0[3] = 10;
-
-   NTL::vector<int64_t> t(5); // The second t-vector for the FOM.
+   NTL::vector<int64_t> t(5); // The t-vector for the FOM.
    t[0] = 32;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 32;    // Then pairs, triples, etc.
    t[2] = 16;
    t[3] = 12;
-   t[3] = 10;
+   t[4] = 10;
+
+   NTL::vector<int64_t> t0(4); // A reduced t-vector for the FOM.
+   t0[0] = 4;
+   t0[1] = 32;
+   t0[2] = 16;
+   t0[3] = 12;
 
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    WeightsUniform weights(1.0);
    NormaBestLat normaPrimal(log(m), 1, maxdim);  // Factors computed for primal.
    NormaBestLat normaDual(-log(m), 1, maxdim);  // Factors computed for dual.
-   FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, 0, true);
-   FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, 0, true); // FoM for dual lattice.
+   ReducerBB<Int, Real> red(maxdim);   // Single ReducerBB with internal lattice `lat`.
+   FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
+   FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true); // FoM for dual lattice.
 
    int64_t numMultLong = 100000;  // Total number of multipliers to examine.
    int64_t numMultShort = 1000;  // Number to examine in the `no early discard` case.
-   int64_t numBest1 = 20;  // When doing two rounds, we retain `numBest1` from the first round.
-   int64_t numBest2 = 3;   // We want the best three at the end.
+   int64_t numBest0 = 50;  // When doing two rounds, we retain `numBest1` from the first round.
+   int64_t numBest = 3;   // We want the best three at the end.
 
    // We do first the primal, then the dual.
    std::cout << "\n=========================================================\n";
    std::cout << "FOM experiments in primal lattices \n";
-   compareSearchMethods<Int, Real>(&fomPrimal, m, a0, t, t0, numMultLong, numMultShort, numBest1,
-         numBest2);
+   compareSearchMethods<Int, Real>(&fomPrimal, m, a0, t, t0, numMultLong, numMultShort, numBest0,
+         numBest);
 
    std::cout << "\n=========================================================\n";
    std::cout << "FOM experiments in dual lattices \n";
-   compareSearchMethods<Int, Real>(&fomDual, m, a0, t, t0, numMultLong, numMultShort, numBest1,
-         numBest2);
+   compareSearchMethods<Int, Real>(&fomDual, m, a0, t, t0, numMultLong, numMultShort, numBest0,
+         numBest);
    std::cout << "\n***     DONE     ***\n";
    return 0;
 }
