@@ -3,11 +3,8 @@
  * with all five combinations of types.
  * See the Lattice Tester guide for more explanations.
  *
- * ****  Add more explanations later.  *****
- *
- *
  **/
-// #define TYPES_CODE  ZD  // ZZ + double
+
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/xdouble.h>
@@ -21,28 +18,26 @@
 using namespace NTL;
 using namespace LatticeTester;
 
-// We cannot use Int or Real here, because they are not yet defined.
-// They are defined via template parameters when we call the functions.
-const long numSizes = 5; // Number of matrix sizes (choices of dimensions).
-const long dimensions[numSizes] = { 4, 6, 10, 20, 30 };
-const long numMeth = 12;    // Number of methods to test, and their names.
+// The types Int and Real are not yet defined here.
+// They are defined in the main via template parameters when we call the functions.
+const int64_t numSizes = 5; // Number of matrix sizes (choices of dimensions).
+const int64_t dimensions[numSizes] = { 4, 6, 10, 20, 30 };
+const int64_t numMeth = 12;    // Number of methods to test, and their names.
 std::string names[numMeth] = { "LLL5         ", "LLL8         ", "LLL99        ", "LLL99999     ",
       "LLL99999-new ", "UppTri       ", "mDualUT      ", "LLL5-dual    ", "LLL8-dual    ",
-      "LLL99-dual   ", "LLL99999-dual", "LLL99999-new " };
+      "LLL99-dual   ", "LLL99999-dual", "LLL99999-dnew" };
 // We use `ctime` directly for the timings, to minimize overhead.
 clock_t totalTime = clock(); // Global timer for total time.
 clock_t timer[numMeth][numSizes];
-double sumSq[numMeth][numSizes];  // Sums of square lengths, in Real type.
-std::string stringTypes;  // To print the selected flexible types.
+double sumSq[numMeth][numSizes];  // Sums of square lengths.
 
 void printResults();  // Must be declared, because it has no parameters.
 
-/* This function applies LLL to `basis` in `dim` dimensions.
- * It also updates the cumulative times and sums of square lengths.
- */
+// This function applies LLL to `basis` in `dim` dimensions.
+// It also updates the cumulative times and sums of square lengths.
 template<typename IntMat, typename Real>
-void LLLTest(IntMat &basis, long d, long meth, double delta) {
-   long dim = dimensions[d];
+void LLLTest(IntMat &basis, int64_t d, int64_t meth, double delta) {
+   int64_t dim = dimensions[d];
    NTL::vector<Real> sqlen; // Cannot be global variable because it depends on Real.
    sqlen.SetLength(1);
    clock_t tmp = clock();
@@ -51,17 +46,17 @@ void LLLTest(IntMat &basis, long d, long meth, double delta) {
    sumSq[meth][d] += conv<double>(sqlen[0]);
 }
 
-// Run a speed test for dim = dimensions[d], with given basis matrices.
+// Runs a speed test for dim = dimensions[d], with given basis matrices.
 // Only basis1 needs to be initialized; basis2 and basisdual are used only for copy.
 template<typename Int, typename IntMat, typename Real>
-void transformBases(Int m, long d, long dim, IntMat &basis1, IntMat &basis2, IntMat &basisdual) {
+void transformBases(Int m, int64_t d, int64_t dim, IntMat &basis1, IntMat &basis2,
+      IntMat &basisdual) {
    CopyPartMat<IntMat>(basis2, basis1, dim, dim);  // Copy basis1 to basis2.
    clock_t tmp;
 
    // We apply LLL to basis2 with different values of `delta`, incrementally.
    // We start with delta=0.5, then continue with 0.9, then with 0.99999.
    LLLTest<IntMat, Real>(basis2, d, 0, 0.5);
-   //std::cout << "First LLL done with basis2 \n";
    // We continue the LLL process with larger values of `delta`.
    LLLTest<IntMat, Real>(basis2, d, 1, 0.8);
    LLLTest<IntMat, Real>(basis2, d, 2, 0.99);
@@ -87,73 +82,77 @@ void transformBases(Int m, long d, long dim, IntMat &basis1, IntMat &basis2, Int
    // Restart anew with delta = 0.99999.
    mDualUpperTriangular(basis1, basisdual, m, dim);
    LLLTest<IntMat, Real>(basisdual, d, 11, 0.99999);
-   //std::cout << "TransformBases completed, with dim = " << dim << "\n\n";
 }
 
 // In this testing loop, new `Rank1Lattice` objects are created
 // and the  `IntMat` matrices are resized inside the loop.
+// The timings turn out to be about the same.
+/*
+ template<typename Int, typename IntMat, typename Real>
+ void testLoopResize(Int mm, int64_t numRep) {
+ int64_t d, dim;
+ Int m = conv<Int>(mm);
+ Int a;       // The LCG multiplier
+ IntMat basis1, basis2, basisdual;
+ std::cout << "Results for `testLoopResize` (many objects are created or resized)\n";
+ for (d = 0; d < numSizes; d++)      // Reset timers and sums.
+ for (int64_t meth = 0; meth < numMeth; meth++) {
+ timer[meth][d] = 0;
+ sumSq[meth][d] = 0.0;  // NTL::conv<Real>(0.0);
+ }
+ totalTime = clock(); // Global timer for total time.
+ for (int64_t r = 0; r < numRep; r++) {
+ a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
+ for (d = 0; d < numSizes; d++) {  // Each matrix size
+ dim = dimensions[d]; // The corresponding dimension.
+ basis1.SetDims(dim, dim); // Will be initial triangular basis.
+ basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
+ basisdual.SetDims(dim, dim);  // m-dual basis.
+
+ // *** The following does not work well with LLL_FPInt.h (when Int == int64_t).      *******
+ Rank1Lattice<Int, Real> korlat(m, a, dim);  // Create a new one.
+ // Rank1Lattice<Int, Real> *korlat = new Rank1Lattice<Int, Real> (m, a, dim);  // Create a new one.
+
+ // std::cout << "Just created a new korlat \n";
+ korlat.buildBasis(dim);
+ basis1 = korlat.getBasis();
+ // std::cout << " Basis B = \n" << basis1 << "\n";
+ transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2, basisdual);
+ // delete &korlat;
+ }
+ }
+ printResults();
+ basis1.kill();  // Since we create objects repeatedly,
+ basis2.kill();  // it is a good idea to release the memory when we are done.
+ basisdual.kill();
+ }
+ */
+
+// Testing loop. The `IntMat` and `Rank1Lattice` objects are created only once.
 template<typename Int, typename IntMat, typename Real>
-void testLoopResize(Int mm, long numRep) {
-   long d, dim;
-   Int m = conv<Int>(mm);
-   Int a;       // The LCG multiplier
-   IntMat basis1, basis2, basisdual;
-   // Rank1Lattice<Int, Real> korlat;    // Will be a Korobov lattice.
-   // Rank1Lattice<Int, Real> *korlat;    // Will be a Korobov lattice.
-   std::cout << "Results for `testLoopResize` (many objects are created or resized)\n";
-   for (d = 0; d < numSizes; d++)      // Reset timers and sums.
-      for (int64_t meth = 0; meth < numMeth; meth++) {
-         timer[meth][d] = 0;
-         sumSq[meth][d] = 0.0;  // NTL::conv<Real>(0.0);
-      }
-   totalTime = clock(); // Global timer for total time.
-   for (int64_t r = 0; r < numRep; r++) {
-      a = (m / 5 + 17 * r) % m;   // The multiplier we use for this rep.
-      //for (d = 0; d < 2; d++) {  // Each matrix size
-      for (d = 0; d < numSizes; d++) {  // Each matrix size
-         dim = dimensions[d]; // The corresponding dimension.
-         basis1.SetDims(dim, dim); // Will be initial triangular basis.
-         basis2.SetDims(dim, dim); // Will be LLL-reduced basis.
-         basisdual.SetDims(dim, dim);  // m-dual basis.
+void testLoop(Int mm, int64_t numRep) {
+   std::string stringTypes;  // To print the selected flexible types.
+   strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
+   std::cout << "****************************************************\n";
+   std::cout << "Types: " << stringTypes << "\n\n";
+   std::cout << "TestBasisConstructionSpeed with m = " << mm << "\n";
+   std::cout << "Number of replications (different multipliers a): " << numRep << "\n\n";
 
-         // *** The following does not work well with LLL_FPInt.h (when Int == int64_t).      *******
-         Rank1Lattice<Int, Real> korlat(m, a, dim);  // Create a new one.
-         // Rank1Lattice<Int, Real> *korlat = new Rank1Lattice<Int, Real> (m, a, dim);  // Create a new one.
-
-         // std::cout << "Just created a new korlat \n";
-         korlat.buildBasis(dim);
-         basis1 = korlat.getBasis();
-         // std::cout << " Basis B = \n" << basis1 << "\n";
-         transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2, basisdual);
-         // delete &korlat;
-      }
-   }
-   printResults();
-   basis1.kill();  // Since we create objects repeatedly,
-   basis2.kill();  // it is a good idea to release the memory when we are done.
-   basisdual.kill();
-}
-
-// In this testing loop, we try to minimize the creation of objects.
-// The `IntMat` and `Rank1Lattice` objects are created only once.
-template<typename Int, typename IntMat, typename Real>
-void testLoopNoResize(Int mm, long numRep) {
-   long d, dim;  // Index of dimension.
+   int64_t d, dim;  // Index of dimension.
    Int m = conv<Int>(mm);
    Int a;
    IntMat basis1, basis2, basisdual;
-   long maxdim = dimensions[numSizes - 1];   // Maximum dimension
+   int64_t maxdim = dimensions[numSizes - 1];   // Maximum dimension
    basis1.SetDims(maxdim, maxdim); // Will be initial triangular basis.
    basis2.SetDims(maxdim, maxdim); // Will be LLL-reduced basis.
    basisdual.SetDims(maxdim, maxdim);  // m-dual basis.
    // We create a single Korobov lattice object.
    Rank1Lattice<Int, Real> korlat(m, maxdim);
-   std::cout << "Results for `testLoop No Resize`\n";
 
    for (d = 0; d < numSizes; d++)   // Reset accumulators.
       for (int64_t meth = 0; meth < numMeth; meth++) {
          timer[meth][d] = 0;
-         sumSq[meth][d] = 0.0;  // NTL::conv<Real>(0.0);
+         sumSq[meth][d] = 0.0;
       }
    totalTime = clock(); // Global timer for total time.
    for (int64_t r = 0; r < numRep; r++) {
@@ -162,8 +161,6 @@ void testLoopNoResize(Int mm, long numRep) {
       for (d = 0; d < numSizes; d++) {  // Each matrix size
          dim = dimensions[d]; // The corresponding dimension.
          korlat.buildBasis(dim);
-         // std::cout << " Basis B = \n" << basis1 << "\n";
-         // std::cout << "a = " << a << ",  dim = " << dimensions[d] << "\n";
          CopyPartMat<IntMat>(basis1, korlat.getBasis(), dim, dim); // Triangular basis.
          transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2, basisdual);
       }
@@ -174,20 +171,8 @@ void testLoopNoResize(Int mm, long numRep) {
    basisdual.kill();
 }
 
-// This function runs the two types of test loops.
-template<typename Int, typename IntMat, typename Real>
-void testTwoLoops(Int mm, long numRep) {
-   strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
-   std::cout << "****************************************************\n";
-   std::cout << "Types: " << stringTypes << "\n\n";
-   std::cout << "TestBasisConstructionSpeed with m = " << mm << "\n";
-   std::cout << "Number of replications (different multipliers a): " << numRep << "\n\n";
-   testLoopResize<Int, IntMat, Real>(mm, numRep);
-   testLoopNoResize<Int, IntMat, Real>(mm, numRep);
-}
-
 void printResults() {
-   long d;
+   int64_t d;
    std::cout << "Timings for different methods, in basic clock units (microseconds) \n\n";
    std::cout << " dim:    ";
    for (d = 0; d < numSizes; d++)
@@ -201,7 +186,7 @@ void printResults() {
    }
    std::cout << "\n";
    std::cout << "Sums of square lengths of shortest basis vector";
-   std::cout << " (must be the same across all implementations):\n";
+   std::cout << " (must be the same for all flexible types):\n";
    std::cout << " dim:    ";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(13) << dimensions[d] << "  ";
@@ -220,22 +205,21 @@ void printResults() {
 }
 
 int main() {
+
    // Here, Int and Real are not yet defined.
-   //int64_t m(1021);  // Prime modulus near 2^{10}
    int64_t m(1048573);  // Prime modulus near 2^{20}
    NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
    // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
-   long numRep = 1000;   // Number of replications (multipliers) for each case.
+   int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
 
-   // Here we can test with all combinations of types.
-
-   testTwoLoops<int64_t, NTL::matrix<int64_t>, double>(m, numRep);
-   testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
-   //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
-   //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
-   //testTwoLoops<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
+   // Here we can test with any combination of types.
+   testLoop<int64_t, NTL::matrix<int64_t>, double>(m, numRep);
+   testLoop<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
+   testLoop<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
+   testLoop<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
+   testLoop<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
    return 0;
 }
 

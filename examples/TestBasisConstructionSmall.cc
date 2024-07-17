@@ -8,8 +8,7 @@
  * to an upper triangular basis, which happens to be the same as the initial one.
  * Different triangularization methods are compared.  Then LLL with different
  * values of `delta`. Then a dual basis is computed in different ways.
- *
- * After that, we look at projections of this lattice over subsets of coordinates.
+ * After that, we look at projections of this lattice over a subset of coordinates.
  * We show how to construct a basis for such a projection and compute the corresponding
  * dual basis.
  *
@@ -41,8 +40,6 @@ using namespace LatticeTester;
 using namespace NTL;
 
 Int m(101);      // Modulus m = 101
-//Int m(1021);     // Modulus m = 1021
-//Int m(1048573);  // Modulus m = 1048573 (prime number near 2^{20})
 Int a(33);       // An LCG multiplier
 const long dim(5);  // Dimension of lattice.
 const long dimProj(3);  // Dimension of projection.
@@ -51,22 +48,22 @@ int main() {
     std::cout << "Types: " << strFlexTypes << "\n";
     std::cout << "TestBasisConstructionSmall \n\n";
 
-    // All the IntMat objects are created in 5 dimensions, but we may use less.
+    // The IntMat objects are created in 5 dimensions, but we may use fewer dimens.
     IntMat basis1, basis2, basisDual, basisProj, basisDualProj;
     basis1.SetDims(dim, dim);
     basis2.SetDims(dim, dim);
     basisDual.SetDims(dim, dim);
     basisProj.SetDims(dim, dimProj);
     basisDualProj.SetDims(dimProj, dimProj);
-    Int sqlength;
-    RealVec sqlen;      // To recover square lengths of basis vector.
+    RealVec sqlen;      // To recover square length of first basis vector after LLL.
     sqlen.SetLength(1); // We only want to recover the length of the first basis vector.
 
-    // We construct a Korobov lattice in dim dimensions.
+    // We construct a Korobov lattice `korlat` in dim dimensions.
     Rank1Lattice<Int, Real> korlat(m, a, dim);
     korlat.buildBasis(dim);   // This initial basis is triangular.
     basis1 = korlat.getBasis();
     std::cout << "Initial Korobov lattice basis (triangular) = \n" << basis1 << "\n";
+    Int sqlength;       // Square length of first vector in initial basis.
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
@@ -92,47 +89,47 @@ int main() {
     std::cout << "Square length of first dual basis vector: " << sqlen[0] << "\n\n";
 
     // We now investigate the projection over coordinates {1, 3, 5}.
-    // We first insert those three coordinates one by one in `proj`.
-    // We then compute a basis for this projection in two ways.
-    //Coordinates proj({1, 2, 3});
     Coordinates proj({1, 3, 5});
-    //proj.insert(1);
-    //proj.insert(3);
-    //proj.insert(5);
     std::cout << "Lattice projection over coordinates " << proj << ".\n";
     std::cout << "In the following basisProj matrices, we need 5 rows and 3 columns\n";
     std::cout << " to make the projection, then 3 rows and 3 columns for the basis.\n";
     std::cout << " When part of matrix is not used, it must be ignored.\n\n";
 
-    // We obtain in basisProj generating vectors for the projection of basis2.
+    // We will compute a basis for this projection in three ways.
+    // We put in `basisProj` a set of generating vectors for the projection over `proj`.
     projectMatrix(basis2, basisProj, proj, dim);
     std::cout << "basisProj after projectMatrix (the generating vectors): \n" << basisProj << "\n";
+    // We construct a basis for this projection using LLL.
     LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.5, dim, dimProj);
-    std::cout << "Basis for this projection (first 3 rows), obtained with LLL: \n" << basisProj << "\n";
+    std::cout << "Basis for this projection, obtained with LLL: \n" << basisProj << "\n";
+
+    // Basis construction with upper-triangular method from `basis2`, using `dim` rows.
+    projectionConstructionUpperTri(basis2, basisProj, proj, m, dim);
+    std::cout << "Upper-triangular basis for this proj. (first 3 rows):\n" << basisProj << "\n";
 
     // This one tests the `buildProjection` method from `IntLattice`.
-    // It requires a new `Rank1Lattice` for the projection.
-    // Rank1Lattice<Int, Real> *projLattice2;   // Old style...
-    // projLattice2 = new Rank1Lattice<Int, Real>(m, a, dimProj, true, false);
+    // We create a new `projLattice2` object and put the projection of `korlat` in it.
     Rank1Lattice<Int, Real> projLattice2(m, a, dimProj);
     korlat.buildProjection(projLattice2, proj);
     std::cout << "Triangular basis for this projection, with `buildProjection`: \n"
               << projLattice2.getBasis() << "\n";
 
-    // Basis construction with upper-triangular method, using `dim` rows.
-    projectionConstructionUpperTri(basis2, basisProj, proj, m, dim);
-    std::cout << "Upper-triangular basis for this proj. (first 3 rows):\n" << basisProj << "\n";
-
     // Use first dimProj rows of `basisProj` basis matrix to construct an m-dual basis.
     mDualUpperTriangular(basisProj, basisDualProj, m, dimProj);
-    std::cout << "Triangular basis for m-dual of this proj.: \n"
+    std::cout << "Triangular basis for m-dual of this projection: \n"
             << basisDualProj << "\n";
     LLLConstruction0<IntMat, RealVec>(basisDualProj, 0.99999, dimProj, dimProj, &sqlen);
     std::cout << "m-dual basis of proj after LLL with delta=0.99999: \n" << basisDualProj
             << "\n";
     std::cout << "Square length of first m-dual basis vector: " << sqlen[0] << "\n\n";
 
-    // We then project the dual lattice over coordinates {1, 3, 5}.
+    // We can also construct the m-dual basis directly in `projLattice2` via  `buildProjectionDual`.
+    // Rank1Lattice<Int, Real> projLattice2(m, a, dimProj);
+    korlat.buildProjectionDual(projLattice2, proj);
+    std::cout << "Triangular basis for m-dual of this projection, with `buildProjectionDual`: \n"
+              << projLattice2.getDualBasis() << "\n";
+
+    // For comparison, we project the full m-dual lattice over coordinates {1, 3, 5}.
     projectMatrix(basisDual, basisProj, proj, dim);
     std::cout << "We now look at the direct projection of the dual over the coordinates in proj.\n";
     std::cout << "Generating vectors for the projection of the dual: \n" << basisProj << "\n";
