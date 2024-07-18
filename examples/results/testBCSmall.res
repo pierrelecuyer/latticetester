@@ -1,4 +1,4 @@
-Types: Int = NTL::ZZ, Real = double
+Types: Int = int64_t, Real = double
 TestBasisConstructionSmall 
 
 Initial Korobov lattice basis (triangular) = 
@@ -29,7 +29,7 @@ Basis after LLL with delta=0.99999:
 Square length of first basis vector: 1263
 
 After `upperTriangularBasis`: 
-[[1 33 79 82 80]
+[[1 -68 79 82 80]
 [0 101 0 0 0]
 [0 0 101 0 0]
 [0 0 0 101 0]
@@ -38,7 +38,7 @@ After `upperTriangularBasis`:
 
 m-dual of upper-triangular basis: 
 [[101 0 0 0 0]
-[-33 1 0 0 0]
+[68 1 0 0 0]
 [-79 0 1 0 0]
 [-82 0 0 1 0]
 [-80 0 0 0 1]
@@ -65,17 +65,12 @@ basisProj after projectMatrix (the generating vectors):
 [0 0 0]
 [0 0 101]
 ]
-Basis for this projection (first 3 rows), obtained with LLL: 
+Basis for this projection, obtained with LLL: 
 [[5 -9 -4]
 [9 4 13]
 [35 38 -28]
 [0 0 0]
 [0 0 0]
-]
-Triangular basis for this projection, with `buildProjection`: 
-[[1 79 80]
-[0 101 0]
-[0 0 101]
 ]
 Upper-triangular basis for this proj. (first 3 rows):
 [[1 79 80]
@@ -84,7 +79,12 @@ Upper-triangular basis for this proj. (first 3 rows):
 [0 0 0]
 [0 0 0]
 ]
-Triangular basis for m-dual of this proj.: 
+Triangular basis for this projection, with `buildProjection`: 
+[[1 79 80]
+[0 101 0]
+[0 0 101]
+]
+Triangular basis for m-dual of this projection: 
 [[101 0 0]
 [-79 1 0]
 [-80 0 1]
@@ -96,6 +96,11 @@ m-dual basis of proj after LLL with delta=0.99999:
 ]
 Square length of first m-dual basis vector: 3
 
+Triangular basis for m-dual of this projection, with `buildProjectionDual`: 
+[[101 0 0]
+[79 1 0]
+[80 0 1]
+]
 We now look at the direct projection of the dual over the coordinates in proj.
 Generating vectors for the projection of the dual: 
 [[-1 -1 1]

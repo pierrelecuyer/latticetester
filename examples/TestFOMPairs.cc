@@ -3,15 +3,15 @@
  * for projections specified by t, and `numRepStat` values of a.
  * For each a, we compute the FOM for the primal and for the m-dual, we find
  * the worst-case projection and its dimension in each case, and we print these values in
- * a data file that can be used to make a scatter plot (e.g., with PGFplots).
+ * a .dat file that can be used to make a scatter plot (e.g., with PGFplots).
  * The file has one row for each a, and the row contains the FOM and the dimension of the
  * worst projection for both the primal and the m-dual, plus an integer that indicates
  * if the worst projection is the same for both the primal and dual.
- * The program also reports how many times the worst projection has s dimensions for each
+ * The program also displays these projections explicitly for the first few values of a.
+ * At the end, it reports how many times the worst projection has s dimensions for each
  * integer s > 1, for both the primal and the m-dual.
- * And it displays these projections explicitly for the first few values of a.
  *
- * See the Lattice Tester Guide for more explanations and results.
+ * See the Lattice Tester Guide for more explanations and to view the plots.
  */
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,6 @@ void testLoop(const Int &m, Int &a0, const NTL::vector<int64_t> t, long numRepVe
    WeightsUniform weights(1.0);
    NormaBestLat normaPrimal(log(m), 1, maxdim);  // Factors computed for primal.
    NormaBestLat normaDual(-log(m), 1, maxdim);  // Factors computed for dual.
-   // normaDual.computeBounds(-log(m), 1);
    FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
    FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true);
    IntLattice<Int, Real> proj(m, t.size());
@@ -107,12 +106,12 @@ void testLoop(const Int &m, Int &a0, const NTL::vector<int64_t> t, long numRepVe
 int main() {
 
    // Here, Int and Real are passed as template parameters.
-   std::cout << "Types: NTL::ZZ, double \n";
+   std::cout << "Types: Int = NTL::ZZ, Real = double \n";
    NTL::ZZ m(1048573); // Prime modulus near 2^{20}
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
-   NTL::vector<int64_t> t(4); // The t-vector for the FOM.
+   NTL::vector<int64_t> t(4); // One t vector for the FOM.
    t[0] = 16;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 16;    // Also pairs, triples, and quadruples.
    t[2] = 12;
@@ -120,7 +119,7 @@ int main() {
    std::string outFile = "pairsPrimalDualFOM16.dat";
    testLoop<NTL::ZZ, double>(m, a0, t, 10, 1000, outFile);
 
-   t.resize(5);
+   t.resize(5);  // Another t vector.
    t[0] = 32;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 32;    // Also pairs, triples, etc.
    t[2] = 16;

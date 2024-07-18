@@ -10,36 +10,22 @@
  * as the successive powers of a given a0 modulo m.
  */
 
-// Is every include below really needed?
-//#include <iterator>
 #include <iostream>
-//#include <cstdint>
-//#include <algorithm>
 #include <vector>
-//#include <numeric>
 #include <NTL/vector.h>
-//#include <NTL/matrix.h>
 #include <NTL/ZZ.h>
-//#include <NTL/RR.h>
+#include <NTL/RR.h>
 
-//#include "latticetester/FlexTypes.h"
-//#include "latticetester/EnumTypes.h"
-//#include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/FigureOfMeritM.h"
 #include "latticetester/FigureOfMeritDualM.h"
 #include "latticetester/ReducerStatic.h"
-// #include "latticetester/LLL_lt.h"
 #include "latticetester/Weights.h"
-
-// Application specific headers
 #include "latticetester/NormaBestLat.h"
-//#include "latticetester/NormaBestBound.h"
 #include "latticetester/CoordinateSets.h"
 #include "latticetester/WeightsUniform.h"
 #include "latticetester/BasisConstruction.h"
-//#include "latticetester/MRGLattice.h"
 
 using namespace LatticeTester;
 
@@ -51,8 +37,7 @@ using namespace LatticeTester;
  * If `fromList` is true, the `numMult` values of a are taken from the array `inList`
  * and `a0` is not used, otherwise they are the successive powers of `a0`.
  * The `numBest` best candidates are returned in the list `outList`.
- * If `verbose` is true, they are also printed on the terminal, together with
- * the FOM values.
+ * If `verbose` is true, they are also printed on the terminal, together with the FOM values.
  */
 template<typename Int, typename Real>
 static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat,
@@ -62,18 +47,13 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
    Int a = a0;
    double merit;
    fom->setLowBound(0.0);
-   // Int outList[numBest]; // Array to store the numBest multipliers with the best FoMs.
-   double bestFoms[numBest];     // Array to store the best FoM values.
+   double bestFoms[numBest];  // Array to store the best FoM values, in decreasing order.
    for (int64_t i = 0; i < numBest; i++) {
       outList[i] = 0;
       bestFoms[i] = 0.0;
    }
-   // Initialize variables for minimum elements of the numBest largest FoMs, get the corresponding index
-   // and also get the maximal value.  ????    They are not kept sorted?
-   // auto adrMin = std::min_element(bestFoms, bestFoms + numBest); // Iterator to smallest FOM value in the list.
-   // auto posMin = std::distance(bestFoms, bestFoms); // Position of smallest FOM value in the list, here 0.
    int64_t posComp;  // Position in the list of the current candidate to dislodge.
-   clock_t tmp; // Variables for measuring time elapsed
+   clock_t tmp;      // To measure computing time.
    tmp = clock();
    // We try numMult values of a.
    for (int64_t j = 0; j < numMult; j++) {
@@ -83,7 +63,7 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
       merit = fom->computeMerit(lat, proj);  // Here we compute the FOM.
       posComp = numBest - 1;  // The last index in the list.
       if (merit > bestFoms[posComp]) {
-         // Overwrite the currently smallest FoM and best a in the stored list.
+         // Overwrite the currently smallest FoM and corresponding a in the stored list.
          for (; (posComp > 0) && (merit > bestFoms[posComp - 1]); posComp--) {
             outList[posComp] = outList[posComp - 1];
             bestFoms[posComp] = bestFoms[posComp - 1];
@@ -94,21 +74,6 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
          // This value represents the FOM for the worst candidate still in the list.
          if (earlyDiscard) fom->setLowBound(bestFoms[posComp]);
       }
-      // I have replaced the following by an array that is always sorted.
-      // This is much simpler and faster, because we only have to scan less than half the list on average.
-      /*
-       if (merit > bestFoms[posMin]) {
-       // Overwrite the currently smallest FoM and best a in the stored list.
-       outList[posMin] = a;
-       bestFoms[posMin] = merit;
-       // Find the new smallest FoM in the list.
-       adrMin = std::min_element(bestFoms, bestFoms + numBest); // Address of smallest FOM value
-       posMin = std::distance(bestFoms, adrMin); // Its position in the list.
-       // If earlyDiscard, set the new lower bound to the current smallest FoM value in the list.
-       // This value represents the FOM for the worst candidate still in the list.
-       if (earlyDiscard) fom->setLowBound(bestFoms[posMin]);
-       }
-       */
    }
    tmp = clock() - tmp;
    std::cout << "\n--------------------------------------\n";
@@ -136,9 +101,10 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
  * In the second method, we also apply BKZ + BB, but we use early discarding.
  * In the third method, we apply only LLL and use early discarding.
  * In the fourth method, we use two stages, with early discarding at each stage,
- * In the first stage, we use only LLL and we retain the `numBest1` multipliers in a list.
- * In the second stage, we test these retained multipliers using the BB and return the `numBest2`
- * best ones.
+ * The first stage applies only LLL and retains the `numBest1` multipliers in a list.
+ * The second stage tests the retained multipliers using the BB and return the `numBest2` best ones.
+ * The fifth method is similar to the fourth, except that in the first stage we use a smaller
+ * vector t, with a restricted number of projections, to try speed up the screening.
  */
 template<typename Int, typename Real>
 static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, const Int a0,
@@ -188,11 +154,11 @@ static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, co
 int main() {
    typedef NTL::ZZ Int;
    typedef double Real;
-   std::cout << "Types: NTL::ZZ, double \n";
+   std::cout << "Types: Int = NTL::ZZ, Real = double \n";
 
-   NTL::ZZ m(1048573); // Prime modulus near 2^{20}
+   //NTL::ZZ m(1048573); // Prime modulus near 2^{20}
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
-   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
    NTL::vector<int64_t> t(5); // The t-vector for the FOM.
    t[0] = 32;    // We look at successive coordinates in up to t[0] dimensions.

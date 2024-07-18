@@ -1,13 +1,10 @@
 /**
- * TO REDO:  This example shows how to use `LatticeTester` to calculate a figure of merit in practice
- * In a first loop an approximation of the FoM is calculated for many multipliers (numRep)
- * by using the chosen pre-reduction algorithm (meth). A chosen number (noBest) of the 
- * best multipliers according to this loop is stored. Afterwards the exact FoM for these 
- * stored multipliers is calculated by means of the BB algorithm.
+ * This example shows how projections sometimes have a smaller density than the full lattice.
+ * We do this with a small MRG example or order 3 with `m = 13`, then with a larger MRG example
+ * with `m` near @f$2^{63}@f$. For each case, we compute the FOM M_t for a given set of projections,
+ * and we find that the projection over coordinates {1,3,4} has a smaller density because some
+ * points project only each other.
  */
-
-// #define TYPES_CODE  ZD
-
 #include <iostream>
 #include <cstdint>
 #include <algorithm>
@@ -26,33 +23,37 @@
 
 using namespace LatticeTester;
 
-// tests an MRG of modulus m and multipliers a, for projections specified by t.
-// The order k is the size of vector a.
+// Tests an MRG of modulus m and multipliers a, for projections specified by t, with
+// coordinate 1 always included.  The order k is the size of the vector a.
+// We first examine the projections over successive coordinates, then the other ones.
+// We do this for the primal, then for the m-dual.
+// Finally, we examine more closely the projection over {1, 3, 4}.
 template<typename Int, typename Real>
 void testProjectionsMRG (const Int m, const NTL::vector<Int> a, const NTL::vector<int64_t> t) {
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    int64_t order = a.size();
    double merit;
+   MRGLattice<Int, Real> lat(m, a, maxdim);
+   WeightsUniform weights(1.0);
+   ReducerBB<Int, Real> red(maxdim);   // Reducer created for up to maxdim dimensions.
 
    // Building full primal lattice and looking at projections over successive coordinates.
    std::cout << "===================================================\n";
    std::cout << "We build the lattice and look at projections over successive coordinates.\n";
-   MRGLattice<Int, Real> lat(m, a, maxdim);
-   WeightsUniform weights(1.0);
+   std::cout << "\nFigure of merit primal succ, with BB.\n";
+   // We consider only the projections that contain coordinate 1.
    NormaBestLat norma(log(m), order, maxdim);  // Factors will be computed for primal.
-   ReducerBB<Int, Real> red(maxdim);   // Reducer created for up to dim dimensions.
    FigureOfMeritM<Int, Real> fom(t, weights, norma, &red, true);
    fom.setVerbosity(2);
-   std::cout << "\nFigure of merit primal succ, with BB.\n";
    merit = fom.computeMeritSucc(lat);
    std::cout << "FOM value: " << merit << "\n\n";
 
    // Now looking at other primal projections, placed in lattice proj.
    std::cout << "===================================================\n";
    std::cout << "Then we look at other primal projections, over pairs and triples.\n";
-   IntLattice<Int, Real> proj(m, 3);
    lat.buildBasis(maxdim);
    std::cout << "\nFigure of merit primal non-succ, with BB.\n";
+   IntLattice<Int, Real> proj(m, 3);
    merit = fom.computeMeritNonSucc(lat, proj);
    std::cout << "FOM value: " << merit << "\n\n";
 
@@ -75,11 +76,8 @@ void testProjectionsMRG (const Int m, const NTL::vector<Int> a, const NTL::vecto
 
    // A closer look at projection {1,3,4}
    std::cout << "===================================================\n";
-   std::cout << "Let us have a closer look at the projection over coordinates {1,3,4}. \n";
-   Coordinates coord;
-   coord.insert(1);
-   coord.insert(3);
-   coord.insert(4);
+   std::cout << "A closer look at the projection over coordinates {1,3,4}: \n";
+   Coordinates coord({1, 3, 4});
    std::cout << "Full basis B before taking projection {1,3,4}: \n" << lat.getBasis() << "\n";
    lat.buildProjection(proj, coord);
    std::cout << "Basis for projection {1,3,4}: \n" << proj.getBasis() << "\n";
