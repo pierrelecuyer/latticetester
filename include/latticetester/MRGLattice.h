@@ -71,7 +71,7 @@ public:
 
    /**
     * Sets the vector of multipliers. The order of the lattice is set equal to
-    * the length of this vector.
+    * the length of this vector.  `aa[j-1]` must contain \f$a_j\f$.
     */
    void setaa(const IntVec &aa);
 
@@ -128,7 +128,7 @@ public:
    int m_order;
 
    /**
-    * The coefficients used for the MRG recurrence.
+    * The coefficients \f$a_1, ..., a_k\f$ of the MRG recurrence, a_j stored in `m_aCoeff[j-1]`.
     */
    IntVec m_aCoeff;
 
@@ -136,7 +136,7 @@ protected:
 
    /**
     * These variants take the basis as a parameter for more flexibility.
-    * They are used inside buildBais, buildBasisDual, incDimBasis, etc., with either `m_basis` or `m_basis0`.
+    * They are used inside buildBasis, buildBasisDual, incDimBasis, etc., with either `m_basis` or `m_basis0`.
     */
    void buildBasis0(IntMat &basis, int64_t d);
 
