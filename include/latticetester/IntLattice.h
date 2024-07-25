@@ -265,7 +265,7 @@ public:
    /**
     * Returns the scaling factor `m`.
     */
-   Int getModulo() const {
+   Int getModulus() const {
       return m_modulo;
    }
 

@@ -31,7 +31,7 @@ using namespace LatticeTester;
 template<typename Int, typename Real>
 void testProjectionsMRG (const Int m, const NTL::vector<Int> a, const NTL::vector<int64_t> t) {
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
-   int64_t order = a.size();
+   int64_t order = a.size()-1;
    double merit;
    MRGLattice<Int, Real> lat(m, a, maxdim);
    WeightsUniform weights(1.0);
@@ -104,19 +104,19 @@ int main() {
    std::cout << "\n=============================================================\n";
    std::cout << "Results for a small MRG example with m=13, k=3, a=(7,0,4). \n";
    NTL::ZZ m(13);
-   NTL::vector<NTL::ZZ> a(3); // Vector a has size 3.
-   a[0] = 7;
-   a[1] = 0;
-   a[2] = 4;
+   NTL::vector<NTL::ZZ> a(4); // Vector a has size 4, a[j] contains a_j.
+   a[1] = 7;
+   a[2] = 0;
+   a[3] = 4;
    testProjectionsMRG<NTL::ZZ, double> (m, a, t);
 
     // This is the MRG retained in Table VII of the LatMRG paper of L'Ecuyer and Couture (1997).
    std::cout << "\n=============================================================\n";
    std::cout << "Results for a MRG example with m = 9223372036854773561, a = (1145902849652723, 0, -1184153554609676). \n";
    m = 9223372036854773561;
-   a[0] = 1145902849652723;
-   a[1] = 0;
-   a[2] = -1184153554609676;
+   a[1] = 1145902849652723;
+   a[2] = 0;
+   a[3] = -1184153554609676;
    testProjectionsMRG<NTL::ZZ, double> (m, a, t);
 
    return 0;

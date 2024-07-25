@@ -751,7 +751,7 @@ bool ReducerBB<Int, Real>::calculCholesky(RealVec &DC2, RealMat &C0) {
    Real m2;
    // C2[i][j] = C0[i][j] * C2[i][i] if i != j.
    // C2[i][i] = DC2[i].
-   NTL::conv(m2, m_lat->getModulo());
+   NTL::conv(m2, m_lat->getModulus());
    m2 = m2 * m2;
    int64_t d = dim;
    //if(m_lat->withDual())
@@ -1176,7 +1176,7 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
    Real S1, S2, S3, S4, mR;
 
    const int64_t dim = m_lat->getDim();
-   NTL::conv(mR, m_lat->getModulo());
+   NTL::conv(mR, m_lat->getModulus());
 
    ++m_countNodes;
    if (m_countNodes > maxNodesBB) {
@@ -1371,7 +1371,7 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
          m_lat->setDualVecNorm(tmp, i);
       }
       Real m2;
-      NTL::conv(m2, m_lat->getModulo());
+      NTL::conv(m2, m_lat->getModulus());
       m2 = m2 * m2;
       if (m_lMin2 * m_lat->getDualVecNorm(i) < 4 * m2) return true; // if the angle between the basis vector i and the dual
       // basis vector i is between -Pi/3 and Pi/3
@@ -1657,7 +1657,7 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
       IntMat m_v, m_v2;   // Here we create new matrices each time!!!!
       m_v.resize(dim, dim);
       m_v2.resize(dim, dim);
-      Int mod = m_lat->getModulo();
+      Int mod = m_lat->getModulus();
       CopyMatr(m_v, m_lat->getBasis(), dim, dim);
       lowerTriangularBasis(m_v, m_v2, mod);
       // CopyMatr(m_lat->getBasis(), m_v2, dim, dim);

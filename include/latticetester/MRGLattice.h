@@ -48,9 +48,10 @@ public:
    /**
     * This constructor takes as input the modulus `m`, the vector of multipliers `aa`,
     * and the norm used to measure the vector lengths.
+    * The vector `aa` must have length `k+1`, with \f$a_j\f$ in `aa[j]`.
     * The maximal dimension `maxDim` will be the maximal dimension of the basis.
-    * This constructor does not build the basis, to leave
-    * more flexibility in the dimension when doing so.
+    * This constructor does not build the basis, so we can build it for a smaller
+    * number of dimensions of only for selected projections.
     */
    MRGLattice(const Int &m, const IntVec &aa, int64_t maxDim, NormType norm = L2NORM);
 
@@ -70,8 +71,8 @@ public:
    ~MRGLattice();
 
    /**
-    * Sets the vector of multipliers. The order of the lattice is set equal to
-    * the length of this vector.  `aa[j-1]` must contain \f$a_j\f$.
+    * Sets the vector of multipliers. The order `k` of the lattice is set equal to
+    * the length of this vector, minus 1.  `aa[j]` must contain \f$a_j\f$ for j=1,...,k.
     */
    void setaa(const IntVec &aa);
 
@@ -128,14 +129,14 @@ public:
    int m_order;
 
    /**
-    * The coefficients \f$a_1, ..., a_k\f$ of the MRG recurrence, a_j stored in `m_aCoeff[j-1]`.
+    * The coefficients \f$a_1, ..., a_k\f$ of the MRG recurrence, a_j stored in `m_aCoeff[j]`.
     */
    IntVec m_aCoeff;
 
 protected:
 
    /**
-    * These variants take the basis as a parameter for more flexibility.
+    * The following protected functions take the basis as a parameter for more flexibility.
     * They are used inside buildBasis, buildBasisDual, incDimBasis, etc., with either `m_basis` or `m_basis0`.
     */
    void buildBasis0(IntMat &basis, int64_t d);
@@ -162,6 +163,7 @@ protected:
    IntMat m_genTemp;
 
    /**
+    * NOT USED  ***********
     * Hidden variable used across the `buildProjection` functions, to avoid recomputing it.
     * This variable is `true` if the first m_order coordinates are all in `proj`.
     */
@@ -175,7 +177,6 @@ MRGLattice<Int, Real>::MRGLattice(const Int &m, const IntVec &aa, int64_t maxDim
       IntLatticeExt<Int, Real>(m, maxDim, norm) {
    this->m_maxDim = maxDim;
    setaa(aa);
-   m_order = aa.length();
    m_dim0 = 0;
    m_basis0.resize(maxDim, maxDim);
    m_genTemp.resize(maxDim, maxDim);
@@ -186,7 +187,6 @@ MRGLattice<Int, Real>::MRGLattice(const Int &m, const IntVec &aa, int64_t maxDim
 template<typename Int, typename Real>
 MRGLattice<Int, Real>::~MRGLattice() {
    m_aCoeff.kill();
-   // m_aux_basis.kill();
 }
 
 //============================================================================
@@ -208,7 +208,7 @@ MRGLattice<Int, Real>::MRGLattice(const MRGLattice<Int, Real> &lat) :
    m_aCoeff = lat.m_aCoeff;
    m_order = lat.m_order;
    m_basis0 = lat.m_basis0;
-   // Should also copy the basis and all other variables?
+   // Should also copy the basis and all other variables???  ******
 }
 
 //============================================================================
@@ -219,7 +219,7 @@ MRGLattice<Int, Real>::MRGLattice(const MRGLattice<Int, Real> &lat) :
 template<typename Int, typename Real>
 void MRGLattice<Int, Real>::setaa(const IntVec &aa) {
    m_aCoeff = aa;
-   m_order = aa.length();
+   m_order = aa.length()-1;
    this->m_dim = 0;  // Current basis is now invalid.
    this->m_dimdual = 0;
    this->m_dim0 = 0;
@@ -249,8 +249,8 @@ void MRGLattice<Int, Real>::buildBasis0(IntMat &basis, int64_t d) {
          for (j = m_order; j < d; j++) {
             basis[i][j] = 0;
             // Calculate the components of v_{i,j}. The first component of the coefficient is m_aCoeff[0] here
-            for (k = 0; k < m_order; k++)
-               basis[i][j] += m_aCoeff[k] * basis[i][j - (k + 1)] % this->m_modulo;
+            for (k = 1; k <= m_order; k++)
+               basis[i][j] += m_aCoeff[k] * basis[i][j - k] % this->m_modulo;
          }
       }
    }
@@ -307,8 +307,8 @@ void MRGLattice<Int, Real>::incDimBasis0(IntMat &basis, int64_t d) {
    for (i = 0; i < d - 1; i++) {
       basis[i][d - 1] = 0;
       if (d - 1 >= m_order) {
-         for (k = 0; k < m_order; k++)
-            basis[i][d - 1] += m_aCoeff[k] * basis[i][d - 1 - (k + 1)] % this->m_modulo;
+         for (k = 1; k <= m_order; k++)
+            basis[i][d - 1] += m_aCoeff[k] * basis[i][d - 1 - k] % this->m_modulo;
       }
    }
 }
@@ -461,7 +461,7 @@ void MRGLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLatti
 //============================================================================
 template<typename Int, typename Real>
 std::string MRGLattice<Int, Real>::toStringCoef() const {
-   return toString(m_aCoeff, 0, this->getDim());
+   return toString(m_aCoeff, 1, this->getDim()+1);
 }
 
 //============================================================================
