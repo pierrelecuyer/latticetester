@@ -27,7 +27,7 @@
 namespace LatticeTester {
 
 /**
- * This subclass of `IntLatticeExt` defines an MRG lattce and is similar to Rank1Lattice,
+ * This subclass of `IntLatticeExt` defines an MRG lattice and is similar to Rank1Lattice,
  * but constructs lattices associated with multiple recursive generators (MRGs) with 
  * modulus m, order k, and vector of multipliers a = (a_1, . . . , a_k).
  *
@@ -51,7 +51,7 @@ public:
     * The vector `aa` must have length `k+1`, with \f$a_j\f$ in `aa[j]`.
     * The maximal dimension `maxDim` will be the maximal dimension of the basis.
     * This constructor does not build the basis, so we can build it for a smaller
-    * number of dimensions of only for selected projections.
+    * number of dimensions or only for selected projections.
     */
    MRGLattice(const Int &m, const IntVec &aa, int64_t maxDim, NormType norm = L2NORM);
 
@@ -158,14 +158,20 @@ protected:
    int64_t m_dim0 = 0;
 
    /**
-    * This auxiliary matrix is used to store generating vectors of projections.
+    * A vector to store \f$y_0, y_1, ..., y_{t+k-2}\f$ used in the matrix V^{(p)}.
+    */
+   IntVec m_y;
+
+   /**
+    * This auxiliary matrix is used to store the generating vectors of a projections
+    * before reducing them into a triangular basis.
     */
    IntMat m_genTemp;
 
    /**
     * NOT USED  ***********
     * Hidden variable used across the `buildProjection` functions, to avoid recomputing it.
-    * This variable is `true` if the first m_order coordinates are all in `proj`.
+    * This variable is `true` if the first m_order coordinates are all in `proj`.   ???
     */
    // bool projCase1 = true; // True if the first m_order coordinates are all in current `proj`.
 };
@@ -180,6 +186,7 @@ MRGLattice<Int, Real>::MRGLattice(const Int &m, const IntVec &aa, int64_t maxDim
    m_dim0 = 0;
    m_basis0.resize(maxDim, maxDim);
    m_genTemp.resize(maxDim, maxDim);
+   m_y.resize(maxDim + m_order - 1);
 }
 
 //============================================================================
@@ -197,6 +204,7 @@ MRGLattice<Int, Real>& MRGLattice<Int, Real>::operator=(const MRGLattice<Int, Re
    m_aCoeff = lat.m_aCoeff;
    m_order = lat.m_order;
    m_basis0 = lat.m_basis0;
+   m_y = lat.m_y;
    return *this;
 }
 
@@ -208,6 +216,7 @@ MRGLattice<Int, Real>::MRGLattice(const MRGLattice<Int, Real> &lat) :
    m_aCoeff = lat.m_aCoeff;
    m_order = lat.m_order;
    m_basis0 = lat.m_basis0;
+   m_y = lat.m_y;
    // Should also copy the basis and all other variables???  ******
 }
 
@@ -219,18 +228,18 @@ MRGLattice<Int, Real>::MRGLattice(const MRGLattice<Int, Real> &lat) :
 template<typename Int, typename Real>
 void MRGLattice<Int, Real>::setaa(const IntVec &aa) {
    m_aCoeff = aa;
-   m_order = aa.length()-1;
+   m_order = aa.length() - 1;
    this->m_dim = 0;  // Current basis is now invalid.
    this->m_dimdual = 0;
    this->m_dim0 = 0;
 }
 
 //============================================================================
-
+/*
 // Builds an upper-triangular basis directly in `d` dimensions, as explained in Section 4.1 of
-// the guide of LatMRG, puts it in `basis`.  Must have d < m_maxdim.
+// the guide of LatMRG, puts it in `basis`.  Must have d <= m_maxdim.
 template<typename Int, typename Real>
-void MRGLattice<Int, Real>::buildBasis0(IntMat &basis, int64_t d) {
+void MRGLattice<Int, Real>::buildBasis00(IntMat &basis, int64_t d) {
    assert(d <= this->m_maxDim);
    int64_t dk = min(d, m_order);
    int64_t i, j, k;
@@ -252,6 +261,43 @@ void MRGLattice<Int, Real>::buildBasis0(IntMat &basis, int64_t d) {
             for (k = 1; k <= m_order; k++)
                basis[i][j] += m_aCoeff[k] * basis[i][j - k] % this->m_modulo;
          }
+      }
+   }
+}
+*/
+
+//============================================================================
+
+// Builds an upper-triangular basis directly in `d` dimensions, as explained in Section 4.1 of
+// the guide of LatMRG, using the matrix V^{(p)} that contains y_k,...,y_{k+t-2}.
+// Puts this matrix in `basis`.  Must have d <= m_maxdim.
+template<typename Int, typename Real>
+void MRGLattice<Int, Real>::buildBasis0(IntMat &basis, int64_t d) {
+   assert(d <= this->m_maxDim);
+   int64_t k = m_order;
+   int64_t dk = min(d, k);
+   int64_t i, j, jj;
+   for (j = 0; j < k-1; j++)
+      m_y[j] = 0;
+   m_y[k-1] = 1;
+   // Put the lower-triangular part of the identity matrix in the upper left corner
+   for (i = 0; i < dk; i++) {
+      for (j = 0; j <= i; j++)
+         basis[i][j] = (i == j);  // Avoid "if" statements.
+   }
+   // Put m times the identity matrix to the lower right part and the zero matrix to the lower left part.
+   for (i = k; i < d; i++)  // If d <= m_order, this does nothing.
+      for (j = 0; j < d; j++)
+         basis[i][j] = this->m_modulo * (i == j);
+   // Fill the rest of the first m_order rows
+   for (j = k; j < d + k - 1; j++) {
+      // Calculate y_j = (a_1 y_{j-1} + ... + a_k y_{j-k}) mod m.
+      m_y[j] = 0;
+      for (jj = 1; jj <= k; jj++)
+         m_y[j] += m_aCoeff[jj] * m_y[j - jj];
+      m_y[j] = m_y[j] % this->m_modulo;
+      for (i = 0; i < min(k, d - j + k - 1); i++) {  // We want i < k and i+j-k+1 < d.
+         basis[i][i + j - k + 1] = m_y[j];
       }
    }
 }
@@ -293,24 +339,60 @@ void MRGLattice<Int, Real>::buildDualBasis(int64_t d) {
 
 //============================================================================
 
+/*
+// Increases the dimension of given basis from d-1 to d dimensions.
+template<typename Int, typename Real>
+void MRGLattice<Int, Real>::incDimBasis00(IntMat &basis, int64_t d) {
+   // int64_t d = 1 + this->getDim();  // New current dimension.
+   assert(d <= this->m_maxDim);
+   int64_t i, j, jj;
+   // Add new row and new column of the primal basis.
+   for (j = 0; j < d - 1; j++)
+      basis[d - 1][j] = 0;
+   if (d > m_order) basis[d - 1][d - 1] = this->m_modulo;
+   else basis[d - 1][d - 1] = 1;
+   for (i = 0; i < d - 1; i++) {
+      basis[i][d - 1] = 0;
+      if (d - 1 >= m_order) {
+         for (jj = 1; jj <= m_order; jj++)
+            basis[i][d - 1] += m_aCoeff[k] * basis[i][d - 1 - jj] % this->m_modulo;
+      }
+   }
+}
+*/
+
+//============================================================================
+
 // Increases the dimension of given basis from d-1 to d dimensions.
 template<typename Int, typename Real>
 void MRGLattice<Int, Real>::incDimBasis0(IntMat &basis, int64_t d) {
    // int64_t d = 1 + this->getDim();  // New current dimension.
    assert(d <= this->m_maxDim);
-   int64_t i, j, k;
-   // Add new row and new column of the primal basis.
+   int64_t k = m_order;
+   int64_t i, j, jj;
+   // Add new row to the primal basis.
    for (j = 0; j < d - 1; j++)
       basis[d - 1][j] = 0;
-   if (d - 1 >= m_order) basis[d - 1][d - 1] = this->m_modulo;
+   if (d > k) basis[d - 1][d - 1] = this->m_modulo;
    else basis[d - 1][d - 1] = 1;
-   for (i = 0; i < d - 1; i++) {
-      basis[i][d - 1] = 0;
-      if (d - 1 >= m_order) {
-         for (k = 1; k <= m_order; k++)
-            basis[i][d - 1] += m_aCoeff[k] * basis[i][d - 1 - k] % this->m_modulo;
-      }
+   if (d == 1) {
+      for (j = 0; j < k-1; j++)
+         m_y[j] = 0;
+      m_y[k-1] = 1;
+      return;
    }
+   // Compute missing y_j.  We assume that the previous ones are there.
+   j = d + k - 2;
+   m_y[j] = 0;
+   for (jj = 1; jj <= k; jj++)
+      m_y[j] += m_aCoeff[jj] * m_y[j - jj];
+   m_y[j] = m_y[j] % this->m_modulo;
+   // Add new column.
+   basis[0][d - 1] = m_y[j];
+   for (i = 1; i < min(d, k); i++)
+      basis[i][d - 1] = basis[i - 1][d - 2];
+   for (i = k; i < d - 1; i++)
+      basis[i][d - 1] = 0;
 }
 
 //============================================================================
@@ -461,7 +543,7 @@ void MRGLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLatti
 //============================================================================
 template<typename Int, typename Real>
 std::string MRGLattice<Int, Real>::toStringCoef() const {
-   return toString(m_aCoeff, 1, this->getDim()+1);
+   return toString(m_aCoeff, 1, this->getDim() + 1);
 }
 
 //============================================================================

@@ -509,9 +509,11 @@ private:
    RealMat m_cho2, m_gramVD;  // Matrices used by redLLLOld.
 
 };
-// End class ReducerBB
+// End of class ReducerBB
+
 
 //=========================================================================
+// IMPLEMENTATION
 
 // Constructor for a given `IntLattice` object `lat`.
 template<typename Int, typename Real>
