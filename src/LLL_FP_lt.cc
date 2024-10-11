@@ -27,8 +27,8 @@
 #include <NTL/mat_ZZ.h>
 #include <NTL/LLL.h>
 
-//#include <latticetester/FlexTypes.h>
-#include <latticetester/Util.h>
+// #include <latticetester/FlexTypes.h>
+// #include <latticetester/Util.h>
 #include <latticetester/LLL_lt.h>
 
 

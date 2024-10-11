@@ -122,14 +122,6 @@ namespace LatticeTester
     return u << shift;
   }
 
-  //===========================================================================
-
-  void MyExit (int64_t status, std::string msg)
-  {
-    std::cout << "\n***** Error " << msg << std::endl;
-    exit (status);
-  }
-
 
   //===========================================================================
 

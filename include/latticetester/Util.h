@@ -1401,7 +1401,11 @@ void calcDual(const Matr &A, Matr &B, int64_t d, const Int &m) {
  * Special exit function. `status` is the status code to return to the
  * system, `msg` is the message to print upon exit.
  */
-void MyExit(int64_t status, std::string msg);
+void MyExit(int64_t status, std::string msg)
+  {
+    std::cout << "\n***** Error " << msg << std::endl;
+    exit (status);
+  }
 
 /**
  * @}
