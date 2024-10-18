@@ -19,7 +19,7 @@
 #include "latticetester/CoordinateSets.h"
 #include "latticetester/WeightsUniform.h"
 #include "latticetester/BasisConstruction.h"
-#include "latmrg/MRGLattice.h"
+#include "latticetester/MRGLattice.h"
 
 using namespace LatticeTester;
 
@@ -33,7 +33,7 @@ void testProjectionsMRG (const Int m, const NTL::vector<Int> a, const NTL::vecto
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    int64_t order = a.size()-1;
    double merit;
-   LatMRG::MRGLattice<Int, Real> lat(m, a, maxdim);
+   MRGLattice<Int, Real> lat(m, a, maxdim);
    WeightsUniform weights(1.0);
    ReducerBB<Int, Real> red(maxdim);   // Reducer created for up to maxdim dimensions.
 
