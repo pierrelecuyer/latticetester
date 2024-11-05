@@ -1,6 +1,6 @@
 ﻿# Lattice Tester
 
-_A software package for measuring the uniformity of integral lattices in the real space_
+A software package for measuring the uniformity of integral lattices in the real space
 
 ## What this software is about
 
@@ -30,8 +30,6 @@ More details on _Lattice Tester_, its underlying theory, its organization, and e
 
 The interface is specified in the 
 [**API documentation**](http://pierrelecuyer.github.io/latticetester/namespaces.html).
-
-_Lattice Tester_ is free open source software, distributed under the Apache License.
 
 ## Compiling
 
@@ -141,4 +139,15 @@ with:
 
     ./waf install
 
+## Authors
+
+François Blouin, Erwan Bourceret, Anna Bragina, Ajmal Chaumun, 
+Raymond Couture, Marco Jacques, David Munger, François Paradis, Marc-Antoine Savard, Richard Simard, 
+Mamadou Thiongane, Josée Turgeon, and Christian Weiss
+have contributed to various versions of this software since around 1986,
+under the lead of Pierre L'Ecuyer.
+
+## License
+
+_Lattice Tester_ is free open source software, distributed under the Apache 2.0 License.
 
