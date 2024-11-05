@@ -1,6 +1,6 @@
 ﻿# Lattice Tester
 
-A software package for measuring the uniformity of integral lattices in the real space
+A C++ library for measuring the uniformity of integral lattices in the real space
 
 ## What this software is about
 
@@ -23,6 +23,7 @@ and [LatMRG](https://github.com/umontreal-simul/latmrg), designed to construct a
 lattice rules (for quasi-Monte-Carlo) and multiple recursive linear 
 congruential random number generators, respectively. 
 It is also intended to be used for other applications related to lattices in the integer space.
+It was developed to work under Linux environments (mostly because of NTL).
 
 ## Documentation
 
@@ -40,7 +41,7 @@ The interface is specified in the
 Compiling *Lattice Tester* requires the following software to be installed:
 
 * [GMP](https://gmplib.org/) compatible version with your NTL installation
-* [NTL](http://www.shoup.net/ntl/index.html) 10.4.0 or later
+* [NTL](http://www.shoup.net/ntl/index.html) 11.5.1 or later
 * [Git](http://git-scm.com/) *(optional for downloading the source code)*
 * [Python](https://www.python.org/) *(Needed by waf to compile and build the library)*
 * [Doxygen](http://www.stack.nl/~dimitri/doxygen/) *(optional for generating
@@ -108,7 +109,7 @@ which means that `/opt/ntl` and `/opt/gmp` all contain subdirectories named
 `include` and `lib` — the following command indicates `waf` where to find these
 two libraries:
 
-        ./waf configure --ntl /opt/ntl --gmp /opt/gmp
+    ./waf configure --ntl /opt/ntl --gmp /opt/gmp
 
 It is possible to set the `CXX` environment variable to the path to a specific
 C++ compiler to be used to build Lattice Tester, before running the `waf
