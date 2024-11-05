@@ -24,6 +24,8 @@ lattice rules (for quasi-Monte-Carlo) and multiple recursive linear
 congruential random number generators, respectively. 
 It is also intended to be used for other applications related to lattices in the integer space.
 
+## Documentation
+
 More details on _Lattice Tester_, its underlying theory, its organization, and examples, can be found in the 
 [**Lattice Tester User's Guide** (in .pdf)](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
 [](http://umontreal-simul.github.io/latticetester/)
@@ -129,13 +131,12 @@ script with `./configure.sh` to avoid typing the configure command by hand
 ### Building and Installing
 
 Once everything is configured correctly, the following command will build the
-*Lattice Tester* library and command-line tool:
+*Lattice Tester* library:
 
     ./waf build
 
 If the build process completed without errors, *Lattice Tester* can be installed to the
-directory specified with the `--prefix` option during the configuration step,
-with:
+directory specified with the `--prefix` option during the configuration step, with:
 
     ./waf install
 
