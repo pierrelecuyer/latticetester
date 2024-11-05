@@ -5,7 +5,7 @@ _A software package for measuring the uniformity of integral lattices in the rea
 ## What this software is about
 
 _Lattice Tester_ is a C++ software library to compute theoretical measures
-of uniformity (figures of merit) for lattices in the $t$-dimensional integer space \f$\ZZ^t\f$
+of uniformity (figures of merit) for lattices in the $t$-dimensional integer space $\ZZ^t$
 (all lattice points have integer coordinates).
 This integral property is often obtained after rescaling an original lattice by an integer factor $m > 1$.
 Such lattices are encountered in particular in quasi-Monte Carlo integration
@@ -25,11 +25,11 @@ congruential random number generators, respectively.
 It is also intended to be used for other applications related to lattices in the integer space.
 
 More details on _Lattice Tester_, its underlying theory, its organization, and examples, can be found in the 
-[*Lattice Tester User's Guide* (in .pdf)](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
+[**Lattice Tester User's Guide** (in .pdf)](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
 [](http://umontreal-simul.github.io/latticetester/).
 
 The interface is specified in the 
-[*API documentation*](http://pierrelecuyer.github.io/latticetester/namespaces.html).
+[**API documentation**](http://pierrelecuyer.github.io/latticetester/namespaces.html).
 
 _Lattice Tester_ is free open source software, distributed under the Apache License.
 
