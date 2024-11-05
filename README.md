@@ -26,12 +26,12 @@ It is also intended to be used for other applications related to lattices in the
 
 More details on _Lattice Tester_, its underlying theory, its organization, and examples, can be found in the 
 [**Lattice Tester User's Guide** (in .pdf)](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
-[](http://umontreal-simul.github.io/latticetester/).
+[](http://umontreal-simul.github.io/latticetester/)
 
 The interface is specified in the 
 [**API documentation**](http://pierrelecuyer.github.io/latticetester/namespaces.html).
 
-## Compiling
+## Compiling and Building
 
 ### Software Dependencies
 
