@@ -24,12 +24,15 @@ lattice rules (for quasi-Monte-Carlo) and multiple recursive linear
 congruential random number generators, respectively. 
 It is also intended to be used for other applications related to lattices in the integer space.
 It was developed to work under Linux environments (mostly because of NTL).
+This version is a significant overhaul compared to the previous official version given 
+[**HERE**](http://umontreal-simul.github.io/latticetester/).
+
 
 ## Documentation
 
 More details on _Lattice Tester_, its underlying theory, its organization, and examples, can be found in the 
 [**Lattice Tester User's Guide** (in .pdf)](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
-[](http://umontreal-simul.github.io/latticetester/)
+This is really the core documentation. 
 
 The interface is specified in the 
 [**API documentation**](http://pierrelecuyer.github.io/latticetester/namespaces.html).
@@ -47,7 +50,7 @@ Compiling *Lattice Tester* requires the following software to be installed:
 * [Doxygen](http://www.stack.nl/~dimitri/doxygen/) *(optional for generating
   the API documentation)*
 
-You will also need a recent compiler compliant with the C++14 standard.
+You also need a recent compiler compliant with (at least) the C++14 standard.
 
 ### Configuring the Build
 
@@ -58,7 +61,7 @@ tree, but it depends on [Python](http://python.org/download), which must be
 available on the system on which *Lattice Tester* is to be compiled.
 
 The commands below should work verbatim under Linux and MacOS systems.
-**Microsoft Windows** users should replace every instance of `./waf` 
+*Microsoft Windows* users should replace every instance of `./waf` 
 with the path under which the Python executable
 (`python.exe`) or simply with `python waf`
 if the Python installation path is accessible from the system `%PATH%`
@@ -66,20 +69,19 @@ environment variable.
 
 Change the current directory to the root directory of the package, for example:
 
-    cd latticetester
+    cd git/gilatticetester
 
-if you obtained the source code with the `git` command.
+if you obtained the source code via `git`.
 If you obtained the source code from the ZIP archive, the directory should be
 named `latticetester-master` instead of `latticetester`.
-At the root of the source tree lies the `waf` script, which manages the build process.
+At the root of the source tree, the `wscript` file contains the waf script that manages the build process.
 
 Try:
 
 	./waf --help
 
 to see the various commands and options.
-
-There are six options that you might want or need to use:
+Some options you might want to use:
 - `--out /path/to/build/location` allows you to specify in which directory the
   build process will operate. The default is `./build`. You will need permission
   to write in that directory.
@@ -97,42 +99,46 @@ There are six options that you might want or need to use:
   will not build it if it is omitted.
 - `--link-static` if this flag is specified, the compiler will link all the 
   libraries statically to the executable programs (the examples). 
-  This might be practical if you installed NTL in non standard paths.
+  This might be convenient if you installed NTL in non standard paths.
 
 First, the project must be configured with:
 
 	./waf configure --needed --flags
 
-For example, if NTL, and GMP are not part of the standard system installation and were
-manually installed under, say, the `/opt/ntl`, and `/opt/gmp` directories —
+A simple 
+
+   ./waf configure
+
+command should be enough to configure `waf` for a minimal build. 
+
+If you also want to build the html documentation, 
+[Doxygen](http://www.stack.nl/~dimitri/doxygen/) must be available on the system
+and you should first configure with
+
+   ./waf configure --build-docs
+
+The waf script in `doc/wscript` manages the documentation build.  
+The Doxygen options are selected in the file `Doxyfile.in` and the main page is in `doc/dox/main.dox`.
+The built documentation is placed in `build/doc/html/` with `index.html` as its main entry.
+
+If NTL, and GMP are not part of the standard system installation and were
+manually installed under, say, the `/opt/ntl`, and `/opt/gmp` directories,
 which means that `/opt/ntl` and `/opt/gmp` all contain subdirectories named
-`include` and `lib` — the following command indicates `waf` where to find these
-two libraries:
+`include` and `lib`, you should do:
 
     ./waf configure --ntl /opt/ntl --gmp /opt/gmp
 
 It is possible to set the `CXX` environment variable to the path to a specific
-C++ compiler to be used to build Lattice Tester, before running the `waf
-configure` command.
+C++ compiler to be used to build Lattice Tester, before running the `waf configure` command.
 
-A simple 
-    ./waf configure
-command should be enough to configure `waf` for a minimal build,
-without documentation. The documentation can be built by
-appending the `--build-docs` option to `waf configure`, if
-  [Doxygen](http://www.stack.nl/~dimitri/doxygen/) is available on the system.
-
-Errors will be reported if required software components cannot be found.  In
-that case, you should check the dependencies installation paths.
-
-If a UNIX shell is available, it is also possible to run the simple `configure.sh`
-script with `./configure.sh` to avoid typing the configure command by hand 
-(that can be useful if you have flags to include).
+In a UNIX shell, it is also possible to run the simple `configure.sh`
+script with `./configure.sh` to avoid typing the configure command by hand. 
+This can be useful if you have many flags to include.
 
 ### Building and Installing
 
-Once everything is configured correctly, the following command will build the
-*Lattice Tester* library:
+Once everything is configured correctly, you can build the
+*Lattice Tester* library via:
 
     ./waf build
 

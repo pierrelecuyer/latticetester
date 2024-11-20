@@ -29,12 +29,13 @@ def build(ctx):
     # Doxyfile
     doc_dir = ctx.root.find_node(ctx.variant_dir).make_node('doc')
     ctx(features='subst',
+            # source='doc-gen',
             source='Doxyfile.in',
             target='Doxyfile',
             DOCDIR=ctx.path.abspath(),
             TOPDIR=ctx.top_dir,
             OUTDIR=doc_dir.abspath(),
-            LATTICETESTER_VERSION=ctx.set_version('latticetester'))
+            LATTICETESTER_VERSION=ctx.set_version('version-latticetester'))
 
     # Doxygen
     dox = doxygen(env=ctx.env)

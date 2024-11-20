@@ -75,9 +75,9 @@ def configure(ctx):
             ctx.fatal('Doxygen is required for building documentation.\n' +
                       'Get it from http://www.stack.nl/~dimitri/doxygen/')
 
-
-    ctx.version_file('latticetester')
-    version_tag = ctx.set_version('latticetester')
+    # The version number is set by reading git tags; see the file `waftools/version.py`.
+    ctx.version_file('version-latticetester')
+    version_tag = ctx.set_version('version-latticetester')
     ctx.define('LATTICETESTER_VERSION', version_tag)
     ctx.msg("Setting LatticeTester version", version_tag)
 
