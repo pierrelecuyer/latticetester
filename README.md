@@ -69,57 +69,58 @@ environment variable.
 
 Change the current directory to the root directory of the package, for example:
 
-    cd git/gilatticetester
+    cd git/latticetester
 
 if you obtained the source code via `git`.
 If you obtained the source code from the ZIP archive, the directory should be
 named `latticetester-master` instead of `latticetester`.
 At the root of the source tree, the `wscript` file contains the waf script that manages the build process.
 
-Try:
+To see the various commands and options, try
 
 	./waf --help
 
-to see the various commands and options.
-Some options you might want to use:
-- `--out /path/to/build/location` allows you to specify in which directory the
-  build process will operate. The default is `./build`. You will need permission
-  to write in that directory.
-- `--prefix /path/to/installation/location` allows you to specify in which 
-  directory you would like to install *Lattice Tester* after it's compilation.
-  The default is `/usr/local` on Linux (waf's default). You will need permission
-  to write in that directory.
-- `--gmp /path/to/gmp` allows you to specify the location of your gmp
-  installation. You will only need this flag if waf doesn't find your gmp
-  installation automatically.
-- `--ntl /path/to/NTL` allows you to specify the location of your NTL 
-  installation. You will only need this flag if waf does not find your NTL
-  installation automatically.
-- `--build-docs` waf will build the documentation if this flag is specified and 
-  will not build it if it is omitted.
-- `--link-static` if this flag is specified, the compiler will link all the 
-  libraries statically to the executable programs (the examples). 
-  This might be convenient if you installed NTL in non standard paths.
-
 First, the project must be configured with:
 
-	./waf configure --needed --flags
+   ./waf configure --flags
 
 A simple 
 
    ./waf configure
 
-command should be enough to configure `waf` for a minimal build. 
+command (with no flags) should be enough to configure `waf` for a minimal build. 
+Otherwise, some of the commonly used options include:
 
-If you also want to build the html documentation, 
+- `--out /path/to/build/location` specifies in which directory the
+  build process will operate. The default is `./build`. You need permission
+  to write in that directory.
+- `--prefix /path/to/installation/location` specifies in which 
+  directory *Lattice Tester* will be installed after it's compilation.
+  The default is `/usr/local` on Linux (waf's default). You need permission
+  to write in that directory.
+- `--gmp /path/to/gmp` specifies the location of the gmp installation. 
+  This is needed only if waf does not find gmp automatically.
+- `--ntl /path/to/NTL` specifies the location of the NTL installation. 
+  This is needed only if waf does not find NTL automatically.
+ - `--build-docs` waf will build the documentation if and only if this flag is specified 
+  in the configure step. 
+- `--link-static` if this flag is specified, the compiler will link all the 
+  libraries statically to the executable programs (the examples). 
+  This might be convenient if NTL is installed in non standard paths.
+
+To build the html documentation, 
 [Doxygen](http://www.stack.nl/~dimitri/doxygen/) must be available on the system
-and you should first configure with
+and you must first configure with
 
    ./waf configure --build-docs
 
 The waf script in `doc/wscript` manages the documentation build.  
-The Doxygen options are selected in the file `Doxyfile.in` and the main page is in `doc/dox/main.dox`.
+The Doxygen options are selected in the file `Doxyfile.in` and the source of the main page 
+is in `doc/dox/main.dox`.
 The built documentation is placed in `build/doc/html/` with `index.html` as its main entry.
+To deploy the documentation on the `pierrelecuyer.github.io/latticetester/` GitHub pages,
+the contents of this `html` directory must be moved to the `gh-pages` branch of `latticetester`. 
+The `README.md` in that branch provides more details on how to proceed for this deployment.
 
 If NTL, and GMP are not part of the standard system installation and were
 manually installed under, say, the `/opt/ntl`, and `/opt/gmp` directories,
@@ -131,7 +132,7 @@ which means that `/opt/ntl` and `/opt/gmp` all contain subdirectories named
 It is possible to set the `CXX` environment variable to the path to a specific
 C++ compiler to be used to build Lattice Tester, before running the `waf configure` command.
 
-In a UNIX shell, it is also possible to run the simple `configure.sh`
+In a UNIX shell, it is also possible to write and run a simple `configure.sh`
 script with `./configure.sh` to avoid typing the configure command by hand. 
 This can be useful if you have many flags to include.
 
