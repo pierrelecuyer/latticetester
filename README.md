@@ -30,9 +30,9 @@ This version is a significant overhaul compared to the previous official version
 
 ## Documentation
 
-More details on _Lattice Tester_, its underlying theory, its organization, and examples, can be found in the 
-[**Lattice Tester User's Guide** (in .pdf)](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
-This is really the core documentation. 
+A detailed description of _Lattice Tester_, its underlying theory, its organization, and examples, can be found in the 
+[**Lattice Tester User's Guide**](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
+That .pdf document is the core documentation. 
 
 The interface is specified in the 
 [**API documentation**](http://pierrelecuyer.github.io/latticetester/namespaces.html).
@@ -115,8 +115,11 @@ and you must first configure with
    ./waf configure --build-docs
 
 The waf script in `doc/wscript` manages the documentation build.  
-The Doxygen options are selected in the file `Doxyfile.in` and the source of the main page 
-is in `doc/dox/main.dox`.
+The Doxygen options are selected in the file `Doxyfile.in`. 
+For example, one may select if members from the `.cc` files are included or not
+by changing the `FILE_PATTERNS` option, select if the `#include` statements 
+are shown or not with the `SHOW_INCLUDE_FILES` option, etc. 
+The source of the main page is in `doc/dox/main.dox`.
 The built documentation is placed in `build/doc/html/` with `index.html` as its main entry.
 To deploy the documentation on the `pierrelecuyer.github.io/latticetester/` GitHub pages,
 the contents of this `html` directory must be moved to the `gh-pages` branch of `latticetester`. 
