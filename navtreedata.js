@@ -1,84 +1,42 @@
 /*
-@ @licstart  The following is the entire license notice for the
-JavaScript code in this file.
+ @licstart  The following is the entire license notice for the JavaScript code in this file.
 
-Copyright (C) 1997-2017 by Dimitri van Heesch
+ The MIT License (MIT)
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+ Copyright (C) 1997-2020 by Dimitri van Heesch
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ and associated documentation files (the "Software"), to deal in the Software without restriction,
+ including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ The above copyright notice and this permission notice shall be included in all copies or
+ substantial portions of the Software.
 
-@licend  The above is the entire license notice
-for the JavaScript code in this file
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ @licend  The above is the entire license notice for the JavaScript code in this file
 */
 var NAVTREE =
 [
-  [ "Lattice Tester Guide", "index.html", [
-    [ "Overview", "index.html#over", [
-      [ "Content Outline", "index.html#over_ctn", null ],
-      [ "Presentation of Lattice Tester", "index.html#presentation", null ],
-      [ "Types and representations", "index.html#overview_type", null ],
-      [ "Links", "index.html#links", null ]
-    ] ],
-    [ "Tutorial", "db/d4e/tutorial.html", [
-      [ "Using the library", "db/d4e/tutorial.html#library_usage", null ],
-      [ "Basis manipulation", "db/d4e/tutorial.html#sec_basis", null ],
-      [ "Using the input and output classes", "db/d4e/tutorial.html#sec_io", null ],
-      [ "The Reducer class", "db/d4e/tutorial.html#sec_reduc", null ],
-      [ "Construction figures of merit", "db/d4e/tutorial.html#sec_FOM", null ]
-    ] ],
-    [ "Usage instructions", "da/d1b/usage.html", [
-      [ "Compiling the Library", "da/d1b/usage.html#usage_build", [
-        [ "Software Dependencies", "da/d1b/usage.html#usage_build_soft", null ],
-        [ "Acquiring/Building/Installing the program", "da/d1b/usage.html#usage_build_build", null ],
-        [ "Types and representations", "da/d1b/usage.html#Types", null ]
-      ] ],
-      [ "Using the executable", "da/d1b/usage.html#usage_program", [
-        [ "Basis Construction", "da/d1b/usage.html#Basis", null ],
-        [ "Dual Construction", "da/d1b/usage.html#Dual", null ],
-        [ "Lattice Reduction", "da/d1b/usage.html#Lattice", null ],
-        [ "Shortest Vector Research", "da/d1b/usage.html#Shortest", null ],
-        [ "Figure of Merit Computation", "da/d1b/usage.html#Figure", null ]
-      ] ]
-    ] ],
-    [ "Background", "da/d18/a_intro.html", [
-      [ "Lattices on the Integers", "da/d18/a_intro.html#lattices_def", [
-        [ "Definitions", "da/d18/a_intro.html#lattices_def_def", null ],
-        [ "Algorithms on lattices", "da/d18/a_intro.html#lattices_def_algo", null ]
-      ] ],
-      [ "Measures of Uniformity", "da/d18/a_intro.html#sec_merit", [
-        [ "Shortest Nonzero Lattice Vector and Spectral Test", "da/d18/a_intro.html#sec_merit_short", [
-          [ "The Spectral Test", "da/d18/a_intro.html#sec_merit_spectral", null ]
-        ] ],
-        [ "Lattice Reduction Algorithms", "da/d18/a_intro.html#sec_latred", [
-          [ "Pairwise reduction", "da/d18/a_intro.html#sec_latred_dieter", null ],
-          [ "Lenstra-Lenstra-Lovasz reduction", "da/d18/a_intro.html#sec_latred_lll", null ],
-          [ "Block Korkine-Zolotarev Reduction", "da/d18/a_intro.html#sec_latred_bkz", null ],
-          [ "A Quick Note on Precision", "da/d18/a_intro.html#sec_latred_precision", null ]
-        ] ],
-        [ "Shortest Vector Computation", "da/d18/a_intro.html#sec_svp", null ]
-      ] ]
-    ] ],
+  [ "Lattice Tester Online Documentation", "index.html", [
     [ "Todo List", "dd/da0/todo.html", null ],
     [ "Bibliography", "d0/de3/citelist.html", null ],
     [ "Namespaces", "namespaces.html", [
+      [ "Overview of files and classes", "index.html#overview", null ],
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
-        [ "All", "namespacemembers.html", null ],
+        [ "All", "namespacemembers.html", "namespacemembers_dup" ],
         [ "Functions", "namespacemembers_func.html", null ],
         [ "Variables", "namespacemembers_vars.html", null ],
         [ "Typedefs", "namespacemembers_type.html", null ],
-        [ "Enumerations", "namespacemembers_enum.html", null ]
+        [ "Enumerations", "namespacemembers_enum.html", null ],
+        [ "Enumerator", "namespacemembers_eval.html", null ]
       ] ]
     ] ],
     [ "Classes", "annotated.html", [
@@ -89,7 +47,20 @@ var NAVTREE =
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", null ],
-        [ "Typedefs", "functions_type.html", null ]
+        [ "Typedefs", "functions_type.html", null ],
+        [ "Enumerations", "functions_enum.html", null ],
+        [ "Enumerator", "functions_eval.html", null ],
+        [ "Related Symbols", "functions_rela.html", null ]
+      ] ]
+    ] ],
+    [ "Files", "files.html", [
+      [ "File List", "files.html", "files_dup" ],
+      [ "File Members", "globals.html", [
+        [ "All", "globals.html", null ],
+        [ "Functions", "globals_func.html", null ],
+        [ "Variables", "globals_vars.html", null ],
+        [ "Typedefs", "globals_type.html", null ],
+        [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
   ] ]
@@ -98,8 +69,13 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"d8/d3b/classLatticeTester_1_1Lacunary.html#abfa0005744bccda2a6356c1bb8b591d4",
-"namespacemembers.html"
+"d1/dea/classLatticeTester_1_1NormaMinkL2.html#a66e01a570a3727bf5a64fc8760db1634",
+"d6/d0b/structLatticeTester_1_1CoordinateSets_1_1Subsets_1_1const__iterator_1_1end__tag.html",
+"d7/dad/LLL__FP__lt_8cc.html#a7b80bd49abbf21083739a2091b07569b",
+"d8/d74/namespaceLatticeTester.html#a0d0e87ed1324a4d20f9289b472fe7152",
+"d9/d32/classLatticeTester_1_1Chrono.html#afd6d46c7ce75e32bdbb9dbfe49728dbfa76e7acb5aa152cb48e5ed083874b8569",
+"dd/d1d/Weights_8h.html",
+"df/de5/classLatticeTester_1_1NormaBestBound.html#a63d045807de2d7363738db34e796174b"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

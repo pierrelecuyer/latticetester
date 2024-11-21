@@ -1,13 +1,21 @@
 var searchData=
 [
-  ['matrix',['matrix',['../d4/d6f/classNTL_1_1matrix.html#a16f367fc850c9ca39bbbb796971de141',1,'NTL::matrix::matrix()'],['../d4/d6f/classNTL_1_1matrix.html#aafb33f5a0a25d024f9745e4c85f99d99',1,'NTL::matrix::matrix(const Mat&lt; T &gt; &amp;a)'],['../d4/d6f/classNTL_1_1matrix.html#accc96531e7fef556bbc9385321f4c8f6',1,'NTL::matrix::matrix(size_type size1, size_type size2)']]],
-  ['matrix_5frow',['matrix_row',['../df/d79/classNTL_1_1matrix__row.html#a5fee8c03f9712aa9db56bcb46a11c0b6',1,'NTL::matrix_row']]],
-  ['max_5fsize',['max_size',['../d0/d01/classNTL_1_1vector.html#ad6e252b8460b90061612ceefb5d27736',1,'NTL::vector']]],
-  ['maxorder',['maxOrder',['../d8/d6d/classLatticeTester_1_1CoordinateSets_1_1Subsets.html#a1da2cca150a8e2380008ef64af0545d4',1,'LatticeTester::CoordinateSets::Subsets']]],
-  ['minorder',['minOrder',['../d8/d6d/classLatticeTester_1_1CoordinateSets_1_1Subsets.html#a0ae5d84db94d0c904ddd2a28bba0285b',1,'LatticeTester::CoordinateSets::Subsets']]],
-  ['modifvect',['ModifVect',['../d8/d74/namespaceLatticeTester.html#ad43d2de9716e712790093eff2c12631f',1,'LatticeTester']]],
-  ['modulo',['Modulo',['../d8/d74/namespaceLatticeTester.html#a33b2ac0aaf5689dbf1f2225dbf14b327',1,'LatticeTester']]],
-  ['multiplyweights',['multiplyWeights',['../da/d3e/classLatticeTester_1_1ProductWeights.html#a0a82c07a628425656a2c1e7184bda025',1,'LatticeTester::ProductWeights']]],
-  ['myexit',['MyExit',['../d8/d74/namespaceLatticeTester.html#a49105dd8e915243488440f570b3951bd',1,'LatticeTester']]],
-  ['mysqrt',['mysqrt',['../d8/d74/namespaceLatticeTester.html#a9abb8da9fdc5fa2c37d44165f8660aaf',1,'LatticeTester']]]
+  ['matrix_0',['matrix',['../d4/d6f/classNTL_1_1matrix.html#a16f367fc850c9ca39bbbb796971de141',1,'NTL::matrix::matrix()'],['../d4/d6f/classNTL_1_1matrix.html#aafb33f5a0a25d024f9745e4c85f99d99',1,'NTL::matrix::matrix(const Mat&lt; T &gt; &amp;a)'],['../d4/d6f/classNTL_1_1matrix.html#accc96531e7fef556bbc9385321f4c8f6',1,'NTL::matrix::matrix(size_type size1, size_type size2)']]],
+  ['matrix_5frow_1',['matrix_row',['../df/d79/classNTL_1_1matrix__row.html#a5fee8c03f9712aa9db56bcb46a11c0b6',1,'NTL::matrix_row']]],
+  ['max_5fabs_2',['max_abs',['../d4/d9e/LLL__FPInt_8h.html#afe7a6b5300b38db2c87bfe07546ae66d',1,'max_abs(double *v, long n):&#160;LLL_FPInt.h'],['../d7/dad/LLL__FP__lt_8cc.html#afe7a6b5300b38db2c87bfe07546ae66d',1,'max_abs(double *v, long n):&#160;LLL_FP_lt.cc'],['../da/d5d/LLL__QP__lt_8cc.html#a6f635f8c385826176cd5deb247e70b64',1,'max_abs(quad_float *v, long n):&#160;LLL_QP_lt.cc']]],
+  ['max_5fsize_3',['max_size',['../d0/d01/classNTL_1_1vector.html#ad6e252b8460b90061612ceefb5d27736',1,'NTL::vector']]],
+  ['maxorder_4',['maxOrder',['../d8/d6d/classLatticeTester_1_1CoordinateSets_1_1Subsets.html#a1da2cca150a8e2380008ef64af0545d4',1,'LatticeTester::CoordinateSets::Subsets']]],
+  ['mdualbasis_5',['mDualBasis',['../d8/d74/namespaceLatticeTester.html#a3846fec78f4c1d9e01cdd3cf3e39402a',1,'LatticeTester::mDualBasis(const IntMat &amp;basis, IntMat &amp;basisDual, const Int &amp;m)'],['../d8/d74/namespaceLatticeTester.html#a79552d814332bea466c22b483081c2d5',1,'LatticeTester::mDualBasis(const IntMat &amp;basis, IntMat &amp;basisDual, const Int &amp;m)'],['../d8/d74/namespaceLatticeTester.html#a16a8ee34d4c3df1e33dd4da6e2802ff6',1,'LatticeTester::mDualBasis(const NTL::matrix&lt; NTL::ZZ &gt; &amp;basis, NTL::matrix&lt; NTL::ZZ &gt; &amp;basisDual, const NTL::ZZ &amp;m)']]],
+  ['mdualuppertriangular_6',['mDualUpperTriangular',['../d8/d74/namespaceLatticeTester.html#a7138efa423d213c77627f9e530e37533',1,'LatticeTester::mDualUpperTriangular(const IntMat &amp;basis, IntMat &amp;basisDual, const Int &amp;m, long dim=0)'],['../d8/d74/namespaceLatticeTester.html#a6c3c0496c2570e89c7e0cb221911e9ca',1,'LatticeTester::mDualUpperTriangular(const IntMat &amp;A, IntMat &amp;B, const Int &amp;m, long dim)']]],
+  ['mdualuppertriangular96_7',['mDualUpperTriangular96',['../d8/d74/namespaceLatticeTester.html#a81445b4f83a91c2b0c25685c17b66d0b',1,'LatticeTester::mDualUpperTriangular96(IntMat &amp;basis, IntMat &amp;basisDual, const Int &amp;m, long dim=0)'],['../d8/d74/namespaceLatticeTester.html#a6384cd156f8be50657091b44faa46d44',1,'LatticeTester::mDualUpperTriangular96(IntMat &amp;basis, IntMat &amp;basisDual, const Int &amp;m, long dim)'],['../d8/d74/namespaceLatticeTester.html#ad3208c417df961de57aa5dd66a316708',1,'LatticeTester::mDualUpperTriangular96(NTL::matrix&lt; NTL::ZZ &gt; &amp;basis, NTL::matrix&lt; NTL::ZZ &gt; &amp;basisDual, const NTL::ZZ &amp;m, long dim)']]],
+  ['minorder_8',['minOrder',['../d8/d6d/classLatticeTester_1_1CoordinateSets_1_1Subsets.html#a0ae5d84db94d0c904ddd2a28bba0285b',1,'LatticeTester::CoordinateSets::Subsets']]],
+  ['modifvect_9',['ModifVect',['../d8/d74/namespaceLatticeTester.html#adc9a8b7fb956c99df2713c1767b3f257',1,'LatticeTester']]],
+  ['modulo_10',['Modulo',['../d8/d74/namespaceLatticeTester.html#a33b2ac0aaf5689dbf1f2225dbf14b327',1,'LatticeTester']]],
+  ['mrglattice_11',['MRGLattice',['../d9/d4e/classLatticeTester_1_1MRGLattice.html#a8210853724e4a18eac3a6bc835352776',1,'LatticeTester::MRGLattice::MRGLattice(const Int &amp;m, const IntVec &amp;aa, int64_t maxDim, NormType norm=L2NORM)'],['../d9/d4e/classLatticeTester_1_1MRGLattice.html#aec4e1975284d59b072a2ebef329c6c48',1,'LatticeTester::MRGLattice::MRGLattice(const MRGLattice&lt; Int, Real &gt; &amp;Lat)']]],
+  ['mul_12',['mul',['../d2/d5a/namespaceNTL.html#a9b18934c734704b6369d4e93d6b558f8',1,'NTL::mul(int64_t &amp;x, const int64_t a, const int64_t b)'],['../d2/d5a/namespaceNTL.html#a26599fdddb3c11423636d30884da10ac',1,'NTL::mul(vector64 &amp;x, const vector64 &amp;a, const int64_t b)']]],
+  ['muladdto_13',['MulAddTo',['../d2/d5a/namespaceNTL.html#a9aa0159dd8f37a4c72dce137fc72ccd5',1,'NTL']]],
+  ['mulsubfrom_14',['MulSubFrom',['../d2/d5a/namespaceNTL.html#afb24ba43ee5b0172c26a59ffbd4600b0',1,'NTL']]],
+  ['multiplyweights_15',['multiplyWeights',['../d1/d8a/classLatticeTester_1_1WeightsProduct.html#a2ce3fce933033c5ab244e5aa0199cb2f',1,'LatticeTester::WeightsProduct']]],
+  ['myexit_16',['MyExit',['../d8/d74/namespaceLatticeTester.html#af79fc7cd4419fe00202f162860573d89',1,'LatticeTester']]],
+  ['mysqrt_17',['mysqrt',['../d8/d74/namespaceLatticeTester.html#a9abb8da9fdc5fa2c37d44165f8660aaf',1,'LatticeTester']]]
 ];

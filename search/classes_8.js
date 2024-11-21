@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['orderdependentweights',['OrderDependentWeights',['../d3/d01/classLatticeTester_1_1OrderDependentWeights.html',1,'LatticeTester']]]
+  ['paramreader_0',['ParamReader',['../da/d47/classLatticeTester_1_1ParamReader.html',1,'LatticeTester']]]
 ];

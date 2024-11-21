@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['numcols',['NumCols',['../d8/dcd/classLatticeTester_1_1Config.html#ae5cd8282b7aec200f916486700ba52d3',1,'LatticeTester::Config']]],
-  ['numrows',['NumRows',['../d8/dcd/classLatticeTester_1_1Config.html#ae027b303017127355f60f226c251ac49',1,'LatticeTester::Config']]]
+  ['red_5ffudge_0',['red_fudge',['../d4/d9e/LLL__FPInt_8h.html#a4311e5b219d474513793859c6f36ced7',1,'red_fudge:&#160;LLL_FPInt.h'],['../d7/dad/LLL__FP__lt_8cc.html#a4311e5b219d474513793859c6f36ced7',1,'red_fudge:&#160;LLL_FP_lt.cc']]],
+  ['rr_5fgs_5ftime_1',['RR_GS_time',['../d7/dad/LLL__FP__lt_8cc.html#a2ed96bcc9cd29144a95b1cd28cc18afa',1,'LLL_FP_lt.cc']]]
 ];

@@ -1,6 +1,7 @@
 var classLatticeTester_1_1NormaBestBound =
 [
-    [ "NormaBestBound", "df/de5/classLatticeTester_1_1NormaBestBound.html#af7a93463ad2a84d2768eafc379c13dca", null ],
-    [ "~NormaBestBound", "df/de5/classLatticeTester_1_1NormaBestBound.html#a9a10d0b58ca46f4093a715b2a184324d", null ],
-    [ "getGamma", "df/de5/classLatticeTester_1_1NormaBestBound.html#a7c6a618d514298fe8f765b26ba896c81", null ]
+    [ "NormaBestBound", "df/de5/classLatticeTester_1_1NormaBestBound.html#a5daf15998d61b366fb312e1c655c32b8", null ],
+    [ "NormaBestBound", "df/de5/classLatticeTester_1_1NormaBestBound.html#ae321ecf0bf1c57ffbda461716db88c30", null ],
+    [ "~NormaBestBound", "df/de5/classLatticeTester_1_1NormaBestBound.html#aa5f6b8b0ec02467e8016beda2b4879d1", null ],
+    [ "getGamma", "df/de5/classLatticeTester_1_1NormaBestBound.html#a63d045807de2d7363738db34e796174b", null ]
 ];
