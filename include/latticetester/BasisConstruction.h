@@ -50,34 +50,32 @@
 using namespace LatticeTester;
 using namespace NTL;
 
-namespace LatticeTester {
-
 /**
- * This static class offers methods (functions) to construct a basis from a set of generating
+ * This file offers functions to construct a basis from a set of generating
  * vectors that are not necessarily independent, to construct a triangular basis,
  * to construct the basis for a projection over a given subset of coordinates,
  * and to obtain the \f$m\f$-dual of a given basis.
  * The implementation relies on NTL and uses NTL matrices.
- * When the basis turns out to have fewer rows than columns, some of the methods
+ * When the basis turns out to have fewer rows than columns, some of the functions
  * add implicitly the rescaled unit vectors to the set of generating vectors.
  * In that case, the basis matrix is always square and all the vectors of the form
  * \f$m \be_i\f$ belong to the lattice.
  *
- * NTL already offers an efficient method to construct an LLL-reduced basis from a set
+ * NTL already offers an efficient procedure to construct an LLL-reduced basis from a set
  * of generating vectors.  This is the most effective way of constructing a basis
- * and it is encapsulated in the `LLLConstruction0` method given below.
- * This method does not assume that the rescaled unit vectors \f$m \be_i\f$ belong
+ * and it is encapsulated in the `LLLConstruction0` function given below.
+ * This function does not assume that the rescaled unit vectors \f$m \be_i\f$ belong
  * to the lattices and it does not even know about \f$m\f$.
- * The method `LLLBasisConstruction` adds those vectors to the set of generating vectors,
+ * The function `LLLBasisConstruction` adds those vectors to the set of generating vectors,
  * so it always returns a square basis.
  *
- * We also offer an alternative methods that construct a triangular basis from a set of
+ * We also offer an alternative functions that construct a triangular basis from a set of
  * generating vectors. They always add the rescaled unit vectors implicitly to the set.
- * The method `lowerTriangularBasis` constructs a lower-triangular basis, while
+ * The function `lowerTriangularBasis` constructs a lower-triangular basis, while
  * `upperTriangularBasis` constructs an upper-triangular basis.
  *
- * To compute the  \f$m\f$-dual of a given basis, we have a general (but slow) method
- * implemented in `mDualBasis`, and a much faster method in `mDualUpperTriangular`
+ * To compute the  \f$m\f$-dual of a given basis, we have a general (but slow) function
+ * implemented in `mDualBasis`, and a much faster function in `mDualUpperTriangular`
  * that works only when the basis is upper-triangular.
  *
  * We also have functions to compute the basis of a projection of a given lattice over
@@ -92,7 +90,7 @@ namespace LatticeTester {
  * via the optional parameters `r` and `c`.  This can permit one to use the same `IntMat`
  * object for several numbers of dimensions, to avoid doing many object creations or resizing.
  *
- * All functions in this class are static, so there is no reason to create any
+ * All functions in this file are static, so there is no reason to create any
  * `BasisConstruction` object. We also avoid to create new objects (such as vectors and
  * matrices) inside these functions.  These functions can be called thousands or millions
  * of times in a program, and we want the user to be able to re-use the same vectors and
@@ -111,12 +109,14 @@ namespace LatticeTester {
  */
 
 
+namespace LatticeTester {
+
 /**
  * This function takes a set of generating vectors of a lattice in matrix `gen` and
  * finds a lattice basis by applying LLL reduction with the given value of `delta`,
  * using the NTL implementation specified by `prec`.
  * The basis is returned in the first rows of `gen`, in a number of rows equal to its rank.
- * See the class `EnumTypes` and the documentation of LLL in NTL for the meaning and
+ * See the file `EnumTypes` and the documentation of LLL in NTL for the meaning and
  * choices for `prec`. The default value of delta is not very close to 1 because the
  * goal here is just to compute a basis. It can be taken much closer to 1 if we
  * really prefer a highly-reduced basis.
@@ -134,7 +134,7 @@ namespace LatticeTester {
  * This function *does not* assume that all vectors \f$m e_i\f$ belong to the lattice, so
  * it may return a basis matrix that has fewer rows than columns!
  * To make sure that these vectors belong to the lattice, we can add them
- * explicitly beforehand to the set of generating vectors, or call the next method.
+ * explicitly beforehand to the set of generating vectors, or call the next function.
  */
 template<typename IntMat, typename RealVec>
 static long LLLConstruction0(IntMat &gen, const double delta = 0.9, long r = 0, long c = 0,
@@ -180,12 +180,12 @@ static void upperTriangularBasis(IntMat &gen, IntMat &basis, const Int &m, long 
 
 /**
  * Takes an upper triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
- * The method assumes that each coefficient on the diagonal of `basis` is nonzero and divides `m`.
+ * The function assumes that each coefficient on the diagonal of `basis` is nonzero and divides `m`.
  * That is, the basis matrix must be square and invertible.
  * The algorithm is described in the Lattice Tester guide \cite iLEC22l.
  * Since the basis is upper triangular, its m-dual will be lower triangular.
  * When `dim > 0`, it gives the number of rows and columns of the matrix `basis`
- * that is actually used. Otherwise (by default) the method uses `basis.numCols()`.
+ * that is actually used. Otherwise (by default) the function uses `basis.numCols()`.
  */
 template<typename IntMat, typename Int>
 static void mDualUpperTriangular(const IntMat &basis, IntMat &basisDual, const Int &m,
@@ -258,7 +258,7 @@ static void projectionConstructionLLL(const IntMat &inBasis, IntMat &projBasis,
  * The two matrices `projBasis` and `genTemp` must have enough columns to hold the
  * projection and at least as many rows as the number of rows that we use from `inBasis`.
  * We pass `genTemp` as a parameter to avoid the internal creation of a new matrix each time,
- * in case we call this method several times.  Its contents will be modified.
+ * in case we call this function several times.  Its contents will be modified.
  * In the second version, this matrix is not passed and a temporary one is created internally,
  * which may add a bit of overhead.
  */

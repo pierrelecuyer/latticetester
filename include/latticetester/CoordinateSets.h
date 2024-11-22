@@ -576,7 +576,7 @@ namespace LatticeTester {
      * `BASE` is a type of coordinate sets that serves as a base. This should
      * be one of the classes defined in the `CoordinateSets` namespace.
      *
-     * \todo This class needs to be benchmarked
+     * Note: This class should be benchmarked
      * to see how much slower it is (because it will be).
      */
     template <typename BASE> class AddCoordinate {

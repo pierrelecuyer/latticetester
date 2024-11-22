@@ -1,7 +1,7 @@
 /**
  * 
  * \if NESTED_PROJECT
- * \page latticetester Lattice Tester Online Dcumentation
+ * \page latticetester *Lattice Tester Online Dcumentation*
  * \else
  * \mainpage
  * \endif
@@ -9,12 +9,12 @@
  * These pages provide an online API documentation of
  * [**Lattice Tester**](https://github.com/pierrelecuyer/latticetester),
  * a C++ library for measuring the uniformity of integral lattices in the real space. 
- * This version is still under construction; the previous version can be found 
+ * This version is still under construction; the previous stable version can be found 
  * [**HERE**](https://github.com/umontreal-simul/latticetester).
-  *  More details on the purpose of *Lattice Tester*, the mathematics behind, the algorithms,
+ * A detailed description of the purpose of *Lattice Tester*, the mathematics behind, the algorithms,
  * its organization, and examples of programs that use it, can be found in the 
- * [**Lattice Tester User's Guide** (in .pdf)](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf),
- * which is really the core documentation.
+ * [**Lattice Tester User's Guide**](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
+ * This .pdf document is really the core documentation.
  * 
  * *Lattice Tester* was built primarily as a base library for
  * [LatNet Builder](https://github.com/umontreal-simul/latbuilder),
@@ -92,4 +92,14 @@
  * not offered in NTL.
  * `Random` implements a 64-bit uniform random number generator, used when we make random selections.
  * 
+ *
+ * \subsection notes Notes on this documentation
+ *
+ * - The list of classes does not contain everything, because some files contain only static functions.
+ * - Look at the list of files.
+ * - Only the .h files are included in this documentation.  
+ *   To also include the .cc files (and perhaps others), 
+ *   it suffices to change the `FILE_PATTERNS` option in the `Doxyfile.in`.
+ * 
+ *
  */

@@ -28,7 +28,7 @@
 #include <cmath>
 
 /**
- * This module extends the `Vec` and `Mat` classes of NTL. It was previously
+ * \file This module extends the `Vec` and `Mat` classes of NTL. It was previously
  * necessary because NTL and boost (an old dependency) did not use the same 
  * function names and indices.
  * Most of the methods below only define alias names for some NTL methods.
@@ -47,7 +47,7 @@
 namespace NTL {
 
 /**
- * A subclass of the `NTL::Vec<T>` class. It extends its parent with a some additional
+ * \class A subclass of the `NTL::Vec<T>` class. It extends its parent with a some additional
  * methods and overloads (changes) a few other methods for compatibility with boost.  !!!!!   BAD!
  * ** WARNING **: Avoid using these redefined methods, because this can be very confusing
  * and dangerous. We should probably remove them!                            *********

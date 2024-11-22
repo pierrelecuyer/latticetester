@@ -18,7 +18,7 @@
 /*
  * \file latticetester/Util.h
  *
- * This class provides several utility functions for Lattice Tester, as well as functions
+ * This file provides several utility functions for Lattice Tester, as well as functions
  * implementing interactions with NTL.
  */
 

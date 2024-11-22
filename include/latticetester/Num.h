@@ -19,7 +19,7 @@
  *
  * \file latticetester/Num.h
  *
- * This module implements a few mathematical functions of obscure relevance.
+ * This file implements some mathematical functions.
  */
 
 #ifndef LATTICETESTER__NUM_H
@@ -27,6 +27,9 @@
 
 #include <cstdint>
 
+/**
+ * These functions are in the latticetester namespace.
+ */
 namespace LatticeTester {
 
   /**

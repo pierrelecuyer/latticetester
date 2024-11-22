@@ -27,34 +27,13 @@
 
 using namespace std;
 
-
 #undef USE_ANSI_CLOCK
 
 namespace LatticeTester {
 
   /**
    * This class acts as an interface to the system clock to compute the CPU
-   * time used by parts of a program. Even though the ANSI/ISO macro
-   * <tt>CLOCKS_PER_SEC = 1000000</tt> is the number of clock ticks per second
-   * for the value returned by the ANSI-C standard `clock` function (so this
-   * function returns the number of microseconds), on some systems where the
-   * 32-bit type `long` is used to measure time, the value returned by `clock`
-   * wraps around to negative values after about 36 minutes. On some other
-   * systems where time is measured using the 32-bit type `unsigned long`, the
-   * clock may wrap around to 0 after about 72 minutes. When the macro
-   * <tt>USE_ANSI_CLOCK</tt> is undefined, a non-ANSI-C clock is used. On
-   * Linux-Unix systems, it calls the POSIX function `times` to get the CPU
-   * time used by a program. On a Windows platform (when the macro
-   * <tt>HAVE_WINDOWS_H</tt> is defined), the Windows function
-   * `GetProcessTimes` will be used to measure the CPU time used by programs.
-   * On Linux\f$|\f$Unix platforms, if the macro <tt>USE_ANSI_CLOCK</tt> is
-   * defined, the timers will call the ANSI C `clock` function. When
-   * <tt>USE_ANSI_CLOCK</tt> is left undefined, class `Chrono` gets the CPU
-   * time used by a program via an alternate non-ANSI C timer based on the
-   * POSIX (The Portable Operating System Interface) function `times`, assuming
-   * this function is available. The POSIX standard is described in the IEEE
-   * Std 1003.1-2001 document (see The Open Group web site at
-   * [http://www.opengroup.org/onlinepubs/007904975/toc.htm](http://www.opengroup.org/onlinepubs/007904975/toc.htm)).
+   * time used by parts of a program.
    *
    * Every object `Chrono` acts as an independent *stopwatch*. Several such
    * stopwatchs can run at any given time. An object of type `Chrono` must be
@@ -77,6 +56,28 @@ namespace LatticeTester {
    * (...) (<em>suppose 330 CPU seconds are used here</em>.) <br>
    * t = timer.val (Chrono::MIN); // Here, t = 5.5 <br>
    * timer.write (Chrono::HMS); // Prints: 00:05:30.00 </tt>
+   *
+   * Note that even though the ANSI/ISO macro
+   * <tt>CLOCKS_PER_SEC = 1000000</tt> is the number of clock ticks per second
+   * for the value returned by the ANSI-C standard `clock` function (so this
+   * function returns the number of microseconds), on some systems where the
+   * 32-bit type `long` is used to measure time, the value returned by `clock`
+   * wraps around to negative values after about 36 minutes. On some other
+   * systems where time is measured using the 32-bit type `unsigned long`, the
+   * clock may wrap around to 0 after about 72 minutes. When the macro
+   * <tt>USE_ANSI_CLOCK</tt> is undefined, a non-ANSI-C clock is used. On
+   * Linux-Unix systems, it calls the POSIX function `times` to get the CPU
+   * time used by a program. On a Windows platform (when the macro
+   * <tt>HAVE_WINDOWS_H</tt> is defined), the Windows function
+   * `GetProcessTimes` will be used to measure the CPU time used by programs.
+   * On Linux\f$|\f$Unix platforms, if the macro <tt>USE_ANSI_CLOCK</tt> is
+   * defined, the timers will call the ANSI C `clock` function. When
+   * <tt>USE_ANSI_CLOCK</tt> is left undefined, class `Chrono` gets the CPU
+   * time used by a program via an alternate non-ANSI C timer based on the
+   * POSIX (The Portable Operating System Interface) function `times`, assuming
+   * this function is available. The POSIX standard is described in the IEEE
+   * Std 1003.1-2001 document (see The Open Group web site at
+   * [http://www.opengroup.org/onlinepubs/007904975/toc.htm](http://www.opengroup.org/onlinepubs/007904975/toc.htm)).
    */
 
 class Chrono {

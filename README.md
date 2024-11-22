@@ -115,11 +115,11 @@ and you must first configure with
    ./waf configure --build-docs
 
 The waf script in `doc/wscript` manages the documentation build.  
+The source of the main page is in `doc/dox/main.dox`.
 The Doxygen options are selected in the file `Doxyfile.in`. 
 For example, one may select if members from the `.cc` files are included or not
-by changing the `FILE_PATTERNS` option, select if the `#include` statements 
+by changing the `FILE_PATTERNS` option, select if the `#include` statements at the head of a file
 are shown or not with the `SHOW_INCLUDE_FILES` option, etc. 
-The source of the main page is in `doc/dox/main.dox`.
 The built documentation is placed in `build/doc/html/` with `index.html` as its main entry.
 To deploy the documentation on the `pierrelecuyer.github.io/latticetester/` GitHub pages,
 the contents of this `html` directory must be moved to the `gh-pages` branch of `latticetester`. 
