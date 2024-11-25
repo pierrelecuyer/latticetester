@@ -39,7 +39,7 @@ using namespace LatticeTester;
  * first `numRepVerb` of them. The results for the scatter plot will be in file `outFile`.
  */
 template<typename Int, typename Real>
-void testLoop(const Int &m, Int &a0, const NTL::vector<int64_t> t, long numRepVerb, long numRepStat,
+void testLoop(const Int &m, Int &a0, const NTL::Vec<int64_t> t, long numRepVerb, long numRepStat,
         std::string &outFile) {
    std::string stringTypes;  // To print the selected flexible types.
    strTypes<Int, Real>(stringTypes);  // Function from FlexTypes
@@ -65,8 +65,8 @@ void testLoop(const Int &m, Int &a0, const NTL::vector<int64_t> t, long numRepVe
    Chrono timer;
 
    // This part is to collect statistics for a large sample of values of a.
-   NTL::vector<int64_t> countDimOfMinPrimal(maxdim);
-   NTL::vector<int64_t> countDimOfMinDual(maxdim);
+   NTL::Vec<int64_t> countDimOfMinPrimal(maxdim);
+   NTL::Vec<int64_t> countDimOfMinDual(maxdim);
    for (int64_t j = 0; j <= maxdim; j++) {
       countDimOfMinPrimal[j] = 0;
       countDimOfMinDual[j] = 0;
@@ -111,7 +111,7 @@ int main() {
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
-   NTL::vector<int64_t> t(4); // One t vector for the FOM.
+   NTL::Vec<int64_t> t(4); // One t vector for the FOM.
    t[0] = 16;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 16;    // Also pairs, triples, and quadruples.
    t[2] = 12;
@@ -119,7 +119,7 @@ int main() {
    std::string outFile = "pairsPrimalDualFOM16.dat";
    testLoop<NTL::ZZ, double>(m, a0, t, 10, 1000, outFile);
 
-   t.resize(5);  // Another t vector.
+   t.SetLength(5);  // Another t vector.
    t[0] = 32;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 32;    // Also pairs, triples, etc.
    t[2] = 16;

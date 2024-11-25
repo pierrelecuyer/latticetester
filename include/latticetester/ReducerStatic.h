@@ -30,7 +30,7 @@
 #include "latticetester/IntLattice.h"
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/NTLWrap.h"
-#include "latticetester/LLL_FPInt.h"
+#include "latticetester/LLL_FP64.h"
 #include "latticetester/LLL_lt.h"
 
 using namespace LatticeTester;
@@ -58,7 +58,7 @@ namespace LatticeTester {
  * The same `IntMat` object can then be used for several lattices of different sizes.
  */
 
-// typedef NTL::vector<Int> IntVec;  // Int is not defined!
+// typedef NTL::Vec<Int> IntVec;  // Int is not defined!
 // typedef NTL::matrix<Int> IntMat;
 
 /**
@@ -118,32 +118,32 @@ void redLLL(IntMat &basis, double delta, long dim, RealVec *sqlen) {
 
 // A specialization for the case where Int = int64_t and Real = double.
 template<>
-void redLLL(NTL::matrix<int64_t> &basis, double delta, long dim, NTL::vector<double> *sqlen) {
-   NTL::LLL_FPInt<long, NTL::matrix<long>>(basis, delta, dim, dim, sqlen);
+void redLLL(NTL::matrix<int64_t> &basis, double delta, long dim, NTL::Vec<double> *sqlen) {
+   NTL::LLL_FP64(basis, delta, dim, dim, sqlen);
 }
 
 // A specialization for the case where Int = ZZ and Real = double.
 template<>
-void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::vector<double> *sqlen) {
+void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<double> *sqlen) {
    //NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
    NTL::LLL_FP_lt(basis, delta, dim, dim, sqlen);
 }
 
 // A specialization for the case where Int = ZZ and Real = xdouble.
 template<>
-void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::vector<xdouble> *sqlen) {
+void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<xdouble> *sqlen) {
    NTL::LLL_XD_lt(basis, delta, dim, dim, sqlen);
 }
 
 // A specialization for the case where Int = ZZ and Real = quad_float.
 template<>
-void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::vector<quad_float> *sqlen) {
+void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<quad_float> *sqlen) {
    NTL::LLL_QP_lt(basis, delta, dim, dim, sqlen);
 }
 
 // A specialization for the case where Int = ZZ and Real = RR.
 template<>
-void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::vector<NTL::RR> *sqlen) {
+void redLLL(NTL::matrix<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<NTL::RR> *sqlen) {
    NTL::LLL_RR_lt(basis, delta, dim, dim, sqlen);
 }
 
@@ -173,35 +173,35 @@ void redBKZ(IntMat &basis, double delta, long blocksize, long prune, long dim, R
 // Specialization for Int = int64_t.
 template<>
 void redBKZ(NTL::matrix<int64_t> &basis, double delta, long blocksize, long prune, long dim,
-      NTL::vector<double> *sqlen) {
-   NTL::BKZ_FPInt<long, NTL::matrix<long>>(basis, delta, blocksize, prune, dim, dim, sqlen);
+      NTL::Vec<double> *sqlen) {
+   NTL::BKZ_FP64(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = double.
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
-      NTL::vector<double> *sqlen) {
+      NTL::Vec<double> *sqlen) {
    NTL::BKZ_FP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = xdouble.   `precision` is not used.
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
-      NTL::vector<xdouble> *sqlen) {
+      NTL::Vec<xdouble> *sqlen) {
    NTL::BKZ_XD_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = quad_float.   `precision` is not used.
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
-      NTL::vector<quad_float> *sqlen) {
+      NTL::Vec<quad_float> *sqlen) {
    NTL::BKZ_QP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = RR.   `precision` is not used.
 template<>
 void redBKZ(NTL::matrix<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
-      NTL::vector<NTL::RR> *sqlen) {
+      NTL::Vec<NTL::RR> *sqlen) {
    NTL::BKZ_RR_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 

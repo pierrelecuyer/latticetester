@@ -17,6 +17,7 @@
 
 #ifndef LATTICETESTER_LACUNARY_H
 #define LATTICETESTER_LACUNARY_H
+
 #include "latticetester/Util.h"
 #include "latticetester/NTLWrap.h"
 
@@ -41,9 +42,6 @@ namespace LatticeTester {
  */
 template<typename Int>
 class Lacunary {
-
-private:
-   typedef NTL::vector<Int> IntVec;
 
 public:
 

@@ -62,9 +62,9 @@ template<typename Int, typename Real>
 class Rank1Lattice: public IntLatticeExt<Int, Real> {
 
 private:
-   typedef NTL::vector<Int> IntVec;
-   typedef NTL::matrix<Int> IntMat;
-   typedef NTL::vector<Real> RealVec;
+   typedef NTL::Vec<Int> IntVec;
+   typedef NTL::Mat<Int> IntMat;
+   typedef NTL::Vec<Real> RealVec;
 
 public:
 

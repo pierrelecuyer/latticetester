@@ -18,14 +18,16 @@
 #ifndef LATTICETESTER__NTLWRAP_H
 #define LATTICETESTER__NTLWRAP_H
 
+#include <cstdint>
+#include <cmath>
+
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
 #include <NTL/vec_ZZ.h>
 #include <NTL/mat_ZZ.h>
 
-#include <cstdint>
-#include <cmath>
+using namespace NTL;
 
 /**
  * \file This module extends the `Vec` and `Mat` classes of NTL. It was previously

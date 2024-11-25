@@ -41,6 +41,10 @@
 #include "NTL/tools.h"
 #include "NTL/ZZ.h"
 #include "NTL/RR.h"
+#include <NTL/vector.h>
+#include <NTL/matrix.h>
+#include <NTL/vec_ZZ.h>
+#include <NTL/mat_ZZ.h>
 // #include <NTL/mat_GF2.h>
 
 #include "latticetester/EnumTypes.h"
@@ -765,13 +769,12 @@ inline void CreateVect(Real *&A, int64_t d) {
 }
 
 /**
- * Creates the vector `A` of dimensions `d+1` and initializes its
- * elements to 0. The type `Vect` has to have a `resize(integer_type)` method
- * that sets the size of the instance to the value of the argument.
+ * Creates the vector `A` of dimensions `d+1` and initializes its elements to 0.
+ * The type `Vect` must have a method `SetLength`, as for `Vec<T>` in NTL.
  */
 template<typename Vect>
 inline void CreateVect(Vect &A, int64_t d) {
-	A.resize(d + 1);
+	A.SetLength(d + 1);
 	for (int64_t i = 0; i < (d + 1); i++)
 		A[i] = 0;
 }
@@ -788,12 +791,12 @@ inline void DeleteVect(Real *&A) {
 
 /**
  * Frees the memory used by the vector `A`, destroying all the elements it
- * contains. `Vect` type has to have a `clear()` method that deallocates all
+ * contains. `Vect` type has to have a `kill()` method that deallocates all
  * the elements in the vector.
  */
 template<typename Vect>
 inline void DeleteVect(Vect &A) {
-	A.clear();
+	A.kill();
 }
 
 /**
@@ -1077,7 +1080,7 @@ inline void CreateMatr(Real **&A, int64_t line, int64_t col) {
  */
 template<typename IntMat>
 inline void CreateMatr(IntMat &A, int64_t d) {
-	A.resize(d, d);
+	A.SetDims(d, d);
 	for (int64_t i = 0; i < d; i++) {
 		for (int64_t j = 0; j < d; j++)
 			A[i][j] = 0;
@@ -1091,7 +1094,7 @@ inline void CreateMatr(IntMat &A, int64_t d) {
  */
 template<typename IntMat>
 inline void CreateMatr(IntMat &A, int64_t line, int64_t col) {
-	A.resize(line, col);
+	A.SetDims(line, col);
 	for (int64_t i = 0; i < line; i++) {
 		for (int64_t j = 0; j < col; j++)
 			A[i][j] = 0;

@@ -86,13 +86,6 @@ class ReducerBB {
 
 // using namespace LatticeTester;
 
-private:
-   // Local typedefs for matrix and vector types needed in the class.
-   typedef NTL::vector<Int> IntVec;
-   typedef NTL::matrix<Int> IntMat;
-   typedef NTL::vector<Real> RealVec;
-   typedef NTL::matrix<Real> RealMat;
-
 public:
 
    /**
@@ -539,22 +532,22 @@ void ReducerBB<Int, Real>::init(int64_t maxDim) {
    int64_t dim1 = maxDim;
    int64_t dim2 = maxDim;
    if (dim2 <= 2) dim2++;
-   m_c0.resize(dim1, dim1);
-   m_c2.resize(dim1, dim1);
-   m_cho2.resize(dim2, dim2);
-   m_gramVD.resize(dim2, dim2);
+   m_c0.SetDims(dim1, dim1);
+   m_c2.SetDims(dim1, dim1);
+   m_cho2.SetDims(dim2, dim2);
+   m_gramVD.SetDims(dim2, dim2);
    // Indices in m_IC can go as high as maxDim + 2.
    m_IC = new int64_t[2 + dim1];
 
-   m_nv.resize(dim1);
-   m_bv.resize(dim1);
-   m_bw.resize(dim1);
-   m_n2.resize(dim1);
-   m_zLR.resize(dim1);
-   m_zLI.resize(dim1);
-   m_zShort.resize(dim1);
-   m_dc2.resize(dim1);
-   m_BoundL2.resize(dim1);
+   m_nv.SetLength(dim1);
+   m_bv.SetLength(dim1);
+   m_bw.SetLength(dim1);
+   m_n2.SetLength(dim1);
+   m_zLR.SetLength(dim1);
+   m_zLI.SetLength(dim1);
+   m_zShort.SetLength(dim1);
+   m_dc2.SetLength(dim1);
+   m_BoundL2.SetLength(dim1);
 
    m_lMin = std::numeric_limits<double>::max();
    m_lMin2 = m_lMin;
@@ -645,7 +638,7 @@ ReducerBB<Int, Real>::~ReducerBB() {
 
 template<typename Int, typename Real>
 void ReducerBB<Int, Real>::setBoundL2(const RealVec &thresholds, int64_t dim1, int64_t dim2) {
-   m_BoundL2.resize(dim2);
+   m_BoundL2.SetLength(dim2);
    for (int64_t i = dim1; i < dim2; i++)
       m_BoundL2[i] = thresholds[i];
 }
@@ -1657,8 +1650,8 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
        * is already lower triangular?
        */
       IntMat m_v, m_v2;   // Here we create new matrices each time!!!!
-      m_v.resize(dim, dim);
-      m_v2.resize(dim, dim);
+      m_v.SetDims(dim, dim);
+      m_v2.SetDims(dim, dim);
       Int mod = m_lat->getModulus();
       CopyMatr(m_v, m_lat->getBasis(), dim, dim);
       lowerTriangularBasis(m_v, m_v2, mod);

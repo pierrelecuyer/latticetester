@@ -44,7 +44,7 @@
 #include "latticetester/IntLattice.h"
 #include "latticetester/Util.h"
 #include "latticetester/Coordinates.h"
-#include "latticetester/LLL_FPInt.h"
+#include "latticetester/LLL_FP64.h"
 #include "latticetester/LLL_lt.h"
 
 using namespace LatticeTester;
@@ -286,36 +286,36 @@ static void projectionConstruction(const IntMat &inBasis, IntMat &projBasis,
 // This one works only for `precision == DOUBLE` and Real == double.
 template<>
 long LLLConstruction0(NTL::matrix<long> &gen, const double delta, long r, long c,
-      NTL::vector<double> *sqlen) {
-   //return NTL::LLL_FPInt(gen, delta, r, c, sqlen);
-   return NTL::LLL_FPInt<long, NTL::matrix<long>>(gen, delta, r, c, sqlen);
+      NTL::Vec<double> *sqlen) {
+   return NTL::LLL_FP64(gen, delta, r, c, sqlen);
+   // return NTL::LLL_FPInt<long>(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + double implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, const double delta, long r, long c,
-      NTL::vector<double> *sqlen) {
+      NTL::Vec<double> *sqlen) {
    return NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + xdouble implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, const double delta, long r, long c,
-      NTL::vector<xdouble> *sqlen) {
+      NTL::Vec<xdouble> *sqlen) {
    return NTL::LLL_XD_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + quad_float implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, const double delta, long r, long c,
-      NTL::vector<quad_float> *sqlen) {
+      NTL::Vec<quad_float> *sqlen) {
    return NTL::LLL_QP_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + RR implementation.
 template<>
 long LLLConstruction0(NTL::matrix<NTL::ZZ> &gen, const double delta, long r, long c,
-      NTL::vector<NTL::RR> *sqlen) {
+      NTL::Vec<NTL::RR> *sqlen) {
    return NTL::LLL_RR_lt(gen, delta, r, c, sqlen);
 }
 
@@ -349,7 +349,7 @@ void LLLBasisConstruction(IntMat &gen, const Int &m, double delta, long r, long 
 template<typename IntMat, typename Int>
 void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m, long dim1, long dim2) {
    // Note:  dim1 = r, dim2 = c.   The new basis should be c x c.
-   NTL::vector<Int> coeff_gcd, coeff_xi, xi; // Several vectors are created locally here.
+   NTL::Vec<Int> coeff_gcd, coeff_xi, xi; // Several vectors are created locally here.
    Int gcd, gcd_tower, C, D;
    long i, j, k, l;
    // In case r or c is zero:
@@ -447,7 +447,7 @@ void lowerTriangularBasis(IntMat &gen, IntMat &basis, const Int &m, long dim1, l
 
 template<typename IntMat, typename Int>
 void upperTriangularBasis(IntMat &gen, IntMat &basis, const Int &m, long dim1, long dim2) {
-   NTL::vector<Int> coeff_gcd, coeff_xi, xi;  // Here we create new vectors!
+   NTL::Vec<Int> coeff_gcd, coeff_xi, xi;  // Here we create new vectors!
    Int gcd, gcd_tower, C, D;
    long i, j, k, l;
    // In case dim1 or dim2 is zero:
@@ -735,7 +735,10 @@ void mDualBasis(const NTL::matrix<NTL::ZZ> &basis, NTL::matrix<NTL::ZZ> &basisDu
 //=================================================================================
 template<typename IntMat>
 void projectMatrix(const IntMat &in, IntMat &out, const Coordinates &proj, long r) {
-   if (in == out) MyExit(1, "in and out must be different IntMat objects.");
+   if (in == out) {
+      std::cout << "\n***** Error: in and out must be different IntMat objects " << std::endl;
+      exit (1);
+   }
    if (!r) r = in.NumRows();   // In case r=0.
    // We assume without testing that `out` is large enough for proj.size().
    long j = 0;

@@ -25,7 +25,7 @@
 #include <NTL/RR.h>
 #include <NTL/xdouble.h>
 #include <NTL/quad_float.h>
-#include "latticetester/NTLWrap.h"  // This one is needed for the vector and matrix types.
+// #include "latticetester/NTLWrap.h"  // This one is needed for the vector and matrix types.
 
 /**
  * There are five admissible combinations of types for `(Int, Real)`.
@@ -61,7 +61,6 @@ void strTypes(std::string &str) {
    // std::cout << "Types: " << str << "\n\n";
 }
 
-
 #define   LD  1
 #define   ZD  2
 //#define   LX  3
@@ -70,6 +69,11 @@ void strTypes(std::string &str) {
 #define   ZQ  6
 //#define   LR  7
 #define   ZR  8
+
+#define IntVec NTL::Vec<Int>
+#define IntMat NTL::Mat<Int>
+#define RealVec NTL::Vec<Real>
+#define RealMat NTL::Mat<Real>
 
 // std::string strFlexTypes0;
 
@@ -99,10 +103,10 @@ void strTypes(std::string &str) {
 #endif
 
 #ifdef TYPES_CODE
-     typedef NTL::vector<Int> IntVec;
-     typedef NTL::matrix<Int> IntMat;
-     typedef NTL::vector<Real> RealVec;
-     typedef NTL::matrix<Real> RealMat;
+     typedef NTL::Vec<Int> IntVec;
+     typedef NTL::Mat<Int> IntMat;
+     typedef NTL::Vec<Real> RealVec;
+     typedef NTL::Mat<Real> RealMat;
 #endif
 
 //     }

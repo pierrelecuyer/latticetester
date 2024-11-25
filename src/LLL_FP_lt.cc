@@ -4,21 +4,6 @@
 // version of the `LLL_FP` module of NTL available at https://libntl.org/.
 // It was modified because we wanted extra flexibility in the functions.
 
-/*#include <string>
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <vector>
-#include <array>
-#include <set>
-#include <map>
-#include <cmath>
-#include <cstdlib>
-#include <cstdint>
-#include <type_traits>
-*/
-
-//#include <NTL/tools.h>
 #include <NTL/fileio.h>
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -27,8 +12,6 @@
 #include <NTL/mat_ZZ.h>
 #include <NTL/LLL.h>
 
-// #include <latticetester/FlexTypes.h>
-// #include <latticetester/Util.h>
 #include <latticetester/LLL_lt.h>
 
 
@@ -38,13 +21,11 @@
 // Some array indices start at 1 in NTL and at 0 here, but not all of them.
 // Both here and in NTL, some indices start at 0 and others start at 1.
 // This makes the code complicated and not so easy to modify.
-// This macro is defined in NTL/tools.h
 
 // This macro is defined in NTL/tools.h
 NTL_START_IMPL
 
-static inline 
-void CheckFinite(double *p)
+static inline void CheckFinite(double *p)
 {
    if (!IsFinite(p)) ResourceError("LLL_FP: numbers too big...use LLL_XD");
 }
@@ -1416,4 +1397,3 @@ long BKZ_FP_lt(mat_ZZ& BB, double delta, long beta, long prune,
 }
 
 NTL_END_IMPL
-

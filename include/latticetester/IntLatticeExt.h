@@ -49,9 +49,9 @@ namespace LatticeTester {
 template<typename Int, typename Real>
 class IntLatticeExt: public IntLattice<Int, Real> {
 private:
-   typedef NTL::vector<Int> IntVec;
+   typedef NTL::Vec<Int> IntVec;
    typedef NTL::matrix<Int> IntMat;
-   typedef NTL::vector<Real> RealVec;
+   typedef NTL::Vec<Real> RealVec;
    typedef NTL::matrix<Real> RealMat;
 
 public:
@@ -150,11 +150,11 @@ protected:
 template<typename Int, typename Real>
 IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, NormType norm) :
       IntLattice<Int, Real>(m, maxDim, norm) {
-   this->m_basis.resize(this->m_maxDim, this->m_maxDim);
-   this->m_vecNorm.resize(this->m_maxDim);
+   this->m_basis.SetDims(this->m_maxDim, this->m_maxDim);
+   this->m_vecNorm.SetLength(this->m_maxDim);
    // this->setNegativeNorm();
-   this->m_dualbasis.resize(this->m_maxDim, this->m_maxDim);
-   this->m_dualvecNorm.resize(this->m_maxDim);
+   this->m_dualbasis.SetDims(this->m_maxDim, this->m_maxDim);
+   this->m_dualvecNorm.SetLength(this->m_maxDim);
    // this->setDualNegativeNorm();
 }
 //===========================================================================

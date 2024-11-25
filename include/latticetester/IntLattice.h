@@ -18,18 +18,21 @@
 #ifndef LATTICETESTER_INTLATTICE_H
 #define LATTICETESTER_INTLATTICE_H
 
-#include "latticetester/NTLWrap.h"
-#include "latticetester/EnumTypes.h"
-#include "latticetester/Util.h"
-#include "latticetester/Coordinates.h"
-#include "latticetester/BasisConstruction.h"
-// #include "latticetester/LLL_lt.h"
-
 #include <string>
 #include <sstream>
 #include <iomanip>
 #include <cassert>
 
+#include <NTL/xdouble.h>
+#include <NTL/RR.h>
+#include "latticetester/NTLWrap.h"
+#include "latticetester/EnumTypes.h"
+#include "latticetester/Util.h"
+#include "latticetester/Coordinates.h"
+#include "latticetester/BasisConstruction.h"
+#include "latticetester/LLL_lt.h"
+
+using namespace NTL;
 using namespace LatticeTester;
 
 namespace LatticeTester {
@@ -539,10 +542,10 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType no
    m_dim = 0;         // I changed this !!!   *****
    m_dimdual = 0;
    m_norm = norm;
-   m_basis.resize(maxDim, maxDim);
-   m_vecNorm.resize(maxDim);
-   m_dualbasis.resize(maxDim, maxDim);
-   m_dualvecNorm.resize(maxDim);
+   m_basis.SetDims(maxDim, maxDim);
+   m_vecNorm.SetLength(maxDim);
+   m_dualbasis.SetDims(maxDim, maxDim);
+   m_dualvecNorm.SetLength(maxDim);
    setNegativeNorm();
 }
 
@@ -560,9 +563,9 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType no
  m_norm = norm;
  assert(basis.NumRows() == maxDim);
  m_basis = basis;
- m_vecNorm.resize(maxDim);
- // m_dualbasis.resize(maxDim, maxDim);
- m_dualvecNorm.resize(maxDim);
+ m_vecNorm.SetLength(maxDim);
+ // m_dualbasis.SetDims(maxDim, maxDim);
+ m_dualvecNorm.SetLength(maxDim);
  setNegativeNorm();
  }
  */
@@ -577,7 +580,7 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType no
  assert(dualbasis.NumRows() == maxDim);
  m_dualbasis = dualbasis;
  m_dimdual = ??????
- m_dualvecNorm.resize(maxDim);
+ m_dualvecNorm.SetLength(maxDim);
  setDualNegativeNorm();
  }
  */
@@ -891,8 +894,9 @@ void IntLattice<Int, Real>::sortBasis(int64_t d) {
 
 /*=========================================================================*/
 
+/*
 inline double sqrtReal(const double &a) {
-   return NTL::sqrt(a);
+   return std::sqrt(a);
 }
 inline xdouble sqrtReal(const xdouble &a) {
    return NTL::sqrt(a);
@@ -903,6 +907,7 @@ inline quad_float sqrtReal(const quad_float &a) {
 inline NTL::RR sqrtReal(const NTL::RR &a) {
    return NTL::sqrt(a);
 }
+*/
 
 template<typename Int, typename Real>
 std::string IntLattice<Int, Real>::toString() const {
@@ -939,7 +944,8 @@ std::string IntLattice<Int, Real>::toString() const {
          os << "NaN OR Not computed";
       } else {
          if (this->m_norm == L2NORM) {
-            os << sqrtReal(this->m_vecNorm[i]);
+            os << std::sqrt(conv<double>(this->m_vecNorm[i]));
+            // os << sqrtReal(this->m_vecNorm[i]);
          } else {
             os << this->m_vecNorm[i];
          }
@@ -949,7 +955,8 @@ std::string IntLattice<Int, Real>::toString() const {
       if (this->m_dualvecNorm[i] < 0) os << "NaN OR Not computed";
       else {
          if (this->m_norm == L2NORM) {
-            os << sqrtReal(this->m_dualvecNorm[i]);
+            os << std::sqrt(conv<double>(this->m_dualvecNorm[i]));
+            // os << sqrtReal(this->m_dualvecNorm[i]);
          } else {
             os << this->m_dualvecNorm[i];
          }
