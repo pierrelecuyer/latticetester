@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "latticetester/Random.h"
 #include <climits>
+#include "latticetester/Random.h"
 
 
 #define GERME   (ULONG_MAX / 54321)

@@ -18,10 +18,10 @@
 #ifndef LATTICETESTER__POD_WEIGHTS_H
 #define LATTICETESTER__POD_WEIGHTS_H
 
+#include <vector>
 #include "latticetester/Weights.h"
 #include "latticetester/WeightsOrderDependent.h"
 #include "latticetester/WeightsProduct.h"
-#include <vector>
 
 namespace LatticeTester {
   /**

@@ -57,7 +57,7 @@ void testLoop(const Int &m, Int &a0, const NTL::Vec<int64_t> t, long numRepVerb,
    NormaBestLat normaDual(-log(m), 1, maxdim);  // Factors computed for dual.
    FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
    FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true);
-   IntLattice<Int, Real> proj(m, t.size());
+   IntLattice<Int, Real> proj(m, t.length());
    Int a = a0;        // The LCG multiplier
    double meritPrimal, meritDual;         // The merit values, for primal and dual.
    int64_t dimMeritPrimal, dimMeritDual;  // The dimensions of the worst-case projections.
@@ -65,8 +65,10 @@ void testLoop(const Int &m, Int &a0, const NTL::Vec<int64_t> t, long numRepVerb,
    Chrono timer;
 
    // This part is to collect statistics for a large sample of values of a.
-   NTL::Vec<int64_t> countDimOfMinPrimal(maxdim);
-   NTL::Vec<int64_t> countDimOfMinDual(maxdim);
+   NTL::Vec<int64_t> countDimOfMinPrimal;
+   NTL::Vec<int64_t> countDimOfMinDual;
+   countDimOfMinPrimal.SetLength(maxdim+1);
+   countDimOfMinDual.SetLength(maxdim+1);
    for (int64_t j = 0; j <= maxdim; j++) {
       countDimOfMinPrimal[j] = 0;
       countDimOfMinDual[j] = 0;
@@ -111,7 +113,8 @@ int main() {
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
-   NTL::Vec<int64_t> t(4); // One t vector for the FOM.
+   NTL::Vec<int64_t> t; // One t vector for the FOM.
+   t.SetLength(4);
    t[0] = 16;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 16;    // Also pairs, triples, and quadruples.
    t[2] = 12;

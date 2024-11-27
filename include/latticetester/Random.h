@@ -20,13 +20,13 @@
 
 #include <cstdint>
 #include <climits>
-#define GERME   (ULONG_MAX / 54321)
-
 #include <NTL/ZZ.h>
 
 namespace LatticeTester {
 
-  /**
+#define GERME (ULONG_MAX / 54321)
+
+   /**
    * This class generates random numbers (in fact pseudo-random numbers).
    * The generator used is the 64-bits generator `LFSR258`
    * from L'Ecuyer \cite rLEC99a  with period length near \f$2^{258}\f$

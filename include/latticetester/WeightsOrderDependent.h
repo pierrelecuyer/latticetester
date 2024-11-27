@@ -18,9 +18,8 @@
 #ifndef LATTICETESTER__ORDER_DEPENDENT_WEIGHTS_H
 #define LATTICETESTER__ORDER_DEPENDENT_WEIGHTS_H
 
-#include "latticetester/Weights.h"
-
 #include <vector>
+#include "latticetester/Weights.h"
 
 namespace LatticeTester {
   /**

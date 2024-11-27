@@ -68,11 +68,11 @@ int main() {
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     // We apply LLL to reduce basis1.
-    LLLConstruction0<IntMat, RealVec>(basis1, 0.5, 0, 0, &sqlen);
+    LLLConstruction0<Int, Real>(basis1, 0.5, 0, 0, &sqlen);
     std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
     std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
 
-    LLLConstruction0<IntMat, RealVec>(basis1, 0.99999, 0, 0, &sqlen);
+    LLLConstruction0<Int, Real>(basis1, 0.99999, 0, 0, &sqlen);
     std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
     std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
 
@@ -84,7 +84,7 @@ int main() {
     mDualUpperTriangular(basis2, basisDual, m);
     std::cout << "m-dual of upper-triangular basis: \n" << basisDual << "\n\n";
     // We reduce this basisDual with LLL.
-    LLLConstruction0<IntMat, RealVec>(basisDual, 0.99999, 0, 0, &sqlen);
+    LLLConstruction0<Int, Real>(basisDual, 0.99999, 0, 0, &sqlen);
     std::cout << "m-dual basis after LLL with delta=0.99999: \n" << basisDual << "\n";
     std::cout << "Square length of first dual basis vector: " << sqlen[0] << "\n\n";
 
@@ -100,7 +100,7 @@ int main() {
     projectMatrix(basis2, basisProj, proj, dim);
     std::cout << "basisProj after projectMatrix (the generating vectors): \n" << basisProj << "\n";
     // We construct a basis for this projection using LLL.
-    LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.5, dim, dimProj);
+    LLLBasisConstruction<Int, Real>(basisProj, m, 0.5, dim, dimProj);
     std::cout << "Basis for this projection, obtained with LLL: \n" << basisProj << "\n";
 
     // Basis construction with upper-triangular method from `basis2`, using `dim` rows.
@@ -118,7 +118,7 @@ int main() {
     mDualUpperTriangular(basisProj, basisDualProj, m, dimProj);
     std::cout << "Triangular basis for m-dual of this projection: \n"
             << basisDualProj << "\n";
-    LLLConstruction0<IntMat, RealVec>(basisDualProj, 0.99999, dimProj, dimProj, &sqlen);
+    LLLConstruction0<Int, Real>(basisDualProj, 0.99999, dimProj, dimProj, &sqlen);
     std::cout << "m-dual basis of proj after LLL with delta=0.99999: \n" << basisDualProj
             << "\n";
     std::cout << "Square length of first m-dual basis vector: " << sqlen[0] << "\n\n";
@@ -133,7 +133,7 @@ int main() {
     projectMatrix(basisDual, basisProj, proj, dim);
     std::cout << "We now look at the direct projection of the dual over the coordinates in proj.\n";
     std::cout << "Generating vectors for the projection of the dual: \n" << basisProj << "\n";
-    LLLBasisConstruction<IntMat, Int, RealVec>(basisProj, m, 0.99999, dim, dimProj, &sqlen);
+    LLLBasisConstruction<Int, Real>(basisProj, m, 0.99999, dim, dimProj, &sqlen);
     std::cout << "Reduced basis for this projection (first 3 rows), after LLL with delta=0.99999: \n" << basisProj << "\n";
     std::cout << "Square length of first m-dual basis vector: " << sqlen[0] << "\n\n";
 

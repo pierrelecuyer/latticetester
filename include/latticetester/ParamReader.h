@@ -18,13 +18,6 @@
 #ifndef LATTICETESTER_PARAMREADER_H
 #define LATTICETESTER_PARAMREADER_H
 
-#include "NTL/ZZ.h"
-
-#include "latticetester/NTLWrap.h"
-#include "latticetester/Util.h"
-#include "latticetester/EnumTypes.h"
-#include "../examples/Config.h"
-
 #include <string>
 #include <cstring>
 #include <vector>
@@ -32,6 +25,14 @@
 #include <fstream>
 #include <sstream>
 #include <cstdint>
+
+#include "NTL/ZZ.h"
+
+#include "latticetester/Util.h"
+#include "latticetester/EnumTypes.h"
+#include "../examples/Config.h"
+
+using namespace LatticeTester;
 
 namespace LatticeTester {
 
@@ -55,8 +56,8 @@ namespace LatticeTester {
   template<typename Int, typename Real>
     class ParamReader { 
       private:
-        typedef NTL::vector<Int> IntVec;
-        typedef NTL::matrix<Int> IntMat;
+        // typedef NTL::vector<Int> IntVec;
+        // typedef NTL::matrix<Int> IntMat;
       public:
         static const int64_t MAX_WORD_SIZE = 64;
 
@@ -595,7 +596,7 @@ namespace LatticeTester {
       else if (strcasecmp(val.c_str(), "false") == 0)
         field = false;
       else
-        MyExit(1, "readBool:   NO SUCH CASE");
+        myExit("readBool:   NO SUCH CASE");
     }
 
 
@@ -836,7 +837,7 @@ namespace LatticeTester {
         field = MERIT;
       }
       else
-        MyExit(1, "readProblemType:   NO SUCH CASE");
+        myExit("readProblemType:   NO SUCH CASE");
     }
 
   //===========================================================================
@@ -858,7 +859,7 @@ namespace LatticeTester {
         field = PALPHA;
       }
       else
-        MyExit(1, "readCriterionType:   NO SUCH CASE");
+        myExit("readCriterionType:   NO SUCH CASE");
     }
 
   //===========================================================================
@@ -871,7 +872,7 @@ namespace LatticeTester {
       getToken(val, ln, pos);
       if (0 == strcasecmp(val.c_str(), "SUPNORM")){
         field = SUPNORM;
-        MyExit(1, "readNormType:   SUPNORM case not ready");
+        myExit("readNormType:   SUPNORM case not ready");
       }
       else if (0 == strcasecmp(val.c_str(), "L1NORM"))
         field = L1NORM;
@@ -879,10 +880,10 @@ namespace LatticeTester {
         field = L2NORM;
       else if (0 == strcasecmp(val.c_str(), "ZAREMBANORM")){
         field = ZAREMBANORM;
-        MyExit(1, "readNormType:   ZAREMBANORM case not ready");
+        myExit("readNormType:   ZAREMBANORM case not ready");
       }
       else
-        MyExit(1, "readNormType:   NO SUCH CASE");
+        myExit("readNormType:   NO SUCH CASE");
     }
 
 
@@ -915,7 +916,7 @@ namespace LatticeTester {
       else if (0 == strcasecmp(val.c_str(), "NONE"))
         field = NONE;
       else
-        MyExit(1, "readNormaType:   NO SUCH CASE");
+        myExit("readNormaType:   NO SUCH CASE");
     }
 
   //===========================================================================
@@ -939,7 +940,7 @@ namespace LatticeTester {
       //else if (0 == strcasecmp(val.c_str(), "EXACT"))
        // field = EXACT;
       else
-        MyExit(1, "readPrecisionType:   NO SUCH CASE");
+        myExit("readPrecisionType:   NO SUCH CASE");
     }
 
 
@@ -960,12 +961,12 @@ namespace LatticeTester {
         field = RES;
       else if (0 == strcasecmp(val.c_str(), "GEN")) {
         field = GEN;
-        // MyExit(1, "readOutputType:   GEN case not ready");
+        // myExit("readOutputType:   GEN case not ready");
       } else if (0 == strcasecmp(val.c_str(), "TEX")) {
         field = TEX;
-        MyExit(1, "readOutputType:   TEX case not ready");
+        myExit("readOutputType:   TEX case not ready");
       } else
-        MyExit(1, "readOutputType:   NO SUCH CASE");
+        myExit("readOutputType:   NO SUCH CASE");
     }
 
 
@@ -991,7 +992,7 @@ namespace LatticeTester {
       else if (0 == strcasecmp(val.c_str(), "BKZBB"))
         field = BKZBB;
       else
-        MyExit(1, "readReduct:   NO SUCH CASE");
+        myExit("readReduct:   NO SUCH CASE");
     }
 
   //===========================================================================

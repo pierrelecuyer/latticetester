@@ -59,7 +59,7 @@ void printResults();  // Must be declared, because it has no parameters.
 template<typename Int, typename Real>
 void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
       long d, long meth, double deltaLLL1, double deltaLLL2, double deltaBKZ, long k, bool BB,
-      NTL::vector<Real> sqlen) {
+      NTL::Vec<Real> sqlen) {
    long dim = dimensions[d];
    if (inDual) {
       korlat.buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
@@ -86,7 +86,7 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
 template<typename Int, typename Real>
 static void tryManyMethods(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
       long d) {
-   NTL::vector<Real> sqlen; // Cannot be global because it depends on Real.
+   NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
    sqlen.SetLength(1);  // We retrieve only the shortest vector square length.
 
    performReduction(korlat, red, inDual, d, 0, 0.5, 0.0, 0.0, 1, false, sqlen);

@@ -18,8 +18,8 @@
 #ifndef LATTICETESTER__PRODUCT_WEIGHTS_H
 #define LATTICETESTER__PRODUCT_WEIGHTS_H
 
-#include "latticetester/Weights.h"
 #include <vector>
+#include "latticetester/Weights.h"
 
 namespace LatticeTester {
   /**

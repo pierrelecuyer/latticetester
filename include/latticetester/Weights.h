@@ -21,7 +21,7 @@
 #include <string>
 
 #include "latticetester/Coordinates.h"
-#include "latticetester/Util.h"
+// #include "latticetester/Util.h"
 
 namespace LatticeTester {
 

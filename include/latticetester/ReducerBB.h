@@ -18,19 +18,6 @@
 #ifndef LATTICETESTER_REDUCERBB_H
 #define LATTICETESTER_REDUCERBB_H
 
-#include "NTL/LLL.h"
-#include "NTL/tools.h"
-#include "NTL/ZZ.h"
-#include "NTL/RR.h"
-
-#include "latticetester/EnumTypes.h"
-#include "latticetester/Util.h"
-#include "latticetester/IntLattice.h"
-// #include "latticetester/BasisConstruction.h"
-#include "latticetester/NTLWrap.h"
-//#include "latticetester/LLL_FPInt.h"
-//#include "latticetester/LLL_RR_lt.h"
-
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -45,6 +32,18 @@
 #include <cmath>
 #include <cstdlib>
 #include <type_traits>
+
+#include "NTL/LLL.h"
+#include "NTL/tools.h"
+#include "NTL/ZZ.h"
+#include "NTL/RR.h"
+
+#include "latticetester/EnumTypes.h"
+#include "latticetester/Util.h"
+#include "latticetester/IntLattice.h"
+// #include "latticetester/BasisConstruction.h"
+//#include "latticetester/LLL_FPInt.h"
+//#include "latticetester/LLL_RR_lt.h"
 
 namespace LatticeTester {
 
@@ -544,8 +543,8 @@ void ReducerBB<Int, Real>::init(int64_t maxDim) {
    m_bw.SetLength(dim1);
    m_n2.SetLength(dim1);
    m_zLR.SetLength(dim1);
-   m_zLI.SetLength(dim1);
-   m_zShort.SetLength(dim1);
+   m_zLI.resize(dim1);
+   m_zShort.resize(dim1);
    m_dc2.SetLength(dim1);
    m_BoundL2.SetLength(dim1);
 
@@ -618,19 +617,19 @@ void ReducerBB<Int, Real>::copy(const ReducerBB<Int, Real> &red) {
 
 template<typename Int, typename Real>
 ReducerBB<Int, Real>::~ReducerBB() {
-   m_c0.clear();
-   m_c2.clear();
-   m_cho2.clear();
-   m_gramVD.clear();
-   m_nv.clear();
-   m_bv.clear();
-   m_bw.clear();
-   m_n2.clear();
-   m_zLR.clear();
-   m_zLI.clear();
-   m_zShort.clear();
-   m_dc2.clear();
-   m_BoundL2.clear();
+   m_c0.kill();
+   m_c2.kill();
+   m_cho2.kill();
+   m_gramVD.kill();
+   m_nv.kill();
+   m_bv.kill();
+   m_bw.kill();
+   m_n2.kill();
+   m_zLR.kill();
+   m_zLI.resize(0);
+   m_zShort.resize(0);
+   m_dc2.kill();
+   m_BoundL2.kill();
    delete[] m_IC;
 }
 
@@ -654,13 +653,17 @@ inline void ReducerBB<Int, Real>::calculGramVD() {
    const int64_t dim = m_lat->getDim();
    Int temp;
    for (int64_t i = 0; i < dim; i++) {
-      NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+      IntVec row1 = m_lat->getBasis()[i];
+      // NTL::Mat_row<Int> row1(m_lat->getBasis(), i);
+      // this->_vec__rep = (typename M::value_type*&) data[i]._vec__rep;
       temp = 0;
       for (int64_t h = 0; h < dim; h++)
+         // NTL::MulAddTo(temp, m_lat->getBasis()[i][h], m_lat->getBasis()[i][h]);
          NTL::MulAddTo(temp, row1[h], row1[h]);
       NTL::conv(m_gramVD[i][i], temp);
       for (int64_t j = i + 1; j < dim; j++) {
-         NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
+         // NTL::Mat_row<Int> row2(m_lat->getBasis(), j);
+         IntVec row2 = m_lat->getBasis()[j];
          temp = 0;
          for (int64_t h = 0; h < dim; h++)
             NTL::MulAddTo(temp, row1[h], row2[h]);
@@ -679,8 +682,10 @@ inline void ReducerBB<Int, Real>::miseAJourGramVD(int64_t j) {
    // %%%  Could easily be made static by passing the rows and gramVD as parameters.
    const int64_t dim = m_lat->getDim();
    for (int64_t i = 0; i < dim; i++) {
-      NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
-      NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
+      //NTL::Mat_row<Int> row1(m_lat->getBasis(), i);
+      //NTL::Mat_row<Int> row2(m_lat->getBasis(), j);
+      IntVec row1 = m_lat->getBasis()[i];
+      IntVec row2 = m_lat->getBasis()[j];
       ProdScal<Int>(row1, row2, dim, m_gramVD[i][j]);
       m_gramVD[j][i] = m_gramVD[i][j];
    }
@@ -756,11 +761,13 @@ bool ReducerBB<Int, Real>::calculCholesky(RealVec &DC2, RealMat &C0) {
    // Compute the d first lines of C0 with the primal Basis.
    for (i = 0; i < d; i++) {
       m_lat->updateScalL2Norm(i);
-      NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+      IntVec row1 = m_lat->getBasis()[i];
+      // NTL::Mat_row<Int> row1(m_lat->getBasis(), i);
       for (j = i; j < dim; j++) {
          if (j == i) NTL::conv(m_c2[i][i], m_lat->getVecNorm(i));
          else {
-            NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
+            IntVec row2 = m_lat->getBasis()[j];
+            // NTL::Mat_row<Int> row2(m_lat->getBasis(), j);
             ProdScal<Int>(row1, row2, dim, m_c2[i][j]);
          }
          for (k = 0; k < i; k++)
@@ -797,8 +804,8 @@ bool ReducerBB<Int, Real>::calculCholesky(RealVec &DC2, RealMat &C0) {
    //      if (j == i)
    //        NTL::conv (m_c2[i][i], m_lat->getDualVecNorm (i));
    //      else {
-   //        NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), i);
-   //        NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), j);
+   //        NTL::Mat_row<Int> row1(m_lat->getDualBasis(), i);
+   //        NTL::Mat_row<Int> row2(m_lat->getDualBasis(), j);
    //        ProdScal<Int> (row1, row2, dim, m_c2[i][j]);
    //      }
    //      for (k = i + 1; k < dim; k++){
@@ -835,11 +842,13 @@ void ReducerBB<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[])
    std::cout << " vecNorm(i) = " << m_lat->getVecNorm(i) << "\n";
 
    for (int64_t j = d; j < dim; j++) {
-      NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+      IntVec row1 = m_lat->getBasis()[i];
+      // NTL::Mat_row<Int> row1(m_lat->getBasis(), i);
       std::cout << " row(i) = " << row1 << "\n";
       if (i == j) continue;
       modifFlag = false;
-      NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
+      IntVec row2 = m_lat->getBasis()[j];
+      // NTL::Mat_row<Int> row2(m_lat->getBasis(), j);
       ProdScal<Int>(row1, row2, dim, m_ns);
       std::cout << " redPrimal, before divideRound, j = " << j << "\n";
       std::cout << " m_ns = " << m_ns << ",  vecNorm(i) = " << m_lat->getVecNorm(i) << "\n";
@@ -851,17 +860,22 @@ void ReducerBB<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[])
       std::cout << " redPrimal, before if (m_ns ...), m_ns = " << m_ns << "\n";
       if (m_ns < 1000 && m_ns > -1000) {
          m_lat->updateScalL2Norm(j);
-         NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
-         //NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+         IntVec row1 = m_lat->getBasis()[i];
+         IntVec row2 = m_lat->getBasis()[j];
+         //NTL::Mat_row<Int> row2(m_lat->getBasis(), j);
+         //NTL::Mat_row<Int> row1(m_lat->getBasis(), i);
          ModifVect(row2, row1, -m_bs, dim);
 
          // Verify that m_lat->getBasis()[j] is really shorter
-         NTL::matrix_row<IntMat> row1(m_lat->getBasis(), j);
-         ProdScal<Int>(row1, row1, dim, m_ns);
+         IntVec row3 = m_lat->getBasis()[j];
+         // NTL::Mat_row<Int> row1(m_lat->getBasis(), j);
+         ProdScal<Int>(row3, row3, dim, m_ns);
          if (m_ns >= m_lat->getVecNorm(j)) {
-            NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
-            //NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
-            ModifVect(row2, row1, m_bs, dim);
+            IntVec row3 = m_lat->getBasis()[j];
+            IntVec row4 = m_lat->getBasis()[i];
+            //NTL::Mat_row<Int> row2(m_lat->getBasis(), j);
+            //NTL::Mat_row<Int> row1(m_lat->getBasis(), i);
+            ModifVect(row3, row4, m_bs, dim);
          } else {
             modifFlag = true;
             m_lat->setVecNorm(m_ns, j);
@@ -869,9 +883,11 @@ void ReducerBB<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[])
          //std::cout << " redDieter, end of the if, j = " << j << "\n";
       } else {
          std::cout << " redDieter, in the else, j = " << j << "\n";
-         NTL::matrix_row<IntMat> row2(m_lat->getBasis(), j);
-         //NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
-         ModifVect(row2, row1, -m_bs, dim);
+         IntVec row1 = m_lat->getBasis()[j];
+         IntVec row2 = m_lat->getBasis()[i];
+         //NTL::Mat_row<Int> row2(m_lat->getBasis(), j);
+         //NTL::Mat_row<Int> row1(m_lat->getBasis(), i);
+         ModifVect(row1, row2, -m_bs, dim);
          m_lat->setNegativeNorm(j);
          modifFlag = true;
       }
@@ -881,8 +897,10 @@ void ReducerBB<Int, Real>::pairwiseRedPrimal(int64_t i, int64_t d, bool taboo[])
          ++m_cpt;
 //            if (m_lat->withDual()) {
          if (false) {
-            //NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), i);
-            NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), j);
+            //NTL::Mat_row<Int> row1(m_lat->getDualBasis(), i);
+            //NTL::Mat_row<Int> row2(m_lat->getDualBasis(), j);
+            IntVec row1 = m_lat->getDualBasis()[i];
+            IntVec row2 = m_lat->getDualBasis()[j];
             ModifVect(row1, row2, m_bs, dim);
             m_lat->setDualNegativeNorm(i);
 
@@ -906,12 +924,15 @@ void ReducerBB<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
 
    ++m_countDieter;
    m_lat->updateDualScalL2Norm(i);
-   NTL::matrix_row<IntMat> row9(m_lat->getBasis(), i);
+   IntVec row9 = m_lat->getBasis()[i];
+   // NTL::Mat_row<Int> row9(m_lat->getBasis(), i);
    m_bv = row9;
    for (j = 0; j < dim; j++) {
-      NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), j);
+      IntVec row2 = m_lat->getDualBasis()[j];
+      // NTL::Mat_row<Int> row2(m_lat->getDualBasis(), j);
       if (i != j) {
-         NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), i);
+         IntVec row1 = m_lat->getDualBasis()[i];
+         // NTL::Mat_row<Int> row1(m_lat->getDualBasis(), i);
          ProdScal<Int>(row1, row2, dim, m_ns);
          // ProdScal<Int> (m_lat->getDualBasis ()[i], m_lat->getDualBasis ()[j],
          //           dim, m_ns);
@@ -922,7 +943,9 @@ void ReducerBB<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
          if (m_nv[j] != 0) {
             NTL::conv(m_bs, m_nv[j]);
             std::cout << " after NTL::conv,  m_bs = " << m_bs << "\n";
-            NTL::matrix_row<IntMat> row7(m_lat->getBasis(), j);
+            IntVec row2 = m_lat->getBasis()[j];
+            IntVec row7 = m_lat->getBasis()[j];
+            // NTL::Mat_row<Int> row7(m_lat->getBasis(), j);
             ModifVect(m_bv, row7, m_bs, dim);
             std::cout << " after ModifVect \n";
          }
@@ -933,17 +956,20 @@ void ReducerBB<Int, Real>::pairwiseRedDual(int64_t i, bool taboo[]) {
    if (m_ns < m_lat->getVecNorm(i)) {
       ++m_cpt;
       m_countDieter = 0;
-      NTL::matrix_row<IntMat> row6(m_lat->getBasis(), i);
+      IntVec row6 = m_lat->getBasis()[i];
+      // NTL::Mat_row<Int> row6(m_lat->getBasis(), i);
       for (j = 0; j < dim; j++)
          row6[j] = m_bv[j];
       m_lat->setNegativeNorm(i);
       if (taboo) taboo[i] = false;
       m_lat->setVecNorm(m_ns, i);
       for (j = 0; j < dim; j++) {
-         NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), j);
+         IntVec row1 = m_lat->getDualBasis()[j];
+         // NTL::Mat_row<Int> row1(m_lat->getDualBasis(), j);
          if (i != j && m_nv[j] != 0) {
             NTL::conv(m_bs, -m_nv[j]);
-            NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), i);
+            IntVec row2 = m_lat->getDualBasis()[j];
+            // NTL::Mat_row<Int> row2(m_lat->getDualBasis(), i);
             std::cout << " redDual, before modifVect \n";
             ModifVect(row1, row2, m_bs, dim);
             //  ModifVect (m_lat->getDualBasis ()[j], m_lat->getDualBasis ()[i],
@@ -1031,12 +1057,14 @@ void ReducerBB<Int, Real>::reductionFaible(int64_t i, int64_t j) {
       // On peut representer cte en int64_t
       if (abs(cte) > 0.5) {
          NTL::conv(cteLI, Round(cte));
-         NTL::matrix_row<IntMat> row1(m_lat->getBasis(), j);
-         NTL::matrix_row<IntMat> row2(m_lat->getBasis(), i);
+         IntVec row1 = m_lat->getBasis()[j];
+         IntVec row2 = m_lat->getBasis()[i];
+         //NTL::Mat_row<Int> row1(m_lat->getBasis(), j);
+         //NTL::Mat_row<Int> row2(m_lat->getBasis(), i);
          ModifVect(row1, row2, -cteLI, dim);
          //if(withDual){
-         //  NTL::matrix_row<IntMat> row3(m_lat->getDualBasis(), i);
-         //  NTL::matrix_row<IntMat> row4(m_lat->getDualBasis(), j);
+         //  NTL::Mat_row<Int> row3(m_lat->getDualBasis(), i);
+         //  NTL::Mat_row<Int> row4(m_lat->getDualBasis(), j);
          //  ModifVect (row3, row4, cteLI, dim);
          //}
 
@@ -1045,12 +1073,14 @@ void ReducerBB<Int, Real>::reductionFaible(int64_t i, int64_t j) {
    } else {
       // On represente cte en double.
       if (abs(cte) < std::numeric_limits<long double>::max()) cte = Round(cte);
-      NTL::matrix_row<IntMat> row1(m_lat->getBasis(), j);
-      NTL::matrix_row<IntMat> row2(m_lat->getBasis(), i);
+      IntVec row1 = m_lat->getBasis()[j];
+      IntVec row2 = m_lat->getBasis()[i];
+      //NTL::Mat_row<Int> row1(m_lat->getBasis(), j);
+      //NTL::Mat_row<Int> row2(m_lat->getBasis(), i);
       ModifVect(row1, row2, -cte, dim);
       //if(withDual){
-      //  NTL::matrix_row<IntMat> row3(m_lat->getDualBasis(), i);
-      //  NTL::matrix_row<IntMat> row4(m_lat->getDualBasis(), j);
+      //  NTL::Mat_row<Int> row3(m_lat->getDualBasis(), i);
+      //  NTL::Mat_row<Int> row4(m_lat->getDualBasis(), j);
       //  ModifVect (row3, row4, cte, dim);
       //}
 
@@ -1088,16 +1118,20 @@ void ReducerBB<Int, Real>::transformStage3Mink(std::vector<std::int64_t> &z, int
          if (q) {
             // On ajoute q * v[i] au vecteur m_lat->getBasis()[j]
             z[i] -= q * z[j];
-            NTL::matrix_row<IntMat> row2(m_lat->getBasis(), i);
-            NTL::matrix_row<IntMat> row1(m_lat->getBasis(), j);
+            IntVec row1 = m_lat->getBasis()[j];
+            IntVec row2 = m_lat->getBasis()[i];
+            //NTL::Mat_row<Int> row2(m_lat->getBasis(), i);
+            //NTL::Mat_row<Int> row1(m_lat->getBasis(), j);
             //    ModifVect (m_lat->getBasis ()[j], m_lat->getBasis ()[i],
             //            q, dim);
             ModifVect(row1, row2, q, dim);
             m_lat->setNegativeNorm(j);
 
             if (withDual) {
-               NTL::matrix_row<IntMat> row3(m_lat->getDualBasis(), i);
-               NTL::matrix_row<IntMat> row4(m_lat->getDualBasis(), j);
+               IntVec row3 = m_lat->getDualBasis()[i];
+               IntVec row4 = m_lat->getDualBasis()[j];
+               //NTL::Mat_row<Int> row3(m_lat->getDualBasis(), i);
+               //NTL::Mat_row<Int> row4(m_lat->getDualBasis(), j);
                //    ModifVect (m_lat->getDualBasis ()[i], m_lat->getDualBasis ()[j],
                //             -q, dim);
                ModifVect(row3, row4, -q, dim);
@@ -1141,8 +1175,10 @@ void ReducerBB<Int, Real>::transformStage3ShortVec(std::vector<std::int64_t> &z,
          if (q) {
             // On ajoute q * v[i] au vecteur m_lat->getBasis()[j]
             z[i] -= q * z[j];
-            NTL::matrix_row<IntMat> row2(m_lat->getBasis(), i);
-            NTL::matrix_row<IntMat> row1(m_lat->getBasis(), j);
+            IntVec row1 = m_lat->getBasis()[j];
+            IntVec row2 = m_lat->getBasis()[i];
+            //NTL::Mat_row<Int> row2(m_lat->getBasis(), i);
+            //NTL::Mat_row<Int> row1(m_lat->getBasis(), j);
             ModifVect(row1, row2, q, dim);
             m_lat->setNegativeNorm(j);
          }
@@ -1255,16 +1291,19 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
          Real tmps_n2 = m_n2[0] + x * x * m_dc2[0];
          if (tmps_n2 < m_lMin2) {
             // On verifie si on a vraiment trouve un vecteur plus court
-            NTL::matrix_row<const IntMat> row1(m_lat->getBasis(), dim - 1);
+            // NTL::Mat_row<const Int> row1(m_lat->getBasis(), dim - 1);
+            IntVec row1 = m_lat->getBasis()[dim-1];
             m_bv = row1;
             for (k = 0; k < dim - 1; k++) {
                if (m_zLI[k] != 0) {
-                  NTL::matrix_row<const IntMat> row1(m_lat->getBasis(), k);
+                  IntVec row1 = m_lat->getBasis()[k];
+                  //NTL::Mat_row<Int> row1(m_lat->getBasis(), k);
                   ModifVect(m_bv, row1, m_zLI[k], dim);
                }
             }
             if (Stage == 3) {
-               NTL::matrix_row<const IntMat> row1(m_lat->getBasis(), dim - 1);
+               IntVec row1 = m_lat->getBasis()[dim-1];
+               //NTL::Mat_row<Int> row1(m_lat->getBasis(), dim - 1);
                ModifVect(m_bv, row1, m_zLR[dim - 1] - 1.0, dim);
             }
 
@@ -1276,8 +1315,8 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
                   if (!PreRedLLLMink) m_zShort = m_zLI;
                   else {
                      for (k = 1; k < dim; k++) {
-                        NTL::matrix_row<const IntMat> row1(WTemp, k);
-                        ProdScal<Int>(m_bv, row1, dim, S2);
+                        // NTL::Mat_row<Int> row1(WTemp, k);
+                        ProdScal<Int>(m_bv, WTemp[k], dim, S2);
                         Quotient(S2, mR, S3);
                         NTL::conv(m_zShort[k], S3);
                      }
@@ -1290,8 +1329,8 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
                   }
                } else {
                   for (k = 0; k < dim; k++) {
-                     NTL::matrix_row<const IntMat> row1(WTemp, k);
-                     ProdScal<Int>(m_bv, row1, dim, S2);
+                     // NTL::Mat_row<Int> const row1(WTemp, k);
+                     ProdScal<Int>(m_bv, WTemp[k], dim, S2);
                      Quotient(S2, mR, S3);
                      NTL::conv(m_zShort[k], S3);
                   }
@@ -1342,14 +1381,15 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
     */
    bool withDual = false;  // m_lat->withDual();
    const int64_t dim = m_lat->getDim();
-   IntMat VTemp(dim, dim), WTemp(dim, dim);
+   IntMat VTemp(NTL::INIT_SIZE, dim, dim);
+   IntMat WTemp(NTL::INIT_SIZE, dim, dim);
    bool TabooTemp[dim];
    Real tmp;
    smaller = false;
 
    // Approximation du carre de la longueur de Vi.
    if (m_lat->getVecNorm(i) < 0) {
-      NTL::matrix_row<IntMat> row1(m_lat->getBasis(), i);
+      IntVec row1 = m_lat->getBasis()[i];
       ProdScal<Int>(row1, row1, dim, tmp);
       //  ProdScal<Int> (m_lat->getBasis()[i], m_lat->getBasis()[i],
       //            dim, tmp);
@@ -1359,7 +1399,8 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
 
    if (Stage == 3 && withDual) {
       if (m_lat->getDualVecNorm(i) < 0) {
-         NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), i);
+         IntVec row1 = m_lat->getDualBasis()[i];
+         //NTL::Mat_row<Int> row1(m_lat->getDualBasis(), i);
          ProdScal<Int>(row1, row1, dim, tmp);
          //   ProdScal<Int> (m_lat->getDualBasis()[i], m_lat->getDualBasis()[i],
          //            dim, tmp);
@@ -1415,13 +1456,15 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
        m_lat->getBasis()[k].  */
       if (Stage == 2) k = dim - 1;
       else transformStage3Mink(m_zShort, k);
-      NTL::matrix_row<IntMat> row1(m_lat->getBasis(), k);
+      IntVec row1 = m_lat->getBasis()[k];
+      //NTL::Mat_row<Int> row1(m_lat->getBasis(), k);
       for (h = 0; h < dim; h++)
-         row1(h) = m_bv[h];
+         row1[h] = m_bv[h];
       //  m_lat->getBasis ()[k] = m_bv;
       m_lat->setNegativeNorm(k);
       if (m_zShort[k] < 0 && withDual) {
-         NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), k);
+         IntVec row2 = m_lat->getDualBasis()[k];
+         //NTL::Mat_row<Int> row2(m_lat->getDualBasis(), k);
          ChangeSign(row2, dim);
       }
       /* Mise a jour des vecteurs de la base duale selon le nouveau
@@ -1429,8 +1472,10 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
       for (h = 0; h < dim; h++) {
          if ((m_zShort[h] != 0) && (h != k)) {
             if (withDual) {
-               NTL::matrix_row<IntMat> row1(m_lat->getDualBasis(), h);
-               NTL::matrix_row<IntMat> row2(m_lat->getDualBasis(), k);
+               IntVec row1 = m_lat->getDualBasis()[h];
+               IntVec row2 = m_lat->getDualBasis()[k];
+               //NTL::Mat_row<Int> row1(m_lat->getDualBasis(), h);
+               //NTL::Mat_row<Int> row2(m_lat->getDualBasis(), k);
                ModifVect(row1, row2, -m_zShort[h], dim);
                m_lat->setDualNegativeNorm(h);
             }
@@ -1548,7 +1593,8 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
                SetZero(m_bv, dim);
                for (k = 0; k < dim; k++) {
                   if (m_zLI[k] != 0) {
-                     NTL::matrix_row<IntMat> row1(m_lat->getBasis(), k);
+                     IntVec row1 = m_lat->getBasis()[k];
+                     // NTL::Mat_row<Int> row1(m_lat->getBasis(), k);
                      ModifVect(m_bv, row1, m_zLI[k], dim);
                   }
                }
@@ -1626,10 +1672,12 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
       NTL::conv(m_lMin2, m_lat->getVecNorm(0));
    } else {
       // Looking for the shortest vector in basis according to the considered norm
-      NTL::matrix_row<IntMat> row1(m_lat->getBasis(), 0);
+      // NTL::Mat_row<Int> row1(m_lat->getBasis(), 0);
+      IntVec row1 = m_lat->getBasis()[0];
       CalcNorm<IntVec, Real>(row1, dim, m_lMin, norm);
       for (k = 1; k < dim; k++) {
-         NTL::matrix_row<IntMat> row2(m_lat->getBasis(), k);
+         // NTL::Mat_row<Int> row2(m_lat->getBasis(), k);
+         IntVec row2 = m_lat->getBasis()[k];
          CalcNorm<IntVec, Real>(row2, dim, x, norm);
          if (x < m_lMin) m_lMin = x;
       }
@@ -1686,7 +1734,8 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
       // We found a shorter vector. Its square length is in m_lMin2.
       transformStage3ShortVec(m_zShort, k); // Is this useful and OK for L1 ???
       //std::cout << " redBBShortVec, after transformStage 3 \n";
-      NTL::matrix_row<IntMat> row1(m_lat->getBasis(), k);
+      IntVec row1 = m_lat->getBasis()[k];
+      // NTL::Mat_row<Int> row1(m_lat->getBasis(), k);
       //std::cout << " redBBShortVec, after row1, k = " << k << "\n";
       //std::cout << " redBBShortVec, row1 = " << row1 << "\n";
       //std::cout << " redBBShortVec, m_bw = " << m_bw << "\n";
@@ -1705,7 +1754,8 @@ bool ReducerBB<Int, Real>::redBBShortVec() {
       /* In the case of L1NORM, we must check if it is really smaller.  */
       if (norm == L2NORM) m_lat->permute(k, 0);
       else {
-         NTL::matrix_row<IntMat> row5(m_lat->getBasis(), k);
+         IntVec row5 = m_lat->getBasis()[k];
+         // NTL::Mat_row<Int> row5(m_lat->getBasis(), k);
          CalcNorm(row5, dim, x, norm);
          if (x < m_lMin) {
             m_lMin = x;

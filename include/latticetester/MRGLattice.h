@@ -19,6 +19,7 @@
 #define LATTICETESTER_MRGLATTICE_H
 
 #include <cassert>
+#include "latticetester/FlexTypes.h"
 #include "latticetester/Util.h"
 #include "latticetester/EnumTypes.h"
 #include "latticetester/IntLatticeExt.h"
@@ -37,11 +38,6 @@ namespace LatticeTester {
 
 template<typename Int, typename Real>
 class MRGLattice: public IntLatticeExt<Int, Real> {
-
-private:
-   typedef NTL::vector<Int> IntVec;
-   typedef NTL::matrix<Int> IntMat;
-   typedef NTL::vector<Real> RealVec;
 
 public:
 
@@ -184,9 +180,9 @@ MRGLattice<Int, Real>::MRGLattice(const Int &m, const IntVec &aa, int64_t maxDim
    this->m_maxDim = maxDim;
    setaa(aa);
    m_dim0 = 0;
-   m_basis0.resize(maxDim, maxDim);
-   m_genTemp.resize(maxDim, maxDim);
-   m_y.resize(maxDim + m_order - 1);
+   m_basis0.SetDims(maxDim, maxDim);
+   m_genTemp.SetDims(maxDim, maxDim);
+   m_y.SetLength(maxDim + m_order - 1);
 }
 
 //============================================================================

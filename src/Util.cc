@@ -15,16 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "latticetester/Util.h"
 #include <cstdlib>
 #include <cmath>
 #include <climits>
-
 #include "NTL/ZZ.h"
+#include "latticetester/Util.h"
+
 using namespace NTL;
 
-namespace
-{
+namespace {
 
 #define GERME  9876543219876543L
 #define NORM53  1.11022302462515654e-16   // 1 / 2^53

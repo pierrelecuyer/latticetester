@@ -25,9 +25,11 @@
 
 #include <NTL/xdouble.h>
 #include <NTL/RR.h>
-#include "latticetester/NTLWrap.h"
+
+#include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
 #include "latticetester/Util.h"
+//#include "latticetester/NTLWrap.h"
 #include "latticetester/Coordinates.h"
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/LLL_lt.h"
@@ -79,10 +81,10 @@ template<typename Int, typename Real>
 class IntLattice {
 
 // private:
-   typedef NTL::vector<Int> IntVec;
-   typedef NTL::matrix<Int> IntMat;
-   typedef NTL::vector<Real> RealVec;
-   typedef NTL::matrix<Real> RealMat;
+   //typedef NTL::vector<Int> IntVec;
+   //typedef NTL::matrix<Int> IntMat;
+   //typedef NTL::vector<Real> RealVec;
+   //typedef NTL::matrix<Real> RealMat;
 
 public:
 
@@ -641,7 +643,7 @@ void IntLattice<Int, Real>::buildProjectionLLL(IntLattice<Int, Real> &projLattic
       const Coordinates &proj, double delta) {
    // We assume here that this and lattice have the same scaling factor m.
    projLattice.setDim(proj.size());  // Number of coordinates in the projection.
-   projectionConstructionLLL<NTL::matrix<Int>, Int, NTL::vector<Real>>(this->m_basis,
+   projectionConstructionLLL<Int, Real>(this->m_basis,
          projLattice.m_basis, proj, this->m_modulo, delta, proj.size());
 }
 
@@ -653,7 +655,7 @@ void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
       const Coordinates &proj) {
    // We assume here that this and lattice have the same m.
    projLattice.setDim(proj.size());  // Number of coordinates in the projection.
-   projectionConstructionUpperTri(this->m_basis, projLattice.m_basis, proj, this->m_modulo,
+   projectionConstructionUpperTri<Int>(this->m_basis, projLattice.m_basis, proj, this->m_modulo,
          this->m_dim);
 }
 
@@ -666,7 +668,7 @@ void IntLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLatti
    // We assume here that this and lattice have the same m.
    projLattice.setDim(proj.size());  // Number of coordinates in the projection.
    projLattice.setDimDual(proj.size());
-   projectionConstructionUpperTri(this->m_basis, projLattice.m_basis, proj, this->m_modulo,
+   projectionConstructionUpperTri<Int>(this->m_basis, projLattice.m_basis, proj, this->m_modulo,
          this->m_dim);
    mDualUpperTriangular(projLattice.m_basis, projLattice.m_dualbasis, this->m_modulo,
          projLattice.m_dim);
@@ -703,7 +705,8 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateVecNorm(const int64_t &d) {
    assert(d >= 0);
    for (int64_t i = d; i < this->m_dim; i++) {
-      NTL::matrix_row<IntMat> row(this->m_basis, i);  // Is this making a copy of the row?  ******
+      IntVec row = this->m_basis[i];
+      //NTL::matrix_row<Int> row(this->m_basis, i);  // Is this making a copy of the row?  ******
       if (this->m_norm == L2NORM) {
          ProdScal<Int>(row, row, this->m_dim, this->m_vecNorm[i]);
       } else {
@@ -724,7 +727,8 @@ void IntLattice<Int, Real>::updateDualVecNorm() {
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateSingleVecNorm(const int64_t &d, const int64_t &c) {
    assert(d >= 0);
-   NTL::matrix_row<IntMat> row(this->m_basis, d);
+   IntVec row = this->m_basis[d];
+   //NTL::matrix_row<Int> row(this->m_basis, d);
    if (this->m_norm == L2NORM) {
       ProdScal<Int>(row, row, c, this->m_vecNorm[d]);
    } else {
@@ -738,7 +742,8 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d) {
    assert(d >= 0);
    for (int64_t i = d; i < this->m_dimdual; i++) {
-      NTL::matrix_row<IntMat> row(this->m_dualbasis, i);
+      IntVec row = this->m_dualbasis[i];
+      //NTL::matrix_row<Int> row(this->m_dualbasis, i);
       if (this->m_norm == L2NORM) {
          ProdScal<Int>(row, row, this->m_dimdual, this->m_dualvecNorm[i]);
       } else {
@@ -753,7 +758,8 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d, const int64_t &c) {
    assert(d >= 0);
    for (int64_t i = 0; i < d + 1; i++) {
-      NTL::matrix_row<IntMat> row(this->m_dualbasis, i);
+      IntVec row = this->m_dualbasis[i];
+      //NTL::matrix_row<Int> row(this->m_dualbasis, i);
       if (this->m_norm == L2NORM) {
          ProdScal<Int>(row, row, c, this->m_dualvecNorm[i]);
       } else {
@@ -767,7 +773,8 @@ void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d, const int64_t &c
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateSingleDualVecNorm(const int64_t &d, const int64_t &c) {
    assert(d >= 0);
-   NTL::matrix_row<IntMat> row(this->m_dualbasis, d);
+   IntVec row = this->m_dualbasis[d];
+   //NTL::matrix_row<Int> row(this->m_dualbasis, d);
    if (this->m_norm == L2NORM) {
       ProdScal<Int>(row, row, c, this->m_dualvecNorm[d]);
    } else {
@@ -779,7 +786,8 @@ void IntLattice<Int, Real>::updateSingleDualVecNorm(const int64_t &d, const int6
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateScalL2Norm(const int64_t i) {
-   NTL::matrix_row<IntMat> row(this->m_basis, i);
+   IntVec row = this->m_basis[i];
+   // NTL::matrix_row<Int> row(this->m_basis, i);
    ProdScal<Int>(row, row, this->m_dim, this->m_vecNorm[i]);
 }
 
@@ -796,7 +804,8 @@ void IntLattice<Int, Real>::updateScalL2Norm(const int64_t k1, const int64_t k2)
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualScalL2Norm(const int64_t i) {
-   NTL::matrix_row<IntMat> row(this->m_dualbasis, i);
+   IntVec row = this->m_dualbasis[i];
+   // NTL::matrix_row<Int> row(this->m_dualbasis, i);
    ProdScal<Int>(row, row, this->m_dimdual, this->m_dualvecNorm[i]);
 }
 
@@ -848,8 +857,10 @@ bool IntLattice<Int, Real>::checkDuality() {
    int64_t dim = getDim();
    for (int64_t i = 0; i < dim; i++) {
       for (int64_t j = 0; j < dim; j++) {
-         NTL::matrix_row<const IntMat> row1(this->m_basis, i);
-         NTL::matrix_row<const IntMat> row2(this->m_dualbasis, j);
+         IntVec row1 = this->m_basis[i];
+         IntVec row2 = this->m_dualbasis[j];
+         //NTL::matrix_row<const IntMat> row1(this->m_basis, i);
+         //NTL::matrix_row<const IntMat> row2(this->m_dualbasis, j);
          ProdScal<Int>(row1, row2, dim, S);
          if (j != i) {
             if (S != 0) {

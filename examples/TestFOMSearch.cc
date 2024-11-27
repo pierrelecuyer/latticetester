@@ -108,12 +108,12 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
  */
 template<typename Int, typename Real>
 static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, const Int a0,
-      const NTL::vector<int64_t> t, const NTL::vector<int64_t> t0, int64_t numMultLong,
+      const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
       int64_t numMultShort, int64_t numBest0, int64_t numBest) {
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    // WeightsUniform weights(1.0);
    Rank1Lattice<Int, Real> lat(m, maxdim);  // The current lattice for which the FoM is calculated.
-   IntLattice<Int, Real> proj(m, t.size()); // Lattice used for projections.
+   IntLattice<Int, Real> proj(m, t.length()); // Lattice used for projections.
    Int emptyList[0];
    Int inList[numBest0];
    Int outList[numBest0];
@@ -160,14 +160,16 @@ int main() {
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
    NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
-   NTL::vector<int64_t> t(5); // The t-vector for the FOM.
+   NTL::Vec<int64_t> t; // The t-vector for the FOM.
+   t.SetLength(5);
    t[0] = 32;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 32;    // Then pairs, triples, etc.
    t[2] = 16;
    t[3] = 12;
    t[4] = 10;
 
-   NTL::vector<int64_t> t0(4); // A reduced t-vector for the FOM.
+   NTL::Vec<int64_t> t0; // A reduced t-vector for the FOM.
+   t0.SetLength(4);
    t0[0] = 4;
    t0[1] = 32;
    t0[2] = 16;

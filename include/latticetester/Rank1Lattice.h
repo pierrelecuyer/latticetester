@@ -62,9 +62,9 @@ template<typename Int, typename Real>
 class Rank1Lattice: public IntLatticeExt<Int, Real> {
 
 private:
-   typedef NTL::Vec<Int> IntVec;
-   typedef NTL::Mat<Int> IntMat;
-   typedef NTL::Vec<Real> RealVec;
+//   typedef NTL::Vec<Int> IntVec;
+//   typedef NTL::Mat<Int> IntMat;
+//   typedef NTL::Vec<Real> RealVec;
 
 public:
 
@@ -241,7 +241,7 @@ Rank1Lattice<Int, Real>::Rank1Lattice(const Rank1Lattice<Int, Real> &lat) :
  */
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::setaa(const IntVec &aa) {
-   if (aa[0] != 1) MyExit(1, "Rank1Lattice::setaa: must have aa[0] == 1.");
+   if (aa[0] != 1) myExit("Rank1Lattice::setaa: must have aa[0] == 1.");
    this->m_a = aa;
 }
 
@@ -349,7 +349,7 @@ void Rank1Lattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice
       Int c1, b1, b2;   // c1 will be gcd(a_{i_1}, m). We should always have c1=1.
       // Recall:  XGCD (g, c, d, a, b) does g = gcd(a, b) = a*c + b*d.
       NTL::XGCD(c1, b1, b2, m_a[*proj.begin() - 1], this->m_modulo);
-      if (c1 > 1) MyExit(1, "Rank1Lattice::buildProjection: c1 > 1.");
+      if (c1 > 1) myExit("Rank1Lattice::buildProjection: c1 > 1.");
       basis[0][0] = 1;
       auto it = proj.begin();
       j = 1;
@@ -386,7 +386,7 @@ void Rank1Lattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLat
       Int c1, b1, b2; // c1 will be gcd(a_{i_1}, m). We should always have c1=1.
       // Recall:  XGCD (g, c, d, a, b) does g = gcd(a, b) = a*c + b*d.
       NTL::XGCD(c1, b1, b2, m_a[*proj.begin() - 1], this->m_modulo);
-      if (c1 > 1) MyExit(1, "Rank1Lattice::buildProjection: c1 > 1.");
+      if (c1 > 1) myExit("Rank1Lattice::buildProjection: c1 > 1.");
       for (it++; it != proj.end(); it++, i++)
          dualBasis[i][0] = -(m_a[*it - 1] * b1 % this->m_modulo);
    }

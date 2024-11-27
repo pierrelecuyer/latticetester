@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "latticetester/WeightsPOD.h"
 #include <sstream>
+#include "latticetester/WeightsPOD.h"
 
 namespace LatticeTester
 {

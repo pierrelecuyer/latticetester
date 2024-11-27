@@ -47,6 +47,7 @@
 #include <NTL/mat_ZZ.h>
 // #include <NTL/mat_GF2.h>
 
+#include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
 #include "latticetester/NTLWrap.h"
 
@@ -349,7 +350,7 @@ inline void ModuloPos(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &r) {
  }*/
 
 
-template<typename IntVec, typename Int>
+template<typename Int>
 void ModuloVec(IntVec &a, Int &m) {
 	for (int64_t i = 0; i < a.length(); i++)
 		Modulo(a[i], m, a[i]);
@@ -685,10 +686,10 @@ void Euclide(const Int &A, const Int &B, Int &C, Int &D, Int &G) {
 /*
  *Put the transpose of 'mat' into 'mat2'
  */
-template<typename IntMat>
+template<typename Int>
 void TransposeMatrix(IntMat &mat, IntMat &mat2) {
-	int64_t dim1 = mat.size1();
-	int64_t dim2 = mat.size2();
+	int64_t dim1 = mat.NumRows();
+	int64_t dim2 = mat.NumCols();
 	for (int64_t i = 0; i < dim1; i++) {
 		for (int64_t j = 0; j < dim2; j++)
 			mat2(i, j) = mat(j, i);
@@ -891,9 +892,10 @@ std::string toString(const Vect &A, int64_t d) {
  *
  * **WARNING**: This uses so many types without check about them and also assumes all
  * those types can be converted to each other without problem. This is used in
- * many places to compute a floating point norm of vectors with integers values.
+ * some places to compute a floating point norm of vectors with integers values.
  * Take care when using this function.
  */
+/*
 template<typename Int, typename Vect1, typename Vect2, typename Scal>
 inline void ProdScal(const Vect1 &A, const Vect2 &B, int64_t n, Scal &D) {
 	// Le produit A[i] * B[i] peut déborder, d'où conv.
@@ -903,13 +905,22 @@ inline void ProdScal(const Vect1 &A, const Vect2 &B, int64_t n, Scal &D) {
 		C += A[i] * B[i];
 	NTL::conv(D, C);
 }
+*/
+template<typename Int, typename Scal>
+inline void ProdScal(const IntVec &A, const IntVec &B, int64_t n, Scal &D) {
+   Int C;
+   C = 0;
+   for (int64_t i = 0; i < n; i++)
+      C += A[i] * B[i];
+   NTL::conv(D, C);
+}
 
 /**
  * Takes an input vector `A` of dimension `n+1` and fill the vector `B` with
  * the values `[-A[n] -A[n-1] ... -A[1][1]`. `B` is assumed to be of dimension
  * at least `n+1`.
  */
-template<typename IntVec>
+template<typename Int>
 inline void Invert(const IntVec &A, IntVec &B, int64_t n) {
 	NTL::conv(B[n], 1);
 	for (int64_t i = 0; i < n; i++) {
@@ -1078,7 +1089,7 @@ inline void CreateMatr(Real **&A, int64_t line, int64_t col) {
  * Resizes the matrix `A` to a square matrix of dimensions `d*d`
  * and re-initializes its elements to 0.
  */
-template<typename IntMat>
+template<typename Int>
 inline void CreateMatr(IntMat &A, int64_t d) {
 	A.SetDims(d, d);
 	for (int64_t i = 0; i < d; i++) {
@@ -1092,7 +1103,7 @@ inline void CreateMatr(IntMat &A, int64_t d) {
  * Resizes the matrix `A` to a matrix of dimensions \f$line \times col\f$
  * and re-initializes its elements to 0.
  */
-template<typename IntMat>
+template<typename Int>
 inline void CreateMatr(IntMat &A, int64_t line, int64_t col) {
 	A.SetDims(line, col);
 	for (int64_t i = 0; i < line; i++) {
@@ -1132,7 +1143,7 @@ inline void DeleteMatr(Real **&A, int64_t line, int64_t col) {
  * Calls the `clear()` method on `A`. `A` has to have a `clear()` method that
  * frees the memory allocated to it.
  */
-template<typename IntMat>
+template<typename Int>
 inline void DeleteMatr(IntMat &A) {
 	A.clear();
 }
@@ -1184,7 +1195,7 @@ std::string toStr(const MatT &mat, int64_t d1, int64_t d2, int64_t prec=2) {
  * which is assumed to be square `dim x dim`.
  */
 template<typename Int>
-void ProductDiagonal(const NTL::matrix<Int> &A, long dim, Int &prod) {
+void ProductDiagonal(const NTL::Mat<Int> &A, long dim, Int &prod) {
 	prod = 1;
 	for (int64_t i = 1; i < dim; i++) {
 		prod *= A[i][i];
@@ -1198,7 +1209,7 @@ void ProductDiagonal(const NTL::matrix<Int> &A, long dim, Int &prod) {
  * If `m` is `0`, this function simply verifies that the matrix is triangular.
  */
 template<typename Int>
-bool CheckTriangular(const NTL::matrix<Int> &A, long dim, const Int m) {
+bool CheckTriangular(const NTL::Mat<Int> &A, long dim, const Int m) {
 	for (int64_t i = 1; i < dim; i++) {
 		for (int64_t j = 0; j < i; j++) {
 			if (m != 0) {
@@ -1223,7 +1234,7 @@ bool CheckTriangular(const NTL::matrix<Int> &A, long dim, const Int m) {
  * Returns `true` if `AB = mI`, false otherwise.
  */
 template<typename Int>
-bool checkInverseModm (const NTL::matrix<Int> &A, const NTL::matrix<Int> &B,
+bool checkInverseModm (const NTL::Mat<Int> &A, const NTL::Mat<Int> &B,
 		 const Int m) {
 	int64_t dim = A.NumRows();
 	if ((dim != A.NumCols) | (dim != B.NumRows) | (dim != B.NumCols)) {
@@ -1401,13 +1412,11 @@ void calcDual(const Matr &A, Matr &B, int64_t d, const Int &m) {
  */
 
 /**
- * Special exit function. `status` is the status code to return to the
- * system, `msg` is the message to print upon exit.
+ * Simple error exit function, with `msg` messahe printed on exit.
  */
-void MyExit(int64_t status, std::string msg)
-  {
-    std::cout << "\n***** Error " << msg << std::endl;
-    exit (status);
+inline void myExit(std::string msg) {
+    std::cout << "\n***** Error: " << msg << std::endl;
+    exit (1);
   }
 
 /**
@@ -1508,7 +1517,7 @@ void copyMatrixToMat(Matr1 &A, Matr2 &B) {
 
 }
 
-template<typename IntMat>
+template<typename Int>
 void printBase(IntMat bas_mat) {
 	int64_t l = bas_mat.NumRows();
 	int64_t c = bas_mat.NumCols();
@@ -1520,7 +1529,7 @@ void printBase(IntMat bas_mat) {
 	}
 }
 
-template<typename IntMat>
+template<typename Int>
 void printBase2(IntMat bas_mat) {
 	//int64_t l = bas_mat.size1();
 	// int64_t c = bas_mat.size2();
@@ -1535,7 +1544,7 @@ void printBase2(IntMat bas_mat) {
 }
 
 // Copies b1 into b2. The two matrices must already have the same dimensions!
-template<typename IntMat>
+template<typename Int>
 void copy(IntMat &b1, IntMat &b2) {
 	for (int64_t i = 0; i < b1.NumRows(); i++) {
 		for (int64_t j = 0; j < b1.NumCols(); j++) {
@@ -1546,7 +1555,7 @@ void copy(IntMat &b1, IntMat &b2) {
 
 // Copies the first r rows and c columns of b1 into b2, which is assumed to be large enough.
 // The two matrices must already have the same dimensions!
-template<typename IntMat>
+template<typename Int>
 void copy(IntMat &b1, IntMat &b2, int64_t r, int64_t c) {
     for (int64_t i = 0; i < r; i++) {
         for (int64_t j = 0; j < c; j++) {

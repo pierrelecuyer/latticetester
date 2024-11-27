@@ -35,10 +35,10 @@ void printResults();  // Must be declared, because it has no parameters.
 
 // This function applies LLL to `basis` in `dim` dimensions.
 // It also updates the cumulative times and sums of square lengths.
-template<typename IntMat, typename Real>
+template<typename Int, typename Real>
 void LLLTest(IntMat &basis, int64_t d, int64_t meth, double delta) {
    int64_t dim = dimensions[d];
-   NTL::vector<Real> sqlen; // Cannot be global variable because it depends on Real.
+   NTL::Vec<Real> sqlen; // Cannot be global variable because it depends on Real.
    sqlen.SetLength(1);
    clock_t tmp = clock();
    LLLConstruction0(basis, delta, dim, dim, &sqlen);
@@ -48,7 +48,7 @@ void LLLTest(IntMat &basis, int64_t d, int64_t meth, double delta) {
 
 // Runs a speed test for dim = dimensions[d], with given basis matrices.
 // Only basis1 needs to be initialized; basis2 and basisdual are used only for copy.
-template<typename Int, typename IntMat, typename Real>
+template<typename Int, typename Real>
 void transformBases(Int m, int64_t d, int64_t dim, IntMat &basis1, IntMat &basis2,
       IntMat &basisdual) {
    CopyPartMat<IntMat>(basis2, basis1, dim, dim);  // Copy basis1 to basis2.
@@ -56,14 +56,14 @@ void transformBases(Int m, int64_t d, int64_t dim, IntMat &basis1, IntMat &basis
 
    // We apply LLL to basis2 with different values of `delta`, incrementally.
    // We start with delta=0.5, then continue with 0.9, then with 0.99999.
-   LLLTest<IntMat, Real>(basis2, d, 0, 0.5);
+   LLLTest<Int, Real>(basis2, d, 0, 0.5);
    // We continue the LLL process with larger values of `delta`.
-   LLLTest<IntMat, Real>(basis2, d, 1, 0.8);
-   LLLTest<IntMat, Real>(basis2, d, 2, 0.99);
-   LLLTest<IntMat, Real>(basis2, d, 3, 0.99999);
+   LLLTest<Int, Real>(basis2, d, 1, 0.8);
+   LLLTest<Int, Real>(basis2, d, 2, 0.99);
+   LLLTest<Int, Real>(basis2, d, 3, 0.99999);
    // Here we restart LLL from the initial triangular basis, with delta=0.99999.
    CopyPartMat(basis2, basis1, dim, dim);  // Copy basis1 to basis2.
-   LLLTest<IntMat, Real>(basis2, d, 4, 0.99999);
+   LLLTest<Int, Real>(basis2, d, 4, 0.99999);
 
    // We now construct an upper-triangular basis from basis2 into basis1.
    tmp = clock();
@@ -75,13 +75,13 @@ void transformBases(Int m, int64_t d, int64_t dim, IntMat &basis1, IntMat &basis
    timer[6][d] += clock() - tmp;
 
    // We apply LLL to this m-dual basis, with delta = 0.5, 0.8, etc.
-   LLLTest<IntMat, Real>(basisdual, d, 7, 0.5);
-   LLLTest<IntMat, Real>(basisdual, d, 8, 0.8);
-   LLLTest<IntMat, Real>(basisdual, d, 9, 0.99);
-   LLLTest<IntMat, Real>(basisdual, d, 10, 0.99999);
+   LLLTest<Int, Real>(basisdual, d, 7, 0.5);
+   LLLTest<Int, Real>(basisdual, d, 8, 0.8);
+   LLLTest<Int, Real>(basisdual, d, 9, 0.99);
+   LLLTest<Int, Real>(basisdual, d, 10, 0.99999);
    // Restart anew with delta = 0.99999.
    mDualUpperTriangular(basis1, basisdual, m, dim);
-   LLLTest<IntMat, Real>(basisdual, d, 11, 0.99999);
+   LLLTest<Int, Real>(basisdual, d, 11, 0.99999);
 }
 
 // In this testing loop, new `Rank1Lattice` objects are created
@@ -129,7 +129,7 @@ void transformBases(Int m, int64_t d, int64_t dim, IntMat &basis1, IntMat &basis
  */
 
 // Testing loop. The `IntMat` and `Rank1Lattice` objects are created only once.
-template<typename Int, typename IntMat, typename Real>
+template<typename Int, typename Real>
 void testLoop(Int mm, int64_t numRep) {
    std::string stringTypes;  // To print the selected flexible types.
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
@@ -162,7 +162,7 @@ void testLoop(Int mm, int64_t numRep) {
          dim = dimensions[d]; // The corresponding dimension.
          korlat.buildBasis(dim);
          CopyPartMat<IntMat>(basis1, korlat.getBasis(), dim, dim); // Triangular basis.
-         transformBases<Int, IntMat, Real>(m, d, dim, basis1, basis2, basisdual);
+         transformBases<Int, Real>(m, d, dim, basis1, basis2, basisdual);
       }
    }
    printResults();
@@ -215,11 +215,11 @@ int main() {
    int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
 
    // Here we can test with any combination of types.
-   testLoop<int64_t, NTL::matrix<int64_t>, double>(m, numRep);
-   testLoop<NTL::ZZ, NTL::matrix<NTL::ZZ>, double>(mm, numRep);
-   testLoop<NTL::ZZ, NTL::matrix<NTL::ZZ>, xdouble>(mm, numRep);
-   testLoop<NTL::ZZ, NTL::matrix<NTL::ZZ>, quad_float>(mm, numRep);
-   testLoop<NTL::ZZ, NTL::matrix<NTL::ZZ>, NTL::RR>(mm, numRep);
+   testLoop<int64_t, double>(m, numRep);
+   testLoop<NTL::ZZ, double>(mm, numRep);
+   testLoop<NTL::ZZ, xdouble>(mm, numRep);
+   testLoop<NTL::ZZ, quad_float>(mm, numRep);
+   testLoop<NTL::ZZ, NTL::RR>(mm, numRep);
    return 0;
 }
 

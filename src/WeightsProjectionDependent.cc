@@ -15,12 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "latticetester/Util.h"
-#include "latticetester/WeightsProjectionDependent.h"
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
 #include <sstream>
+#include "latticetester/Util.h"
+#include "latticetester/WeightsProjectionDependent.h"
+
 
 using namespace std;
 

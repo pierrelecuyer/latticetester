@@ -47,7 +47,7 @@ using namespace LatticeTester;
   Rank1Lattice<Int, Real> lat(m, dim); // Rank1Lattice to store the current lattice for which the FoM is calculated 
   Rank1Lattice<Int, Real> proj(m, dim); // The IntLattice used to store projections  
   
-  NTL::vector<int64_t> worstdims(dim); // vector to store the worst dims per lattice
+  NTL::Vec<int64_t> worstdims(dim); // vector to store the worst dims per lattice
                                        //  ....   does not store worst dims, but counts  *****
   
   NormaBestLat norma(log(m), 1, dim);  // Normalization factors computed for primal lattice
@@ -90,7 +90,7 @@ static void testLoopDim(FigureOfMeritM<Int, Real> *fom, int numMult) {
       merit = fom->computeMerit (lat, proj);
       maxmerit = max(merit, maxmerit);
       fom->setLowBound(maxmerit);
-      worstdims[fom->getMinMeritProj().size()-1]++;    
+      worstdims[fom->getMinMeritProj().length()-1]++;    
       currMultiplier = currMultiplier * a % m;
    }   
 }
@@ -207,7 +207,7 @@ static void testLoopBestFoms(FigureOfMeritM<Int, Real> *fom, int numMult, int nu
 * What is the goal of this (not written)?  Already covered by TestFOMPairs.   ********
 */
 template<typename Int, typename Real>
-static void testDim(NTL::vector<int64_t> t, int numMult) {
+static void testDim(NTL::Vec<int64_t> t, int numMult) {
 
   FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red, true); // FoM for the primal lattice with reducer
   FigureOfMeritDualM<Int, Real> fomdual(t, weights, normadual, &red, true); // FoM for the dual lattice with reducer
@@ -233,7 +233,7 @@ static void testDim(NTL::vector<int64_t> t, int numMult) {
 * the vector 't' is not the best one. The 'numBest' number of best multipliers of total 'numMult' multipliers are stored.
 */
 template<typename Int, typename Real>
-static void testBestFoms(NTL::vector<int64_t> t, int numMult, int numBest) {
+static void testBestFoms(NTL::Vec<int64_t> t, int numMult, int numBest) {
   
   FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red, true); // FoM for the primal lattice with reducer
   FigureOfMeritM<Int, Real> fomprimal_wo_red(t, weights, norma, 0, true); //FoM for the primal without reducer
@@ -278,7 +278,7 @@ static void testBestFoms(NTL::vector<int64_t> t, int numMult, int numBest) {
 */
 
 template<typename Int, typename Real>
-static void testSearch(NTL::vector<int64_t> t, int numMult, int numBest) {
+static void testSearch(NTL::Vec<int64_t> t, int numMult, int numBest) {
   
   FigureOfMeritM<Int, Real> fomprimal(t, weights, norma, &red, true); // FoM for the primal lattice with reducer
   FigureOfMeritM<Int, Real> fomprimal_wo_red(t, weights, norma, 0, true); //FoM for the primal without reducer
@@ -309,7 +309,7 @@ static void testSearch(NTL::vector<int64_t> t, int numMult, int numBest) {
 * This one is now done in a better way in TestFOMPairs.
 */
 template<typename Int, typename Real>
-static void testScatter(NTL::vector<int64_t> t, int numMult) { 
+static void testScatter(NTL::Vec<int64_t> t, int numMult) { 
 
    double merit;
    Int currMultiplier;
@@ -345,7 +345,7 @@ static void testScatter(NTL::vector<int64_t> t, int numMult) {
 
 int main() {
   
-   NTL::vector<int64_t> t(4); // The t-vector for the FOM.
+   NTL::Vec<int64_t> t(4); // The t-vector for the FOM.
    t[0] = 16;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 16;    // Then pairs and triples up to coord. 5.
    t[2] = 12;

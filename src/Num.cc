@@ -25,9 +25,10 @@
  * e-mail: lecuyer@iro.umontreal.ca
  *
  \*************************************************************************/
-#include "latticetester/Num.h"
+
 #include <cmath>
 #include <stdexcept>
+#include "latticetester/Num.h"
 
 
 // PI

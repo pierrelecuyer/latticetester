@@ -102,12 +102,12 @@ void strTypes(std::string &str) {
      std::string strFlexTypes = "Int = NTL::ZZ, Real = NTL::RR";
 #endif
 
-#ifdef TYPES_CODE
-     typedef NTL::Vec<Int> IntVec;
-     typedef NTL::Mat<Int> IntMat;
-     typedef NTL::Vec<Real> RealVec;
-     typedef NTL::Mat<Real> RealMat;
-#endif
+//#ifdef TYPES_CODE
+//     typedef NTL::Vec<Int> IntVec;
+//     typedef NTL::Mat<Int> IntMat;
+//     typedef NTL::Vec<Real> RealVec;
+//     typedef NTL::Mat<Real> RealMat;
+//#endif
 
 //     }
 #endif

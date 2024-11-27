@@ -97,8 +97,8 @@ namespace NTL {
     }
   }
 
-  double determinant(const NTL::matrix<std::int64_t>& mat) {
-    NTL::matrix<NTL::ZZ> temp_mat;
+  double determinant(const NTL::Mat<std::int64_t>& mat) {
+    NTL::Mat<NTL::ZZ> temp_mat;
     temp_mat.SetDims(mat.NumCols(), mat.NumCols());
     for (int64_t i = 0; i < mat.NumCols(); i++) {
       for (int64_t j = 0; j < mat.NumCols(); j++) {

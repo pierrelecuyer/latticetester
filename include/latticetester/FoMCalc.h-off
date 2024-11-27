@@ -33,15 +33,12 @@
 
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
-#include "latticetester/BasisConstruction.h"
 #include "latticetester/Util.h"
+#include "latticetester/BasisConstruction.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/IntLatticeExt.h"
-#include "latticetester/LLL_FPZZflex.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/Reducer.h"
-
-
 #include "latticetester/NormaBestLat.h"
 #include "latticetester/NormaBestBound.h"
 #include "latticetester/WeightsUniform.h"

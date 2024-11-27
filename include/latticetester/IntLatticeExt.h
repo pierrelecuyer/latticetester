@@ -18,10 +18,10 @@
 #ifndef LATTICETESTER_INTLATTICEEXT_H
 #define LATTICETESTER_INTLATTICEEXT_H
 
+#include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Coordinates.h"
-#include "latticetester/Lacunary.h"
-#include "latticetester/Util.h"
+// #include "latticetester/Lacunary.h"
 #include "latticetester/BasisConstruction.h"
 #include <cassert>
 
@@ -48,11 +48,6 @@ namespace LatticeTester {
 
 template<typename Int, typename Real>
 class IntLatticeExt: public IntLattice<Int, Real> {
-private:
-   typedef NTL::Vec<Int> IntVec;
-   typedef NTL::matrix<Int> IntMat;
-   typedef NTL::Vec<Real> RealVec;
-   typedef NTL::matrix<Real> RealMat;
 
 public:
 

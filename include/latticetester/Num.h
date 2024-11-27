@@ -33,8 +33,8 @@
 namespace LatticeTester {
 
   /**
-   * Calculates \f$t!\f$, the factorial of \f$t\f$. Might throw if `t` is too
-   * large or if std::int64_t can't contain the factorial asked for.
+   * Calculates \f$t!\f$, the factorial of \f$t\f$. Might throw an error if `t` is too
+   * large or if std::int64_t cannot contain the factorial asked for.
    */
   std::int64_t lFactorial (int64_t t);
 

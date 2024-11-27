@@ -29,8 +29,8 @@ def configure(ctx):
     cxxflags     = ['-O3']
 
     ctx.load('compiler_c compiler_cxx gnu_dirs waf_unit_test')
-    ctx.check(features='cxx', cxxflags='-std=c++14')
-    ctx.env.append_unique('CXXFLAGS', ['-std=c++14', '-O3', '-Wall'])
+    ctx.check(features='cxx', cxxflags='-std=c++20')
+    ctx.env.append_unique('CXXFLAGS', ['-std=c++20', '-O3', '-Wall'])
     ctx.check(features='c', cflags='-std=c99')
     ctx.env.append_unique('CFLAGS', ['-std=c99', '-Wall'])
     ctx.env.INCLUDES_TEST      = ['examples'] #/usr/include

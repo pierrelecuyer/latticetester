@@ -28,17 +28,8 @@
 #include <NTL/vec_double.h>
 #include <NTL/ZZ.h>
 
-#include <latticetester/NTLWrap.h>
+#include <latticetester/Util.h>
 
-// namespace LatticeTester {
-// namespace NTL {
-
-// NTL_OPEN_NNS
-
-// class LLL64;
-
-// template<typename Int>
-// class LLL64 {
 
 NTL_START_IMPL
 

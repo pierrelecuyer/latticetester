@@ -33,17 +33,16 @@
 
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
-#include "latticetester/BasisConstruction.h"
 #include "latticetester/Util.h"
+#include "latticetester/BasisConstruction.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/IntLatticeExt.h"
-#include "latticetester/LLL_lt.h"
+//#include "latticetester/LLL_lt.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/ReducerStatic.h"
 #include "latticetester/ReducerBB.h"
 #include "latticetester/Weights.h"
 // #include "latticetester/WeightsOrderDependent.h"
-
 #include "latticetester/NormaBestLat.h"
 #include "latticetester/NormaBestBound.h"
 #include "latticetester/WeightsUniform.h"
@@ -68,16 +67,16 @@ template<typename Int, typename Real>
 class FigureOfMeritDualM: public FigureOfMeritM<Int, Real> {
 
 private:
-	typedef NTL::vector<Int> IntVec;
-	typedef NTL::matrix<Int> IntMat;
-	// typedef NTL::vector<Real> RealVec;
+	// typedef NTL::Vec<Int> IntVec;
+	// typedef NTL::Mat<Int> IntMat;
+	// typedef NTL::Vec<Real> RealVec;
 public:
 
 	/*
 	 * This constructor will call `setTVector` with the given vector `t`
 	 * and `includeFirst` variable, then set the `Weights`, `Normalizer` and `ReducerBB` to the given values.
 	 */
-	FigureOfMeritDualM(const NTL::vector<int64_t> &t, Weights &w, Normalizer &norma,
+	FigureOfMeritDualM(const NTL::Vec<int64_t> &t, Weights &w, Normalizer &norma,
 	      ReducerBB<Int, Real> *red = 0, bool includeFirst = false);
 
 	/*
@@ -108,7 +107,7 @@ public:
 // Implementation
 
 template<typename Int, typename Real>
-FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::vector<int64_t> &t,
+FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::Vec<int64_t> &t,
 		Weights &w, Normalizer &norma, ReducerBB<Int, Real> *red, bool includeFirst) :
 		FigureOfMeritM<Int, Real>(t, w, norma, red, includeFirst) {
 };
@@ -120,7 +119,7 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
    this->m_minMerit = minmerit;
 	Coordinates coord;
    if (this->m_verbose > 1) std::cout << "coordinates      merit        sqlen   minmerit  \n";
-	int64_t lower_dim = static_cast<int64_t>(this->m_t.size()) + 1; // We start in d+1 dimensions.
+	int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1; // We start in d+1 dimensions.
    for (int64_t j = 1; j <= lower_dim; j++)
       coord.insert(j);
    lat.buildDualBasis(lower_dim);
