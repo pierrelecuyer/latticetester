@@ -76,6 +76,8 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
       if (!red.shortestVector(korlat)) std::cout << " shortestVector failed for " << names[meth] << "\n";
       len2 = conv<double>(korlat.getVecNorm(0));
    }
+   // std::cout << " korlat.getVecNorm(0): = " << korlat.getVecNorm(0) << "\n";
+   // std::cout << " red.getShortVec(): = " << red.getShortVec() << "\n";
    timer[meth][d] += clock() - tmp;
    sumSq[meth][d] += len2;
 }
@@ -89,17 +91,21 @@ static void tryManyMethods(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real>
    NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
    sqlen.SetLength(1);  // We retrieve only the shortest vector square length.
 
+   // For the first 4 parameter choices, we take BB = false (no BB).
+   // performReduction(korlat, red, inDual, d, 0, 0.0, 0.0, 0.0, 1, true, sqlen);
    performReduction(korlat, red, inDual, d, 0, 0.5, 0.0, 0.0, 1, false, sqlen);
    performReduction(korlat, red, inDual, d, 1, 0.99999, 0.0, 0.0, 1, false, sqlen);
    performReduction(korlat, red, inDual, d, 2, 0.0, 0.0, 0.99999, 10, false, sqlen);
    performReduction(korlat, red, inDual, d, 3, 0.5, 0.9, 0.99999, 10, false, sqlen);
 
+   // For the other choices, we take BB = true.
    // We hide the next two cases for the large m, because they are much too slow
    // and they often fail.
-   performReduction(korlat, red, inDual, d, 4, 0.5, 0.0, 0.0, 1, true, sqlen);
-   performReduction(korlat, red, inDual, d, 5, 0.8, 0.0, 0.0, 1, true, sqlen);
+   //performReduction(korlat, red, inDual, d, 4, 0.5, 0.0, 0.0, 1, true, sqlen);
+   //performReduction(korlat, red, inDual, d, 5, 0.8, 0.0, 0.0, 1, true, sqlen);
    performReduction(korlat, red, inDual, d, 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
    performReduction(korlat, red, inDual, d, 7, 0.0, 0.0, 0.99999, 6, true, sqlen);
+
    performReduction(korlat, red, inDual, d, 8, 0.0, 0.0, 0.99999, 8, true, sqlen);
    performReduction(korlat, red, inDual, d, 9, 0.0, 0.0, 0.99999, 10, true, sqlen);
    performReduction(korlat, red, inDual, d, 10, 0.0, 0.0, 0.99999, 12, true, sqlen);
@@ -113,7 +119,7 @@ static void tryManyMethods(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real>
 }
 
 // In this testing loop, we generate `numRep` multipliers `a` and for each one
-// we call tryManyMathods.
+// we call tryManyMathods.  We use the same sequence of multipliers `a` for all methods.
 template<typename Int, typename Real>
 static void testLoop(Int m, long numRep, bool inDual) {
    std::string stringTypes;  // To print the selected flexible types.
@@ -124,7 +130,7 @@ static void testLoop(Int m, long numRep, bool inDual) {
    if (inDual) std::cout << ", in the dual lattice. \n\n";
    else std::cout << ", in the primal lattice. \n\n";
    std::cout << "Timings (in microseconds) for different methods for " << numRep
-         << " replications \n\n";
+         << " replications. \n\n";
    long d;  // dim = dimensions[d].
    Rank1Lattice<Int, Real> korlat(m, maxdim); // We use single lattice object.
    ReducerBB<Int, Real> red(korlat);   // Single ReducerBB with internal lattice `korlat`.
@@ -183,13 +189,13 @@ int main() {
    // Here, Int and Real are not yet defined.
    NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
-   long numRep = 50; // Number of replications (multipliers a) for each case.
+   long numRep = 10; // Number of replications (multipliers a) for each case.
    bool inDual = false;  // Tests in dual lattice ?
 
    // These functions apply the tests with the desired types.
    testLoop<int64_t, double>(conv<int64_t>(m), numRep, inDual);
    testLoop<NTL::ZZ, double>(m, numRep, inDual);
-   testLoop<NTL::ZZ, xdouble>(m, numRep, inDual);
-   testLoop<NTL::ZZ, quad_float>(m, numRep, inDual);
+   //testLoop<NTL::ZZ, xdouble>(m, numRep, inDual);
+   //testLoop<NTL::ZZ, quad_float>(m, numRep, inDual);
    // testLoop<NTL::ZZ, NTL::RR>(m, numRep, inDual);
 }

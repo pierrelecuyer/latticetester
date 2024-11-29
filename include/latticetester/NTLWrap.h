@@ -49,11 +49,35 @@ using namespace NTL;
 namespace NTL {
 
 
+/**
+ * \name Pointers to NTL matrix rows.
+ * @{
+ * An extension of `NTL::Vec<T>` implemented in this module to be used as
+ * a reference to a matrix row. This is essentially the same as defining a
+ * variable which is a pointer to the row vector.
+ */
+template <class M>
+  class Mat_row : public Vec<typename M::value_type> {
+    public:
+      /**
+       * No new vector is created, only a reference to the row.
+       */
+      inline Mat_row(M& data, long i) {
+        this->_vec__rep = (typename M::value_type*&) data[i]._vec__rep;
+      }
+      /**
+       * Empty constructor.
+       * */
+      inline ~Mat_row() {
+        this->_vec__rep = 0; /* avoid destruction in parent class */
+      }
+  };
+
 
 //============================================================================
 
 /**
- * \name Conversion utilities for compatibility with NTL.
+ * \name Conversion functions for compatibility with NTL.
  * @{
  * These functions perform conversions between different types. Most of them
  * do not really need explanations, but sometimes a specific logic is used
@@ -130,8 +154,8 @@ inline void conv(double &r, const char *c) {
  * @}
  * \name Function overloads
  * @{
- * These functions are already implemented in NTL for NTL::ZZ or NTL::RR
- * types, but not for the other standard types we use. These overloads allow
+ * These functions are already implemented in NTL for NTL::ZZ and NTL::RR
+ * types, but not for the other standard types used below. These overloads allow
  * us to make a simple call to the function in the `NTL` namespace without
  * worrying about types and still have working algorithms.
  */
@@ -204,20 +228,19 @@ inline void power2(NTL::ZZ &z, std::int64_t i) {
 //}
 
 inline double inv(const double x) {
-    return 1. / x;
+    return 1.0 / x;
 }
 
 /**
  * Transposes `A` into `X`.
- * This is a template overload of the transpose function of NTL. This
- * does basically the same thing as the implementation NTL uses. It might
+ * This is a template overload of the transpose function of NTL.
+ * It does basically the same thing as in NTL. It might
  * be necessary to implement the swap function for the type `T` for this to work.
  *
- * This is bad because it has the same signature as the NTL method,
+ * This seems a bad idea, because it has the same signature as the NTL method,
  *  and it is probably slower.  Remove?                     !!!!!      *****
- *  We can replace this by a method that transposes X in place, with a single parameter.
  *
- * */
+ */
 template<typename T>
 static void transpose(NTL::Mat<T> &X, const NTL::Mat<T> &A) {
     int64_t n = A.NumRows();
@@ -249,15 +272,15 @@ static void transpose(NTL::Mat<T> &X, const NTL::Mat<T> &A) {
 
 /**
  * Another implementation of the `transpose` function.  Returns the transpose of `a`.
- *
  * No need for this:  Just call NTL::transpose(x, a) directly!  *********
  * */
 template<typename T>
-static inline NTL::Mat<T> transpose(const NTL::Mat<T> &a) {
-    NTL::Mat<T> x;
-    transpose(x, a);
-    return x;
+static inline NTL::Mat<T> transpose(const NTL::Mat<T> &A) {
+    NTL::Mat<T> X;
+    transpose(X, A);
+    return X;
 }
+
 
 //============================================================================
 
@@ -272,6 +295,10 @@ typedef Mat<std::int64_t> Mat_64;
 typedef Vec<std::int64_t> Vec_64;
 
 //==========================================
+
+/** \name Inline functions for certain operators, again for compatibility with NTL.
+* @{
+*/
 
 inline static void add(int64_t &x, const int64_t a, const int64_t b) {
     x = a + b;
@@ -350,7 +377,7 @@ inline static void RightShift(int64_t &x, const int64_t a, int64_t k) {
  }
  */
 
-void static mul(vector64 &x, const vector64 &a, const int64_t b) {
+void static mul(Vec_64 &x, const Vec_64 &a, const int64_t b) {
     int64_t n = a.length();
     x.SetLength(n);
     int64_t i;
@@ -358,7 +385,7 @@ void static mul(vector64 &x, const vector64 &a, const int64_t b) {
         mul(x[i], a[i], b);
 }
 
-void static add(vector64 &x, const vector64 &a, const vector64 &b) {
+void static add(Vec_64 &x, const Vec_64 &a, const Vec_64 &b) {
     int64_t n = a.length();
     if (b.length() != n)
         LogicError("vector add: dimension mismatch");
@@ -368,7 +395,7 @@ void static add(vector64 &x, const vector64 &a, const vector64 &b) {
         add(x[i], a[i], b[i]);
 }
 
-void static sub(vector64 &x, const vector64 &a, const vector64 &b) {
+void static sub(Vec_64 &x, const Vec_64 &a, const Vec_64 &b) {
     int64_t n = a.length();
     if (b.length() != n)
         LogicError("vector sub: dimension mismatch");

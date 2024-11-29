@@ -416,9 +416,8 @@ public:
    void updateDualScalL2Norm(const int64_t k1, const int64_t k2);
 
    /**
-    * Exchanges vectors `i` and `j` in the basis. This also changes the
-    * m-dual basis vectors and the arrays containing secondary information
-    * about the two bases (like the norms) accordingly.
+    * Exchanges vectors `i` and `j` in the basis. Also exchanges secondary information
+    * about these two vectors (like the norms).
     */
    void permute(int64_t i, int64_t j);
 
@@ -553,7 +552,7 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType no
 
 //===========================================================================
 
-/*  // Maybe we remove this.   The IntMat basis does ot tell the dimension!
+/*  // Maybe we remove this.   The IntMat basis does not tell the dimension!
  template<typename Int, typename Real>
  IntLattice<Int, Real>::IntLattice(const IntMat basis, const Int m,
  const int64_t maxDim, NormType norm) {
@@ -705,7 +704,7 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateVecNorm(const int64_t &d) {
    assert(d >= 0);
    for (int64_t i = d; i < this->m_dim; i++) {
-      IntVec row = this->m_basis[i];
+      IntVec &row = this->m_basis[i];
       //NTL::matrix_row<Int> row(this->m_basis, i);  // Is this making a copy of the row?  ******
       if (this->m_norm == L2NORM) {
          ProdScal<Int>(row, row, this->m_dim, this->m_vecNorm[i]);
@@ -727,7 +726,7 @@ void IntLattice<Int, Real>::updateDualVecNorm() {
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateSingleVecNorm(const int64_t &d, const int64_t &c) {
    assert(d >= 0);
-   IntVec row = this->m_basis[d];
+   IntVec &row = this->m_basis[d];
    //NTL::matrix_row<Int> row(this->m_basis, d);
    if (this->m_norm == L2NORM) {
       ProdScal<Int>(row, row, c, this->m_vecNorm[d]);
@@ -824,7 +823,9 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::permute(int64_t i, int64_t j) {
    if (i == j) return;
    for (int64_t k = 0; k < this->m_dim; k++) {
-      swap9(this->m_basis(j, k), this->m_basis(i, k));
+//      std::cout << " IntLattice::permute, m_basis(j, k), m_basis(i, k) = " <<
+//            this->m_basis(j, k) << "  " << this->m_basis(i, k) << "\n";
+      swap9(this->m_basis[j][k], this->m_basis[i][k]);
    }
    swap9(this->m_vecNorm[i], this->m_vecNorm[j]);
 }
@@ -835,7 +836,7 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::permuteDual(int64_t i, int64_t j) {
    if (i == j) return;
    for (int64_t k = 0; k < this->m_dimdual; k++) {
-      swap9(this->m_dualbasis(j, k), this->m_dualbasis(i, k));
+      swap9(this->m_dualbasis[j][k], this->m_dualbasis[i][k]);
    }
    swap9(this->m_dualvecNorm[i], this->m_dualvecNorm[j]);
 }
@@ -996,7 +997,7 @@ std::string IntLattice<Int, Real>::toStringBasis() const {
    for (int64_t i = 0; i < this->m_dim; i++) {
       os << "    [";
       for (int64_t j = 0; j < this->m_dim; j++)
-         os << " " << std::setprecision(15) << this->m_basis(i, j);
+         os << " " << std::setprecision(15) << this->m_basis[i][j];
       os << " ]\n";
    }
    os << "  Norms:\n";
@@ -1022,7 +1023,7 @@ std::string IntLattice<Int, Real>::toStringDualBasis() const {
    for (int64_t i = 0; i < this->m_dimdual; i++) {
       os << "    [";
       for (int64_t j = 0; j < this->m_dimdual; j++)
-         os << " " << std::setprecision(15) << this->m_dualbasis(i, j);
+         os << " " << std::setprecision(15) << this->m_dualbasis[i][j];
       os << " ]\n";
    }
    os << "  Norms:\n";

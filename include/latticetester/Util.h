@@ -1006,15 +1006,27 @@ inline void CopyVect(Vect &A, const Vect &B, int64_t n) {
 
 /**
  * Adds the first `n` components of vector `B` multiplied by `x` to first `n`
- * components of vector `A`. This will modify `A`. This does wierd type
- * convertion and might not work well if different types are used.
+ * components of vector `A`. This will modify `A`. This does weird type
+ * conversions and may not work well if different types are used.
  */
-template<typename Vect1, typename Vect2, typename Scal>
-inline void ModifVect(Vect1 &A, const Vect2 &B, Scal x, int64_t n) {
-	typename Vect2::value_type a;
+template<typename Vect, typename Scal>
+inline void ModifVect(Vect &A, const Vect &B, Scal x, int64_t n) {
+	typename Vect::value_type a;
 	NTL::conv(a, x);
 	for (int64_t i = 0; i < n; i++)
 		A[i] = A[i] + B[i] * a;
+}
+
+/**
+ * Adds the first `n` components of vector `B` multiplied by `x` to first `n`
+ * components of vector `A`, modulo m. This will modify `A`.
+ */
+template<typename Vect, typename Scal, typename Int>
+inline void ModifVectModulo(Vect &A, const Vect &B, Scal x, Int m, int64_t n) {
+   typename Vect::value_type a;
+   NTL::conv(a, x);
+   for (int64_t i = 0; i < n; i++)
+      A[i] = (A[i] + B[i] * a) % m;
 }
 
 /**
