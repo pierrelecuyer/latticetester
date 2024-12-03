@@ -189,7 +189,7 @@ int main() {
    // Here, Int and Real are not yet defined.
    NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
-   long numRep = 10; // Number of replications (multipliers a) for each case.
+   long numRep = 100; // Number of replications (multipliers a) for each case.
    bool inDual = false;  // Tests in dual lattice ?
 
    // These functions apply the tests with the desired types.

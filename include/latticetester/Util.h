@@ -1020,13 +1020,16 @@ inline void ModifVect(Vect &A, const Vect &B, Scal x, int64_t n) {
 /**
  * Adds the first `n` components of vector `B` multiplied by `x` to first `n`
  * components of vector `A`, modulo m. This will modify `A`.
+ * The elements that are not multiples of `m` are reduced mod m.
  */
 template<typename Vect, typename Scal, typename Int>
 inline void ModifVectModulo(Vect &A, const Vect &B, Scal x, Int m, int64_t n) {
    typename Vect::value_type a;
    NTL::conv(a, x);
-   for (int64_t i = 0; i < n; i++)
-      A[i] = (A[i] + B[i] * a) % m;
+   for (int64_t i = 0; i < n; i++) {
+      A[i] = (A[i] + B[i] * a);
+      if (A[i] % m != 0) A[i] = A[i] % m;
+   }
 }
 
 /**

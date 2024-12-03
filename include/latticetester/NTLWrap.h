@@ -288,11 +288,11 @@ static inline NTL::Mat<T> transpose(const NTL::Mat<T> &A) {
 
 // typedef std::int64_t int64_t;
 
-typedef NTL::Mat<int64_t> matrix64;
-typedef NTL::Vec<int64_t> vector64;
+//typedef NTL::Mat<int64_t> matrix64;
+//typedef NTL::Vec<int64_t> vector64;
 
-typedef Mat<std::int64_t> Mat_64;
-typedef Vec<std::int64_t> Vec_64;
+//typedef Mat<std::int64_t> Mat_64;
+//typedef Vec<std::int64_t> Vec_64;
 
 //==========================================
 
@@ -377,6 +377,8 @@ inline static void RightShift(int64_t &x, const int64_t a, int64_t k) {
  }
  */
 
+
+/*
 void static mul(Vec_64 &x, const Vec_64 &a, const int64_t b) {
     int64_t n = a.length();
     x.SetLength(n);
@@ -404,11 +406,14 @@ void static sub(Vec_64 &x, const Vec_64 &a, const Vec_64 &b) {
     for (i = 0; i < n; i++)
         sub(x[i], a[i], b[i]);
 }
+*/
 
 /**
  * These are operator overloads for Mat_64 and Vec_64 types. Only the
  * overloads we currently use are defined.
  */
+
+/*
 Vec_64 operator*(const Vec_64 &vec, std::int64_t a);
 Vec_64 operator*(std::int64_t a, const Vec_64 &vec);
 std::int64_t operator*(const Vec_64 &vec1, const Vec_64 &vec2);
@@ -417,17 +422,18 @@ Vec_64& operator-=(Vec_64 &vec1, const Vec_64 &vec2);
 Vec_64& operator*=(Vec_64 &vec, std::int64_t a);
 Mat_64& operator*=(Mat_64 &mat, std::int64_t a);
 Mat_64 operator*(const Mat_64 &mat1, const Mat_64 &mat2);
+*/
 
 /**
  * Transforms `mat` into the identity matrix of dimensions
  * \f$\text{dim}\times\text{dim}\f$.
  */
-void ident(Mat_64 &mat, int64_t dim);
+//void ident(Mat_64 &mat, int64_t dim);
 
 /**
  * Computes and returns the determinant of `mat'.
  */
-double determinant(const Mat_64 &mat);
+//double determinant(const Mat_64 &mat);
 
 } // End namespace NTL
 

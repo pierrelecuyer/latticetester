@@ -71,7 +71,7 @@ namespace LatticeTester {
  * in this case, we may save it before calling this function, or rebuild it.
  *
  * This function always uses the Euclidean norm.
- * The factor `delta` must be between 1/2 and 1. The closer it is to 1,
+ * The factor `delta` must be in [1/2, 1). The closer it is to 1,
  * the more the basis is reduced, in the sense that the LLL
  * algorithm will enforce tighter conditions on the basis.
  * The returned basis always has its shortest vector in first place.
