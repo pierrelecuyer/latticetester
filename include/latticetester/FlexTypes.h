@@ -28,11 +28,13 @@
 // #include "latticetester/NTLWrap.h"  // This one is needed for the vector and matrix types.
 
 /**
+ * \file FlexTypes.h
+ *
  * There are five admissible combinations of types for `(Int, Real)`.
  * They are represented by the five codes given below.
  * For example, to use Int = NTL::ZZ, Real = double in a program, it suffices o put:
  *   #define TYPES_CODE  ZD
- * at the very beginning of the file, *before* the present file is read.
+ * at the very beginning of the file, *before* the present `FlexTypes.h` file is read.
  *
  * Another (more flexible) way of specifying the flexible types
  * `(Int, Real)` is to pass the types we want to use in the class and
@@ -41,6 +43,8 @@
 
 
 /**
+ * \fn void strTypes(std::string &str);
+ *
  * This template function returns a character string that gives the values
  * of `Int` and `Real`, usually for printing purposes.
  * For example, `strTypes<NTL::ZZ,double>(str)` will return the string
@@ -102,12 +106,4 @@ void strTypes(std::string &str) {
      std::string strFlexTypes = "Int = NTL::ZZ, Real = NTL::RR";
 #endif
 
-//#ifdef TYPES_CODE
-//     typedef NTL::Vec<Int> IntVec;
-//     typedef NTL::Mat<Int> IntMat;
-//     typedef NTL::Vec<Real> RealVec;
-//     typedef NTL::Mat<Real> RealMat;
-//#endif
-
-//     }
 #endif

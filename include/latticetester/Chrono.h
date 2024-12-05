@@ -32,6 +32,8 @@ using namespace std;
 namespace LatticeTester {
 
   /**
+   * \file latticetester/Chrono.h
+   *
    * This class acts as an interface to the system clock to compute the CPU
    * time used by parts of a program.
    *

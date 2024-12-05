@@ -37,6 +37,8 @@ using namespace LatticeTester;
 namespace LatticeTester {
 
 /**
+ * \file latticetester/ReducerStatic.h
+ *
  * This file provides only static functions to reduce a lattice basis in some ways
  * (pairwise, LLL, BKZ \cite rDIE75a, \cite mLEN82a, \cite mSCH91a).
  * The LLL and BKZ ones are wrappers to slightly modified versions of the NTL
@@ -57,8 +59,6 @@ namespace LatticeTester {
  * The same `IntMat` object can then be used for several lattices of different sizes.
  */
 
-// typedef NTL::Vec<Int> IntVec;  // Int is not defined!
-// typedef NTL::Mat<Int> IntMat;
 
 /**
  * This function uses the NTL implementation of the LLL reduction algorithm
@@ -105,6 +105,8 @@ static void redLLLExact(IntMat &basis, double delta = 0.99999);
 template<typename Int, typename Real>
 static void redBKZ(IntMat &basis, double delta = 0.99999, int64_t blocksize = 10, long prune = 0,
       long dim = 0, RealVec *sqlen = 0);
+
+
 
 //============================================================================
 // Implementation

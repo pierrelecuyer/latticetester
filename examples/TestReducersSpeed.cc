@@ -12,6 +12,8 @@
  */
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#define TYPES_CODE  LD     // Int = int64_t, Real = double
+
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
@@ -194,7 +196,7 @@ int main() {
 
    // These functions apply the tests with the desired types.
    testLoop<int64_t, double>(conv<int64_t>(m), numRep, inDual);
-   testLoop<NTL::ZZ, double>(m, numRep, inDual);
+   //testLoop<NTL::ZZ, double>(m, numRep, inDual);
    //testLoop<NTL::ZZ, xdouble>(m, numRep, inDual);
    //testLoop<NTL::ZZ, quad_float>(m, numRep, inDual);
    // testLoop<NTL::ZZ, NTL::RR>(m, numRep, inDual);

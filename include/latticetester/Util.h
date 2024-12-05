@@ -15,13 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
- * \file latticetester/Util.h
- *
- * This file provides several utility functions for Lattice Tester, as well as functions
- * implementing interactions with NTL.
- */
-
 #ifndef LATTICETESTER__UTIL_H
 #define LATTICETESTER__UTIL_H
 
@@ -52,6 +45,14 @@
 #include "latticetester/NTLWrap.h"
 
 /****************************************************************/
+
+/*
+ * \file latticetester/Util.h
+ *
+ * This file provides several utility functions for Lattice Tester, as well as functions
+ * implementing interactions with NTL.
+ */
+
 
 namespace LatticeTester {
 
@@ -930,12 +931,11 @@ inline void Invert(const IntVec &A, IntVec &B, int64_t n) {
 
 /**
  * Computes the `norm` norm of vector `V` trunctated to its `n` first
- * components, and puts the result in `S`. `Scal` has to be a floating point
- * type.
+ * components, and puts the result in `S`. `Scal` has to be a floating point type.
  */
-template<typename Vect, typename Scal>
-inline void CalcNorm(const Vect &V, int64_t n, Scal &S, NormType norm) {
-	Scal y;
+template<typename Int, typename Real>
+inline void CalcNorm(const IntVec &V, int64_t n, Real &S, NormType norm) {
+	Real y;
 	S = 0;
 	switch (norm) {
 	case L1NORM:
@@ -950,7 +950,6 @@ inline void CalcNorm(const Vect &V, int64_t n, Scal &S, NormType norm) {
 			NTL::conv(y, V[i]);
 			S += y * y;
 		}
-		//S = sqrt(S);
 		break;
 
 	case SUPNORM:

@@ -28,6 +28,8 @@
 namespace LatticeTester {
 
 /**
+ * \file latticetester/IntLatticeExt.h
+ *
  * This abstract class extends `IntLattice` and is a skeleton for the
  * specialized subclasses that define specific types of lattices.
  * It is not intended to be used directly, but only via subclasses.

@@ -29,7 +29,6 @@
 #include "latticetester/FlexTypes.h"
 #include "latticetester/EnumTypes.h"
 #include "latticetester/Util.h"
-//#include "latticetester/NTLWrap.h"
 #include "latticetester/Coordinates.h"
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/LLL_lt.h"
@@ -40,6 +39,8 @@ using namespace LatticeTester;
 namespace LatticeTester {
 
 /**
+ * \file latticetester/IntLattice.h
+ *
  * An `IntLattice` object is an integral lattice, with its basis or its `m`-dual basis, or both.
  * There are tools to perform simple manipulations on those lattice bases.
  * The value of `m` must be chosen in a way that all coordinates of the basis and
@@ -79,12 +80,6 @@ namespace LatticeTester {
 
 template<typename Int, typename Real>
 class IntLattice {
-
-// private:
-   //typedef NTL::vector<Int> IntVec;
-   //typedef NTL::matrix<Int> IntMat;
-   //typedef NTL::vector<Real> RealVec;
-   //typedef NTL::matrix<Real> RealMat;
 
 public:
 
@@ -187,7 +182,7 @@ public:
       m_norm = norm;
       m_dim = dim;
       m_basis = basis;
-      // setNegativeNorm();
+      setNegativeNorm();
    }
 
    /**
@@ -198,7 +193,7 @@ public:
       assert(this->m_maxDim == basis.NumRows());
       m_dim = dim;
       m_basis = basis;
-      // setNegativeNorm();
+      setNegativeNorm();
    }
 
    /**
@@ -705,11 +700,10 @@ void IntLattice<Int, Real>::updateVecNorm(const int64_t &d) {
    assert(d >= 0);
    for (int64_t i = d; i < this->m_dim; i++) {
       IntVec &row = this->m_basis[i];
-      //NTL::matrix_row<Int> row(this->m_basis, i);  // Is this making a copy of the row?  ******
       if (this->m_norm == L2NORM) {
          ProdScal<Int>(row, row, this->m_dim, this->m_vecNorm[i]);
       } else {
-         CalcNorm<IntVec, Real>(row, this->m_dim, this->m_vecNorm[i], this->m_norm);
+         CalcNorm<Int, Real>(row, this->m_dim, this->m_vecNorm[i], this->m_norm);
       }
    }
 }
@@ -731,7 +725,7 @@ void IntLattice<Int, Real>::updateSingleVecNorm(const int64_t &d, const int64_t 
    if (this->m_norm == L2NORM) {
       ProdScal<Int>(row, row, c, this->m_vecNorm[d]);
    } else {
-      CalcNorm<IntVec, Real>(row, c, this->m_vecNorm[d], this->m_norm);
+      CalcNorm<Int, Real>(row, c, this->m_vecNorm[d], this->m_norm);
    }
 }
 
@@ -746,7 +740,7 @@ void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d) {
       if (this->m_norm == L2NORM) {
          ProdScal<Int>(row, row, this->m_dimdual, this->m_dualvecNorm[i]);
       } else {
-         CalcNorm<IntVec, Real>(row, this->m_dimdual, this->m_dualvecNorm[i], this->m_norm);
+         CalcNorm<Int, Real>(row, this->m_dimdual, this->m_dualvecNorm[i], this->m_norm);
       }
    }
 }
@@ -762,7 +756,7 @@ void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d, const int64_t &c
       if (this->m_norm == L2NORM) {
          ProdScal<Int>(row, row, c, this->m_dualvecNorm[i]);
       } else {
-         CalcNorm<IntVec, Real>(row, c, this->m_dualvecNorm[i], this->m_norm);
+         CalcNorm<Int, Real>(row, c, this->m_dualvecNorm[i], this->m_norm);
       }
    }
 }
@@ -777,7 +771,7 @@ void IntLattice<Int, Real>::updateSingleDualVecNorm(const int64_t &d, const int6
    if (this->m_norm == L2NORM) {
       ProdScal<Int>(row, row, c, this->m_dualvecNorm[d]);
    } else {
-      CalcNorm<IntVec, Real>(row, c, this->m_dualvecNorm[d], this->m_norm);
+      CalcNorm<Int, Real>(row, c, this->m_dualvecNorm[d], this->m_norm);
    }
 }
 
