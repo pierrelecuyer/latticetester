@@ -10,7 +10,7 @@
  * values of `delta`. Then a dual basis is computed in different ways.
  * After that, we look at projections of this lattice over a subset of coordinates.
  * We show how to construct a basis for such a projection and compute the corresponding
- * dual basis.
+ * dual basis. We only use the L2 norm here, because LLL handles only that norm.
  *
  * This program can be run with the three different types of `Int` (just change the first
  * line below), and with various choices of the modulus `m` and multiplier `a`.

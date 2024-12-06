@@ -182,14 +182,14 @@ public:
    }
 
    /**
-    * Returns the *square Euclidean length* of the current shortest basis vector in the lattice.
+    * Returns the *square length* of the current shortest basis vector in the lattice.
     */
    Real getMinLength2() {
       return m_lMin2;
    }
 
    /**
-    * Returns the length of the current shortest basis vector in the lattice,
+    * Returns the *length* (not squared) of the current shortest basis vector in the lattice,
     * which is stored in a local variable.
     * This depends only on the lattice, but this length is stored and used in this class.
     */
@@ -726,7 +726,9 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
                // The first vector found will always be zero, we discard it.
                m_foundZero = true;
             } else {
-               SetZero(m_bv, dim);
+               for (k = 0; k < dim; k++)
+                  m_bv[k] = 0;
+               // SetZero(m_bv, dim);
                for (k = 0; k < dim; k++) {
                   if (m_z[k] != 0) {
                      // IntVec &row1 = m_lat->getBasis()[k];
@@ -798,6 +800,8 @@ bool ReducerBB<Int, Real>::shortestVector() {
    if (norm != L2NORM)  m_lat->setNegativeNorm();
    m_lat->updateScalL2Norm(0, dim);
    m_lat->sortBasis(0);
+   // for (int64_t k = 0; k < dim; k++)  m_bv[k] = m_lat->getBasis()[0][k];
+   m_bv = m_lat->getBasis()[0];
    // We put in m_lMin2 the approximate square norm of the shortest vector in the basis,
    // for either the L1 or L2 norm.  For the L2 norm, we now it is the first vector.
    if (norm == L2NORM) {
@@ -827,18 +831,23 @@ bool ReducerBB<Int, Real>::shortestVector() {
       m_v.SetDims(dim, dim);
       m_v2.SetDims(dim, dim);
       Int mod = m_lat->getModulus();
+      std::cout << " Triangular, before CopyMatr, dim  = " << dim << "\n";
       CopyMatr(m_v, m_lat->getBasis(), dim, dim);
+      std::cout << " Triangular, after CopyMatr, dim  = " << dim << "\n";
       lowerTriangularBasis(m_v, m_v2, mod);
       // CopyMatr(m_lat->getBasis(), m_v2, dim, dim);
+      std::cout << " Triangular, after lowerTriangular, dim  = " << dim << "\n";
       for (int64_t i = 0; i < dim; i++) {
          for (int64_t j = 0; j < dim; j++) {
             if (i != j) m_c0[i][j] = NTL::conv < Real > (m_v2[i][j]) / NTL::conv<Real> (m_v2[i][i]);
             else m_c0[i][j] = NTL::conv < Real > (m_v2[i][j]);
          }
       }
+      std::cout << " Triangular, after setting m_c0 \n";
       for (int64_t i = 0; i < dim; i++) {
          m_dc2[i] = m_c0[i][i] * m_c0[i][i];
       }
+      std::cout << " Triangular, after setting m_dc2 \n";
    } else {
       std::cerr << "RedBBShortVec:decomp value not supported";
       return false;

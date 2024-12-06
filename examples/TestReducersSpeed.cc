@@ -12,7 +12,7 @@
  */
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#define TYPES_CODE  LD     // Int = int64_t, Real = double
+// #define TYPES_CODE  LD     // Int = int64_t, Real = double
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -29,9 +29,10 @@ using namespace LatticeTester;
 // template<typename Int, typename Real>
 // class TestReducersSpeed {
 
-const long dimensions[] = { 5, 10, 20, 30, 40 };
-const long numSizes = 5;   // Number of matrix sizes (choices of dimension).
-long maxdim = dimensions[numSizes - 1];   // Maximum dimension
+// const long dimensions[] = { 5, 10, 20, 30, 40, 50, 60 };
+const long dimensions[] = { 6, 8, 10, 12, 14, 16, 18 };
+const long maxNumSizes = 7;   // Number of matrix sizes (choices of dimension).
+long maxdim = dimensions[maxNumSizes - 1];   // Maximum dimension
 
 const long numMeth = 18;   // Number of methods, and their short names.
 std::string names[] = { "LLL5           ", "LLL99999       ", "BKZ99999-10    ", "L5+9+BKZ-10    ",
@@ -39,13 +40,16 @@ std::string names[] = { "LLL5           ", "LLL99999       ", "BKZ99999-10    ",
       "BKZ99999-10+BB ", "BKZ99999-12+BB ", "BKZ999-6+BB    ", "BKZ999-8+BB    ", "BKZ999-10+BB   ",
       "BKZ999-12+BB   ", "L8+BKZ-10+BB   ", "L5+9+BKZ-10+BB ", "L5+9+BKZ-12+BB ", };
 
+// const long numMeth2 = 2;   // Number of methods, and their short names.
+// std::string names2[] = { "LLL99999+BB    ", "BKZ999-10+BB   "};
+
 // We use ctime directly for the timings.
 clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
-clock_t timer[numMeth][numSizes]; // Clock times in microseconds.
-double sumSq[numMeth][numSizes]; // Sum of squares of vector lengths (for checking).
+clock_t timer[numMeth][maxNumSizes]; // Clock times in microseconds.
+double sumSq[numMeth][maxNumSizes]; // Sum of squares of vector lengths (for checking).
 
-void printResults();  // Must be declared, because it has no parameters.
+void printResults(long numMeth, long numSizes);  // Must be declared, because it has no template parameters.
 
 /* This function builds the dual basis of `korlat` in dim = dimensions[d]
  * and dualizes to put the dual as a primal basis. It then applies the
@@ -73,10 +77,11 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
    if (deltaLLL1 > 0.0) redLLL(korlat.getBasis(), deltaLLL1, dim, &sqlen);
    if (deltaLLL2 > 0.0) redLLL(korlat.getBasis(), deltaLLL2, dim, &sqlen);
    if (deltaBKZ > 0.0) redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
-   double len2 = conv<double>(sqlen[0]);
+   double len2 = conv<double>(sqlen[0]);   // This is always the squared L2 norm.
    if (BB) {
-      if (!red.shortestVector(korlat)) std::cout << " shortestVector failed for " << names[meth] << "\n";
-      len2 = conv<double>(korlat.getVecNorm(0));
+      // Here we get the square norm of our choice, either L1 or l2.
+      if (red.shortestVector(korlat)) len2 = conv<double>(red.getMinLength2());
+      else std::cout << " shortestVector failed for " << names[meth] << "\n";
    }
    // std::cout << " korlat.getVecNorm(0): = " << korlat.getVecNorm(0) << "\n";
    // std::cout << " red.getShortVec(): = " << red.getShortVec() << "\n";
@@ -88,10 +93,10 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
 // We test several methods to approximate or find a shortest vector in the dual lattice.
 // The same initial dual basis is rebuilt each time by `performReduction`.
 template<typename Int, typename Real>
-static void tryManyMethods(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
+static void tryManyMethods1(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
       long d) {
    NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
-   sqlen.SetLength(1);  // We retrieve only the shortest vector square length.
+   sqlen.SetLength(1);   // We retrieve only the shortest vector square length.
 
    // For the first 4 parameter choices, we take BB = false (no BB).
    // performReduction(korlat, red, inDual, d, 0, 0.0, 0.0, 0.0, 1, true, sqlen);
@@ -120,21 +125,34 @@ static void tryManyMethods(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real>
    performReduction(korlat, red, inDual, d, 17, 0.5, 0.9, 0.99999, 12, true, sqlen);
 }
 
+// This version just tries two methods.  We use it to compare the speeds for L1 and L2 norms.
+template<typename Int, typename Real>
+static void tryManyMethods2(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
+      long d) {
+   NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
+   sqlen.SetLength(1);   // We retrieve only the shortest vector square length.
+   // Here we take BB = true.
+   performReduction(korlat, red, inDual, d, 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
+   // performReduction(korlat, red, inDual, d, 7, 0.0, 0.0, 0.99999, 6, true, sqlen);
+   performReduction(korlat, red, inDual, d, 13, 0.0, 0.0, 0.999, 10, true, sqlen);
+}
+
 // In this testing loop, we generate `numRep` multipliers `a` and for each one
 // we call tryManyMathods.  We use the same sequence of multipliers `a` for all methods.
 template<typename Int, typename Real>
-static void testLoop(Int m, long numRep, bool inDual) {
+static void testLoop(Int m, NormType norm, bool inDual, long numSet, long numSizes, long numRep) {
    std::string stringTypes;  // To print the selected flexible types.
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
-   std::cout << "****************************************************\n";
+   std::cout << "****************************************\n";
    std::cout << "Types: " << stringTypes << "\n";
    std::cout << "TestReducersSpeed with m = " << m;
-   if (inDual) std::cout << ", in the dual lattice. \n\n";
-   else std::cout << ", in the primal lattice. \n\n";
+   if (inDual) std::cout << ", in the dual lattice ";
+   else std::cout << ", in the primal lattice ";
+   std::cout << "with norm L" << norm << ".\n\n";
    std::cout << "Timings (in microseconds) for different methods for " << numRep
-         << " replications. \n\n";
+         << " replications. \n";
    long d;  // dim = dimensions[d].
-   Rank1Lattice<Int, Real> korlat(m, maxdim); // We use single lattice object.
+   Rank1Lattice<Int, Real> korlat(m, maxdim, norm); // We use single lattice object.
    ReducerBB<Int, Real> red(korlat);   // Single ReducerBB with internal lattice `korlat`.
    Int a0(91);
    Int a(a0);   // For the LCG multiplier, we take successive powers of a0 mod m.
@@ -148,13 +166,14 @@ static void testLoop(Int m, long numRep, bool inDual) {
       a = a * a0 % m;   // The multiplier we use for this rep.
       korlat.seta(a);
       for (d = 0; d < numSizes; d++) {  // Each matrix size.
-         tryManyMethods<Int, Real>(korlat, red, inDual, d);
+         if (numSet == 1) tryManyMethods1<Int, Real>(korlat, red, inDual, d);
+         else tryManyMethods2<Int, Real>(korlat, red, inDual, d);
       }
    }
-   printResults();
+   printResults(numMeth, numSizes);
 }
 
-void printResults() {
+void printResults(long numMeth, long numSizes) {
    long d;
    std::cout << "Num. dimensions:";
    for (d = 0; d < numSizes; d++)
@@ -170,9 +189,9 @@ void printResults() {
    }
    std::cout << "\n";
    std::cout << "Sums of square lengths of shortest basis vector:\n";
-   std::cout << "Num. dimensions: ";
+   std::cout << "Num. dimensions:";
    for (d = 0; d < numSizes; d++)
-      std::cout << std::setw(10) << dimensions[d] << " ";
+      std::cout << std::setw(8) << dimensions[d] << "   ";
    std::cout << "\n\n";
    for (int meth = 0; meth < numMeth; meth++) {
       if (sumSq[meth][0] > 0) {
@@ -187,17 +206,45 @@ void printResults() {
          << " seconds\n\n";
 }
 
+// This function compares the speed with different `Real` types.
+// For each type, it compares different pre-reduction strategies.
+template<typename Int>
+void compareRealTypes (Int m, NormType norm, bool inDual, long numSet, long numSizes, long numRep) {
+   std::cout << "\n========================================================================\n";
+   std::cout << "Compare different reduction strategies for different real types, with L2 norm, ";
+   if (inDual) std::cout << ", in the dual lattice. \n\n";
+   else std::cout << ", in the primal lattice. \n\n";
+   testLoop<int64_t, double>(conv<int64_t>(m), norm, inDual, numSet, numSizes, numRep);
+   testLoop<NTL::ZZ, double>(m, norm, inDual, numSet, numSizes, numRep);
+   //testLoop<NTL::ZZ, xdouble>(m, norm, inDual, numSizes, numRep);
+   //testLoop<NTL::ZZ, quad_float>(m, norm, inDual, numSizes, numRep);
+   //testLoop<NTL::ZZ, NTL::RR>(m, norm, inDual, numSizes, numRep);
+}
+
+// Compares the speeds and results for the two norms, L1 and L2.
+template<typename Int>
+void compareL1L2 (Int m, bool inDual, long numSet, long numSizes, long numRep) {
+    std::cout << "\n=======================================================================\n";
+    std::cout << "Compare L2 vs L2 norms ";
+    if (inDual) std::cout << ", in the dual lattice. \n\n";
+    else std::cout << ", in the primal lattice. \n\n";
+    testLoop<NTL::ZZ, double>(m, L2NORM, inDual, numSet, numSizes, numRep);
+    testLoop<NTL::ZZ, double>(m, L1NORM, inDual, numSet, numSizes, numRep);
+}
+
 int main() {
    // Here, Int and Real are not yet defined.
    NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
-   long numRep = 100; // Number of replications (multipliers a) for each case.
-   bool inDual = false;  // Tests in dual lattice ?
+   // NormType norm = L2NORM;
+   //long numSizes = 2;
+   //long numRep = 2; // Number of replications (multipliers a) for each case.
+   //bool inDual = false;  // Tests in dual lattice ?
+   // long numSet = 1;  // The set of methods, either 1 or 2.
 
-   // These functions apply the tests with the desired types.
-   testLoop<int64_t, double>(conv<int64_t>(m), numRep, inDual);
-   //testLoop<NTL::ZZ, double>(m, numRep, inDual);
-   //testLoop<NTL::ZZ, xdouble>(m, numRep, inDual);
-   //testLoop<NTL::ZZ, quad_float>(m, numRep, inDual);
-   // testLoop<NTL::ZZ, NTL::RR>(m, numRep, inDual);
+   // compareL1L2 (m, false, 2, 3, 10);
+   compareL1L2 (m, true, 2, 5, 10);
+
+   //compareRealTypes (m, L2NORM, false, 1, 3, 10);
+   //compareRealTypes (m, L2NORM, true, 1, 3, 10);
 }

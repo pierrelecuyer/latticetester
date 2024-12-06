@@ -25,16 +25,16 @@
 #include <NTL/RR.h>
 #include <NTL/xdouble.h>
 #include <NTL/quad_float.h>
-// #include "latticetester/NTLWrap.h"  // This one is needed for the vector and matrix types.
 
 /**
  * \file FlexTypes.h
  *
  * There are five admissible combinations of types for `(Int, Real)`.
  * They are represented by the five codes given below.
- * For example, to use Int = NTL::ZZ, Real = double in a program, it suffices o put:
+ * For example, to use Int = NTL::ZZ, Real = double in a program, it suffices to put:
  *   #define TYPES_CODE  ZD
  * at the very beginning of the file, *before* the present `FlexTypes.h` file is read.
+ * See `BasisConstructionSmall.cc` for an example.
  *
  * Another (more flexible) way of specifying the flexible types
  * `(Int, Real)` is to pass the types we want to use in the class and

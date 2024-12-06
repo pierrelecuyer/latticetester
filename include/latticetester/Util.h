@@ -754,9 +754,9 @@ void TransposeMatrix(IntMat &mat, IntMat &mat2) {
  * \name Vectors
  *
  * @{
- * These are utilities to manipulate vectors ranging from instantiation to
- * scalar product.
+ * These are utilities to manipulate vectors ranging from instantiation to scalar product.
  *
+ * ********   MOST OF THIS CAN BE REMOVED.   WE CAN JUST USE NTL DIRECTLY.    *********
  */
 
 /**
@@ -932,6 +932,7 @@ inline void Invert(const IntVec &A, IntVec &B, int64_t n) {
 /**
  * Computes the `norm` norm of vector `V` trunctated to its `n` first
  * components, and puts the result in `S`. `Scal` has to be a floating point type.
+ * For the L2 norm, it returns the square norm instead.
  */
 template<typename Int, typename Real>
 inline void CalcNorm(const IntVec &V, int64_t n, Real &S, NormType norm) {

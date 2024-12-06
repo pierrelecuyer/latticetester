@@ -1,9 +1,3 @@
-/**
- * This example makes speed comparisons with the BasisConstruction functions,
- * with all five combinations of types.
- * See the Lattice Tester guide for more explanations.
- *
- **/
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -15,6 +9,11 @@
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/BasisConstruction.h"
 
+/**
+ * This example makes speed comparisons with the `BasisConstruction` functions,
+ * with all five combinations of types. See the Lattice Tester guide for more explanations.
+ */
+
 using namespace NTL;
 using namespace LatticeTester;
 
@@ -24,7 +23,7 @@ const int64_t numSizes = 5; // Number of matrix sizes (choices of dimensions).
 const int64_t dimensions[numSizes] = { 4, 6, 10, 20, 30 };
 const int64_t numMeth = 12;    // Number of methods to test, and their names.
 std::string names[numMeth] = { "LLL5         ", "LLL8         ", "LLL99        ", "LLL99999     ",
-      "LLL99999-new ", "UppTri       ", "mDualUT      ", "LLL5-dual    ", "LLL8-dual    ",
+      "LLL99999-pnew ", "UppTri       ", "mDualUT      ", "LLL5-dual    ", "LLL8-dual    ",
       "LLL99-dual   ", "LLL99999-dual", "LLL99999-dnew" };
 // We use `ctime` directly for the timings, to minimize overhead.
 clock_t totalTime = clock(); // Global timer for total time.
@@ -41,6 +40,8 @@ void LLLTest(IntMat &basis, int64_t d, int64_t meth, double delta) {
    NTL::Vec<Real> sqlen; // Cannot be global variable because it depends on Real.
    sqlen.SetLength(1);
    clock_t tmp = clock();
+   // Here we apply LLL to the basis. Since we already have a basis,
+   // we could equivalently use `redLLL` from the file `ReducerStatic`.
    LLLConstruction0(basis, delta, dim, dim, &sqlen);
    timer[meth][d] += clock() - tmp;
    sumSq[meth][d] += conv<double>(sqlen[0]);
@@ -206,9 +207,10 @@ void printResults() {
 
 int main() {
 
-   // Here, Int and Real are not yet defined.
+   // Here, `Int` and `Real` are not yet defined, they will be passed as template parameters.
    int64_t m(1048573);  // Prime modulus near 2^{20}
    NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
+   // The following values of `mm` work only with ZZ.
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
    // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}

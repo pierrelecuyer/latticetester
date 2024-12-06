@@ -61,11 +61,6 @@ namespace LatticeTester {
 template<typename Int, typename Real>
 class Rank1Lattice: public IntLatticeExt<Int, Real> {
 
-private:
-//   typedef NTL::Vec<Int> IntVec;
-//   typedef NTL::Mat<Int> IntMat;
-//   typedef NTL::Vec<Real> RealVec;
-
 public:
 
    /**
@@ -75,8 +70,8 @@ public:
     * The coefficient @f$a_j@f$ will be `aa[j-1]`. One must have `aa[0] = 1`.
     * The variable `withPrimal` indicates if the primal basis will be maintained or not,
     * and `withDual` indicates if the dual basis will be maintained or not.
-    * This constructor does not build the basis, to leave
-    * more flexibility in the dimension when doing so.
+    * This constructor does not build the basis, to leave more flexibility
+    * in selecting the dimension when doing so. The current dimension is initially 0.
     */
    Rank1Lattice(const Int &m, const IntVec &aa, NormType norm = L2NORM);
 
@@ -84,6 +79,7 @@ public:
     * Constructor for the special case of a Korobov lattice.
     * Here the generating vector has the form @f$\ba = (1, a, a^2 mod m, a^3 mod m, ...)@f$
     * where @f$a@f$ is an integer such that @f$1 < a < m@f$.
+    * The current dimension is initially set to 0, not to `maxdim`.
     */
    Rank1Lattice(const Int &m, const Int &a, int64_t maxDim, NormType norm = L2NORM);
 
