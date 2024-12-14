@@ -17,8 +17,8 @@
  **/
 
 // The code to define the Int and Real types.  Here we must recompile to change it.
-#define TYPES_CODE  LD     // Int = int64_t, Real = double
-//#define TYPES_CODE  ZD     // Int = ZZ, Real = double
+//#define TYPES_CODE  LD     // Int = int64_t, Real = double
+#define TYPES_CODE  ZD     // Int = ZZ, Real = double
 //#define TYPES_CODE  ZX     // Int = ZZ, Real = xdouble
 //#define TYPES_CODE  ZQ     // Int = ZZ, Real = quad_float
 //#define TYPES_CODE  ZR     // ZZ + RR
@@ -39,8 +39,11 @@
 using namespace LatticeTester;
 using namespace NTL;
 
-Int m(101);      // Modulus m = 101
-Int a(33);       // An LCG multiplier
+// Int m(101);      // Modulus m = 101
+// Int m(1021);      // Modulus m = 1021
+// Int m(1048573);
+Int m(1073741827);  // Prime modulus near 2^{30}
+Int a(12);       // An LCG multiplier
 const long dim(5);  // Dimension of lattice.
 const long dimProj(3);  // Dimension of projection.
 
@@ -62,19 +65,57 @@ int main() {
     Rank1Lattice<Int, Real> korlat(m, a, dim);
     korlat.buildBasis(dim);   // This initial basis is triangular.
     basis1 = korlat.getBasis();
-    std::cout << "Initial Korobov lattice basis (triangular) = \n" << basis1 << "\n";
+    // std::cout << "Initial Korobov lattice basis (triangular) = \n" << basis1 << "\n";
     Int sqlength;       // Square length of first vector in initial basis.
     ProdScal<Int>(basis1[0], basis1[0], dim, sqlength);
-    std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
+    // std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     // We apply LLL to reduce basis1.
     LLLConstruction0<Int, Real>(basis1, 0.5, 0, 0, &sqlen);
-    std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
-    std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
+    // std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
+    // std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
 
     LLLConstruction0<Int, Real>(basis1, 0.99999, 0, 0, &sqlen);
     std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
     std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
+
+    // tests on triangular basis
+
+    upperTriangularBasis(basis1, basis2, m);
+    std::cout << "After `upperTriangularBasis`: \n" << basis2 << "\n\n";
+
+    lowerTriangularBasis(basis2, basis1, m);
+    std::cout << "After `lowerTriangularBasis`: \n" << basis1 << "\n\n";
+
+    upperTriangularBasis(basis1, basis2, m);
+    std::cout << "After `upperTriangularBasis`: \n" << basis2 << "\n\n";
+
+    return 0;
+
+
+/*
+    LLLConstruction0<Int, Real>(basis2, 0.99999, 0, 0, &sqlen);
+    std::cout << "Basis after LLL with delta=0.99999: \n" << basis2 << "\n";
+    std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
+
+    lowerTriangularBasis(basis2, basis1, m);
+    std::cout << "After `lowerTriangularBasis`: \n" << basis1 << "\n\n";
+*/
+    LLLConstruction0<Int, Real>(basis1, 0.99999, 0, 0, &sqlen);
+    std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
+    std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
+
+    upperTriangularBasis(basis1, basis2, m);
+    std::cout << "After `upperTriangularBasis`: \n" << basis2 << "\n\n";
+
+    lowerTriangularBasis(basis2, basis1, m);
+    std::cout << "After `lowerTriangularBasis`: \n" << basis1 << "\n\n";
+
+    upperTriangularBasis(basis1, basis2, m);
+    std::cout << "After `upperTriangularBasis`: \n" << basis2 << "\n\n";
+
+    lowerTriangularBasis(basis2, basis1, m);
+    std::cout << "After `lowerTriangularBasis`: \n" << basis1 << "\n\n";
 
     // We now transform basis1 to the upper-triangular basis2.
     // Note that after this, basis1 contains only garbage.
@@ -94,6 +135,8 @@ int main() {
     std::cout << "In the following basisProj matrices, we need 5 rows and 3 columns\n";
     std::cout << " to make the projection, then 3 rows and 3 columns for the basis.\n";
     std::cout << " When part of matrix is not used, it must be ignored.\n\n";
+
+
 
     // We will compute a basis for this projection in three ways.
     // We put in `basisProj` a set of generating vectors for the projection over `proj`.

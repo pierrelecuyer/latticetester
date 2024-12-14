@@ -735,7 +735,7 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d) {
    assert(d >= 0);
    for (int64_t i = d; i < this->m_dimdual; i++) {
-      IntVec row = this->m_dualbasis[i];
+      IntVec &row = this->m_dualbasis[i];
       //NTL::matrix_row<Int> row(this->m_dualbasis, i);
       if (this->m_norm == L2NORM) {
          ProdScal<Int>(row, row, this->m_dimdual, this->m_dualvecNorm[i]);
@@ -751,7 +751,7 @@ template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d, const int64_t &c) {
    assert(d >= 0);
    for (int64_t i = 0; i < d + 1; i++) {
-      IntVec row = this->m_dualbasis[i];
+      IntVec &row = this->m_dualbasis[i];
       //NTL::matrix_row<Int> row(this->m_dualbasis, i);
       if (this->m_norm == L2NORM) {
          ProdScal<Int>(row, row, c, this->m_dualvecNorm[i]);
@@ -766,7 +766,7 @@ void IntLattice<Int, Real>::updateDualVecNorm(const int64_t &d, const int64_t &c
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateSingleDualVecNorm(const int64_t &d, const int64_t &c) {
    assert(d >= 0);
-   IntVec row = this->m_dualbasis[d];
+   IntVec &row = this->m_dualbasis[d];
    //NTL::matrix_row<Int> row(this->m_dualbasis, d);
    if (this->m_norm == L2NORM) {
       ProdScal<Int>(row, row, c, this->m_dualvecNorm[d]);
@@ -779,7 +779,7 @@ void IntLattice<Int, Real>::updateSingleDualVecNorm(const int64_t &d, const int6
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateScalL2Norm(const int64_t i) {
-   IntVec row = this->m_basis[i];
+   IntVec &row = this->m_basis[i];
    // NTL::matrix_row<Int> row(this->m_basis, i);
    ProdScal<Int>(row, row, this->m_dim, this->m_vecNorm[i]);
 }
@@ -797,7 +797,7 @@ void IntLattice<Int, Real>::updateScalL2Norm(const int64_t k1, const int64_t k2)
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::updateDualScalL2Norm(const int64_t i) {
-   IntVec row = this->m_dualbasis[i];
+   IntVec &row = this->m_dualbasis[i];
    // NTL::matrix_row<Int> row(this->m_dualbasis, i);
    ProdScal<Int>(row, row, this->m_dimdual, this->m_dualvecNorm[i]);
 }

@@ -286,12 +286,16 @@ private:
    bool tryZMink(int64_t j, int64_t i, int64_t Stage, bool &smaller, const IntMat &WTemp);
 
    /**
-    * Computes a Cholesky decomposition of the basis. Returns in `C0` the
-    * elements of the upper triangular matrix of the Cholesky
-    * decomposition that are above the diagonal. Returns in `DC2` the
-    * squared elements of the diagonal.
+    * Computes the LDL Cholesky decomposition of the basis. Returns in `m_L` the
+    * lower-triangular matrix of the Cholesky decomposition that are below the diagonal.
+    * Returns in `m_dc2` the squared elements of the diagonal.
     */
-   bool calculCholesky(RealVec &DC2, RealMat &C0);
+   bool calculCholeskyLDL();
+
+   /**
+    * Similar, but for a triangular basis L.
+    */
+   bool calculTriangularL();
 
    /*
     * In this function, we assume that we have found a new shorter vector
@@ -375,14 +379,16 @@ private:
    IntVec m_bv;   // Saves current shortest vector in primal basis
 
    // Vectors used in BB algorithms, in tryZShortVec and tryZMink.
-   // m_n2[j] will be the sum of terms |z*k|^2 ||v*k||^2 for k > j, updated in `tryZShortVec`.
+   // m_sjp[j] will be the sum of terms |z*k|^2 ||v*k||^2 for k > j, updated in `tryZShortVec`.
    // m_dc2[j] corresponds to d_j in the description of BB in the user guide.
    // For Cholesky, these are the elements of the diagonal matrix D.
-   RealVec m_n2, m_dc2;
+   RealVec m_sjp, m_dc2;
 
-   // Matrices used in the Cholesky decomposition.
-   // We must avoid resizing them, because this is expensive!
-   RealMat m_c0, m_c2;
+   // Matrices used in the Cholesky and triangular decomposition, for the BB bounds.
+   // For Cholesky, m_L represents `tilde L` from the guide and `m_c2` is used internally.
+   // For Triangular, m_L contains the lower-triangular basis.
+   // We try to avoid resizing them!
+   RealMat m_L, m_c2;
    // int64_t *m_IC;       // Array of indexes used in Cholesky
 
    std::vector<std::int64_t> m_z;   // Vector of (integer) values of z_i.
@@ -424,14 +430,14 @@ void ReducerBB<Int, Real>::init(int64_t maxDim) {
    int64_t dim1 = maxDim;
    int64_t dim2 = maxDim;
    if (dim2 <= 2) dim2++;
-   m_c0.SetDims(dim1, dim1);
+   m_L.SetDims(dim1, dim1);
    m_c2.SetDims(dim1, dim1);
    // Indices in m_IC can go as high as maxDim + 2.
    // m_IC = new int64_t[2 + dim1];
 
    // m_nv.SetLength(dim1);
    m_bv.SetLength(dim1);
-   m_n2.SetLength(dim1);
+   m_sjp.SetLength(dim1);
    m_zLR.SetLength(dim1);
    m_z.resize(dim1);
    m_zShort.resize(dim1);
@@ -476,13 +482,13 @@ template<typename Int, typename Real>
 void ReducerBB<Int, Real>::copy(const ReducerBB<Int, Real> &red) {
    m_lat = red.m_lat;
    m_maxDim = red.m_maxDim;
-   m_c0 = red.m_c0;
+   m_L = red.m_L;
    m_c2 = red.m_c2;
    m_dc2 = red.m_dc2;
    // m_nv = red.m_nv;
    m_bv = red.m_bv;
    // m_bw = red.m_bw;
-   m_n2 = red.m_n2;
+   m_sjp = red.m_sjp;
    m_zLR = red.m_zLR;
    m_z = red.m_z;
    m_zShort = red.m_zShort;
@@ -502,10 +508,10 @@ void ReducerBB<Int, Real>::copy(const ReducerBB<Int, Real> &red) {
 
 template<typename Int, typename Real>
 ReducerBB<Int, Real>::~ReducerBB() {
-   m_c0.kill();
+   m_L.kill();
    m_c2.kill();
    m_bv.kill();
-   m_n2.kill();
+   m_sjp.kill();
    m_zLR.kill();
    m_z.resize(0);
    m_zShort.resize(0);
@@ -524,55 +530,123 @@ void ReducerBB<Int, Real>::setBoundL2(const RealVec &thresholds, int64_t dim1, i
 
 //=========================================================================
 
+/**
+ * Returns in `m_L` the elements of the *upper-triangular* matrix L of the
+ * Cholesky decomposition that are above the diagonal. Returns in DC2 the
+ * squared elements of the diagonal.
+ */
+/*
 template<typename Int, typename Real>
-bool ReducerBB<Int, Real>::calculCholesky(RealVec &DC2, RealMat &C0) {
-   /*
-    * Returns in C0 the elements of the upper triangular matrix of the
-    * Cholesky decomposition that are above the diagonal. Returns in DC2 the
-    * squared elements of the diagonal.
-    */
+bool ReducerBB<Int, Real>::calculCholesky() {
    const int64_t dim = m_lat->getDim();
-   int64_t k, j, i;
-   Real m2;
-   NTL::conv(m2, m_lat->getModulus());
-   m2 = m2 * m2;
-   int64_t d = dim;
-
-   // Compute the d first lines of C0 with the primal Basis.
-   for (i = 0; i < d; i++) {
-      m_lat->updateScalL2Norm(i);
-      IntVec &row1 = m_lat->getBasis()[i];
-      for (j = i; j < dim; j++) {
-         if (j == i) NTL::conv(m_c2[i][i], m_lat->getVecNorm(i));
-         else {
-            IntVec &row2 = m_lat->getBasis()[j];
-            ProdScal<Int>(row1, row2, dim, m_c2[i][j]);
-         }
-         for (k = 0; k < i; k++)
-            m_c2[i][j] -= C0[k][i] * m_c2[k][j];
+   // int64_t k, j, i;
+   // Real m2;
+   // NTL::conv(m2, m_lat->getModulus());
+   // m2 = m2 * m2;
+   // int64_t d = dim;
+   // Compute the first dim rows of L with the primal Basis.
+   for (int64_t i = 0; i < dim; i++) {
+      // m_lat->updateScalL2Norm(i);
+      // IntVec &rowi = m_lat->getBasis()[i];
+      for (int64_t j = i; j >= 0; j--) {
+         // if (j == i) NTL::conv(m_c2[i][i], m_lat->getVecNorm(i));
+         // else {
+            // IntVec &rowj = m_lat->getBasis()[j];
+         ProdScal<Int>(m_lat->getBasis()[i], m_lat->getBasis()[j], dim, m_c2[i][j]);
+         for (int64_t k = 0; k < i; k++)
+            m_c2[i][j] -= m_L[k][i] * m_c2[k][j];
          if (i == j) {
-            DC2[i] = m_c2[i][i];
-            if (DC2[i] < 0.0) {
-               std::cout << "\n***** Negative diagonal element in Cholesky Decomposition\n" << std::endl;
+            m_dc2[i] = m_c2[i][i];
+            if (m_dc2[i] < 0.0) {
+               std::cout << "\n*** Negative diag. element in Cholesky Decomp.\n" << std::endl;
                return false;
             }
-         } else C0[i][j] = m_c2[i][j] / DC2[i];
-         // For testing ...
-         /**  if(i!=j && i<j)
-          std::cout<< "C0("<<i<<","<<j<<")="<<C0[i][j]<<" ";
-          else if (i==j)
-          std::cout<< "C0("<<i<<","<<j<<")="<<DC2[i]<<" ";
-          else
-          std::cout<< "C0("<<i<<","<<j<<")="<<"0"<<" ";	*/
+         } else m_L[i][j] = m_c2[i][j] / m_dc2[i];
       }
-      // std::cout<<""<<std::endl;
+   }
+   return true;
+}
+*/
+
+//=========================================================================
+
+/**
+ * Performs an LDL Cholesky decomposition, then puts in `m_L` the elements of the
+ * lower-triangular matrix `tilde L` (see the guide) that are above the diagonal,
+ * and puts in DC2 the squared elements of the diagonal, the `d_j` in the guide.
+ */
+template<typename Int, typename Real>
+bool ReducerBB<Int, Real>::calculCholeskyLDL() {
+   const int64_t dim = m_lat->getDim();
+   // int64_t k, j, i;
+   // Real m2;
+   // NTL::conv(m2, m_lat->getModulus());
+   // m2 = m2 * m2;
+   // int64_t d = dim;
+   // Compute the first dim rows of L with the primal Basis.
+   for (int64_t j = 0; j < dim; j++) {  // Column j.
+      // m_lat->updateScalL2Norm(i);
+      // IntVec &rowi = m_lat->getBasis()[i];
+      for (int64_t i = j; i < dim; i++) {  // Row i >= j.
+         // m_c2[i][j] will first contain a_{i,j}, and finally `d_j \tilde\ell_{i,j}`
+         // m_L[i][j] will contain `\tilde\ell_{i,j}`
+         ProdScal<Int>(m_lat->getBasis()[i], m_lat->getBasis()[j], dim, m_c2[i][j]);
+         for (int64_t k = 0; k < j; k++)
+            m_c2[i][j] -= m_L[j][k] * m_c2[i][k];
+         if (i == j) {
+            m_dc2[i] = m_c2[i][i];
+            if (m_dc2[i] < 0.0) {
+               std::cout << "\n*** Negative diag. element in Cholesky Decomp.\n" << std::endl;
+               return false;
+            }
+         } else m_L[i][j] = m_c2[i][j] / m_dc2[j];
+      }
+   }
+   return true;
+}
+
+//=========================================================================
+
+ /**
+  * Compute a lower-triangular basis L.  Then put in `m_L` the elements of the
+  * lower-triangular basis matrix L that are below the diagonal, and the
+  * squared elements of the diagonal in `m_dc2`, both in `double`.
+  */
+template<typename Int, typename Real>
+bool ReducerBB<Int, Real>::calculTriangularL() {
+   // Real m2;
+   // NTL::conv(m2, m_lat->getModulus());
+   // m2 = m2 * m2;
+   // We could also just assume that the basis is already lower triangular?
+   const int64_t dim = m_lat->getDim();
+   // IntMat &basis = m_lat->getBasis();   // The l
+   IntMat copybasis, tribasis;  // Here we create two new matrices each time!
+   copybasis.SetDims(dim, dim); // A copy of the current basis.
+   tribasis.SetDims(dim, dim);  // Will be a lower-triangular basis.
+   // Int mod = m_lat->getModulus();
+   CopyMatr(copybasis, m_lat->getBasis(), dim, dim);  // Copy current basis into `copybasis`.
+   std::cout << " triangularL, copybasis = \n" << copybasis << "\n";
+   upperTriangularBasis(copybasis, tribasis, m_lat->getModulus());  // Here `copybasis` may be destroyed.
+   std::cout << " triangularL, upper triangular basis `tribasis` = \n" << tribasis << "\n";
+   // lowerTriangularBasis(copybasis, tribasis, m_lat->getModulus());  // Here `copybasis` may be destroyed.
+   // std::cout << " triangularL, lower triangular basis `tribasis` = \n" << tribasis << "\n";
+   // CopyMatr(basis, m_v2, dim, dim);
+   for (int64_t i = 0; i < dim; i++) {
+      for (int64_t j = 0; j < dim; j++) {
+         if (i != j) m_L[i][j] = NTL::conv < Real > (tribasis[i][j]) / NTL::conv<Real> (tribasis[i][i]);
+         else m_L[j][j] = NTL::conv < Real > (tribasis[j][j]);
+      }
+   }
+   std::cout << " triangularL, lower triangular basis m_L = \n" << m_L << "\n";
+   for (int64_t i = 0; i < dim; i++) {
+      m_dc2[i] = m_L[i][i] * m_L[i][i];  // These are the square diagonal elements.
    }
    return true;
 }
 
 // =========================================================================
 
-// This function puts the new vector v in the basis without looking at its length.
+// This function puts the new vector v = m_bv in the basis without looking at its length.
 // It does not have to be shorter than the current basis vectors.
 template<typename Int, typename Real>
 void ReducerBB<Int, Real>::insertBasisVector(std::vector<std::int64_t> &z) {
@@ -643,11 +717,11 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
     */
 
    // For a non-recursive implementation, these variables should be arrays indexed by j.
-   Real dc, x, center, mn_xsquare_md;
+   Real dc, center, x, mn_xsquare_md;
    std::int64_t min0, max0;     // Interval boundaries for the z_j.
    std::int64_t zlow, zhigh;    // Current pointers on the left and right of the center.
    bool high;      // Indicates if we are on the right (true) or the left of the center.
-   int64_t k;
+   int64_t i, k;
    std::int64_t temp;
    const int64_t dim = m_lat->getDim();
    ++m_countNodes;
@@ -656,27 +730,22 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       return false;
    }
 
-   /* Compute an interval that contains the admissible values of zj. */
+   /* Compute an interval that contains the admissible values of z_j.      */
    /* This computation is for the L2 norm, but also works for the L1 norm. */
-   /* 1. Compute the center of the interval.  */
-   center = 0.0;
-   dc = 0.0;
+   // m_sjp[j] is s_j(p) in the guide.
+   center = 0.0;   dc = 0;
+   for (i = j+1;  i < dim; ++i)
+       center -= m_L[i][j] * m_zLR[i];
+   // This dc is the distance from the center to the boundaries.
+   // m_lMin2 contains the square length of current shortest vector with the selected norm.
    if (m_decomp == CHOLESKY) {
-      for (k = j + 1; k < dim; ++k)
-         center -= m_c0[j][k] * m_zLR[k];
-      // This dc is the distance from the center to the boundaries.
-      // m_lMin2 contains the square length of current shortest vector with the selected norm.
-      dc = sqrt((m_lMin2 - m_n2[j]) / m_dc2[j]);
+      dc = sqrt((m_lMin2 - m_sjp[j]) / m_dc2[j]);
    }
    if (m_decomp == TRIANGULAR && norm == L2NORM) {
-      for (k = 0; k < j; ++k)
-         center -= m_c0[j][k] * m_zLR[k];
-      dc = sqrt((m_lMin2 - m_n2[j]) / m_dc2[j]);
+       dc = sqrt(m_lMin2 - m_sjp[j]) / m_L[j][j];
    }
    if (m_decomp == TRIANGULAR && norm == L1NORM) {
-      for (k = j + 1; k < dim; ++k)
-         center -= m_c0[k][j] * m_zLR[k];
-      dc = (m_lMin1 - m_n2[j]) / m_c0[j][j];
+      dc = (m_lMin1 - m_sjp[j]) / m_L[j][j];
    }
    // Compute two integers min0 and max0 that are the min and max integers in the interval.
    if (!m_foundZero) min0 = 0;     // We are at the beginning, min will be zero.
@@ -714,9 +783,9 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       else m_z[j] = zlow;
       m_zLR[j] = m_z[j];
 
-      // Computing m_n2[j-1].
+      // Computing m_sjp[j-1].
       x = m_zLR[j] - center;
-      mn_xsquare_md = m_n2[j] + x * x * m_dc2[j]; // We pre-compute this to save time.
+      mn_xsquare_md = m_sjp[j] + x * x * m_dc2[j]; // We pre-compute this to save time.
 
       if (j == 0) {
          // All the zj have been selected: we now have a candidate vector to test!
@@ -726,21 +795,20 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
                // The first vector found will always be zero, we discard it.
                m_foundZero = true;
             } else {
+               IntVec vtest;  // The new shortest vector candidate to be tested.
+               vtest.SetLength(dim);
                for (k = 0; k < dim; k++)
-                  m_bv[k] = 0;
-               // SetZero(m_bv, dim);
+                  vtest[k] = 0;
                for (k = 0; k < dim; k++) {
-                  if (m_z[k] != 0) {
-                     // IntVec &row1 = m_lat->getBasis()[k];
-                     ModifVect(m_bv, m_lat->getBasis()[k], m_z[k], dim);
-                  }
+                  if (m_z[k] != 0)
+                     ModifVect(vtest, m_lat->getBasis()[k], m_z[k], dim);
                }
-               // The new shortest vector is now in `m_bv`. We compute its norm.
+               // The new shortest vector is now in `vtest`. We compute its norm.
                if (m_lat->getNormType() == L2NORM) {
-                  ProdScal<Int>(m_bv, m_bv, dim, x);
+                  ProdScal<Int>(vtest, vtest, dim, x);
                } else {
                   // Compute the square length for the L1 norm.
-                  CalcNorm<Int, Real>(m_bv, dim, x, L1NORM);
+                  CalcNorm<Int, Real>(vtest, dim, x, L1NORM);
                   x = x * x;
                }
                // This must work for either L1 or L2 norm, m_lMin2 is the square norm in both cases.
@@ -748,15 +816,16 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
                   // The new vector is shorter.
                   smaller = true;
                   NTL::conv(m_lMin2, x);  // Update the smallest square norm.
+                  m_bv = vtest;
                   m_zShort = m_z;
                }
             }
          }
       } else if (m_lMin2 > mn_xsquare_md) {
          // There is still hope; we continue the recursion.
-         m_n2[j - 1] = mn_xsquare_md;
+         m_sjp[j - 1] = mn_xsquare_md;
          if (!tryZShortVec(j - 1, smaller, norm)) return false;
-      } else m_n2[j - 1] = mn_xsquare_md;
+      } else m_sjp[j - 1] = mn_xsquare_md;
       if (high) {
          ++zhigh;
          if (zlow >= min0) high = false;
@@ -778,8 +847,8 @@ bool ReducerBB<Int, Real>::shortestVector() {
     * vector length will be in m_lMin2, regardless of the selected norm.
     *
     * This function uses (directly or indirectly) the following class variables:
-    *    m_lMin1, m_lMin2, m_decomp, m_boundL2, m_n2, m_countNodes, m_foundZero,
-    *    m_bv, m_zShort, m_c0, m_zLR, m_z, m_dc2, ....  and more.
+    *    m_lMin1, m_lMin2, m_decomp, m_boundL2, m_sjp, m_countNodes, m_foundZero,
+    *    m_bv, m_zShort, m_L, m_zLR, m_z, m_dc2, ....  and more.
     * From m_lat (current lattice object):
     *    norm, sortBasisNoDual, updateScalL2Norm, getBasis,
     */
@@ -789,30 +858,29 @@ bool ReducerBB<Int, Real>::shortestVector() {
       return false;
    }
    const int64_t dim = m_lat->getDim();  // Lattice dimension
-   //std::cout << " Start redBBShortVec, dim  = " << dim << "\n";
    //std::cout << " Start redBBShortVec, basis = \n" << m_lat->getBasis() << "\n";
 
    bool smaller = false;  // Will change if/when we find a smaller vector.
    Real x(0.0);
-   // Here we sort the basis by L2 lengths, otherwise Cholesky will fail more rapidly
-   // due to floating-point errors. We first update the L2 norm and sort the vectors
-   // based on that norm.
+   // In all cases, we update the L2 norm and we sort the basis by L2 lengths.
+   // This is better for Cholesky, otherwise the decomp will fail more rapidly
+   // due to floating-point errors.
    if (norm != L2NORM)  m_lat->setNegativeNorm();
-   m_lat->updateScalL2Norm(0, dim);
-   m_lat->sortBasis(0);
+   m_lat->updateScalL2Norm(0, dim);  // `m_vecNorm` will now contain the square L2 norms.
+   m_lat->sortBasis(0);              // Vectors are sorted by L2 norms.
    // for (int64_t k = 0; k < dim; k++)  m_bv[k] = m_lat->getBasis()[0][k];
    m_bv = m_lat->getBasis()[0];
+   std::cout << " redBBShortVec, when entering `shortestVector`, m_bv = " << m_bv << "\n";
+
    // We put in m_lMin2 the approximate square norm of the shortest vector in the basis,
-   // for either the L1 or L2 norm.  For the L2 norm, we now it is the first vector.
+   // for either the L1 or L2 norm.  For the L2 norm, we know it is the first vector.
    if (norm == L2NORM) {
       NTL::conv(m_lMin2, m_lat->getVecNorm(0));
    } else {
       // Looking for the shortest vector in basis according to the L1 norm.
-      IntVec &row1 = m_lat->getBasis()[0];
-      CalcNorm<Int, Real>(row1, dim, m_lMin1, norm);
+      CalcNorm<Int, Real>(m_lat->getBasis()[0], dim, m_lMin1, norm);
       for (int64_t k = 1; k < dim; k++) {
-         IntVec &row2 = m_lat->getBasis()[k];
-         CalcNorm<Int, Real>(row2, dim, x, norm);
+         CalcNorm<Int, Real>(m_lat->getBasis()[k], dim, x, norm);
          if (x < m_lMin1) m_lMin1 = x;
       }
       m_lMin2 = m_lMin1 * m_lMin1;  // Squared shortest length with L1 norm.
@@ -821,48 +889,29 @@ bool ReducerBB<Int, Real>::shortestVector() {
    // This is useful for the seek programs in LatMRG.
    if (m_lMin2 <= m_BoundL2[dim - 1]) return false;
 
+   std::cout << " redBBShortVec, basis before decomposition = \n" << m_lat->getBasis() << "\n";
    if (m_decomp == CHOLESKY) {
-      // Perform the Cholesky decomposition; if it fails we exit. */
-      if (!calculCholesky(m_dc2, m_c0)) return false;
+      // Perform the Cholesky decomposition; if it fails we exit.
+      if (!calculCholeskyLDL()) return false;
    } else if (m_decomp == TRIANGULAR) {  // Just for testing; this is very slow!
       // Perform a triangular decomposition.
-      // Or perhaps we may just assume that the basis is already lower triangular?
-      IntMat m_v, m_v2;   // Here we create new matrices each time!!!!
-      m_v.SetDims(dim, dim);
-      m_v2.SetDims(dim, dim);
-      Int mod = m_lat->getModulus();
-      std::cout << " Triangular, before CopyMatr, dim  = " << dim << "\n";
-      CopyMatr(m_v, m_lat->getBasis(), dim, dim);
-      std::cout << " Triangular, after CopyMatr, dim  = " << dim << "\n";
-      lowerTriangularBasis(m_v, m_v2, mod);
-      // CopyMatr(m_lat->getBasis(), m_v2, dim, dim);
-      std::cout << " Triangular, after lowerTriangular, dim  = " << dim << "\n";
-      for (int64_t i = 0; i < dim; i++) {
-         for (int64_t j = 0; j < dim; j++) {
-            if (i != j) m_c0[i][j] = NTL::conv < Real > (m_v2[i][j]) / NTL::conv<Real> (m_v2[i][i]);
-            else m_c0[i][j] = NTL::conv < Real > (m_v2[i][j]);
-         }
-      }
-      std::cout << " Triangular, after setting m_c0 \n";
-      for (int64_t i = 0; i < dim; i++) {
-         m_dc2[i] = m_c0[i][i] * m_c0[i][i];
-      }
-      std::cout << " Triangular, after setting m_dc2 \n";
+      // We could perhaps just assume that the basis is already lower triangular?
+      if (!calculTriangularL()) return false;
    } else {
       std::cerr << "RedBBShortVec:decomp value not supported";
       return false;
    }
    // Perform the branch and bound.
    // The following variables are used and updated in `tryZShortVec`.
-   m_n2[dim - 1] = 0.0;
+   m_sjp[dim - 1] = 0.0;
    m_countNodes = 0;
    smaller = false;
    m_foundZero = false;
-   // std::cout << " redBBShortVec, basis before tryZ = \n" << m_lat->getBasis() << "\n";
+   std::cout << " redBBShortVec, basis before tryZ = \n" << m_lat->getBasis() << "\n";
    if (!tryZShortVec(dim - 1, smaller, norm)) // We search for a shortest vector.
       return false;
    if (smaller) {
-      //std::cout << " redBBShortVec, found a shorter vector, square length: " << m_lMin2 << "\n";
+      std::cout << " redBBShortVec, found a shorter vector, square length: " << m_lMin2 << "\n";
       //std::cout << " redBBShortVec, m_bv = " << m_bv << "\n";
       //std::cout << " redBBShortVec, before transform Stage 3, basis = \n" << m_lat->getBasis() << "\n";
 
@@ -872,10 +921,6 @@ bool ReducerBB<Int, Real>::shortestVector() {
 
       insertBasisVector(m_zShort); // Is this useful and OK for L1 ???
       // insertBasisVectorLLL(m_zShort); // Is this OK for L1.  This one is just a bit slower.
-      //std::cout << " redBBShortVec, after transform Stage 3, basis = \n" << m_lat->getBasis() << "\n";
-      //std::cout << " redBBShortVec, m_bv = " << m_bv << "\n";
-      // std::cout << " redBBShortVec, m_bv[0] = " << m_bv[0] << "\n";
-      // std::cout << " redBBShortVec, basis after update norm = \n" << m_lat->getBasis() << "\n";
 
       // After the following, the new current shortest vector will be in m_lat->getBasis()(0).
       // In the case of L1NORM, we must check if it is really smaller.
@@ -925,15 +970,11 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
    }
 
    // Calcul d'un intervalle contenant les valeurs admissibles de z_j.
-   center = 0.0;
+   center = 0;
    if (j < dim - 1) {
-      // Calcul du centre de l'intervalle.
-      for (k = j + 1; k < dim; k++)
-         center = center - m_c0(j, k) * m_zLR[k];
-
-      // Distance du centre aux extremites de l'intervalle.
-      // We use the L2 norm for this, since other norms are not allowed.
-      dc = sqrt((m_lMin2 - m_n2[j]) / m_dc2[j]);
+      for (i = j+1;  i < dim; ++i)
+          center -= m_L[i][j] * m_zLR[i];
+      dc = sqrt((m_lMin2 - m_sjp[j]) / m_dc2[j]);
 
       /* Calcul de deux entiers ayant la propriete qu'un entier */
       /* non-compris entre (i.e. strictement exterieur `a) ceux-ci */
@@ -975,7 +1016,7 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
       } else {
          min0 = 2;
          zhigh = 2;
-         NTL::conv(max0, trunc(sqrt((m_lMin2 - m_n2[j]) / m_dc2[j])));
+         NTL::conv(max0, trunc(sqrt((m_lMin2 - m_sjp[j]) / m_dc2[j])));
       }
    }
 
@@ -983,7 +1024,6 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
    /* On essaie maintenant chacun des z[j] dans l'intervalle, en      */
    /* commencant par le centre puis en alternant d'un cote a l'autre. */
    while (zlow >= min0 || zhigh <= max0) {
-
       if (high) {
          m_z[j] = zhigh;
       } else {
@@ -991,30 +1031,30 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
       }
       m_zLR[j] = m_z[j];
 
-      // Calcul de m_n2[j-1].
+      // Calcul de m_sjp[j-1].
       x = m_zLR[j] - center;
-
       if (j == 0) {
-         Real tmps_n2 = m_n2[0] + x * x * m_dc2[0];
+         Real tmps_n2 = m_sjp[0] + x * x * m_dc2[0];
          if (tmps_n2 < m_lMin2) {
             // On verifie si on a vraiment trouve un vecteur plus court
-            // NTL::Mat_row<const Int> row1(m_lat->getBasis(), dim - 1);
+            IntVec vtest;  // The new shorter vector candidate to be tested.
+            vtest.SetLength(dim);
             IntVec &row1 = m_lat->getBasis()[dim-1];
-            m_bv = row1;
+            vtest = row1;
             for (k = 0; k < dim - 1; k++) {
                if (m_z[k] != 0) {
                   IntVec &row1 = m_lat->getBasis()[k];
                   //NTL::Mat_row<Int> row1(m_lat->getBasis(), k);
-                  ModifVect(m_bv, row1, m_z[k], dim);
+                  ModifVect(vtest, row1, m_z[k], dim);
                }
             }
             if (Stage == 3) {
                IntVec &row1 = m_lat->getBasis()[dim-1];
                //NTL::Mat_row<Int> row1(m_lat->getBasis(), dim - 1);
-               ModifVect(m_bv, row1, m_zLR[dim - 1] - 1.0, dim);
+               ModifVect(vtest, row1, m_zLR[dim - 1] - 1.0, dim);
             }
 
-            ProdScal<Int>(m_bv, m_bv, dim, S1);
+            ProdScal<Int>(vtest, vtest, dim, S1);
             NTL::conv(S4, m_lat->getVecNorm(dim - 1));
             if (S1 < S4) {
                if (Stage == 2) {
@@ -1023,7 +1063,7 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
                   else {
                      for (k = 1; k < dim; k++) {
                         // NTL::Mat_row<Int> row1(WTemp, k);
-                        ProdScal<Int>(m_bv, WTemp[k], dim, S2);
+                        ProdScal<Int>(vtest, WTemp[k], dim, S2);
                         Quotient(S2, mR, S3);
                         NTL::conv(m_zShort[k], S3);
                      }
@@ -1037,7 +1077,7 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
                } else {
                   for (k = 0; k < dim; k++) {
                      // NTL::Mat_row<Int> const row1(WTemp, k);
-                     ProdScal<Int>(m_bv, WTemp[k], dim, S2);
+                     ProdScal<Int>(vtest, WTemp[k], dim, S2);
                      Quotient(S2, mR, S3);
                      NTL::conv(m_zShort[k], S3);
                   }
@@ -1048,13 +1088,14 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
                if (smaller) {
                   NTL::conv(temp, S1);
                   m_lat->setVecNorm(temp, dim - 1);
+                  m_bv = vtest;
                   return true;
                }
             }
          }
       } else { // j > 0
-         m_n2[j - 1] = m_n2[j] + x * x * m_dc2[j];
-         if (m_lMin2 >= m_n2[j - 1]) {
+         m_sjp[j - 1] = m_sjp[j] + x * x * m_dc2[j];
+         if (m_lMin2 >= m_sjp[j - 1]) {
             if (!tryZMink(j - 1, i, Stage, smaller, WTemp)) return false;
             // Des qu'on a trouve quelque chose, on sort de la recursion
             // et on retourne dans reductMinkowski.
@@ -1098,8 +1139,6 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
    if (m_lat->getVecNorm(i) < 0) {
       IntVec &row1 = m_lat->getBasis()[i];
       ProdScal<Int>(row1, row1, dim, tmp);
-      //  ProdScal<Int> (m_lat->getBasis()[i], m_lat->getBasis()[i],
-      //            dim, tmp);
       m_lat->setVecNorm(tmp, i);
    }
    NTL::conv(m_lMin2, m_lat->getVecNorm(i));
@@ -1113,25 +1152,23 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
       for (h = 0; h < dim; h++)
          TabooTemp[h] = true;
       redLLL<Int, Real>(m_lat->getBasis(), 0.99999, dim);
-      // redLLLOld(1.0, 1000000, dim - 1);
       m_lat->updateVecNorm();
    }
-   if (!calculCholesky(m_dc2, m_c0)) return false;
+   if (!calculCholeskyLDL()) return false;
    m_countNodes = 0;
-   m_n2[dim - 1] = 0.0;
+   m_sjp[dim - 1] = 0.0;
    if (!tryZMink(dim - 1, i, Stage, smaller, WTemp)) return false;
 
    if (PreRedLLLMink) {
-      /* On remet l'anciennne base, celle d'avant LLL, avant de considerer
-       la prochaine m_lat->dimension.  */
+      // On remet l'anciennne base, celle d'avant LLL, avant de considerer
+      //  la prochaine m_lat->dimension.
       m_lat->getBasis() = VTemp;
       m_lat->updateVecNorm();
       for (h = 0; h < dim; h++)
          taboo[h] = TabooTemp[h];
    }
    if (smaller) {
-      /* On a trouve un plus court vecteur.  On ameliore
-       m_lat->getBasis()[k].  */
+      /* On a trouve un plus court vecteur qui ameliore m_lat->getBasis()[k].  */
       int64_t k = 0;
       if (Stage == 2) k = dim - 1;
       else insertBasisVector(m_zShort);
@@ -1143,7 +1180,6 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
          }
       }
    } else if (Stage == 2) taboo[dim - 1] = true;
-
    m_lat->permute(i, dim - 1);
    // trace( "APRES redBBMink");
    return true;
