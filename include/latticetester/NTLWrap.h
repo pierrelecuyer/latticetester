@@ -329,7 +329,8 @@ inline static void div(int64_t &x, const int64_t a, const int64_t b) {
     x = a / b;
 }
 
-// Modulo.
+// Modulo. Not defined for `int64_t` in NTL.
+// This one always returns a non-negative value, like for ZZ in NTL.
 inline static void rem(int64_t &x, const int64_t a, const int64_t b) {
     x = a % b;
     if (x < 0) x += b;

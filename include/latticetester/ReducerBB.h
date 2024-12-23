@@ -614,30 +614,23 @@ bool ReducerBB<Int, Real>::calculCholeskyLDL() {
   */
 template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::calculTriangularL() {
-   // Real m2;
-   // NTL::conv(m2, m_lat->getModulus());
-   // m2 = m2 * m2;
-   // We could also just assume that the basis is already lower triangular?
+   // If the basis is already lower triangular, this will be fast.
    const int64_t dim = m_lat->getDim();
    // IntMat &basis = m_lat->getBasis();   // The l
    IntMat copybasis, tribasis;  // Here we create two new matrices each time!
    copybasis.SetDims(dim, dim); // A copy of the current basis.
    tribasis.SetDims(dim, dim);  // Will be a lower-triangular basis.
    // Int mod = m_lat->getModulus();
-   CopyMatr(copybasis, m_lat->getBasis(), dim, dim);  // Copy current basis into `copybasis`.
-   std::cout << " triangularL, copybasis = \n" << copybasis << "\n";
-   upperTriangularBasis(copybasis, tribasis, m_lat->getModulus());  // Here `copybasis` may be destroyed.
-   std::cout << " triangularL, upper triangular basis `tribasis` = \n" << tribasis << "\n";
-   // lowerTriangularBasis(copybasis, tribasis, m_lat->getModulus());  // Here `copybasis` may be destroyed.
+   CopyPartMat<IntMat>(copybasis, m_lat->getBasis(), dim, dim);  // Copy current basis into `copybasis`.
+   lowerTriangularBasis(tribasis, copybasis, m_lat->getModulus());  // Here `copybasis` may be destroyed.
    // std::cout << " triangularL, lower triangular basis `tribasis` = \n" << tribasis << "\n";
-   // CopyMatr(basis, m_v2, dim, dim);
    for (int64_t i = 0; i < dim; i++) {
       for (int64_t j = 0; j < dim; j++) {
          if (i != j) m_L[i][j] = NTL::conv < Real > (tribasis[i][j]) / NTL::conv<Real> (tribasis[i][i]);
          else m_L[j][j] = NTL::conv < Real > (tribasis[j][j]);
       }
    }
-   std::cout << " triangularL, lower triangular basis m_L = \n" << m_L << "\n";
+   // std::cout << " triangularL, lower triangular basis m_L = \n" << m_L << "\n";
    for (int64_t i = 0; i < dim; i++) {
       m_dc2[i] = m_L[i][i] * m_L[i][i];  // These are the square diagonal elements.
    }
@@ -870,7 +863,7 @@ bool ReducerBB<Int, Real>::shortestVector() {
    m_lat->sortBasis(0);              // Vectors are sorted by L2 norms.
    // for (int64_t k = 0; k < dim; k++)  m_bv[k] = m_lat->getBasis()[0][k];
    m_bv = m_lat->getBasis()[0];
-   std::cout << " redBBShortVec, when entering `shortestVector`, m_bv = " << m_bv << "\n";
+   // std::cout << " redBBShortVec, when entering `shortestVector`, m_bv = " << m_bv << "\n";
 
    // We put in m_lMin2 the approximate square norm of the shortest vector in the basis,
    // for either the L1 or L2 norm.  For the L2 norm, we know it is the first vector.
@@ -889,13 +882,12 @@ bool ReducerBB<Int, Real>::shortestVector() {
    // This is useful for the seek programs in LatMRG.
    if (m_lMin2 <= m_BoundL2[dim - 1]) return false;
 
-   std::cout << " redBBShortVec, basis before decomposition = \n" << m_lat->getBasis() << "\n";
+   // std::cout << " redBBShortVec, basis before decomposition = \n" << m_lat->getBasis() << "\n";
    if (m_decomp == CHOLESKY) {
       // Perform the Cholesky decomposition; if it fails we exit.
       if (!calculCholeskyLDL()) return false;
    } else if (m_decomp == TRIANGULAR) {  // Just for testing; this is very slow!
-      // Perform a triangular decomposition.
-      // We could perhaps just assume that the basis is already lower triangular?
+      // Compute a lower triangular basis and the corresponding decomposition.
       if (!calculTriangularL()) return false;
    } else {
       std::cerr << "RedBBShortVec:decomp value not supported";
@@ -907,41 +899,15 @@ bool ReducerBB<Int, Real>::shortestVector() {
    m_countNodes = 0;
    smaller = false;
    m_foundZero = false;
-   std::cout << " redBBShortVec, basis before tryZ = \n" << m_lat->getBasis() << "\n";
    if (!tryZShortVec(dim - 1, smaller, norm)) // We search for a shortest vector.
       return false;
    if (smaller) {
-      std::cout << " redBBShortVec, found a shorter vector, square length: " << m_lMin2 << "\n";
-      //std::cout << " redBBShortVec, m_bv = " << m_bv << "\n";
-      //std::cout << " redBBShortVec, before transform Stage 3, basis = \n" << m_lat->getBasis() << "\n";
-
+      // std::cout << " redBBShortVec, found a shorter vector, square length: " << m_lMin2 << "\n";
       // We found a shorter vector. It is in m_bv and its square length is in m_lMin2.
       // The short vector m_bv is not yet put in the basis.
       // The following does that and is useful only if we want to continue working with this basis.
-
-      insertBasisVector(m_zShort); // Is this useful and OK for L1 ???
-      // insertBasisVectorLLL(m_zShort); // Is this OK for L1.  This one is just a bit slower.
-
-      // After the following, the new current shortest vector will be in m_lat->getBasis()(0).
-      // In the case of L1NORM, we must check if it is really smaller.
-/*
-      if (norm == L2NORM) {
-         m_lat->permute(k, 0);
-      }
-      else {
-         if (x < m_lMin1) {
-            m_lMin1 = x;
-            m_lMin2 = m_lMin * m_lMin;
-            m_lat->permute(k, 0);
-         }
-      }
-*/
-      // std::cout << " redBBShortVec, after permute, basis = \n" << m_lat->getBasis() << "\n";
+      insertBasisVector(m_zShort);
    }
-   // m_lat->updateVecNorm();
-   // m_lat->sortBasis(0);
-   //std::cout << " redBBShortVec, basis at exit= \n" << m_lat->getBasis() << "\n";
-   //std::cout << "Exiting redBBShortVec, square length of shortest = " <<  m_lMin2 << "\n";
    return true;
 }
 
@@ -1119,15 +1085,12 @@ template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &smaller,
       bool taboo[]) {
    /*
-    * Tries to shorten m_lat->getBasis()[i] using branch-and-bound.
-    * Used in Minkowski Reduction.
-    * Stage is 2 or 3.
-    * z[i] = 1 if Stage = 2, z[i] >= 2 if Stage = 3.
+    * Tries to shorten m_lat->getBasis()[i] using branch-and-bound, in Minkowski Reduction.
+    * Stage is 2 or 3.  z[i] = 1 if Stage = 2, z[i] >= 2 if Stage = 3.
     * Stops and returns false if not finished after examining MaxNodesBB
     * nodes in the branch-and-bound tree.  When succeeds, returns true.
     * Assumes that the norm is Euclidean.
     */
-   // bool withDual = false;  // m_lat->withDual();
    const int64_t dim = m_lat->getDim();
    IntMat VTemp(NTL::INIT_SIZE, dim, dim);
    IntMat WTemp(NTL::INIT_SIZE, dim, dim);
@@ -1161,7 +1124,7 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
 
    if (PreRedLLLMink) {
       // On remet l'anciennne base, celle d'avant LLL, avant de considerer
-      //  la prochaine m_lat->dimension.
+      // la prochaine m_lat->dimension.
       m_lat->getBasis() = VTemp;
       m_lat->updateVecNorm();
       for (h = 0; h < dim; h++)
@@ -1179,9 +1142,9 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
             }
          }
       }
-   } else if (Stage == 2) taboo[dim - 1] = true;
+   } else if (Stage == 2)
+      taboo[dim - 1] = true;
    m_lat->permute(i, dim - 1);
-   // trace( "APRES redBBMink");
    return true;
 }
 
@@ -1250,20 +1213,6 @@ bool ReducerBB<Int, Real>::shortestVector(IntLattice<Int, Real> &lat) {
    setIntLattice(lat);
    return ReducerBB<Int, Real>::shortestVector();
 }
-
-//=========================================================================
-
-/*
-template<typename Int, typename Real>
-void ReducerBB<Int, Real>::tracePrintBasis(char *message) {
-   std::cout << std::endl << "================================= " << message << std::endl;
-   //std::cout << "dim = " << m_lat->getDim () << std::endl;
-   m_lat->setNegativeNorm();
-   m_lat->updateVecNorm();
-   m_lat->sortBasis(0);
-   m_lat->write();
-}
-*/
 
 //============================================================================
 

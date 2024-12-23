@@ -234,7 +234,7 @@ std::int64_t Factorial(int64_t t);
  */
 
 /**
- * Computes `a/b`, truncates the fractionnal part and puts the result in q.
+ * Computes `a/b`, truncates the fractional part and puts the result in q.
  * This function is overloaded to work as specified on NTL::ZZ integers.
  * Example:
  *
@@ -321,8 +321,9 @@ inline void Modulo(const std::int64_t &a, const std::int64_t &b,
 inline void Modulo(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &r) {
 	r = a % b;
     // if r < 0, we know that b < 0 because of the way NTL works
+	 // Here we assume that b > 0.
     if (r < 0)
-		r -= b;
+		r += b;
 }
 
 
@@ -693,7 +694,7 @@ void TransposeMatrix(IntMat &mat, IntMat &mat2) {
 	int64_t dim2 = mat.NumCols();
 	for (int64_t i = 0; i < dim1; i++) {
 		for (int64_t j = 0; j < dim2; j++)
-			mat2(i, j) = mat(j, i);
+			mat2[i][j] = mat[j][i];
 	}
 }
 
@@ -907,8 +908,8 @@ inline void ProdScal(const Vect1 &A, const Vect2 &B, int64_t n, Scal &D) {
 	NTL::conv(D, C);
 }
 */
-template<typename Int, typename Scal>
-inline void ProdScal(const IntVec &A, const IntVec &B, int64_t n, Scal &D) {
+template<typename Int, typename Real>
+inline void ProdScal(const IntVec &A, const IntVec &B, int64_t n, Real &D) {
    Int C;
    C = 0;
    for (int64_t i = 0; i < n; i++)
@@ -1278,115 +1279,6 @@ bool checkInverseModm (const NTL::Mat<Int> &A, const NTL::Mat<Int> &B,
 }
 
 /**
- * Takes a set of generating vectors in the matrix `W` and iteratively
- * transforms it into an upper triangular lattice basis into the matrix `V`.
- * `W` and `V` have to have more rows than `lin` and more columns than `col`
- * since this algorithm will only operate on the upper `lin*col` matrix of
- * `W`. All the computations will be done modulo `m`, which means that you
- * must know the rescaling factor for the vector system to call this function.
- * After the execution, `W` will be a matrix containing irrelevant information
- * and `V` will contain an upper triangular basis.
- *
- * For more details please look at \cite rCOU96a. This algorithm basically
- * implements what is written at the end of the article, that is the matrix
- * `W` contains the set of vectors that is used and modified at each step to
- * get a new vector from the basis.
- */
-
-template<typename Matr, typename Int>
-void Triangularization(Matr &W, Matr &V, int64_t lin, int64_t col, const Int &m) {
-	Int T1, T2, T3, T4, T5, T6, T7, T8;
-
-	for (int64_t j = 0; j < col; j++) {
-		for (int64_t i = 0; i < lin; i++)
-			Modulo(W(i, j), m, W(i, j));
-		int64_t r = 0;
-		while (r < lin - 1) {
-			while (NTL::IsZero(W(r, j)) && r < lin - 1)
-				++r;
-			if (r < lin - 1) {
-				int64_t s = r + 1;
-				while (NTL::IsZero(W(s, j)) && s < lin - 1)
-					++s;
-				if (!NTL::IsZero(W(s, j))) {
-
-					Int temp;
-					Euclide(W(r, j), W(s, j), T1, T2, T3, T4, temp);
-					W(s, j) = temp;
-
-					NTL::clear(W(r, j));
-
-					for (int64_t j1 = j + 1; j1 < col; j1++) {
-						T5 = T1 * W(r, j1);
-						T6 = T2 * W(s, j1);
-						T7 = T3 * W(r, j1);
-						T8 = T4 * W(s, j1);
-						W(s, j1) = T5 + T6;
-						Modulo(W(s, j1), m, W(s, j1));
-						W(r, j1) = T7 + T8;
-						Modulo(W(r, j1), m, W(r, j1));
-					}
-				} else {
-					for (int64_t j1 = j; j1 < col; j1++) {
-						std::swap(W(r, j1), W(s, j1));
-					}
-				}
-				r = s;
-			}
-		}
-		if (NTL::IsZero(W(lin - 1, j))) {
-
-			for (int64_t j1 = 0; j1 < col; j1++) {
-				if (j1 != j)
-					NTL::clear(V(j, j1));
-				else
-					V(j, j1) = m;
-			}
-		} else {
-			Euclide(W(lin - 1, j), m, T1, T2, T3, T4, V(j, j));
-
-			for (int64_t j1 = 0; j1 < j; j1++)
-				NTL::clear(V(j, j1));
-			for (int64_t j1 = j + 1; j1 < col; j1++) {
-				T2 = W(lin - 1, j1) * T1;
-				Modulo(T2, m, V(j, j1));
-
-			}
-			Quotient(m, V(j, j), T1);
-			for (int64_t j1 = j + 1; j1 < col; j1++) {
-				W(lin - 1, j1) *= T1;
-				Modulo(W(lin - 1, j1), m, W(lin - 1, j1));
-			}
-		}
-
-	}
-	//  CheckTriangular (V, col, m);
-}
-
-/**
- * Takes a basis `A` and computes an m-dual lattice basis B.
- * The matrix B is the m-dual basis of A.
- */
-/*
- template <typename Matr, typename Int>
- void CalcDual2(const Matr & A, Matr & B, const Int & m) {
- Int d, mult;
- Matr C;
- int64_t dim1=A.NumRows();
- int64_t dim2=A.NumCols();
- C.SetDims(dim1, dim2);
- inv(d,B,A);
- transpose(C,B);
- for (int64_t i = 0; i < dim1; i++) {
- for (int64_t j = 0; j < dim2; j++){
- B(i,j)= (m*C(i,j))/d;
- Modulo(B(i,j),m, B(i,j));
- }
- }
- }
- */
-
-/**
  * Takes an upper triangular basis `A` and computes an m-dual lattice basis
  * to this matrix. For this algorithm to work, `A` has to be upper
  * triangular and all the coefficients on the diagonal have to divide `m`.
@@ -1403,15 +1295,15 @@ template<typename Matr, typename Int>
 void calcDual(const Matr &A, Matr &B, int64_t d, const Int &m) {
 	for (int64_t i = 0; i < d; i++) {
 		for (int64_t j = i + 1; j < d; j++)
-			NTL::clear(B(i, j));
-		DivideRound(m, A(i, i), B(i, i));
+			NTL::clear(B[i][j]);
+		DivideRound(m, A[i][i], B[i][i]);
 		for (int64_t j = i - 1; j >= 0; j--) {
-			NTL::clear(B(i, j));
+			NTL::clear(B[i][j]);
 			for (int64_t k = j + 1; k <= i; k++)
-				B(i, j) += A(j, k) * B(i, k);
-			if (B(i, j) != 0)
-				B(i, j) = -B(i, j);
-			DivideRound(B(i, j), A(j, j), B(i, j));
+				B[i][j] += A[j][k] * B[i][k];
+			if (B[i][j] != 0)
+				B[i][j] = -B[i][j];
+			DivideRound(B[i][j], A[j][j], B[i][j]);
 		}
 	}
 }
@@ -1427,7 +1319,7 @@ void calcDual(const Matr &A, Matr &B, int64_t d, const Int &m) {
  */
 
 /**
- * Simple error exit function, with `msg` messahe printed on exit.
+ * Simple error exit function, prints `msg` on exit.
  */
 inline void myExit(std::string msg) {
     std::cout << "\n***** Error: " << msg << std::endl;

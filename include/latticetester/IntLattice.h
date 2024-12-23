@@ -637,8 +637,8 @@ void IntLattice<Int, Real>::buildProjectionLLL(IntLattice<Int, Real> &projLattic
       const Coordinates &proj, double delta) {
    // We assume here that this and lattice have the same scaling factor m.
    projLattice.setDim(proj.size());  // Number of coordinates in the projection.
-   projectionConstructionLLL<Int, Real>(this->m_basis,
-         projLattice.m_basis, proj, this->m_modulo, delta, proj.size());
+   projectionConstructionLLL<Int, Real>(projLattice.m_basis, this->m_basis,
+         proj, this->m_modulo, delta, proj.size());
 }
 
 //===========================================================================
@@ -649,7 +649,7 @@ void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
       const Coordinates &proj) {
    // We assume here that this and lattice have the same m.
    projLattice.setDim(proj.size());  // Number of coordinates in the projection.
-   projectionConstructionUpperTri<Int>(this->m_basis, projLattice.m_basis, proj, this->m_modulo,
+   projectionConstructionUpperTri<Int>(projLattice.m_basis, this->m_basis, proj, this->m_modulo,
          this->m_dim);
 }
 
@@ -662,9 +662,9 @@ void IntLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLatti
    // We assume here that this and lattice have the same m.
    projLattice.setDim(proj.size());  // Number of coordinates in the projection.
    projLattice.setDimDual(proj.size());
-   projectionConstructionUpperTri<Int>(this->m_basis, projLattice.m_basis, proj, this->m_modulo,
+   projectionConstructionUpperTri<Int>(projLattice.m_basis, this->m_basis, proj, this->m_modulo,
          this->m_dim);
-   mDualUpperTriangular(projLattice.m_basis, projLattice.m_dualbasis, this->m_modulo,
+   mDualUpperTriangular(projLattice.m_dualbasis, projLattice.m_basis, this->m_modulo,
          projLattice.m_dim);
 }
 
