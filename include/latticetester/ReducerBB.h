@@ -182,7 +182,8 @@ public:
    }
 
    /**
-    * Returns the *square length* of the current shortest basis vector in the lattice.
+    * Returns the *square length* of the current shortest basis vector in the lattice,
+    * usually computed with the current norm.
     */
    Real getMinLength2() {
       return m_lMin2;
@@ -380,6 +381,7 @@ private:
 
    // Vectors used in BB algorithms, in tryZShortVec and tryZMink.
    // m_sjp[j] will be the sum of terms |z*k|^2 ||v*k||^2 for k > j, updated in `tryZShortVec`.
+   // Exception: for triangular method, it is the sum of |z*k|^p ||v*k||^p.
    // m_dc2[j] corresponds to d_j in the description of BB in the user guide.
    // For Cholesky, these are the elements of the diagonal matrix D.
    RealVec m_sjp, m_dc2;
@@ -531,62 +533,16 @@ void ReducerBB<Int, Real>::setBoundL2(const RealVec &thresholds, int64_t dim1, i
 //=========================================================================
 
 /**
- * Returns in `m_L` the elements of the *upper-triangular* matrix L of the
- * Cholesky decomposition that are above the diagonal. Returns in DC2 the
- * squared elements of the diagonal.
- */
-/*
-template<typename Int, typename Real>
-bool ReducerBB<Int, Real>::calculCholesky() {
-   const int64_t dim = m_lat->getDim();
-   // int64_t k, j, i;
-   // Real m2;
-   // NTL::conv(m2, m_lat->getModulus());
-   // m2 = m2 * m2;
-   // int64_t d = dim;
-   // Compute the first dim rows of L with the primal Basis.
-   for (int64_t i = 0; i < dim; i++) {
-      // m_lat->updateScalL2Norm(i);
-      // IntVec &rowi = m_lat->getBasis()[i];
-      for (int64_t j = i; j >= 0; j--) {
-         // if (j == i) NTL::conv(m_c2[i][i], m_lat->getVecNorm(i));
-         // else {
-            // IntVec &rowj = m_lat->getBasis()[j];
-         ProdScal<Int>(m_lat->getBasis()[i], m_lat->getBasis()[j], dim, m_c2[i][j]);
-         for (int64_t k = 0; k < i; k++)
-            m_c2[i][j] -= m_L[k][i] * m_c2[k][j];
-         if (i == j) {
-            m_dc2[i] = m_c2[i][i];
-            if (m_dc2[i] < 0.0) {
-               std::cout << "\n*** Negative diag. element in Cholesky Decomp.\n" << std::endl;
-               return false;
-            }
-         } else m_L[i][j] = m_c2[i][j] / m_dc2[i];
-      }
-   }
-   return true;
-}
-*/
-
-//=========================================================================
-
-/**
  * Performs an LDL Cholesky decomposition, then puts in `m_L` the elements of the
- * lower-triangular matrix `tilde L` (see the guide) that are above the diagonal,
+ * lower-triangular matrix `tilde L` (see the guide) that are below the diagonal,
  * and puts in DC2 the squared elements of the diagonal, the `d_j` in the guide.
+ * The upper-triangular part of `m_L` (including the diagonal) is not initialized.
  */
 template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::calculCholeskyLDL() {
    const int64_t dim = m_lat->getDim();
-   // int64_t k, j, i;
-   // Real m2;
-   // NTL::conv(m2, m_lat->getModulus());
-   // m2 = m2 * m2;
-   // int64_t d = dim;
-   // Compute the first dim rows of L with the primal Basis.
+   // Compute first dim rows of lower-triangular part of L.
    for (int64_t j = 0; j < dim; j++) {  // Column j.
-      // m_lat->updateScalL2Norm(i);
-      // IntVec &rowi = m_lat->getBasis()[i];
       for (int64_t i = j; i < dim; i++) {  // Row i >= j.
          // m_c2[i][j] will first contain a_{i,j}, and finally `d_j \tilde\ell_{i,j}`
          // m_L[i][j] will contain `\tilde\ell_{i,j}`
@@ -594,6 +550,7 @@ bool ReducerBB<Int, Real>::calculCholeskyLDL() {
          for (int64_t k = 0; k < j; k++)
             m_c2[i][j] -= m_L[j][k] * m_c2[i][k];
          if (i == j) {
+            // m_L[i][i] = sqrt(m_c2[i][i]);
             m_dc2[i] = m_c2[i][i];
             if (m_dc2[i] < 0.0) {
                std::cout << "\n*** Negative diag. element in Cholesky Decomp.\n" << std::endl;
@@ -608,18 +565,20 @@ bool ReducerBB<Int, Real>::calculCholeskyLDL() {
 //=========================================================================
 
  /**
-  * Compute a lower-triangular basis L.  Then put in `m_L` the elements of the
-  * lower-triangular basis matrix L that are below the diagonal, and the
-  * squared elements of the diagonal in `m_dc2`, both in `double`.
+  * Compute a lower-triangular basis L with elements `ell_{i,j}`.
+  * Then put in `m_L` the elements `\tilde\ell_{i,j} = \ell_{i,j}/\ell_{i,i}`
+  * below the diagonal, the elements `\ell_{j,j}` on the diagonal,
+  * and the squared elements of the diagonal of L in `m_dc2`, all in `double`.
   */
 template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::calculTriangularL() {
    // If the basis is already lower triangular, this will be fast.
    const int64_t dim = m_lat->getDim();
-   // IntMat &basis = m_lat->getBasis();   // The l
-   IntMat copybasis, tribasis;  // Here we create two new matrices each time!
+   // IntMat &basis = m_lat->getBasis();
+   IntMat copybasis;  // Here we create two new matrices each time!
+   IntMat &tribasis =  m_lat->getBasis();  // The current basis, will become triangular.
    copybasis.SetDims(dim, dim); // A copy of the current basis.
-   tribasis.SetDims(dim, dim);  // Will be a lower-triangular basis.
+   // tribasis.SetDims(dim, dim);  // Will be a lower-triangular basis. We need it
    // Int mod = m_lat->getModulus();
    CopyPartMat<IntMat>(copybasis, m_lat->getBasis(), dim, dim);  // Copy current basis into `copybasis`.
    lowerTriangularBasis(tribasis, copybasis, m_lat->getModulus());  // Here `copybasis` may be destroyed.
@@ -710,10 +669,11 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
     */
 
    // For a non-recursive implementation, these variables should be arrays indexed by j.
-   Real dc, center, x, mn_xsquare_md;
+   Real dc, center, x, m_spjm1;
    std::int64_t min0, max0;     // Interval boundaries for the z_j.
    std::int64_t zlow, zhigh;    // Current pointers on the left and right of the center.
    bool high;      // Indicates if we are on the right (true) or the left of the center.
+   bool stillHope;
    int64_t i, k;
    std::int64_t temp;
    const int64_t dim = m_lat->getDim();
@@ -723,12 +683,13 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       return false;
    }
 
-   /* Compute an interval that contains the admissible values of z_j.      */
-   /* This computation is for the L2 norm, but also works for the L1 norm. */
+   // Compute an interval that contains the admissible values of z_j.
+   // This computation works for the L2 or L1 norm.
    // m_sjp[j] is s_j(p) in the guide.
    center = 0.0;   dc = 0;
    for (i = j+1;  i < dim; ++i)
-       center -= m_L[i][j] * m_zLR[i];
+       center -= m_L[i][j] * m_zLR[i];  // This is `c_j` in the guide.
+   // m_L contains the \tilde\ell_{i,j} of the guide.
    // This dc is the distance from the center to the boundaries.
    // m_lMin2 contains the square length of current shortest vector with the selected norm.
    if (m_decomp == CHOLESKY) {
@@ -739,7 +700,10 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
    }
    if (m_decomp == TRIANGULAR && norm == L1NORM) {
       dc = (m_lMin1 - m_sjp[j]) / m_L[j][j];
+      if (dc < 0.0) dc = 0.0;
+      // std::cout << " Triangular + L1, j = " << j << ", center = " << center << ",  dc = " << dc << "\n";
    }
+
    // Compute two integers min0 and max0 that are the min and max integers in the interval.
    if (!m_foundZero) min0 = 0;     // We are at the beginning, min will be zero.
    else {
@@ -778,11 +742,18 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
 
       // Computing m_sjp[j-1].
       x = m_zLR[j] - center;
-      mn_xsquare_md = m_sjp[j] + x * x * m_dc2[j]; // We pre-compute this to save time.
+      if (m_decomp == TRIANGULAR && norm == L1NORM)
+         m_spjm1 = m_sjp[j] + abs(x) * m_L[j][j]; // This is s_{j-1}(1) in the guide.
+      else
+         m_spjm1 = m_sjp[j] + x * x * m_dc2[j]; // This is s_{j-1}(2).
 
       if (j == 0) {
          // All the zj have been selected: we now have a candidate vector to test!
-         if (m_lMin2 > mn_xsquare_md) {
+         if (m_decomp == TRIANGULAR && norm == L1NORM)
+            stillHope =  (m_lMin1 > m_spjm1);
+         else
+            stillHope =  (m_lMin2 > m_spjm1);
+         if (stillHope) {
             // Length of shortest is not too yet too small. Check if we have a shorter nonzero vector.
             if (!m_foundZero) {
                // The first vector found will always be zero, we discard it.
@@ -797,28 +768,41 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
                      ModifVect(vtest, m_lat->getBasis()[k], m_z[k], dim);
                }
                // The new shortest vector is now in `vtest`. We compute its norm.
-               if (m_lat->getNormType() == L2NORM) {
+               if (norm == L2NORM) {
                   ProdScal<Int>(vtest, vtest, dim, x);
+                  smaller = (x < m_lMin2);
                } else {
                   // Compute the square length for the L1 norm.
                   CalcNorm<Int, Real>(vtest, dim, x, L1NORM);
+                  std::cout << " vector vtest: " << vtest << ",  L1 norm x = " << x << "\n";
+                  smaller = (x < m_lMin1);
+                  if (smaller) NTL::conv(m_lMin1, x);
                   x = x * x;
+                  std::cout << " compute L1 norm of vtest, xsquare = " << x << "\n";
                }
                // This must work for either L1 or L2 norm, m_lMin2 is the square norm in both cases.
-               if (x < m_lMin2) {
+               if (smaller) {
                   // The new vector is shorter.
-                  smaller = true;
                   NTL::conv(m_lMin2, x);  // Update the smallest square norm.
                   m_bv = vtest;
                   m_zShort = m_z;
+                  std::cout << " Shorter vector vtest: " << vtest << ",  x = " << x << "\n";
+                  std::cout << " Shorter vector m_bv: " << m_bv << "\n";
+                  std::cout << "tryZ: found shorter vector, Shortest L1 norm: " << m_lMin1 << ",  m_lMin2: " << m_lMin2 << "\n";
                }
             }
          }
-      } else if (m_lMin2 > mn_xsquare_md) {
-         // There is still hope; we continue the recursion.
-         m_sjp[j - 1] = mn_xsquare_md;
-         if (!tryZShortVec(j - 1, smaller, norm)) return false;
-      } else m_sjp[j - 1] = mn_xsquare_md;
+      } else {
+         if (m_decomp == TRIANGULAR && norm == L1NORM)
+            stillHope = (m_lMin1 > m_spjm1);
+         else
+            stillHope = (m_lMin2 > m_spjm1);
+         if (stillHope) {
+            // There is still hope; we continue the recursion.
+            m_sjp[j - 1] = m_spjm1;
+            if (!tryZShortVec(j - 1, smaller, norm)) return false;
+         }
+      }
       if (high) {
          ++zhigh;
          if (zlow >= min0) high = false;
@@ -863,7 +847,8 @@ bool ReducerBB<Int, Real>::shortestVector() {
    m_lat->sortBasis(0);              // Vectors are sorted by L2 norms.
    // for (int64_t k = 0; k < dim; k++)  m_bv[k] = m_lat->getBasis()[0][k];
    m_bv = m_lat->getBasis()[0];
-   // std::cout << " redBBShortVec, when entering `shortestVector`, m_bv = " << m_bv << "\n";
+   // std::cout << " redBBShortVec, in `shortestVector` after sort, m_bv = " << m_bv <<
+   //         ",  squared L2 norm = " << m_lat->getVecNorm(0) << "\n";
 
    // We put in m_lMin2 the approximate square norm of the shortest vector in the basis,
    // for either the L1 or L2 norm.  For the L2 norm, we know it is the first vector.
@@ -877,22 +862,25 @@ bool ReducerBB<Int, Real>::shortestVector() {
          if (x < m_lMin1) m_lMin1 = x;
       }
       m_lMin2 = m_lMin1 * m_lMin1;  // Squared shortest length with L1 norm.
+      std::cout << " In SV before BB, Shortest L1 norm: " << m_lMin1 << ",  m_lMin2: " << m_lMin2 << "\n";
    }
+
    // If we already have a shorter vector than the minimum threshold, we stop right away.
    // This is useful for the seek programs in LatMRG.
    if (m_lMin2 <= m_BoundL2[dim - 1]) return false;
 
    // std::cout << " redBBShortVec, basis before decomposition = \n" << m_lat->getBasis() << "\n";
    if (m_decomp == CHOLESKY) {
-      // Perform the Cholesky decomposition; if it fails we exit.
       if (!calculCholeskyLDL()) return false;
    } else if (m_decomp == TRIANGULAR) {  // Just for testing; this is very slow!
-      // Compute a lower triangular basis and the corresponding decomposition.
       if (!calculTriangularL()) return false;
    } else {
       std::cerr << "RedBBShortVec:decomp value not supported";
       return false;
    }
+   // std::cout << " redBBShortVec, matrix m_L = \n" << m_L  << "\n";
+   // std::cout << " vector m_dc2 = " << m_dc2  << "\n";
+
    // Perform the branch and bound.
    // The following variables are used and updated in `tryZShortVec`.
    m_sjp[dim - 1] = 0.0;
@@ -902,11 +890,13 @@ bool ReducerBB<Int, Real>::shortestVector() {
    if (!tryZShortVec(dim - 1, smaller, norm)) // We search for a shortest vector.
       return false;
    if (smaller) {
-      // std::cout << " redBBShortVec, found a shorter vector, square length: " << m_lMin2 << "\n";
+      std::cout << " redBBShortVec, found a shorter vector, square length: " << m_lMin2 << "\n";
       // We found a shorter vector. It is in m_bv and its square length is in m_lMin2.
       // The short vector m_bv is not yet put in the basis.
       // The following does that and is useful only if we want to continue working with this basis.
+      std::cout << "Found smaller vector in BB, Shortest L1 norm: " << m_lMin1 << ",  m_lMin2: " << m_lMin2 << "\n";
       insertBasisVector(m_zShort);
+      std::cout << "After insertBasis, Shortest L1 norm: " << m_lMin1 << ",  m_lMin2: " << m_lMin2 << "\n";
    }
    return true;
 }

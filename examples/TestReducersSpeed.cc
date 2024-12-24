@@ -86,6 +86,10 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
       // Here we get the square norm of our choice, either L1 or l2.
       if (red.shortestVector(korlat)) len2 = conv<double>(red.getMinLength2());
       else std::cout << " shortestVector failed for " << methNames[meth] << "\n";
+
+      std::cout << "After shortestVector, len2 = " << red.getMinLength2() << "\n";
+      std::cout << "After shortestVector, minlength L1 = " << red.getMinLength() <<
+            ",  squared = " << red.getMinLength() * red.getMinLength() << "\n";
    }
    timer[meth][d] += clock() - tmp;
    sumSq[meth][d] += len2;
@@ -150,6 +154,7 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual, Com
 
    NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
    sqlen.SetLength(1);   // We retrieve only the shortest vector square length.
+   // Int a0(113);
    Int a0(91);
    Int a(a0);   // For the LCG multiplier, we take successive powers of a0 mod m.
    for (d = 0; d < numSizes; d++)   // Reset the accumulators.
@@ -159,8 +164,9 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual, Com
       }
    totalTime = clock();
    for (int64_t r = 0; r < numRep; r++) {
-      a = a * a0 % m;   // The multiplier we use for this rep.
+      a = a * a0 % m;   // The multiplier we use for this rep. First one is 113.
       korlat.seta(a);
+      std::cout << "Multiplier a = " << a << "\n";
       for (d = 0; d < numSizes; d++) {   // Each matrix size.
          if (compType == ONERED) {
             performReduction(korlat, red, inDual, d, dimensions1[d], 13, 0.0, 0.0, 0.999, 10, true, sqlen);
@@ -245,6 +251,10 @@ int main() {
    // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    //bool inDual = false;  // Tests in dual lattice ?
+
+   compareDecomp (m, L1NORM, false, 1, 2);
+
+   return 0;
 
    compareNorms (m, CHOLESKY, false, 5, 10);
    compareNorms (m, CHOLESKY, true, 5, 10);
