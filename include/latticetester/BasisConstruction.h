@@ -616,9 +616,10 @@ void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
                for (k = 0; k <= j; k++) {
                   NTL::MulAddTo(xj[k], gen[i][k], coeff_gcd[i]);
                   // std::cout << "  Before: xj[k] = " << xj[k] << "\n";
-                  NTL::rem(xj[k], xj[k], m);
+                  ModuloTowardZero (xj[k], m, xj[k]);
+                  // NTL::rem(xj[k], xj[k], m);
                   // std::cout << "  After: xj[k] = " << xj[k] << "\n";
-                  // if (xj[k] < 0) NTL::add(xj[k], xj[k], m);
+                  // if (xj[k] < 0) NTL::add(xj[k], xj[k], m);    // No!
                }
             }
          }
@@ -686,7 +687,7 @@ void upperTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
             coeff_gcd[i] = d;
             for (l = 0; l < i; l++) {
                NTL::mul(coeff_gcd[l], coeff_gcd[l], c);
-               NTL::rem(coeff_gcd[l], coeff_gcd[l], m);
+               //NTL::rem(coeff_gcd[l], coeff_gcd[l], m);
             }
          }
       }
@@ -705,7 +706,8 @@ void upperTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
             if (coeff_gcd[i] != 0) {
                for (k = j; k < dim2; k++) {
                   NTL::MulAddTo(xj[k], gen[i][k], coeff_gcd[i]);
-                  NTL::rem(xj[k], xj[k], m);
+                  //NTL::rem(xj[k], xj[k], m);
+                  ModuloTowardZero (xj[k], m, xj[k]);
                }
             }
          }
@@ -788,7 +790,6 @@ void upperTriangularBasisOld96 (Matr &V, Matr &W, const Int &m, int64_t lin, int
          }
       }
       if (NTL::IsZero(W[lin - 1][j])) {
-
          for (int64_t j1 = 0; j1 < col; j1++) {
             if (j1 != j)
                NTL::clear(V[j][j1]);
@@ -797,13 +798,11 @@ void upperTriangularBasisOld96 (Matr &V, Matr &W, const Int &m, int64_t lin, int
          }
       } else {
          Euclide(W[lin - 1][j], m, T1, T2, T3, T4, V[j][j]);
-
          for (int64_t j1 = 0; j1 < j; j1++)
             NTL::clear(V[j][j1]);
          for (int64_t j1 = j + 1; j1 < col; j1++) {
             T2 = W[lin - 1][j1] * T1;
             Modulo(T2, m, V[j][j1]);
-
          }
          Quotient(m, V[j][j], T1);
          for (int64_t j1 = j + 1; j1 < col; j1++) {

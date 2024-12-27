@@ -351,7 +351,6 @@ inline void ModuloPos(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &r) {
 
  }*/
 
-
 template<typename Int>
 void ModuloVec(IntVec &a, Int &m) {
 	for (int64_t i = 0; i < a.length(); i++)
@@ -361,8 +360,26 @@ void ModuloVec(IntVec &a, Int &m) {
 /// \endcond
 
 /**
+ * Computes the element `r = a mod b` that is closest to 0.  Assumes `b > 0`.
+ * For example, `8 mod 11 = -3`, `-2 mod 11 = -2`, `-10 mod 11 = 1`.
+ */
+template<typename Int>
+inline void ModuloTowardZero(const Int &a, const Int &b, Int &r) {
+   r = a % b;
+   if (r > b/2) r -= b;
+   else if (r <= -b/2) r += b;
+}
+
+inline void ModuloTowardZero(const std::int64_t &a, const std::int64_t &b,
+      std::int64_t &r) {
+   r = a % b;
+   if (r > b/2) r -= b;
+   else if (r <= -b/2) r += b;
+}
+
+/**
  * Computes the quotient \f$q = a/b\f$ and remainder \f$r = a
- * \bmod b\f$. Truncates \f$q\f$ to the nearest integer towards 0. One always
+ * \bmod b\f$. Truncates \f$q\f$ to the nearest integer toward 0. One always
  * has \f$a = qb + r\f$ and \f$|r| < |b|\f$. This works with std::int64_t,
  * NTL::ZZ and real numbers.
  *
