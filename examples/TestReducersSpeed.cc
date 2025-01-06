@@ -25,7 +25,7 @@
 using namespace LatticeTester;
 
 const long dimensions[] = { 5, 10, 20, 30, 40, 50, 60, 70 };
-const long maxNumSizes = 5; // Number of matrix sizes (choices of dimension), can be adjusted. ***
+const long maxNumSizes = 8; // Number of matrix sizes (choices of dimension), can be adjusted. ***
 
 std::string methNames[] = { "LLL5           ", "LLL99999       ", "BKZ99999-10    ", "L5+9+BKZ-10    ",
       "LLL5+BB        ", "LLL8+BB        ", "LLL99999+BB    ", "BKZ99999-6+BB  ", "BKZ99999-8+BB  ",
@@ -137,7 +137,7 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
    Rank1Lattice<Int, Real> korlat(m, maxdim, norm); // We use single lattice object.
    ReducerBB<Int, Real> red(korlat);   // Single ReducerBB with internal lattice `korlat`.
    red.setDecompTypeBB(decomp);
-   red.setVerbosity(4);  // **************
+   //  red.setVerbosity(4);
 
    NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
    sqlen.SetLength(1);   // We retrieve only the shortest vector square length.
@@ -155,8 +155,8 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
    for (int64_t r = 0; r < numRep; r++) {
       korlat.seta(a);
       for (d = 0; d < numSizes; d++)   // Each matrix size.
-         performReduction(korlat, red, inDual, d, dimensions[d], 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
-         // compareManyReductions<Int, Real>(korlat, red, inDual, d, dimensions[d], sqlen);
+         // performReduction(korlat, red, inDual, d, dimensions[d], 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
+         compareManyReductions<Int, Real>(korlat, red, inDual, d, dimensions[d], sqlen);
       a = a * a0 % m;   // The multiplier we use for this rep. First one is 113.
       }
    printTables<Int, Real>(numMeth, numSizes, numRep, dimensions);
@@ -236,17 +236,17 @@ void comparePreRed (Int m, NormType norm, DecompTypeBB decomp, long numSizes, lo
 }
 
 int main() {
-   // NTL::ZZ m(1021);  // Prime modulus near 2^{10}
-   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   NTL::ZZ m(1021);  // Prime modulus near 2^{10}
+   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    DecompTypeBB decomp = CHOLESKY;
    NormType norm = L2NORM;
-   long numSizes = 3;
-   long numRep = 1;
+   long numSizes = 8;
+   long numRep = 100;
 
-   // comparePreRed<int64_t, double>(conv<int64_t>(m), norm, decomp, numSizes, numRep);
+   comparePreRed<int64_t, double>(conv<int64_t>(m), norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, double>(m, norm, decomp, numSizes, numRep);
-   //comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
-   //comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
+   comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
+   comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
    // comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
 }

@@ -410,9 +410,8 @@ private:
    // Exception: for triangular method, it is the sum of |z*k|^p ||v*k||^p.
    // m_dc2[j] corresponds to d_j in the description of BB in the user guide.
    // For Cholesky, these are the elements of the diagonal matrix D.
-   // m_center[j] is the center c_j in the guide.
    // These vectors are updated only one coordinate at a time in the BB tree.
-   RealVec m_sjp, m_dc2, m_center;
+   RealVec m_sjp, m_dc2;
 
    // Matrices used in the Cholesky and triangular decomposition, for the BB bounds.
    // For Cholesky, m_L represents `tilde L` from the guide and `m_c2` is used internally.
@@ -473,7 +472,6 @@ void ReducerBB<Int, Real>::init(int64_t maxDim) {
    m_zShort.resize(dim1);
    m_dc2.SetLength(dim1);
    m_BoundL2.SetLength(dim1);
-   m_center.SetLength(dim1);
 
    m_lMin1 = std::numeric_limits<double>::max();
    m_lMin2 = m_lMin1;
@@ -528,7 +526,6 @@ void ReducerBB<Int, Real>::copy(const ReducerBB<Int, Real> &red) {
    m_lMin1 = red.m_lMin1;
    m_lMin2 = red.m_lMin2;
    m_BoundL2 = red.m_BoundL2;
-   m_center = red.m_center;
    m_countNodes = 0;
    m_countLeaves = 0;
    m_foundZero = false;
@@ -550,7 +547,6 @@ ReducerBB<Int, Real>::~ReducerBB() {
    m_zShort.resize(0);
    m_dc2.kill();
    m_BoundL2.kill();
-   m_center.kill();
 }
 
 //=========================================================================
@@ -758,7 +754,7 @@ bool ReducerBB<Int, Real>::tryZShortVecOld(int64_t j, bool &smaller, NormType no
    if (m_verbose > 3) {
       for (i = 0;  i <= j; ++i) m_z[i] = 0;
       std::cout << "tryZ: vector z: " << m_z << "\n";
-      std::cout << "  j="<<j << ",  center= " << center << ", borne min= "<< min0 << ",  borne max= "<< max0 << std::endl;
+      std::cout << "  j="<<j << ",  center[j]= " << center << ", borne min= "<< min0 << ",  borne max= "<< max0 << std::endl;
    }
    // Compute initial values of zlow and zhigh, the search pointers on each side of the interval.
    if (min0 > max0) return true;
@@ -886,7 +882,7 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
    int64_t temp;
    bool high;      // Indicates if we are on the right (true) or the left of the center.
    bool stillHope;
-   Real dc, x, spjm1;
+   Real center, dc, x, spjm1;
    int64_t i, k;
    const int64_t dim = m_lat->getDim();
 
@@ -899,17 +895,17 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
    // Compute an interval that contains the admissible values of z_j.
    // This computation works for the L2 or L1 norm.
    // m_sjp[j] is s_j(p) in the guide, was computed one level higher in the tree.
-   if (j < dim-1)
-      m_center[j] = m_center[j+1] - m_L[j+1][j] * m_zLR[j+1];  // This is `c_j` in the guide.
-   else
-      m_center[j] = 0.0;
+   center = 0.0;
+   for (i = j+1;  i < dim; ++i)
+       center -= m_L[i][j] * m_zLR[i];  // This is `c_j` in the guide.
+
    // m_L contains the \tilde\ell_{i,j} of the guide.
    // This dc is the distance from the center to the boundaries.
    // m_lMin2 contains the square length of current shortest vector with the selected norm.
    dc = 0;
    if (m_decomp == CHOLESKY) {
       dc = sqrt((m_lMin2 - m_sjp[j]) / m_dc2[j]);
-      // std::cout << " With Cholesky, j = " << j << ", center[j] = " << m_center[j] << ",  dc = " << dc << "\n";
+      // std::cout << " With Cholesky, j = " << j << ", center[j] = " << center << ",  dc = " << dc << "\n";
    }
    else if (m_decomp == TRIANGULAR) {
       if (norm == L2NORM)
@@ -917,7 +913,7 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       else if (norm == L1NORM) {
          dc = (m_lMin1 - m_sjp[j]) / m_L[j][j];
          // if (dc < 0.0) dc = 0.0;   // Not needed and bad.
-         //std::cout << " Triangular + L1, j = " << j << ", center[j] = " << m_center[j] << ",  dc = " << dc << "\n";
+         //std::cout << " Triangular + L1, j = " << j << ", center[j] = " << center << ",  dc = " << dc << "\n";
       }
    }
    else
@@ -927,18 +923,19 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
    if (!m_foundZero)
       min0 = 0;     // We are at the beginning for j=dim-1, min will be zero.
    else {
-      x = m_center[j] - dc;
+      x = center - dc;
       NTL::conv(min0, trunc(x));
       if (x > 0.0) ++min0;
    }
-   x = m_center[j] + dc;
+   x = center + dc;
    NTL::conv(max0, trunc(x));
    if (x < 0.0) --max0;
 
    if (m_verbose > 3) {
       for (i = 0;  i <= j; ++i) m_z[i] = 0;
       std::cout << "tryZ: vector z: " << m_z << "\n";
-      std::cout << "  j="<<j << ",  center[j]= " << m_center[j] << ", borne min= "<< min0 << ",  borne max= "<< max0 << std::endl;
+      std::cout << "  j="<<j << ",  center[j]= " << center <<
+            ", borne min= "<< min0 << ",  borne max= "<< max0 << std::endl;
    }
    // Compute initial values of zlow and zhigh, the search pointers on each side of the interval.
    if (min0 > max0) return true;
@@ -946,15 +943,15 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       zlow = min0;
       zhigh = max0 + 1;
       high = false;
-   } else if (m_center[j] >= 0.0) {
-      NTL::conv(zlow, trunc(m_center[j]));
+   } else if (center >= 0.0) {
+      NTL::conv(zlow, trunc(center));
       zhigh = zlow + 1;
-      NTL::conv(temp, trunc(2.0 * m_center[j]));
+      NTL::conv(temp, trunc(2.0 * center));
       high = (temp & 1);
    } else {
-      NTL::conv(zhigh, trunc(m_center[j]));
+      NTL::conv(zhigh, trunc(center));
       zlow = zhigh - 1;
-      NTL::conv(temp, -trunc(2.0 * m_center[j]));
+      NTL::conv(temp, -trunc(2.0 * center));
       high = (temp & 1) == 0;
    }
 
@@ -965,7 +962,7 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       NTL::conv (m_zLR[j], m_z[j]);
 
       // Computing m_sjp[j-1].
-      x = m_zLR[j] - m_center[j];
+      x = m_zLR[j] - center;
       if (m_decomp == TRIANGULAR && norm == L1NORM)
          spjm1 = m_sjp[j] + abs(x) * m_L[j][j]; // This is s_{j-1}(1) in the guide.
       else
@@ -1118,7 +1115,7 @@ bool ReducerBB<Int, Real>::shortestVector() {
    smaller = false;
    m_foundZero = false;
    for (long j=0; j < dim; j++) m_z[j] = 0;
-   if (!tryZShortVecOld(dim - 1, smaller, norm)) // We search for a shortest vector.
+   if (!tryZShortVec(dim - 1, smaller, norm)) // We search for a shortest vector.
       return false;
    if (smaller) {
       // We found a shorter vector. It is in m_bv and its square length is in m_lMin2.
@@ -1145,7 +1142,7 @@ template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &smaller,
       const IntMat &WTemp)  {
    std::int64_t max0, min0;
-   Real x, dc;
+   Real x, dc, center;
    std::int64_t zhigh, zlow, h;
    bool high;
    int64_t k;
@@ -1161,17 +1158,19 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
 
    // Calcul d'un intervalle contenant les valeurs admissibles de z_j.
    if (j < dim - 1) {
-      m_center[j] = m_center[j+1] - m_L[j+1][j] * m_zLR[j+1];  // This is `c_j` in the guide.
+      center = 0.0;
+      for (i = j+1;  i < dim; ++i)
+          center -= m_L[i][j] * m_zLR[i];  // This is `c_j` in the guide.
       dc = sqrt((m_lMin2 - m_sjp[j]) / m_dc2[j]);
 
       /* Calcul de deux entiers ayant la propriete qu'un entier */
       /* non-compris entre (i.e. strictement exterieur `a) ceux-ci */
       /* n'appartient pas a l'intervalle.  */
-      x = m_center[j] - dc;
+      x = center - dc;
       NTL::conv(min0, trunc(x));
       if (x > 0.0) ++min0;
 
-      x = m_center[j] + dc;
+      x = center + dc;
       NTL::conv(max0, trunc(x));
       if (x < 0.0) --max0;
 
@@ -1183,19 +1182,19 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
          zlow = min0;
          zhigh = max0 + 1;
          high = false;
-      } else if (m_center[j] >= 0.0) {
-         NTL::conv(zlow, trunc(m_center[j]));
+      } else if (center >= 0.0) {
+         NTL::conv(zlow, trunc(center));
          zhigh = zlow + 1;
-         NTL::conv(h, trunc(2.0 * m_center[j]));
+         NTL::conv(h, trunc(2.0 * center));
          high = h & 1;
       } else {
-         NTL::conv(zhigh, trunc(m_center[j]));
+         NTL::conv(zhigh, trunc(center));
          zlow = zhigh - 1;
-         NTL::conv(h, -trunc(2.0 * m_center[j]));
+         NTL::conv(h, -trunc(2.0 * center));
          high = (h & 1) == 0;
       }
    } else {  // j = dim-1
-      m_center[j] = 0;
+      center = 0;
       zlow = 0;
       high = true;
       if (Stage == 2) {
@@ -1221,7 +1220,7 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
       m_zLR[j] = m_z[j];
 
       // Calcul de m_sjp[j-1].
-      x = m_zLR[j] - m_center[j];
+      x = m_zLR[j] - center;
       if (j == 0) {
          Real tmps_n2 = m_sjp[0] + x * x * m_dc2[0];
          if (tmps_n2 < m_lMin2) {
