@@ -63,7 +63,7 @@ int main() {
 
     // We construct a Korobov lattice `korlat` in dim dimensions.
     Rank1Lattice<Int, Real> korlat(m, a, dim);
-    korlat.buildBasis(dim);   // This initial basis is triangular.
+    korlat.buildBasis(dim);   // Builds an initial triangular basis.
     basis1 = korlat.getBasis();
     std::cout << "Initial Korobov lattice basis (triangular) = \n" << basis1 << "\n";
     Int sqlength;       // Square length of first vector in initial basis.
@@ -100,7 +100,7 @@ int main() {
     std::cout << "Lattice projection over coordinates " << proj << ".\n";
     std::cout << "In the following basisProj matrices, we need 5 rows and 3 columns\n";
     std::cout << " to make the projection, then 3 rows and 3 columns for the basis.\n";
-    std::cout << " When part of matrix is not used, it must be ignored.\n\n";
+    std::cout << " When part of a matrix is not used, it must be ignored.\n\n";
 
     // We will compute a basis for this projection in three ways.
     // We put in `basisProj` a set of generating vectors for the projection over `proj`.

@@ -617,7 +617,7 @@ void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
                   NTL::MulAddTo(xj[k], gen[i][k], coeff_gcd[i]);
                   // std::cout << "  Before: xj[k] = " << xj[k] << "\n";
                   ModuloTowardZero (xj[k], m, xj[k]);
-                  // NTL::rem(xj[k], xj[k], m);
+                  // NTL::rem(xj[k], xj[k], m);     // In case we want always a positive remainder (modulo).
                   // std::cout << "  After: xj[k] = " << xj[k] << "\n";
                   // if (xj[k] < 0) NTL::add(xj[k], xj[k], m);    // No!
                }

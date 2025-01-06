@@ -12,13 +12,11 @@
  */
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// #define TYPES_CODE  LD     // Int = int64_t, Real = double
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
 #include <NTL/ZZ.h>
 #include "latticetester/FlexTypes.h"
-// #include "latticetester/EnumTypes.h"
 #include "latticetester/Util.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/ReducerStatic.h"
@@ -26,22 +24,9 @@
 
 using namespace LatticeTester;
 
-// This could also be made as a class, to reduce parameter passing in functions.
-// template<typename Int, typename Real>
-// class TestReducersSpeed {
+const long dimensions[] = { 5, 10, 20, 30, 40, 50, 60, 70 };
+const long maxNumSizes = 5; // Number of matrix sizes (choices of dimension), can be adjusted. ***
 
-/*
- * Selects if we want to compare all the methods below (MANYRED),
- * or just one, number 13 (ONERED).
- */
-enum CompareType { ONERED, MANYRED };
-
-const long dimensions1[] = { 4, 6, 8, 10, 12, 14 };
-const long dimensions2[] = { 5, 10, 20, 30, 40, 50, 60, 70 };
-const long maxNumSizes = 8;   // Number of matrix sizes (choices of dimension).
-long maxdim = dimensions2[maxNumSizes - 1];   // Maximum dimension
-
-// std::string methNames1[] = { "BKZ999-8+BB    " };
 std::string methNames[] = { "LLL5           ", "LLL99999       ", "BKZ99999-10    ", "L5+9+BKZ-10    ",
       "LLL5+BB        ", "LLL8+BB        ", "LLL99999+BB    ", "BKZ99999-6+BB  ", "BKZ99999-8+BB  ",
       "BKZ99999-10+BB ", "BKZ99999-12+BB ", "BKZ999-6+BB    ", "BKZ999-8+BB    ", "BKZ999-10+BB   ",
@@ -53,7 +38,8 @@ clock_t tmp;
 clock_t totalTime;  // Global timer for total time.
 clock_t timer[numMeth][maxNumSizes]; // Clock times in microseconds.
 double sumSq[numMeth][maxNumSizes]; // Sum of squares of vector lengths (for checking).
-long numBranch[numMeth][maxNumSizes]; // Total number of calls to tryZ.
+long numNodes[numMeth][maxNumSizes]; // Total number of calls to tryZ.
+long numLeaves[numMeth][maxNumSizes]; // Total number of leaves visited by the BB.
 
 // void printResults(long numMeth, long numSizes);  // Must be declared if it has no template heading.
 
@@ -88,7 +74,8 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
       // Here we get the square norm of our choice, either L1 or l2.
       if (red.shortestVector(korlat)) {
          len2 = conv<double>(red.getMinLength2());
-         numBranch[meth][d] += red.getCountNodes();
+         numNodes[meth][d] += red.getCountNodes();
+         numLeaves[meth][d] += red.getCountLeaves();
       }
       else std::cout << " shortestVector failed for " << methNames[meth] << "\n";
    }
@@ -133,25 +120,24 @@ static void compareManyReductions(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int
 // In this testing loop, we generate `numRep` multipliers `a` and for each one
 // we call tryManyMathods.  We use the same sequence of multipliers `a` for all methods.
 template<typename Int, typename Real>
-static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual, CompareType compType,
+static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
       long numSizes, long numRep) {
    std::string stringTypes;  // To print the selected flexible types.
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
-   std::cout << "*************************************\n";
+   std::cout << "****************************************************\n";
+   std::cout << "TestReducersSpeed with m = " << m << "\n";
    std::cout << "Types: " << stringTypes << "\n";
-   std::cout << "TestReducersSpeed with m = " << m;
-   if (inDual) std::cout << ", in the dual lattice.\n";
-   else std::cout << ", in the primal lattice.\n";
-   std::cout << "Norm: " << toStringNorm(norm) << ",   ";
+   std::cout << "Number of replications (different multipliers a): " << numRep << "\n";
+   if (inDual) std::cout << "DUAL lattice,  ";
+   else std::cout << "PRIMAL lattice,  ";
+   std::cout << "Norm: " << toStringNorm(norm) << ",  ";
    std::cout << "Decomposition: " << toStringDecomp(decomp) << ".\n\n";
-
-   std::cout << "Timings (in microseconds) for different methods for " << numRep
-         << " replications. \n";
    long d;  // dim = dimensions[d].
-   // long dim;
+   long maxdim = dimensions[numSizes - 1];   // Maximum dimension
    Rank1Lattice<Int, Real> korlat(m, maxdim, norm); // We use single lattice object.
    ReducerBB<Int, Real> red(korlat);   // Single ReducerBB with internal lattice `korlat`.
    red.setDecompTypeBB(decomp);
+   red.setVerbosity(4);  // **************
 
    NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
    sqlen.SetLength(1);   // We retrieve only the shortest vector square length.
@@ -162,28 +148,24 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual, Com
       for (int64_t meth = 0; meth < numMeth; meth++) {
          timer[meth][d] = 0;
          sumSq[meth][d] = 0.0;
-         numBranch[meth][d] = 0;
+         numNodes[meth][d] = 0;
+         numLeaves[meth][d] = 0;
       }
    totalTime = clock();
    for (int64_t r = 0; r < numRep; r++) {
       korlat.seta(a);
-      for (d = 0; d < numSizes; d++) {   // Each matrix size.
-         if (compType == ONERED) {
-            // performReduction(korlat, red, inDual, d, dimensions1[d], 13, 0.99, 0.0, 0.0, 1, true, sqlen);
-            performReduction(korlat, red, inDual, d, dimensions1[d], 13, 0.0, 0.0, 0.999, 10, true, sqlen);
-         }
-         else
-            compareManyReductions<Int, Real>(korlat, red, inDual, d, dimensions2[d], sqlen);
-         }
+      for (d = 0; d < numSizes; d++)   // Each matrix size.
+         performReduction(korlat, red, inDual, d, dimensions[d], 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
+         // compareManyReductions<Int, Real>(korlat, red, inDual, d, dimensions[d], sqlen);
       a = a * a0 % m;   // The multiplier we use for this rep. First one is 113.
       }
-   if (compType == ONERED) printResults<Int, Real>(numMeth, numSizes, dimensions1);
-   else printResults<Int, Real>(numMeth, numSizes, dimensions2);
+   printTables<Int, Real>(numMeth, numSizes, numRep, dimensions);
 }
 
 template<typename Int, typename Real>
-void printResults(long numMeth, long numSizes, const long *dimensions) {
+void printTables(long numMeth, long numSizes, long numRep, const long *dimensions) {
    long d;
+   std::cout << "Computing times in microseconds:\n";
    std::cout << "Num. dimensions:";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(8) << dimensions[d] << "  ";
@@ -197,8 +179,8 @@ void printResults(long numMeth, long numSizes, const long *dimensions) {
       }
    }
    std::cout << "\n";
-   std::cout << "Sums of square lengths of shortest basis vector:\n";
-   std::cout << "Num. dimensions:";
+   std::cout << "Average square length of shortest basis vector:\n";
+   std::cout << "Num. dimensions: ";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(8) << dimensions[d] << "   ";
    std::cout << "\n\n";
@@ -206,21 +188,35 @@ void printResults(long numMeth, long numSizes, const long *dimensions) {
       if (sumSq[meth][0] > 0) {
          std::cout << methNames[meth];
          for (d = 0; d < numSizes; d++)
-            std::cout << std::setw(10) << std::setprecision(10) << sumSq[meth][d] << " ";
+            std::cout << std::setw(10) << std::setprecision(10) << sumSq[meth][d] / numRep << " ";
          std::cout << "\n";
       }
    }
    std::cout << "\n";
-   std::cout << "Total number of calls to the recursive BB procedure `tryZ`:\n";
-   std::cout << "Num. dimensions:";
+   std::cout << "Average number of calls to the recursive BB procedure `tryZ`:\n";
+   std::cout << "Num. dimensions: ";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(8) << dimensions[d] << "   ";
    std::cout << "\n\n";
    for (int meth = 0; meth < numMeth; meth++) {
-      if (numBranch[meth][0] > 0) {
+      if (numNodes[meth][0] > 0) {
          std::cout << methNames[meth];
          for (d = 0; d < numSizes; d++)
-            std::cout << std::setw(10) << std::setprecision(10) << numBranch[meth][d] << " ";
+            std::cout << std::setw(10) << std::setprecision(10) << numNodes[meth][d] / numRep << " ";
+         std::cout << "\n";
+      }
+   }
+   std::cout << "\n";
+   std::cout << "Average number of visited leaves in the BB procedure:\n";
+   std::cout << "Num. dimensions: ";
+   for (d = 0; d < numSizes; d++)
+      std::cout << std::setw(8) << dimensions[d] << "   ";
+   std::cout << "\n\n";
+   for (int meth = 0; meth < numMeth; meth++) {
+      if (numNodes[meth][0] > 0) {
+         std::cout << methNames[meth];
+         for (d = 0; d < numSizes; d++)
+            std::cout << std::setw(10) << std::setprecision(10) << numLeaves[meth][d] / numRep << " ";
          std::cout << "\n";
       }
    }
@@ -231,55 +227,26 @@ void printResults(long numMeth, long numSizes, const long *dimensions) {
 
 // This function compares the speed with different `Real` types.
 // For each type, it compares different pre-reduction strategies.
-template<typename Int>
-void comparePreRed (Int m, NormType norm, DecompTypeBB decomp, bool inDual, long numSizes, long numRep) {
+template<typename Int, typename Real>
+void comparePreRed (Int m, NormType norm, DecompTypeBB decomp, long numSizes, long numRep) {
    std::cout << "\n========================================================================\n";
    std::cout << "Compare different reduction strategies for different real types.\n";
-   CompareType compType = MANYRED;
-   maxdim = dimensions2[numSizes-1];
-   testLoop<int64_t, double>(conv<int64_t>(m), norm, decomp, inDual, compType, numSizes, numRep);
-   testLoop<NTL::ZZ, double>(m, norm, decomp, inDual, compType, numSizes, numRep);
-   //testLoop<NTL::ZZ, xdouble>(m, norm, decomp, inDual, compType, numSizes, numRep);
-   //testLoop<NTL::ZZ, quad_float>(m, norm, decomp, inDual, compType, numSizes, numRep);
-   //testLoop<NTL::ZZ, NTL::RR>(m, norm, decomp, inDual, compType, numSizes, numRep);
-}
-
-// Compares the speeds and results for the two norms, L1 and L2.
-template<typename Int>
-void compareNorms (Int m, DecompTypeBB decomp, bool inDual, long numSizes, long numRep) {
-    std::cout << "\n=======================================================================\n";
-    std::cout << "Compare L2 vs L2 norms\n";
-    maxdim = dimensions1[numSizes-1];
-    testLoop<NTL::ZZ, double>(m, L2NORM, decomp, inDual, ONERED, numSizes, numRep);
-    testLoop<NTL::ZZ, double>(m, L1NORM, decomp, inDual, ONERED, numSizes, numRep);
-}
-
-// Compares the two decomposition methods: Cholesky vs Triangular.
-template<typename Int>
-void compareDecomp (Int m, NormType norm, bool inDual, long numSizes, long numRep) {
-    std::cout << "\n=======================================================================\n";
-    std::cout << "Compare Cholesky vs Triangular decompositions \n";
-    maxdim = dimensions1[numSizes-1];
-    // testLoop<NTL::ZZ, double>(m, L2NORM, CHOLESKY, inDual, ONERED, numSizes, numRep);
-    testLoop<NTL::ZZ, double>(m, norm, CHOLESKY, inDual, ONERED, numSizes, numRep);
-    testLoop<NTL::ZZ, double>(m, norm, TRIANGULAR, inDual, ONERED, numSizes, numRep);
+   testLoop<Int, Real>(m, norm, decomp, false, numSizes, numRep);
+   testLoop<Int, Real>(m, norm, decomp, true, numSizes, numRep);
 }
 
 int main() {
-   // Here, Int and Real are not yet defined.
-   NTL::ZZ m(1021);  // Prime modulus near 2^{10}
-   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   // NTL::ZZ m(1021);  // Prime modulus near 2^{10}
+   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
-   //bool inDual = false;  // Tests in dual lattice ?
+   DecompTypeBB decomp = CHOLESKY;
+   NormType norm = L2NORM;
+   long numSizes = 3;
+   long numRep = 1;
 
-   compareNorms (m, CHOLESKY, false, 6, 100);
-   compareNorms (m, CHOLESKY, true, 6, 100);
-
-   compareDecomp (m, L2NORM, false, 6, 100);
-   compareDecomp (m, L1NORM, false, 6, 100);
-   compareDecomp (m, L2NORM, true, 6, 100);
-   compareDecomp (m, L1NORM, true, 6, 100);
-
-   comparePreRed (m, L2NORM, CHOLESKY, false, 8, 100);
-   comparePreRed (m, L2NORM, CHOLESKY, true, 8, 100);
+   // comparePreRed<int64_t, double>(conv<int64_t>(m), norm, decomp, numSizes, numRep);
+   comparePreRed<NTL::ZZ, double>(m, norm, decomp, numSizes, numRep);
+   //comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
+   //comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
+   // comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
 }
