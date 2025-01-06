@@ -1,0 +1,117 @@
+/**
+ * This is DEPRECATED.
+ *
+ * Here we take lattices obtained from small LCGs and follow what happens when
+ * we run `shortestVector` from `ReducerBB` to find a shortest vector.
+ * We consider the L1 and L2 norms and compare he `CHOLESKY` and `TRIANGULAR`
+ * decompositions, for both the primal and $m$-dual lattices.
+ * We first perform a weak LLL reduction, then look at the time required for the BB.
+ */
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#define TYPES_CODE  ZD     // Int = ZZ, Real = double
+
+#include <NTL/vector.h>
+#include <NTL/matrix.h>
+#include <NTL/ZZ.h>
+#include "latticetester/FlexTypes.h"
+#include "latticetester/Util.h"
+#include "latticetester/Rank1Lattice.h"
+#include "latticetester/ReducerStatic.h"
+#include "latticetester/ReducerBB.h"
+
+using namespace LatticeTester;
+
+// We use ctime directly for the timings.
+clock_t tmp;
+
+
+template<typename Int, typename Real>
+void applyBB (ReducerBB<Int, Real> &red) {
+   clock_t tmp = clock();
+   if (red.shortestVector()) {
+      std::cout << "Shortest vector m_bv = " << red.getShortVec() << "\n";
+      std::cout << "Square length = " << red.getMinLength2() << "\n";
+      std::cout << "Time = " << clock() - tmp << "\n\n";
+   }
+   else std::cout << " applyBB: shortestVector failed! \n\n";
+}
+
+
+   /* This function builds the dual basis of `korlat` in dim = dimensions[d]
+ * and dualizes to put the dual as a primal basis. It then applies the
+ * selected reductions and adds the CPU times and square length of shortest
+ * vector to the appropriate sum. The reduction method has number `meth`,
+ * its short name is `names[meth]`, and it is specified by the following parameters:
+ * If `deltaLLL1 > 0` it applies LLL with this first `delta`.
+ * Then if `deltaLLL2 > 0` it applies LLL with this second `delta`.
+ * Then if `deltaBKZ > 0` it applies BKZ with this `delta` and the given `k`.
+ * Then if `BB == true` it applies the BB algorithm to find a shortest vector.
+ * The square length of the shortest basis vector is recovered in `len2`.
+ */
+template<typename Int, typename Real>
+void testModesBB (Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual) {
+   long dim = korlat.getMaxDim();  // We want the max dimension, not the current dim (which is 0).
+   IntMat basis0, basis1;    // To store the basis obtained after LLL.
+   basis0.SetDims(dim, dim);
+   basis1.SetDims(dim, dim);
+   RealVec sqlen;      // To recover square length of first basis vector after LLL.
+   sqlen.SetLength(1); // We only want to recover the length of the first basis vector.
+   if (inDual) {
+      korlat.buildDualBasis(dim);  // Build the dual basis (only).
+      korlat.dualize();
+   } else {
+      korlat.buildBasis(dim);  // Build the primal basis.
+   }
+   std::cout << "\n****************************************************\n";
+   // std::cout << "Types: " << stringTypes << "\n";
+   std::cout << "testModesBB";
+   if (inDual) std::cout << " in the dual lattice. \n";
+   else std::cout << ", in the primal lattice. \n";
+   // std::cout << "Initial Korobov lattice basis (triangular) = \n" << korlat.getBasis() << "\n";
+   Int sqlength;       // Square length of first vector in initial basis.
+   basis0 = korlat.getBasis();
+   ProdScal<Int>(basis0[0], basis0[0], dim, sqlength);
+   std::cout << "Initial basis0 = \n" << basis0 << "\n";
+   std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
+
+   redLLL(korlat.getBasis(), 0.5, dim, &sqlen);
+   basis1 = korlat.getBasis(); // We keep this basis obtained from LLL.
+   std::cout << "Lattice basis after LLL with delta = 0.5: \n" << basis1 << "\n";
+   std::cout << "Shortest vector = " << basis1[0] << "\n";
+   std::cout << "Square length = " << sqlen[0] << "\n\n";
+
+   // In the following, we apply BB to compute a shortest vector.
+   red.setIntLattice(korlat);
+   red.setDecompTypeBB(CHOLESKY);
+   std::cout << "BB with Cholesky, norm type = L2 **********\n";
+   korlat.setNormType(L2NORM);
+   //applyBB(red);
+
+   korlat.setBasis(basis1, dim);
+   std::cout << "BB with Cholesky, norm type = L1 **********\n";
+   korlat.setNormType(L1NORM);
+   applyBB(red);
+
+   red.setDecompTypeBB(TRIANGULAR);
+   std::cout << "BB with Triangular, norm type = L2 **********\n";
+   korlat.setBasis(basis1, dim);
+   korlat.setNormType(L2NORM);
+   //applyBB(red);
+
+   korlat.setBasis(basis1, dim);
+   std::cout << "BB with Triangular, norm type = L1 **********\n";
+   korlat.setNormType(L1NORM);
+   applyBB(red);
+}
+
+int main() {
+   Int m(1021);      // Modulus m = 101
+   Int a(73);       // An LCG multiplier
+   const long maxdim(4);  // Max dimension of lattice.
+
+   Rank1Lattice<Int, Real> korlat(m, a, maxdim); // Single lattice object, current dim is 0.
+   ReducerBB<Int, Real> red(korlat);   // Single ReducerBB with internal lattice `korlat`.
+   // testModesBB (korlat, red, false);
+   testModesBB (korlat, red, true);   // For dual lattice.
+}
