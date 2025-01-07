@@ -877,12 +877,12 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
     */
 
    // To avoid creating them in recursive calls, some variables below would have to be arrays indexed by j.
+   Real center, dc, x, spjm1;
    int64_t min0, max0;     // Interval boundaries for the z_j.
    int64_t zlow, zhigh;    // Current pointers on the left and right of the center.
    int64_t temp;
    bool high;      // Indicates if we are on the right (true) or the left of the center.
    bool stillHope;
-   Real center, dc, x, spjm1;
    int64_t i, k;
    const int64_t dim = m_lat->getDim();
 
@@ -969,7 +969,7 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
          spjm1 = m_sjp[j] + x * x * m_dc2[j]; // This is s_{j-1}(2).
 
       if (j == 0) {
-         // All the zj have been selected: we now have a candidate vector to test!
+         // All the z_j have been selected: we now have a candidate vector to test!
          if (m_decomp == TRIANGULAR && norm == L1NORM)
             stillHope =  (m_lMin1 > spjm1);
          else
@@ -1115,7 +1115,7 @@ bool ReducerBB<Int, Real>::shortestVector() {
    smaller = false;
    m_foundZero = false;
    for (long j=0; j < dim; j++) m_z[j] = 0;
-   if (!tryZShortVec(dim - 1, smaller, norm)) // We search for a shortest vector.
+   if (!tryZShortVecOld (dim - 1, smaller, norm)) // We search for a shortest vector.  ******
       return false;
    if (smaller) {
       // We found a shorter vector. It is in m_bv and its square length is in m_lMin2.

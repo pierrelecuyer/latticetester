@@ -19,9 +19,9 @@
 #define LATTICETESTER__WEIGHTS_H
 
 #include <string>
+#include <cstdint>
 
 #include "latticetester/Coordinates.h"
-// #include "latticetester/Util.h"
 
 namespace LatticeTester {
 

@@ -41,7 +41,8 @@ double sumSq[numMeth][maxNumSizes]; // Sum of squares of vector lengths (for che
 long numNodes[numMeth][maxNumSizes]; // Total number of calls to tryZ.
 long numLeaves[numMeth][maxNumSizes]; // Total number of leaves visited by the BB.
 
-// void printResults(long numMeth, long numSizes);  // Must be declared if it has no template heading.
+// Would have to be declared if it had no template heading.
+// void printTables(long numMeth, long numSizes, long numRep, const long *dimensions) {
 
 /* This function builds the dual basis of `korlat` in dim = dimensions[d]
  * and dualizes to put the dual as a primal basis. It then applies the
@@ -236,15 +237,15 @@ void comparePreRed (Int m, NormType norm, DecompTypeBB decomp, long numSizes, lo
 }
 
 int main() {
-   NTL::ZZ m(1021);  // Prime modulus near 2^{10}
-   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   // NTL::ZZ m(1021);  // Prime modulus near 2^{10}
+   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    DecompTypeBB decomp = CHOLESKY;
    NormType norm = L2NORM;
-   long numSizes = 8;
-   long numRep = 100;
+   long numSizes = 5;
+   long numRep = 50;
 
-   comparePreRed<int64_t, double>(conv<int64_t>(m), norm, decomp, numSizes, numRep);
+   //comparePreRed<int64_t, double>(conv<int64_t>(m), norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, double>(m, norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);

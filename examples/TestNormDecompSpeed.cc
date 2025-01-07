@@ -51,7 +51,7 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
    } else {
       korlat.buildBasis(dim);  // Rebuild the primal basis anew.
    }
-   //std::cout << "Before pre-reduction, initial basis = \n" << korlat.getBasis() << "\n";
+   std::cout << "performReduction, d = " << d << ",  a = " << korlat.geta() << "\n";
    tmp = clock();
    if (deltaBKZ > 0.0) redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
    double len2 = conv<double>(sqlen[0]);   // This is always the squared L2 norm.

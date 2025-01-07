@@ -115,6 +115,11 @@ public:
    void seta(const Int &a);
 
    /**
+    * Returns the multiplier `a`.
+    */
+   IntVec geta();
+
+   /**
     * Builds a basis in `dim` dimensions. This `dim` must not exceed `this->maxDim()`.
     * This initial primal basis will be upper triangular.
     * This function can be called only when `withPrimal` is set to true.
@@ -252,6 +257,16 @@ void Rank1Lattice<Int, Real>::seta(const Int &a) {
    for (int64_t i = 1; i < this->m_maxDim; i++) {
       this->m_a[i] = (a * this->m_a[i - 1]) % this->m_modulo;
    }
+}
+
+//============================================================================
+
+/**
+ * Returns the multiplier `a`.
+ */
+template<typename Int, typename Real>
+IntVec Rank1Lattice<Int, Real>::geta() {
+   return m_a;
 }
 
 //============================================================================
