@@ -1115,7 +1115,7 @@ bool ReducerBB<Int, Real>::shortestVector() {
    smaller = false;
    m_foundZero = false;
    for (long j=0; j < dim; j++) m_z[j] = 0;
-   if (!tryZShortVecOld (dim - 1, smaller, norm)) // We search for a shortest vector.  ******
+   if (!tryZShortVec (dim - 1, smaller, norm)) // We search for a shortest vector.  ******
       return false;
    if (smaller) {
       // We found a shorter vector. It is in m_bv and its square length is in m_lMin2.

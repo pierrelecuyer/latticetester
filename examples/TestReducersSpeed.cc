@@ -41,8 +41,8 @@ double sumSq[numMeth][maxNumSizes]; // Sum of squares of vector lengths (for che
 long numNodes[numMeth][maxNumSizes]; // Total number of calls to tryZ.
 long numLeaves[numMeth][maxNumSizes]; // Total number of leaves visited by the BB.
 
-// Would have to be declared if it had no template heading.
-// void printTables(long numMeth, long numSizes, long numRep, const long *dimensions) {
+// Must be declared because it has no template heading.
+void printTables(long numMeth, long numSizes, long numRep, const long *dimensions);
 
 /* This function builds the dual basis of `korlat` in dim = dimensions[d]
  * and dualizes to put the dual as a primal basis. It then applies the
@@ -160,10 +160,9 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
          compareManyReductions<Int, Real>(korlat, red, inDual, d, dimensions[d], sqlen);
       a = a * a0 % m;   // The multiplier we use for this rep. First one is 113.
       }
-   printTables<Int, Real>(numMeth, numSizes, numRep, dimensions);
+   printTables(numMeth, numSizes, numRep, dimensions);
 }
 
-template<typename Int, typename Real>
 void printTables(long numMeth, long numSizes, long numRep, const long *dimensions) {
    long d;
    std::cout << "Computing times in microseconds:\n";
@@ -249,5 +248,5 @@ int main() {
    comparePreRed<NTL::ZZ, double>(m, norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
-   // comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
+   comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
 }

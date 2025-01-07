@@ -37,6 +37,9 @@ clock_t timer[maxNumSizes]; // Clock times in microseconds.
 double sumSq[maxNumSizes]; // Sum of squares of vector lengths (for checking).
 long numBranch[maxNumSizes]; // Total number of calls to tryZ.
 
+// Declaration required.
+void printResultsNormsDecomp(long numSizes, const long *dimensions);
+
 /* This function builds the primal or dual basis of `korlat` in dim = dimensions[d].
  * If `deltaBKZ > 0` it applies BKZ with this `delta` and the given `k`.
  * Then it applies the BB algorithm to find a shortest vector.
@@ -104,10 +107,9 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
       a = a * a0 % m;   // The multiplier we use for this rep. First one is 73.
       // std::cout << "Changed a to a = " << a << "\n";
       }
-   printResultsNormsDecomp<Int, Real>(numSizes, dimensions);
+   printResultsNormsDecomp(numSizes, dimensions);
    }
 
-template<typename Int, typename Real>
 void printResultsNormsDecomp(long numSizes, const long *dimensions) {
    long d;
    std::cout << "Timings are in basic clock units (microseconds) \n";

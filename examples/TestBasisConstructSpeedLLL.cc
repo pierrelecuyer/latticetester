@@ -32,6 +32,8 @@ clock_t tmpTotal = 0;            // Global timer for total time.
 clock_t timer[numMeth][maxNumSizes]; // Collects timings for each case.
 double sumSq[numMeth][maxNumSizes];  // Sums of square lengths.
 
+// Declaration required.
+void printTables(int64_t numSizes);
 
 // This function applies LLL to `basis` in `dim` dimensions.
 // It also updates the cumulative times and sums of square lengths.
@@ -125,11 +127,10 @@ void testLoop(Int &mm, int64_t numSizes, int64_t numRep) {
          transformBasesLLL<Int, Real>(m, d, dim, basis0, basis1, basis2, basisdual);
       }
    }
-   printResults<Int, Real>(numSizes);
+   printTables(numSizes);
 }
 
-template<typename Int, typename Real>
-void printResults(int64_t numSizes) {
+void printTables(int64_t numSizes) {
    int64_t d;
    std::cout << "Total time: " << (double) (clock() - tmpTotal) / (CLOCKS_PER_SEC) << " seconds.\n\n";
    std::cout << "Timings for different methods, in basic clock units (microseconds) \n";

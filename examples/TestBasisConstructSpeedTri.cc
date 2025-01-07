@@ -22,15 +22,18 @@ using namespace LatticeTester;
 const int64_t maxNumSizes = 8; // Number of matrix sizes (choices of dimensions).
 const int64_t dimensions[maxNumSizes] = { 5, 10, 20, 30, 40, 50, 60, 70 };
 const int64_t numMeth = 10;    // Number of methods and their names.
-std::string names[numMeth] = { "LLL 0.5  ", "LowTri   ", "UppTri   ", "UppTri2  ",
-     "mDualUp  ", "LLLD 0.5 ", "LowTriD  ", "UppTriD  ", "UppTriD96", "UppTriD2 " };
+std::string names[numMeth] = { "LLL 0.5     ", "LowTri      ", "UppTri      ", "UppTri2     ",
+     "mDualUp     ", "LLLDual 0.5 ", "LowTriDual  ", "UppTriDual  ", "UppTriDual96", "UppTriDual2 " };
 
 // We use `ctime` directly for the timings, to minimize overhead.
 clock_t tmpTotal = 0;            // Global timer for total time.
 clock_t timer[numMeth][maxNumSizes]; // Collects timings for each case.
 // double sumSq[numMeth][maxNumSizes];  // Sums of square lengths.
 
-// Runs a speed test for dim = dimensions[d], for triangular basis constructions.
+// Declaration required.
+void printTable(int64_t numSizes);
+
+   // Runs a speed test for dim = dimensions[d], for triangular basis constructions.
 // Only basis0 needs to be initialized; the other matrices are used only for copy.
 template<typename Int, typename Real>
 void triangularBases(const Int &m, int64_t d, int64_t dim, IntMat &basis0,
@@ -71,12 +74,12 @@ void triangularBases(const Int &m, int64_t d, int64_t dim, IntMat &basis0,
 
    CopyPartMat<IntMat>(basis1, basisdual, dim, dim);  // Copy basisdual to basis1.
    tmp = clock();
-   upperTriangularBasis<Int>(basis2, basis1, m, dim, dim);
+   lowerTriangularBasis<Int>(basis2, basis1, m, dim, dim);
    timer[6][d] += clock() - tmp;
 
    CopyPartMat<IntMat>(basis1, basisdual, dim, dim);  // Copy basisdual to basis1.
    tmp = clock();
-   lowerTriangularBasis<Int>(basis2, basis1, m, dim, dim);
+   upperTriangularBasis<Int>(basis2, basis1, m, dim, dim);
    timer[7][d] += clock() - tmp;
 
    CopyPartMat<IntMat>(basis1, basisdual, dim, dim);  // Copy basisdual to basis1.
@@ -127,11 +130,10 @@ void testLoop(Int &mm, int64_t numSizes, int64_t numRep) {
          triangularBases<Int, Real>(m, d, dim, basis0, basis1, basis2, basisdual);
       }
    }
-   printResults<Int, Real>(numSizes);
+   printTable(numSizes);
 }
 
-template<typename Int, typename Real>
-void printResults(int64_t numSizes) {
+void printTable(int64_t numSizes) {
    int64_t d;
    std::cout << "Total time (includes time for other operations between triangularizations): "
              << (double) (clock() - tmpTotal) / (CLOCKS_PER_SEC) << " seconds.\n\n";
@@ -147,41 +149,23 @@ void printResults(int64_t numSizes) {
       std::cout << "\n";
    }
    std::cout << "\n";
-   /*
-   std::cout << "Sums of square lengths of shortest basis vectors";
-   std::cout << " (must be the same for all flexible types). \n";
-   std::cout << "The sums are for the shortest vectors after the last LLL. \n";
-   std::cout << " dim:    ";
-   for (d = 0; d < numSizes; d++)
-      std::cout << std::setw(13) << dimensions[d] << " ";
-   std::cout << "\n\n";
-   for (int meth = 0; meth < numMeth; meth++) {
-      if (sumSq[meth][0] > 0.0) {
-         std::cout << names[meth] << "  ";
-         for (d = 0; d < numSizes; d++)
-            std::cout << std::setw(13) << sumSq[meth][d] << " ";
-         std::cout << "\n";
-      }
-   }
-   std::cout << "\n";
-   */
 }
 
 
 int main() {
 
    // Here, `Int` and `Real` are not yet defined, they will be passed as template parameters.
-   int64_t m(1048573);  // Prime modulus near 2^{20}
-   NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
+   //int64_t m(1048573);  // Prime modulus near 2^{20}
+   //NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
    // The following values of `mm` work only with ZZ.
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
-   //NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
+   NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
    int64_t numSizes = 8;
    int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
 
    // Here we can test with any combination of types.
-   testLoop<int64_t, double>(m, numSizes, numRep);  // This one works only for the smaller m.
+   //testLoop<int64_t, double>(m, numSizes, numRep);  // This one works only for the smaller m.
    testLoop<NTL::ZZ, double>(mm, numSizes, numRep);
    //testLoop<NTL::ZZ, xdouble>(mm, numSizes, numRep);
    //testLoop<NTL::ZZ, quad_float>(mm, numSizes, numRep);
