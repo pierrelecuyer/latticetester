@@ -142,11 +142,11 @@ static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, co
          "LLL + BB, stage 2");
 
    // 5. Early discard, two stages, retain numBest0 in inList, with LLL only and vector `t0` in first stage.
-   fom->setTVector(t0);
+   fom->setTVector(t0, true);
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, inList, numBest0, false,
          "LLL only, stage 1 with vector t0");
    // We use LLL + BB on second stage, only for the numBest0 retained.
-   fom->setTVector(t);   fom->setBB(true);
+   fom->setTVector(t, true);   fom->setBB(true);
    findBestFOMs(m, a0, lat, proj, fom, true, true, inList, numBest0, outList, numBest, true,
          "LLL + BB, stage 2");
 }
@@ -156,9 +156,9 @@ int main() {
    typedef double Real;
    std::cout << "Types: Int = NTL::ZZ, Real = double \n";
 
-   //NTL::ZZ m(1048573); // Prime modulus near 2^{20}
+   NTL::ZZ m(1048573); // Prime modulus near 2^{20}
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
-   NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   //NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
    NTL::Vec<int64_t> t; // The t-vector for the FOM.
    t.SetLength(5);

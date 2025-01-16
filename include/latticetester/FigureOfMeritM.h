@@ -124,7 +124,7 @@ public:
     * projections that contain coordinate 1.
     * See the doc of the class `FromRanges` in `CoordinateSets` for more details.
     */
-   void setTVector(const NTL::Vec<int64_t> &t, bool includeFirst = false);
+   void setTVector(const NTL::Vec<int64_t> &t, bool includeFirst);
 
    /*
     * Sets the weights used for calculating the FoM
@@ -214,17 +214,12 @@ public:
    }
 
    /*
-    * This function computes and returns the value of the FOM for the given lattice 'lat'.
-    * The function returns 0 if the computation was not completed for some reason
-    * (early exit, error, etc.).
-    * The parameter `proj` points to a secondary `IntLattice` object used to store the
-    * projections when computing the FOM.  The `maxDim` in this object must be large
-    * enough so it can store any of the projections: `maxDim`\f$\ge \max(s,t_1)$\f.
-    * Re-using this object permits one to avoid creating new objects internally.
-    * We need a full `IntLattice` object (not only a basis) for when we apply BB to the projection.
+    * This function computes and returns the merit value for a single projection
+    * represented in lattice `proj`, in `dim` dimensions.
+    * It returns 0 if the computation is not completed for any reason.
     */
-   double computeMerit(IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj, double minmerit =
-         DBL_MAX);
+   double computeMeritOneProj(IntLattice<Int, Real> &proj, const Coordinates &coord,
+         double minmerit = DBL_MAX);
 
    /*
     * This function computes and returns the FOM only for the projections
@@ -245,16 +240,21 @@ public:
          double minmerit = DBL_MAX);
 
    /*
-    * This function computes and returns the merit value for a single projection
-    * represented in lattice `proj`, in `dim` dimensions.
-    * It returns 0 if the computation is not completed for any reason.
+    * This function computes and returns the value of the FOM for the given lattice 'lat'.
+    * The function returns 0 if the computation was not completed for some reason
+    * (early exit, error, etc.).
+    * The parameter `proj` points to a secondary `IntLattice` object used to store the
+    * projections when computing the FOM.  The `maxDim` in this object must be large
+    * enough so it can store any of the projections: `maxDim`\f$\ge \max(s,t_1)$\f.
+    * Re-using this object permits one to avoid creating new objects internally.
+    * We need a full `IntLattice` object (not only a basis) for when we apply BB to the projection.
     */
-   double computeMeritOneProj(IntLattice<Int, Real> &proj, const Coordinates &coord,
-         double minmerit = DBL_MAX);
+   double computeMerit(IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj, double minmerit =
+         DBL_MAX);
 
 
-// The following variables should not not accessed directly.
-//protected:
+// The following variables should not be accessed directly.
+protected:
 
    /*
     * This 'm_t' specifies the set of projections for which the FOM is computed.
@@ -387,15 +387,15 @@ void FigureOfMeritM<Int, Real>::setTVector(const NTL::Vec<int64_t> &t, bool incl
    if (includeFirst) min_dim = 2;
    for (int64_t i = 1; i < m_tsize; i++) {
       // Adds the set of projections of order i, if non-empty.
-      if (t[i] >= min_dim + i - includeFirst) m_coordRange->includeOrder(i + 1 - includeFirst,
-            min_dim, t[i], includeFirst);
+      if (t[i] >= min_dim + i - includeFirst)
+         m_coordRange->includeOrder(i + 1 - includeFirst, min_dim, t[i], includeFirst);
       else m_coordRange->excludeOrder(i + 1 - includeFirst);
    }
 }
 
 //=========================================================================
-// Computes the merit value for one projection in dim dimensions.
-// The primal dimension of proj must equal the size of coord.
+// Computes the merit value for one projection in `dim` dimensions.
+// The dimension of `proj` must equal the size of coord.
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &proj,
       const Coordinates &coord, double minmerit) {
@@ -418,7 +418,7 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
    }
    double merit;
    if (proj.getNormType() == L2NORM) NTL::conv(merit, sqrt(m_sqlen[0]) / m_norma->getBound(dim));
-   else NTL::conv(merit, m_red->getMinLength() / m_norma->getBound(dim)); // For L1 norm.
+   else NTL::conv(merit, m_red->getMinLength() / m_norma->getBound(dim));   // For L1 norm.
    merit *= m_weights->getWeight(coord);
    if (merit < minmerit) {
       m_minMerit = merit;
@@ -431,19 +431,6 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
       std::cout << merit << std::setw(8) << "  " << m_sqlen[0] << "  " << m_minMerit << "\n";
    }
    return merit;
-}
-
-//=========================================================================
-
-template<typename Int, typename Real>
-double FigureOfMeritM<Int, Real>::computeMerit(IntLatticeExt<Int, Real> &lat,
-      IntLattice<Int, Real> &proj, double minmerit) {
-   m_minMerit = minmerit;
-   this->computeMeritNonSucc(lat, proj, minmerit);
-   if (m_minMerit == 0) return 0;
-   this->computeMeritSucc(lat, m_minMerit);
-   // if (m_minMerit > this->m_highbound) return 0; // Removed. We want to see the large values!
-   return m_minMerit;
 }
 
 //=========================================================================
@@ -487,6 +474,20 @@ double FigureOfMeritM<Int, Real>::computeMeritNonSucc(IntLatticeExt<Int, Real> &
       // std::cout << " Basis B after computeMerit = \n" << proj.getBasis() << "\n";
       if (m_minMerit <= this->m_lowbound) return 0;
    }
+   return m_minMerit;
+}
+
+
+//=========================================================================
+
+template<typename Int, typename Real>
+double FigureOfMeritM<Int, Real>::computeMerit(IntLatticeExt<Int, Real> &lat,
+      IntLattice<Int, Real> &proj, double minmerit) {
+   m_minMerit = minmerit;
+   this->computeMeritNonSucc(lat, proj, minmerit);
+   if (m_minMerit == 0) return 0;
+   this->computeMeritSucc(lat, m_minMerit);
+   // if (m_minMerit > this->m_highbound) return 0; // Removed. We want to see the large values!
    return m_minMerit;
 }
 

@@ -25,7 +25,7 @@
 using namespace LatticeTester;
 
 const long dimensions[] = { 5, 10, 20, 30, 40, 50, 60, 70 };
-const long maxNumSizes = 8; // Number of matrix sizes (choices of dimension), can be adjusted. ***
+const long maxNumSizes = 5; // Number of matrix sizes (choices of dimension), can be adjusted. ***
 
 std::string methNames[] = { "LLL5           ", "LLL99999       ", "BKZ99999-10    ", "L5+9+BKZ-10    ",
       "LLL5+BB        ", "LLL8+BB        ", "LLL99999+BB    ", "BKZ99999-6+BB  ", "BKZ99999-8+BB  ",
@@ -237,8 +237,8 @@ void comparePreRed (Int m, NormType norm, DecompTypeBB decomp, long numSizes, lo
 
 int main() {
    // NTL::ZZ m(1021);  // Prime modulus near 2^{10}
-   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
-   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    DecompTypeBB decomp = CHOLESKY;
    NormType norm = L2NORM;
    long numSizes = 5;

@@ -902,7 +902,7 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
    // m_L contains the \tilde\ell_{i,j} of the guide.
    // This dc is the distance from the center to the boundaries.
    // m_lMin2 contains the square length of current shortest vector with the selected norm.
-   dc = 0;
+   dc = 0.0;
    if (m_decomp == CHOLESKY) {
       dc = sqrt((m_lMin2 - m_sjp[j]) / m_dc2[j]);
       // std::cout << " With Cholesky, j = " << j << ", center[j] = " << center << ",  dc = " << dc << "\n";
