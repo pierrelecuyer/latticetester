@@ -175,19 +175,11 @@ static void LLLBasisConstruction(IntMat &gen, const Int &m, const double delta =
 template<typename Int>
 static void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long r = 0, long c = 0);
 
-// This is a previous version.
-template<typename Int>
-static void lowerTriangularBasisCW(IntMat &basis, IntMat &bgen, const Int &m, long r = 0, long c = 0);
-
 /**
  * Same as `lowerTriangularBasis`, except that the returned basis is upper triangular.
  */
 template<typename Int>
 static void upperTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long r = 0, long c = 0);
-
-// This is a previous version.
-template<typename Int>
-static void upperTriangularBasisCW(IntMat &basis, IntMat &gen, const Int &m, long r = 0, long c = 0);
 
 // The old version from 1996.
 template<typename Int>
@@ -212,6 +204,15 @@ static void mDualUpperTriangular(IntMat &basisDual, const IntMat &basis, const I
  */
 template<typename Int>
 static void mDualUpperTriangularOld96(IntMat &basisDual, const IntMat &basis, const Int &m, long dim = 0);
+
+/**
+ * Takes a lower triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
+ * This function is the equivalent of mDualUpperTriangular for lower triangular matrices.
+ */
+template<typename Int>
+static void mDualLowerTriangular(IntMat &basisDual, const IntMat &basis, const Int &m,
+      long dim = 0);
+
 
 // static void mDualUpperTriangular96ZZ(NTL::Mat<NTL::ZZ> &basis,
 //            NTL::Mat<NTL::ZZ> &basisDual, const NTL::ZZ &m, long dim = 0);
@@ -368,202 +369,6 @@ void LLLBasisConstruction(IntMat &gen, const Int &m, double delta, long r, long 
 }
 
 //==============================================================================
-
-// This function is definitely incorrect. It often gives wrong results.
-template<typename Int>
-void lowerTriangularBasisCW(IntMat &basis, IntMat &gen, const Int &m, long dim1, long dim2) {
-   // Note:  dim1 = r, dim2 = c.   The new basis should be c x c.
-   NTL::Vec<Int> coeff_gcd, coeff_xj, xj; // Vectors are created locally here.
-   Int gcd, gcdCopy, C, D;
-   long i, j, k, l;
-   // In case r or c is zero:
-   if (dim1 == 0) dim1 = gen.NumRows();
-   if (dim2 == 0) dim2 = gen.NumCols();
-   assert(dim2 <= basis.NumRows() && dim2 <= basis.NumCols());
-   // Allocate space for the vectors:
-   coeff_gcd.SetLength(dim1);
-   coeff_xj.SetLength(dim1);
-   xj.SetLength(dim2);
-   // if (basis.NumRows() != dim2 || basis.NumCols() != dim2)
-   //    basis.SetDims(dim2, dim2);
-
-   for (i = dim2 - 1; i > -1; i--) {
-      // Reset these vectors to 0, as they may contain nonzero values from the previous i.
-      for (j = dim1 - 1; j > -1; j--)
-         coeff_gcd[j] = 0;
-      for (j = dim2 - 1; j > -1; j--)
-         xj[j] = 0;
-      // Search for the first non-zero element in the row.
-      for (k = dim1 - 1; (k > -1 && gen[dim1 - 1 - k][i] == 0); k--) {
-      }
-      //			if (gen[k][i] != 0)	break;
-      // Reduce the other generators as they are used often in what follows.
-      for (j = dim1 - 1; j > dim1 - k - 1; j--)
-         NTL::rem(gen[j][i], gen[j][i], m);
-      // The `else` case adds m e_i to the basis matrix.
-      if (k > -1) {
-         gcd = m;    // Will be GCD(m, gen[k][i]);
-         coeff_gcd[k] = 1;
-         gcdCopy = gcd;
-
-         // Find the other coefficients by applying the Euclidean algorithm multiple times
-         for (j = dim1 - 1; j > dim1 - k - 1; j--) {
-            if (gen[j][i] == 0) coeff_gcd[j] = 0;
-            else {
-               NTL::XGCD(gcd, C, D, gcdCopy, gen[j][i]);
-               coeff_gcd[j] = D;
-               for (l = dim1 - j - 1 - 1; l > -1; l--) {
-                  NTL::mul(coeff_gcd[dim1 - 1 - l], coeff_gcd[dim1 - 1 - l], C);
-               }
-               gcdCopy = gcd;
-            }
-         }
-         // If gcd = m, then this basis (row) vector will be `m e_i`.
-         if (gcd == m) {
-            for (j = dim2 - 1; j > -1; j--) {
-               if (j != i) basis[i][j] = 0;
-               else basis[i][j] = m;
-            }
-         } else {
-            // Reduce the coefficients found during the Euclidean algorithm.
-            for (j = 0; j < dim1; j++)
-               NTL::rem(coeff_gcd[dim1 - 1 - j], coeff_gcd[dim1 - 1 - j], m);
-            // We have now found all the coefficients and can compute the vector x_i.
-            for (l = dim1 - 1; l > -1; l--) {
-               if (coeff_gcd[l] != 0) {
-                  for (j = dim2 - 1; j > dim1 - 1 - i - 1; j--) {
-                     NTL::MulAddTo(xj[j], gen[l][j], coeff_gcd[l]);
-                  }
-               }
-            }
-            // Next we calculate the new vectors v_i.
-            // We first calculate the coefficients with which x_i needs to be multiplied.
-            for (j = dim1 - 1; j > -1; j--) {
-               NTL::div(coeff_xj[j], gen[j][i], gcd);
-               NTL::rem(coeff_xj[j], coeff_xj[j], m);
-            }
-            for (j = dim2 - 1; j > -1; j--)
-               NTL::rem(xj[j], xj[j], m);
-            // Update the v_i
-            for (l = dim1 - 1; l > -1; l--) {
-               if (coeff_xj[l] != 0) {
-                  for (j = dim2 - 1; j > dim1 - 1 - i - 1; j--) {
-                     NTL::MulSubFrom(gen[l][j], coeff_xj[l], xj[j]);
-                  }
-               }
-            }
-            // Set the `i`th base vector.
-            for (j = 0; j < dim2; j++)
-               basis[i][j] = xj[j];
-         }
-      } else {
-         for (j = dim2 - 1; j > -1; j--) {
-            if (j != i) basis[i][j] = 0;
-            else basis[i][j] = m;
-         }
-      }
-   }
-}
-
-
-//===================================================================
-
-template<typename Int>
-void upperTriangularBasisCW(IntMat &basis, IntMat &gen, const Int &m, long dim1, long dim2) {
-   // `dim1` and `dim2` are `s` and `t` in the guide.
-   if (dim1 == 0) dim1 = gen.NumRows();
-   if (dim2 == 0) dim2 = gen.NumCols();
-   assert(dim2 <= basis.NumRows() && dim2 <= basis.NumCols());
-
-   long i, j, k, l;
-   Int gcd, gcdCopy, C, D;
-   NTL::Vec<Int> coeff_gcd, coeff_xj, xj;  // Here we create new vectors!
-   coeff_gcd.SetLength(dim1);
-   coeff_xj.SetLength(dim1);
-   xj.SetLength(dim2);
-
-   for (j = 0; j < dim2; j++) {
-      for (i = 0; i < dim1; i++)
-         coeff_gcd[i] = 0;
-      for (i = 0; i < dim2; i++)
-         xj[i] = 0;
-      // Search for the first non-zero element in column j.
-      for (k = 0; (k < dim1 && gen[k][j] == 0); k++) {}
-      // The reduction of the generating vectors is done only here, for column j.
-      // Reduce the other generators as they are used often in what follows.
-      for (i = k; i < dim1; i++) {
-         NTL::rem(gen[i][j], gen[i][j], m);  // This should be done *before* searching for the first nonzero element?
-      }
-      // The `else` case adds m e_j to the basis matrix.
-      if (k < dim1) {
-         gcd = m;    // Will be GCD(m, gen[k][j]);
-         coeff_gcd[k] = 1;
-         gcdCopy = gcd;
-
-         // Find the other coefficients by applying the Euclidean algorithm multiple times
-         for (i = k; i < dim1; i++) {
-            if
-               (gen[i][j] == 0) coeff_gcd[i] = 0;
-            else {
-               // XGCD (g, c, d, a, b) does g = gcd(a, b) = a*c + b*d.
-               NTL::XGCD(gcd, C, D, gcdCopy, gen[i][j]);
-               coeff_gcd[i] = D;
-               for (l = 0; l < i; l++) {
-                  NTL::mul(coeff_gcd[l], coeff_gcd[l], C);
-               }
-               gcdCopy = gcd;
-            }
-         }
-         // If gcd = m, then this basis (row) vector will be `m e_j`.
-         if (gcd == m) {
-            for (i = 0; i < dim2; i++) {
-               if (i != j) basis[j][i] = 0;
-               else basis[j][i] = m;
-            }
-         } else {
-            // Reduce the coefficients found during the Euclidean algorithm.
-            for (i = 0; i < dim1; i++) {
-               NTL::rem(coeff_gcd[i], coeff_gcd[i], m);
-            }
-            // We have now found all the coefficients and can compute the vector x_j.
-            for (k = 0; k < dim1; k++) {
-               if (coeff_gcd[k] != 0) {
-                  for (i = j; i < dim2; i++) {
-                     NTL::MulAddTo(xj[i], gen[k][i], coeff_gcd[k]);
-                     NTL::rem(xj[i], xj[i], m);
-                  }
-               }
-            }
-            // Next we calculate the new vectors v_j.
-            // We first calculate the coefficients with which x_j needs to be multiplied.
-            for (i = 0; i < dim1; i++) {
-               NTL::div(coeff_xj[i], gen[i][j], gcd);
-               NTL::rem(coeff_xj[i], coeff_xj[i], m);
-            }
-            for (i = 0; i < dim2; i++)
-               NTL::rem(xj[i], xj[i], m);
-            // Update the v_i's
-            for (k = 0; k < dim1; k++) {
-               if (coeff_xj[k] != 0) {
-                  for (i = j; i < dim2; i++) {
-                     NTL::MulSubFrom(gen[k][i], coeff_xj[k], xj[i]);
-                  }
-               }
-            }
-            // Set the `j`th basis vector.
-            for (i = 0; i < dim2; i++)
-               basis[j][i] = xj[i];
-         }
-      } else {
-         for (i = 0; i < dim2; i++) {
-            if (j != i) basis[j][i] = 0;
-            else basis[j][i] = m;
-         }
-      }
-   }
-}
-
-//===================================================================
 
 template<typename Int>
 void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, long dim2) {
@@ -842,6 +647,33 @@ void mDualUpperTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
          for (int64_t k = j + 1; k <= i; k++)
             NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
          NTL::div(B[i][j], B[i][j], A[j][j]);
+      }
+   }
+}
+
+/**
+ * For `B` to be `m`-dual to `A`, we have to have that \f$AB^t = mI\f$.
+ * Since `A` is lower triangular, `B` will be a upper triangular matrix
+ * The algorithm is similar to the upper triangular case
+ */
+template<typename Int>
+void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
+   // Note:  A = basis,  B = basisDual
+   if (dim == 0) dim = A.NumRows();
+   assert(dim <= A.NumCols());
+   assert(dim <= B.NumRows() && dim <= B.NumCols());
+   for (int64_t i = 0; i < dim; i++) {
+      // Put zeros under the diagonal.
+      for (int64_t j = i + 1; j < dim; j++)
+         NTL::clear(B[i][j]);
+      // Set diagonal elements.
+      NTL::div(B[i][i], m, A[i][i]);
+      // Compute the other ones.
+      for (int64_t j = i - 1; j >= 0; j--) {
+         NTL::clear(B[j][i]);
+         for (int64_t k = j + 1; k <= i; k++)
+            NTL::MulSubFrom(B[j][i], A[k][j], B[k][i]);
+         NTL::div(B[j][i], B[j][i], A[j][j]);
       }
    }
 }
