@@ -24,8 +24,10 @@ lattice rules (for quasi-Monte-Carlo) and multiple recursive linear
 congruential random number generators, respectively. 
 It is also intended to be used for other applications related to lattices in the integer space.
 It was developed to work under Linux environments (mostly because of NTL).
+
 This version is a significant overhaul compared to the previous official version given 
-[**HERE**](http://umontreal-simul.github.io/latticetester/).
+[**HERE**](http://umontreal-simul.github.io/latticetester/).  
+Some polishing remains to be done; it should be completed by February 2025.
 
 
 ## Documentation
@@ -36,6 +38,7 @@ That .pdf document is the core documentation.
 
 The interface is specified in the 
 [**API documentation**](http://pierrelecuyer.github.io/latticetester/namespaces.html).
+This part still needs work.  It should be completed by February 2025.
 
 ## Compiling and Building
 
