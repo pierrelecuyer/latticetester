@@ -186,13 +186,21 @@ template<typename Int>
 static void upperTriangularBasisOld96(IntMat &basis, IntMat &gen, const Int &m, long r = 0, long c = 0);
 
 /**
- * Takes an upper triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
+ * Takes a lower-triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
  * The function assumes that each coefficient on the diagonal of `basis` is nonzero and divides `m`.
- * That is, the basis matrix must be square and invertible.
+ * That is, the basis matrix must be square and m-invertible.
  * The algorithm is described in the Lattice Tester guide \cite iLEC22l.
- * Since the basis is upper triangular, its m-dual will be lower triangular.
- * When `dim > 0`, it gives the number of rows and columns of the matrix `basis`
+ * Since the basis is lower triangular, its m-dual will be upper triangular.
+ * When `dim > 0`, it must give the number of rows and columns of the matrix `basis`
  * that is actually used. Otherwise (by default) the function uses `basis.numCols()`.
+ */
+template<typename Int>
+static void mDualLowerTriangular(IntMat &basisDual, const IntMat &basis, const Int &m,
+      long dim = 0);
+
+/**
+ * Takes a upper triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
+ * This function is the equivalent of mDualLowerTriangular for upper-triangular matrices.
  */
 template<typename Int>
 static void mDualUpperTriangular(IntMat &basisDual, const IntMat &basis, const Int &m,
@@ -204,15 +212,6 @@ static void mDualUpperTriangular(IntMat &basisDual, const IntMat &basis, const I
  */
 template<typename Int>
 static void mDualUpperTriangularOld96(IntMat &basisDual, const IntMat &basis, const Int &m, long dim = 0);
-
-/**
- * Takes a lower triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
- * This function is the equivalent of mDualUpperTriangular for lower triangular matrices.
- */
-template<typename Int>
-static void mDualLowerTriangular(IntMat &basisDual, const IntMat &basis, const Int &m,
-      long dim = 0);
-
 
 // static void mDualUpperTriangular96ZZ(NTL::Mat<NTL::ZZ> &basis,
 //            NTL::Mat<NTL::ZZ> &basisDual, const NTL::ZZ &m, long dim = 0);
@@ -623,6 +622,35 @@ void upperTriangularBasisOld96 (Matr &V, Matr &W, const Int &m, int64_t lin, int
 
 /**
  * For `B` to be `m`-dual to `A`, we have to have that \f$AB^t = mI\f$.
+ * Since `A` is lower triangular, `B` will be a upper triangular matrix
+ * The algorithm is similar to the upper triangular case
+ */
+template<typename Int>
+void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
+   // Note:  A = basis,  B = basisDual
+   if (dim == 0) dim = A.NumRows();
+   assert(dim <= A.NumCols());
+   assert(dim <= B.NumRows() && dim <= B.NumCols());
+   for (int64_t i = 0; i < dim; i++) {
+      // Put zeros under the diagonal.
+      for (int64_t j = i + 1; j < dim; j++)
+         NTL::clear(B[i][j]);
+      // Set diagonal elements.
+      NTL::div(B[i][i], m, A[i][i]);
+      // Compute the other ones.
+      for (int64_t j = i - 1; j >= 0; j--) {
+         NTL::clear(B[j][i]);
+         for (int64_t k = j + 1; k <= i; k++)
+            NTL::MulSubFrom(B[j][i], A[k][j], B[k][i]);
+         NTL::div(B[j][i], B[j][i], A[j][j]);
+      }
+   }
+}
+
+//===================================================
+
+/**
+ * For `B` to be `m`-dual to `A`, we have to have that \f$AB^t = mI\f$.
  * Since `A` is upper triangular, `B` will be a lower triangular matrix
  * with `A(i,i)*B(i,i) = m` for all `i` and
  * \f$ A_i \cdot B_j = 0\f$ for \f$i\neq j\f$. To get the second condition,
@@ -647,33 +675,6 @@ void mDualUpperTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
          for (int64_t k = j + 1; k <= i; k++)
             NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
          NTL::div(B[i][j], B[i][j], A[j][j]);
-      }
-   }
-}
-
-/**
- * For `B` to be `m`-dual to `A`, we have to have that \f$AB^t = mI\f$.
- * Since `A` is lower triangular, `B` will be a upper triangular matrix
- * The algorithm is similar to the upper triangular case
- */
-template<typename Int>
-void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
-   // Note:  A = basis,  B = basisDual
-   if (dim == 0) dim = A.NumRows();
-   assert(dim <= A.NumCols());
-   assert(dim <= B.NumRows() && dim <= B.NumCols());
-   for (int64_t i = 0; i < dim; i++) {
-      // Put zeros under the diagonal.
-      for (int64_t j = i + 1; j < dim; j++)
-         NTL::clear(B[i][j]);
-      // Set diagonal elements.
-      NTL::div(B[i][i], m, A[i][i]);
-      // Compute the other ones.
-      for (int64_t j = i - 1; j >= 0; j--) {
-         NTL::clear(B[j][i]);
-         for (int64_t k = j + 1; k <= i; k++)
-            NTL::MulSubFrom(B[j][i], A[k][j], B[k][i]);
-         NTL::div(B[j][i], B[j][i], A[j][j]);
       }
    }
 }
@@ -755,7 +756,6 @@ void mDualBasis(NTL::Mat<Int> &basisDual, const NTL::Mat<Int> &basis, const Int 
 
 // The specialization for the case where `Int = ZZ`.
 template<>
-// void mDualBasis(const IntMat &basis, IntMat &basisDual,
 void mDualBasis(NTL::Mat<NTL::ZZ> &basisDual, const NTL::Mat<NTL::ZZ> &basis,
       const NTL::ZZ &m) {
    NTL::ZZ det, fac;

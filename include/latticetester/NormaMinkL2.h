@@ -38,14 +38,14 @@ public:
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
-    NormaMinkL2(double logm, int64_t k, int64_t maxDim);
+    NormaMinkL2(double logm, int64_t k, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Constructs a `NormaMinkL2` for up to `maxDim` dimensions, by assuming that the
      * log density is `logDensity` in all dimensions and the lattice was not rescaled.
      * Restriction: `maxDim`\f$ \le 48\f$.
      */
-    NormaMinkL2(double logDensity, int64_t maxDim);
+    NormaMinkL2(double logDensity, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Returns the value of the lattice constant \f$\gamma_j\f$ in
@@ -121,19 +121,21 @@ const double NormaMinkL2::m_gamma[] = {
 
 /*=========================================================================*/
 
-NormaMinkL2::NormaMinkL2(double logDensity, int64_t maxDim) :
-        Normalizer(maxDim, "Minkowski", L2NORM) {
+NormaMinkL2::NormaMinkL2(double logDensity, int64_t maxDim, NormType norm) :
+        Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaMinkL2:   dimension > MAX_DIM");
+    m_name = "NormaMinkL2";
     Normalizer::computeBounds(logDensity);
 }
 
 /*=========================================================================*/
 
-NormaMinkL2::NormaMinkL2(double logm, int64_t k, int64_t maxDim) :
-        Normalizer(maxDim, "BestLat", L2NORM) {
+NormaMinkL2::NormaMinkL2(double logm, int64_t k, int64_t maxDim, NormType norm) :
+        Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
-        throw std::invalid_argument("NormaBestLat:   dimension > MAXDIM");
+        throw std::invalid_argument("NormaMinkL2:   dimension > MAXDIM");
+    m_name = "NormaMinkL2";
     Normalizer::computeBounds(logm, k);
 }
 
@@ -142,7 +144,12 @@ NormaMinkL2::NormaMinkL2(double logm, int64_t k, int64_t maxDim) :
 inline double NormaMinkL2::getGamma(int64_t j) const {
     if (j < 1 || j > this->MAX_DIM)
         throw std::out_of_range("NormaMinkL2::getGamma");
-    return m_gamma[j];
+    if (m_norm == L2NORM)
+       return m_gamma[j];
+    else if (m_norm == L1NORM)
+       return m_gamma[j] * j;
+    else
+       throw std::domain_error("NormaMinkL2::getGamma with wrong norm");
 }
 
 }

@@ -32,7 +32,8 @@ namespace LatticeTester {
  * "A Conceptual breakthrough in sphere packing" from Henry Cohn (2016).
  * see https://doi.org/10.4007/annals.2003.157.689.
  * For dimensions 37 through 48 we use Rogers's bound.
- * This class is to be used with the L2NORM (the Euclidean norm) exclusively.
+ * This values given here are for the L2NORM.
+ * For the L1NORM, the bounds must be multiplied by `s` in `s` dimensions.
  */
 class NormaBestBound: public Normalizer {
 public:
@@ -42,14 +43,14 @@ public:
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
-    NormaBestBound(double logm, int k, int maxDim);
+    NormaBestBound(double logm, int k, int maxDim, NormType norm = L2NORM);
 
     /**
      * Constructs a `NormaBestBound` for up to `maxDim` dimensions, by assuming that the
      * log density is `logDensity` in all dimensions and the lattice was not rescaled.
      * Restriction: `maxDim`\f$ \le 48\f$.
      */
-    NormaBestBound(double logDensity, int maxDim);
+    NormaBestBound(double logDensity, int maxDim, NormType norm = L2NORM);
 
     /**
      * Destructor.
@@ -134,17 +135,19 @@ const double NormaBestBound::m_gamma[] = {
 
 /*=======================================================================*/
 
-NormaBestBound::NormaBestBound(double logDensity, int maxDim) :
-        Normalizer(maxDim, "Best", L2NORM) { //Normalizer (logDensity, maxDim, "Best", L2NORM
-    Normalizer::computeBounds(logDensity);
+NormaBestBound::NormaBestBound(double logDensity, int maxDim, NormType norm) :
+        Normalizer(maxDim, norm) {
+   m_name = "NormaBestBound";
+   Normalizer::computeBounds(logDensity);
 }
 
 /*=========================================================================*/
 
-NormaBestBound::NormaBestBound(double logm, int k, int maxDim) :
-        Normalizer(maxDim, "BestLat", L2NORM) {
+NormaBestBound::NormaBestBound(double logm, int k, int maxDim, NormType norm) :
+        Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaBestLat:   dimension > MAXDIM");
+    m_name = "NormaBestBound";
     Normalizer::computeBounds(logm, k);
 }
 
@@ -158,7 +161,12 @@ NormaBestBound::~NormaBestBound() {
 inline double NormaBestBound::getGamma(int j) const {
     if (j < 1 || j > this->m_maxDim)
         throw std::out_of_range("NormaBestBound::getGamma");
-    return m_gamma[j];
+    if (m_norm == L2NORM)
+       return m_gamma[j];
+    else if (m_norm == L1NORM)
+       return m_gamma[j] * j;
+    else
+       throw std::domain_error("NormaBestBound::getGamma with wrong norm");
 }
 
 }

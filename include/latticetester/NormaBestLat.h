@@ -46,20 +46,14 @@ public:
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
-    NormaBestLat(double logm, int64_t k, int64_t maxDim);
+    NormaBestLat(double logm, int64_t k, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Constructs a `NormaBestLat` for up to `maxDim` dimensions, by assuming that the
      * log density is `logDensity` in all dimensions and the lattice was not rescaled.
      * Restriction: `maxDim`\f$ \le 48\f$.
      */
-    NormaBestLat(double logDensity, int64_t maxDim);
-
-    /**
-     * Constructs a `NormaBestLat` for up to `maxDim` dimensions, without computing the bounds.
-     * Restriction: `maxDim`\f$ \le 48\f$.
-     */
-    NormaBestLat(int64_t maxDim);
+    NormaBestLat(double logDensity, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Returns the value of the bound on the Hermite's constant \f$\gamma_j\f$
@@ -130,28 +124,22 @@ const double NormaBestLat::m_gamma[] = {
 
 /*=========================================================================*/
 
-NormaBestLat::NormaBestLat(double logDensity, int64_t maxDim) :
-        Normalizer(maxDim, "BestLat", L2NORM) {
+NormaBestLat::NormaBestLat(double logDensity, int64_t maxDim, NormType norm) :
+        Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaBestLat:   dimension > MAXDIM");
+    m_name = "NormaBestLat";
     Normalizer::computeBounds(logDensity);
 }
 
 /*=========================================================================*/
 
-NormaBestLat::NormaBestLat(double logm, int64_t k, int64_t maxDim) :
-        Normalizer(maxDim, "BestLat", L2NORM) {
+NormaBestLat::NormaBestLat(double logm, int64_t k, int64_t maxDim, NormType norm) :
+        Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaBestLat:   dimension > MAXDIM");
+    m_name = "NormaBestLat";
     Normalizer::computeBounds(logm, k);
-}
-
-/*=========================================================================*/
-
-NormaBestLat::NormaBestLat(int64_t maxDim) :
-        Normalizer(maxDim, "BestLat", L2NORM) {
-    if (maxDim > this->MAX_DIM)
-        throw std::invalid_argument("NormaBestLat:   dimension > MAXDIM");
 }
 
 /*=========================================================================*/
@@ -159,7 +147,12 @@ NormaBestLat::NormaBestLat(int64_t maxDim) :
 inline double NormaBestLat::getGamma(int64_t j) const {
     if (j < 1 || j > this->MAX_DIM)
         throw std::out_of_range("NormaBestLat::getGamma");
-    return m_gamma[j];
+    if (m_norm == L2NORM)
+       return m_gamma[j];
+    else if (m_norm == L1NORM)
+       return m_gamma[j] * j;
+    else
+       throw std::domain_error("NormaBestLat::getGamma with wrong norm");
 }
 
 } // End namespace LatticeTester

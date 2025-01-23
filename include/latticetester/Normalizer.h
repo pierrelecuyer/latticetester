@@ -94,9 +94,9 @@ public:
      * The bounds \f$ d_t^*(\eta)\f$ will then be computed by assuming those densities.
      * To compute bounds for the m-dual, pass `-logm` instead of `logm`.
      * The values of \f$\log m\f$ (in natural basis) and \f$k\f$ must be given as inputs.
+     * The parameter `name` is used by subclasses
      */
-    Normalizer(double logm, int64_t k, int64_t maxDim, std::string name = "",
-            NormType norm = L2NORM);
+    Normalizer(double logm, int64_t k, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * *****  DEPRECATED  *****
@@ -111,15 +111,14 @@ public:
      * The `name` parameter gives name that will be printed by the ToString() method.
      * The `norm` parameter is the `NormType` used by this object.
      */
-    Normalizer(double logDensity, int64_t maxDim, std::string name = "",
-            NormType norm = L2NORM);
+    Normalizer(double logDensity, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * This constructor creates a Normalizer object without computing any bounds.
      * This is used in the case of rank 1 lattices in the `NormaPalpha`
-     * class with a prime density.
+     * class with a prime density, and also by the constructors in subclasses.
      */
-    Normalizer(int64_t maxDim, std::string name, NormType norm = L2NORM);
+    Normalizer(int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Destructor.
@@ -184,9 +183,13 @@ public:
     virtual double getBound(int64_t j) const;
 
     /**
-     * Returns the value of a lattice constant \f$\gamma\f$ in
-     * dimension \f$j\f$. These constants can be used by subclasses to
-     * implement `computeBounds()`. For this base class, always returns 1.
+     * This virtual function must be implemented in subclasses.
+     * Returns the estimated value of the Hermite constant \f$\gamma_j\f$ from the subclass.
+     * The usual Hermite constants are for the \f$L^2\f$ norm.
+     * When they are used for the \f$L^1\f$ norm instead, each \f$\gamma_j\f$ is multiplied
+     * by \f$j\f$, as explained in the guide, and this function must return these inflated values
+     * denoted \f$\gamma_j^{(1)}\f$ in the guide. This is done in the subclasses.
+     * These constants are used by `computeBounds`.
      */
     virtual double getGamma(int64_t j) const;
 
@@ -224,20 +227,14 @@ private:
      * Use of assignment is forbidden.
      */
     Normalizer& operator=(const Normalizer&);
-
-    /**
-     * Return the min between k et j
-     */
-    // int64_t min(int64_t k, int64_t j);
-
 }
 ;
 // End class Normalizer
 
 //===========================================================================
 
-Normalizer::Normalizer(int64_t maxDim, std::string name, NormType norm) :
-        m_name(name), m_norm(norm), m_maxDim(maxDim) {
+Normalizer::Normalizer(int64_t maxDim, NormType norm) :
+        m_norm(norm), m_maxDim(maxDim) {
     m_bounds = new double[maxDim + 1];
 }
 
@@ -257,7 +254,8 @@ void Normalizer::computeBounds(double logDensity) {
 void Normalizer::computeBounds(double logm, int64_t k) {
     // This function uses the bounds given in Section 9 of the user's guide.
     // For t > k, they are \f$ \tilde d_t^*(\eta_t/m^t)\f$ (for primal) or \f$ \ell_t^*(\eta_t)\f$ (for dual).
-    // These are the bounds when the primal lattice is *rescaled* by a factor m.
+    // These are the bounds when the primal lattice is *rescaled* by a factor m, for the L2 norm.
+    // For the L1 norm, we multiply them by `s`, as explained in the guide.
     double x;
     for (int64_t s = 1; s <= m_maxDim; s++) {
         x = -logm;

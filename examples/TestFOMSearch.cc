@@ -119,8 +119,8 @@ static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, co
    Int outList[numBest0];
 
    // 1. Full computation (no discard), with default BKZ + BB.
-   findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
-         true, "BKZ + BB");
+ //  findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
+ //        true, "BKZ + BB");
 
    // 2. Early discard, with BKZ + BB.
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
@@ -177,15 +177,15 @@ int main() {
 
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    WeightsUniform weights(1.0);
-   NormaBestLat normaPrimal(log(m), 1, maxdim);  // Factors computed for primal.
-   NormaBestLat normaDual(-log(m), 1, maxdim);  // Factors computed for dual.
+   NormaBestLat normaPrimal(log(m), 1, maxdim, L1NORM);  // Factors computed for primal.
+   NormaBestLat normaDual(-log(m), 1, maxdim, L1NORM);  // Factors computed for dual.
    ReducerBB<Int, Real> red(maxdim);   // Single ReducerBB with internal lattice `lat`.
    FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
    FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true); // FoM for dual lattice.
 
-   int64_t numMultLong = 100000;  // Total number of multipliers to examine.
+   int64_t numMultLong = 10000;  // Total number of multipliers to examine.
    int64_t numMultShort = 1000;  // Number to examine in the `no early discard` case.
-   int64_t numBest0 = 50;  // When doing two rounds, we retain `numBest1` from the first round.
+   int64_t numBest0 = 10;  // When doing two rounds, we retain `numBest1` from the first round.
    int64_t numBest = 3;   // We want the best three at the end.
 
    // We do first the primal, then the dual.

@@ -43,13 +43,13 @@ public:
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
-    NormaRogers(double logm, int64_t k, int64_t maxDim);
+    NormaRogers(double logm, int64_t k, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Constructs a `NormaRogers` for up to `maxDim` dimensions, by assuming that the
      * log density is `logDensity` in all dimensions and the lattice was not rescaled.
      */
-    NormaRogers(double logDensity, int64_t maxDim);
+    NormaRogers(double logDensity, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Destructor.
@@ -160,8 +160,8 @@ double NormaRogers::calcGamma(int64_t dim) {
 
 /*=========================================================================*/
 
-NormaRogers::NormaRogers(double logDensity, int64_t maxDim) :
-        Normalizer(maxDim, "Rogers", L2NORM) {
+NormaRogers::NormaRogers(double logDensity, int64_t maxDim, NormType norm) :
+        Normalizer(maxDim, norm) {
     m_gamma = new double[maxDim + 1];
     int64_t t0 = maxDim;
     if (t0 > this->MAX_DIM)
@@ -171,12 +171,13 @@ NormaRogers::NormaRogers(double logDensity, int64_t maxDim) :
     for (int64_t i = t0 + 1; i <= maxDim; i++)
         m_gamma[i] = calcGamma(i);
     Normalizer::computeBounds(logDensity);
+    m_name = "NormaRogers";
 }
 
 /*=========================================================================*/
 
-NormaRogers::NormaRogers(double logm, int64_t k, int64_t maxDim) :
-        Normalizer(maxDim, "BestLat", L2NORM) {
+NormaRogers::NormaRogers(double logm, int64_t k, int64_t maxDim, NormType norm) :
+        Normalizer(maxDim, norm) {
     m_gamma = new double[maxDim + 1];
     int64_t t0 = maxDim;
     if (t0 > this->MAX_DIM)
@@ -186,6 +187,7 @@ NormaRogers::NormaRogers(double logm, int64_t k, int64_t maxDim) :
     for (int64_t i = t0 + 1; i <= maxDim; i++)
         m_gamma[i] = calcGamma(i);
     Normalizer::computeBounds(logm, k);
+    m_name = "NormaRogers";
 }
 
 /*=========================================================================*/
@@ -199,7 +201,12 @@ NormaRogers::~NormaRogers() {
 inline double NormaRogers::getGamma(int64_t j) const {
     if (j < 1 || j > this->m_maxDim)
         throw std::out_of_range("NormaRogers::getGamma");
-    return m_gamma[j];
+    if (m_norm == L2NORM)
+       return m_gamma[j];
+    else if (m_norm == L1NORM)
+       return m_gamma[j] * j;
+    else
+       throw std::domain_error("NormaRogers::getGamma with wrong norm");
 }
 
 }

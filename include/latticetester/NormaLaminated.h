@@ -48,20 +48,20 @@ public:
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
-    NormaLaminated(double logm, int64_t k, int64_t maxDim);
+    NormaLaminated(double logm, int64_t k, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Constructs a `NormaLaminated` for up to `maxDim` dimensions, by assuming that the
      * log density is `logDensity` in all dimensions and the lattice was not rescaled.
      * Restriction: `maxDim`\f$ \le 48\f$.
      */
-    NormaLaminated(double logDensity, int64_t maxDim);
+    NormaLaminated(double logDensity, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Constructs a `NormaLaminated` for up to `maxDim` dimensions, without computing the bounds.
      * Restriction: `maxDim`\f$ \le 48\f$.
      */
-    NormaLaminated(int64_t maxDim);
+    NormaLaminated(int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Returns the value of the bound on the Hermite's constant \f$\gamma_j\f$
@@ -141,20 +141,22 @@ const double NormaLaminated::m_gamma[] = {
 
 /*=========================================================================*/
 
-NormaLaminated::NormaLaminated(double logDensity, int64_t maxDim) :
-        Normalizer(maxDim, "Laminated", L2NORM) {
+NormaLaminated::NormaLaminated(double logDensity, int64_t maxDim, NormType norm) :
+        Normalizer(maxDim, "Laminated", norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument(
                 "NormaLaminated:   dimension > this->MAX_DIM");
+    m_name = "NormaLaminated";
     Normalizer::computeBounds(logDensity);
 }
 
 /*=========================================================================*/
 
-NormaLaminated::NormaLaminated(double logm, int64_t k, int64_t maxDim) :
-        Normalizer(maxDim, "Laminated", L2NORM) {
+NormaLaminated::NormaLaminated(double logm, int64_t k, int64_t maxDim, NormType norm) :
+        Normalizer(maxDim, "Laminated", norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaLaminated:   dimension > MAXDIM");
+    m_name = "NormaLaminated";
     Normalizer::computeBounds(logm, k);
 }
 
@@ -163,7 +165,12 @@ NormaLaminated::NormaLaminated(double logm, int64_t k, int64_t maxDim) :
 inline double NormaLaminated::getGamma(int64_t j) const {
     if (j < 1 || j > this->MAX_DIM)
         throw std::out_of_range("NormaLaminated::getGamma");
-    return m_gamma[j];
+    if (m_norm == L2NORM)
+       return m_gamma[j];
+    else if (m_norm == L1NORM)
+       return m_gamma[j] * j;
+    else
+       throw std::domain_error("NormaLamnated:getGamma with wrong norm");
 }
 
 }
