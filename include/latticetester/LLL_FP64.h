@@ -6,7 +6,6 @@
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
-//#include <latticetester/Util.h>
 
 using namespace NTL;
 

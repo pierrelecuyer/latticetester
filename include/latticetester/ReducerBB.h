@@ -754,7 +754,7 @@ bool ReducerBB<Int, Real>::tryZShortVecOld(int64_t j, bool &smaller, NormType no
    if (m_verbose > 3) {
       for (i = 0;  i <= j; ++i) m_z[i] = 0;
       std::cout << "tryZ: vector z: " << m_z << "\n";
-      std::cout << "  j="<<j << ",  center[j]= " << center << ", borne min= "<< min0 << ",  borne max= "<< max0 << std::endl;
+      std::cout << "  j="<<j << ",  center[j]= " << center << ", low bound= "<< min0 << ", up bound= "<< max0 << std::endl;
    }
    // Compute initial values of zlow and zhigh, the search pointers on each side of the interval.
    if (min0 > max0) return true;
@@ -935,7 +935,7 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       for (i = 0;  i <= j; ++i) m_z[i] = 0;
       std::cout << "tryZ: vector z: " << m_z << "\n";
       std::cout << "  j="<<j << ",  center[j]= " << center <<
-            ", borne min= "<< min0 << ",  borne max= "<< max0 << std::endl;
+            ", low bound= "<< min0 << ", up bound= "<< max0 << std::endl;
    }
    // Compute initial values of zlow and zhigh, the search pointers on each side of the interval.
    if (min0 > max0) return true;

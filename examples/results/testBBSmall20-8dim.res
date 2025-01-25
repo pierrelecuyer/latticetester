@@ -58,16 +58,6 @@ After LLL reduction, squared L2 norm = 2.12922e+10,  basis =
 [-162659 -25025 60724 -23238 -33448 97965 -58798 -112879]
 [127063 -81261 -63358 -19269 43740 123062 -65812 72499]
 ]
- triangularL, lower triangular basis `tribasis` = 
-[[1048573 0 0 0 0 0 0 0]
-[0 1048573 0 0 0 0 0 0]
-[0 0 1048573 0 0 0 0 0]
-[0 0 0 1048573 0 0 0 0]
-[0 0 0 0 1048573 0 0 0]
-[0 0 0 0 0 1048573 0 0]
-[0 0 0 0 0 0 1048573 0]
-[-43417 88760 -313637 -278346 153832 -472123 -423529 1]
-]
 shortestVector: total number of calls to tryZ: 184801
   shortest vector = [-30223 -30326 38474 97794 75784 26325 -23025 38063]
   square length m_lMin2 = 2.12922e+10
@@ -107,3 +97,19 @@ After BB, square length of shortest vector: 1.2961e+11
    length of shortest vector: 360014
 Number of calls to BB procedure `tryZ`: 418
 
+
+**********************************
+Performing Reduction: 
+PRIMAL lattice,  Norm: L1NORM,  Decomposition: TRIANGULAR.
+
+Before pre-reduction, initial basis = 
+[[1 29873 60506 804459 407693 886167 192833 688720]
+[0 1048573 0 0 0 0 0 0]
+[0 0 1048573 0 0 0 0 0]
+[0 0 0 1048573 0 0 0 0]
+[0 0 0 0 1048573 0 0 0]
+[0 0 0 0 0 1048573 0 0]
+[0 0 0 0 0 0 1048573 0]
+[0 0 0 0 0 0 0 1048573]
+]
+After LLL red

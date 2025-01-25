@@ -29,10 +29,7 @@ After LLL reduction, squared L2 norm = 152466,  basis =
 shortestVector: total number of calls to tryZ: 8
   shortest vector = [-251 55 -69 68 -141 -83 67 -214]
   square length m_lMin2 = 152466
-After BB, square length of shortest vector: 152466
-   length of shortest vector: 390.469
-Number of calls to BB procedure `tryZ`: 8
-
+  length of shortest vector: 390.469
 
 **********************************
 Performing Reduction: 
@@ -58,23 +55,10 @@ After LLL reduction, squared L2 norm = 152466,  basis =
 [72 151 -208 131 374 -265 54 -142]
 [-451 -251 55 -69 68 -141 -83 67]
 ]
- triangularL, lower triangular basis `tribasis` = 
-[[1021 0 0 0 0 0 0 0]
-[0 1021 0 0 0 0 0 0]
-[0 0 1021 0 0 0 0 0]
-[0 0 0 1021 0 0 0 0]
-[0 0 0 0 1021 0 0 0]
-[0 0 0 0 0 1021 0 0]
-[0 0 0 0 0 0 1021 0]
-[359 -339 -243 -382 -319 196 14 1]
-]
 shortestVector: total number of calls to tryZ: 844
   shortest vector = [-251 55 -69 68 -141 -83 67 -214]
   square length m_lMin2 = 152466
-After BB, square length of shortest vector: 152466
-   length of shortest vector: 390.469
-Number of calls to BB procedure `tryZ`: 844
-
+  length of shortest vector: 390.469
 
 **********************************
 Performing Reduction: 
@@ -103,10 +87,7 @@ After LLL reduction, squared L2 norm = 152466,  basis =
 shortestVector: total number of calls to tryZ: 1050
   shortest vector = [-251 55 -69 68 -141 -83 67 -214]
   square length m_lMin2 = 898704
-After BB, square length of shortest vector: 898704
-   length of shortest vector: 948
-Number of calls to BB procedure `tryZ`: 1050
-
+  length of shortest vector: 948
 
 **********************************
 Performing Reduction: 
@@ -132,23 +113,10 @@ After LLL reduction, squared L2 norm = 152466,  basis =
 [72 151 -208 131 374 -265 54 -142]
 [-451 -251 55 -69 68 -141 -83 67]
 ]
- triangularL, lower triangular basis `tribasis` = 
-[[1021 0 0 0 0 0 0 0]
-[0 1021 0 0 0 0 0 0]
-[0 0 1021 0 0 0 0 0]
-[0 0 0 1021 0 0 0 0]
-[0 0 0 0 1021 0 0 0]
-[0 0 0 0 0 1021 0 0]
-[0 0 0 0 0 0 1021 0]
-[359 -339 -243 -382 -319 196 14 1]
-]
 shortestVector: total number of calls to tryZ: 2748
   shortest vector = [-251 55 -69 68 -141 -83 67 -214]
   square length m_lMin2 = 898704
-After BB, square length of shortest vector: 898704
-   length of shortest vector: 948
-Number of calls to BB procedure `tryZ`: 2748
-
+  length of shortest vector: 948
 
 **********************************
 Performing Reduction: 
@@ -177,10 +145,7 @@ After LLL reduction, squared L2 norm = 6,  basis =
 shortestVector: total number of calls to tryZ: 18
   shortest vector = [-1 -2 0 0 1 0 0 0]
   square length m_lMin2 = 6
-After BB, square length of shortest vector: 6
-   length of shortest vector: 2.44949
-Number of calls to BB procedure `tryZ`: 18
-
+  length of shortest vector: 2.44949
 
 **********************************
 Performing Reduction: 
@@ -206,23 +171,10 @@ After LLL reduction, squared L2 norm = 6,  basis =
 [0 0 -1 2 1 -1 1 1]
 [-2 -1 -1 0 -1 -1 1 -1]
 ]
- triangularL, lower triangular basis `tribasis` = 
-[[1021 0 0 0 0 0 0 0]
-[-73 1 0 0 0 0 0 0]
-[-5 -3 1 0 0 0 0 0]
-[0 -5 -3 1 0 0 0 0]
-[-1 -2 0 0 1 0 0 0]
-[0 -1 -2 0 0 1 0 0]
-[0 0 -1 -2 0 0 1 0]
-[0 0 0 -1 -2 0 0 1]
-]
 shortestVector: total number of calls to tryZ: 1576
   shortest vector = [-1 -2 0 0 1 0 0 0]
   square length m_lMin2 = 6
-After BB, square length of shortest vector: 6
-   length of shortest vector: 2.44949
-Number of calls to BB procedure `tryZ`: 1576
-
+  length of shortest vector: 2.44949
 
 **********************************
 Performing Reduction: 
@@ -251,10 +203,7 @@ After LLL reduction, squared L2 norm = 6,  basis =
 shortestVector: total number of calls to tryZ: 216
   shortest vector = [-1 -2 0 0 1 0 0 0]
   square length m_lMin2 = 16
-After BB, square length of shortest vector: 16
-   length of shortest vector: 4
-Number of calls to BB procedure `tryZ`: 216
-
+  length of shortest vector: 4
 
 **********************************
 Performing Reduction: 
@@ -280,20 +229,7 @@ After LLL reduction, squared L2 norm = 6,  basis =
 [0 0 -1 2 1 -1 1 1]
 [-2 -1 -1 0 -1 -1 1 -1]
 ]
- triangularL, lower triangular basis `tribasis` = 
-[[1021 0 0 0 0 0 0 0]
-[-73 1 0 0 0 0 0 0]
-[-5 -3 1 0 0 0 0 0]
-[0 -5 -3 1 0 0 0 0]
-[-1 -2 0 0 1 0 0 0]
-[0 -1 -2 0 0 1 0 0]
-[0 0 -1 -2 0 0 1 0]
-[0 0 0 -1 -2 0 0 1]
-]
 shortestVector: total number of calls to tryZ: 708
   shortest vector = [-1 -2 0 0 1 0 0 0]
   square length m_lMin2 = 16
-After BB, square length of shortest vector: 16
-   length of shortest vector: 4
-Number of calls to BB procedure `tryZ`: 708
-
+  length of shortest vector: 4

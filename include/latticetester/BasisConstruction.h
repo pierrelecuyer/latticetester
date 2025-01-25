@@ -704,7 +704,7 @@ void mDualUpperTriangularOld96(IntMat &basisDual, const IntMat &basis, const Int
          if (!NTL::IsZero(basisDual[i][j] % basis[j][j])) {
             gcd = NTL::GCD(basisDual[i][j], basis[j][j]);
             mm *= basis[j][j] / gcd;
-            basisDual *= basis[j][j] / gcd;
+            basisDual[i][j] *= basis[j][j] / gcd;
          }
          DivideRound(basisDual[i][j], basis[j][j], basisDual[i][j]);
       }
@@ -736,7 +736,7 @@ void mDualUpperTriangularOld96(NTL::Mat<NTL::ZZ> &basisDual, const NTL::Mat<NTL:
          //if (basisDual(i, j) != 0)
          NTL::negate(basisDual[i][j], basisDual[i][j]);
          if (!NTL::IsZero(basisDual[i][j] % basis[j][j])) {
-            gcd = NTL::GCD(basisDual(i, j), basis[j][j]);
+            gcd = NTL::GCD(basisDual[i][j], basis[j][j]);
             div(fac, basis[j][j], gcd);
             mul(mm, mm, fac);
             mul(basisDual[i][j], basisDual[i][j], fac);

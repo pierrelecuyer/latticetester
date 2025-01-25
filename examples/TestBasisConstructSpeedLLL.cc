@@ -134,7 +134,7 @@ void printTables(int64_t numSizes) {
    int64_t d;
    std::cout << "Total time: " << (double) (clock() - tmpTotal) / (CLOCKS_PER_SEC) << " seconds.\n\n";
    std::cout << "Timings for different methods, in basic clock units (microseconds) \n";
-   std::cout << " dim:         ";
+   std::cout << "Dimension:    ";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(8) << dimensions[d] << "  ";
    std::cout << "\n\n";
@@ -147,7 +147,7 @@ void printTables(int64_t numSizes) {
    std::cout << "\n";
    std::cout << "Sums of square lengths of shortest basis vectors";
    std::cout << " (must be the same for all flexible types): \n";
-   std::cout << " dim:    ";
+   std::cout << "Dimension:";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(13) << dimensions[d] << " ";
    std::cout << "\n\n";
@@ -162,21 +162,20 @@ void printTables(int64_t numSizes) {
    std::cout << "\n";
 }
 
-
 int main() {
-
+   // After changing the value of `mm` (the modulus) one must recompile.
    // Here, `Int` and `Real` are not yet defined, they will be passed as template parameters.
-   int64_t m(1048573);  // Prime modulus near 2^{20}
-   NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
+   //int64_t m(1048573);  // Prime modulus near 2^{20}
+   //NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
    // The following values of `mm` work only with ZZ.
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
-   // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
+   NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
    int64_t numSizes = 8;
    int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
 
    // Here we can test with any combination of types.
-   testLoop<int64_t, double>(m, numSizes, numRep);   // This one works only for the smaller m.
+   // testLoop<int64_t, double>(m, numSizes, numRep);   // This one works only for the smaller m.
    testLoop<NTL::ZZ, double>(mm, numSizes, numRep);
    testLoop<NTL::ZZ, xdouble>(mm, numSizes, numRep);
    testLoop<NTL::ZZ, quad_float>(mm, numSizes, numRep);

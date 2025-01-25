@@ -112,7 +112,7 @@ static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, co
       int64_t numMultShort, int64_t numBest0, int64_t numBest) {
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    // WeightsUniform weights(1.0);
-   Rank1Lattice<Int, Real> lat(m, maxdim);  // The current lattice for which the FoM is calculated.
+   Rank1Lattice<Int, Real> lat(m, maxdim);  // The current lattice for which the FoM is calculated.   ****  L2NORM
    IntLattice<Int, Real> proj(m, t.length()); // Lattice used for projections.
    Int emptyList[0];
    Int inList[numBest0];
@@ -177,8 +177,8 @@ int main() {
 
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    WeightsUniform weights(1.0);
-   NormaBestLat normaPrimal(log(m), 1, maxdim, L1NORM);  // Factors computed for primal.
-   NormaBestLat normaDual(-log(m), 1, maxdim, L1NORM);  // Factors computed for dual.
+   NormaBestLat normaPrimal(log(m), 1, maxdim, L2NORM);  // Factors computed for primal.
+   NormaBestLat normaDual(-log(m), 1, maxdim, L2NORM);  // Factors computed for dual.
    ReducerBB<Int, Real> red(maxdim);   // Single ReducerBB with internal lattice `lat`.
    FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
    FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true); // FoM for dual lattice.

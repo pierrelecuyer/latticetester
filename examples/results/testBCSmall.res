@@ -64,7 +64,7 @@ Square length of first dual basis vector: 6
 Lattice projection over coordinates {1,3,5}.
 In the following basisProj matrices, we need 5 rows and 3 columns
  to make the projection, then 3 rows and 3 columns for the basis.
- When part of matrix is not used, it must be ignored.
+ When part of a matrix is not used, it must be ignored.
 
 basisProj after projectMatrix (the generating vectors): 
 [[1 144 316]

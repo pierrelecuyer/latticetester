@@ -45,18 +45,18 @@ void findShortest (Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red,
    std::cout << "After LLL reduction, squared L2 norm = " << len2 << ",  basis = \n" << korlat.getBasis() << "\n";
    red.shortestVector(korlat);  // BB is applied here.  ***
 
-   std::cout << "After BB, square length of shortest vector: " << red.getMinLength2() << "\n";
-   std::cout << "   length of shortest vector: " << sqrt(red.getMinLength2()) << "\n";
-   std::cout << "Number of calls to BB procedure `tryZ`: " << red.getCountNodes() << "\n\n";
+   //std::cout << "After BB, square length of shortest vector: " << red.getMinLength2() << "\n";
+   std::cout << "  length of shortest vector: " << sqrt(red.getMinLength2()) << "\n";
+   //std::cout << "Number of calls to BB procedure `tryZ`: " << red.getCountNodes() << "\n\n";
 }
 
 int main() {
-   NTL::ZZ m(1021);  // Prime modulus near 2^{10}
-   Int a(73);
-   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
-   // Int a(29873);
+   // NTL::ZZ m(1021);  // Prime modulus near 2^{10}
+   // Int a(73);
+   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   Int a(29873);
    // NTL::ZZ m(1073741827);  // Prime modulus near 2^{30}
-   long dim = 8;
+   long dim = 6;
 
    std::cout << "=========================================================\n";
    std::string stringTypes;  // To print the selected flexible types.
@@ -74,12 +74,12 @@ int main() {
 
    bool inDual = false;  // Primal basis
    findShortest<Int, Real>(korlat, red, L2NORM, CHOLESKY, inDual, dim, 0.99, sqlen);
-   //findShortest<Int, Real>(korlat, red, L2NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
+   findShortest<Int, Real>(korlat, red, L2NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
    findShortest<Int, Real>(korlat, red, L1NORM, CHOLESKY, inDual, dim, 0.99, sqlen);
-   //findShortest<Int, Real>(korlat, red, L1NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
+   findShortest<Int, Real>(korlat, red, L1NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
    inDual = true;   // Dual basis
    findShortest(korlat, red, L2NORM, CHOLESKY, inDual, dim, 0.99, sqlen);
-   //findShortest(korlat, red, L2NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
+   findShortest(korlat, red, L2NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
    findShortest(korlat, red, L1NORM, CHOLESKY, inDual, dim, 0.99, sqlen);
-   //findShortest(korlat, red, L1NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
+   findShortest(korlat, red, L1NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
 }
