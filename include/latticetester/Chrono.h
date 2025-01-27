@@ -52,10 +52,10 @@ namespace LatticeTester {
    * to the output and deleted.
    *
    * <tt>Chrono timer; <br>
-   * (...) (<em>suppose 2.1 CPU seconds are used here</em>.)<br>
+   *      ........ <em> suppose 2.1 CPU seconds are used here</em>.<br>
    * double t = timer.val (Chrono::SEC); // Here, t = 2.1 <br>
    * timer.init(); <br>
-   * (...) (<em>suppose 330 CPU seconds are used here</em>.) <br>
+   *      ........ <em> suppose 330 CPU seconds are used here</em>. <br>
    * t = timer.val (Chrono::MIN); // Here, t = 5.5 <br>
    * timer.write (Chrono::HMS); // Prints: 00:05:30.00 </tt>
    *
@@ -136,7 +136,7 @@ class Chrono {
        */
       bool timeOver (double limit);
 
-//    private:
+    private:
 
       /// Microseconds
       uint64_t microsec;
@@ -154,7 +154,7 @@ class Chrono {
   /**
    * Returns the value of the duration from `timer`.
    */
-  std::string toString (Chrono& timer);
+  // std::string toString (Chrono& timer);
 
 // };
 

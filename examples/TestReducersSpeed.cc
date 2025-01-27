@@ -40,9 +40,11 @@ clock_t timer[numMeth][maxNumSizes]; // Clock times in microseconds.
 double sumSq[numMeth][maxNumSizes]; // Sum of squares of vector lengths (for checking).
 long numNodes[numMeth][maxNumSizes]; // Total number of calls to tryZ.
 long numLeaves[numMeth][maxNumSizes]; // Total number of leaves visited by the BB.
+long maxZ[numMeth][maxNumSizes];     // Max absolute value of z_j.
 
 // Must be declared because it has no template heading.
 void printTables(long numMeth, long numSizes, long numRep, const long *dimensions);
+// void printOneTable(long numMeth, long numSizes, long numRep, const long *dimensions, long table[][numSizes], std::string str);
 
 /* This function builds the dual basis of `korlat` in dim = dimensions[d]
  * and dualizes to put the dual as a primal basis. It then applies the
@@ -77,6 +79,7 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
          len2 = conv<double>(red.getMinLength2());
          numNodes[meth][d] += red.getCountNodes();
          numLeaves[meth][d] += red.getCountLeaves();
+         maxZ[meth][d] = max (maxZ[meth][d], red.getMaxZj());
       }
       else std::cout << " shortestVector failed for " << methNames[meth] << "\n";
    }
@@ -103,6 +106,7 @@ static void compareManyReductions(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int
       performReduction(korlat, red, inDual, d, dim, 4, 0.5, 0.0, 0.0, 1, true, sqlen);
       performReduction(korlat, red, inDual, d, dim, 5, 0.8, 0.0, 0.0, 1, true, sqlen);
    }
+   performReduction(korlat, red, inDual, d, dim, 5, 0.8, 0.0, 0.0, 1, true, sqlen);
    performReduction(korlat, red, inDual, d, dim, 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
    performReduction(korlat, red, inDual, d, dim, 7, 0.0, 0.0, 0.99999, 6, true, sqlen);
 
@@ -151,6 +155,7 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
          sumSq[meth][d] = 0.0;
          numNodes[meth][d] = 0;
          numLeaves[meth][d] = 0;
+         maxZ[meth][d] = 0;
       }
    totalTime = clock();
    for (int64_t r = 0; r < numRep; r++) {
@@ -221,6 +226,20 @@ void printTables(long numMeth, long numSizes, long numRep, const long *dimension
       }
    }
    std::cout << "\n";
+   std::cout << "Largest absolute value of z_j in the BB procedures:\n";
+   std::cout << "Num. dimensions: ";
+   for (d = 0; d < numSizes; d++)
+      std::cout << std::setw(8) << dimensions[d] << "   ";
+   std::cout << "\n\n";
+   for (int meth = 0; meth < numMeth; meth++) {
+      if (numNodes[meth][0] > 0) {
+         std::cout << methNames[meth];
+         for (d = 0; d < numSizes; d++)
+            std::cout << std::setw(10) << std::setprecision(10) << maxZ[meth][d] << " ";
+         std::cout << "\n";
+      }
+   }
+   std::cout << "\n";
    std::cout << "Total time for everything: " << (double) (clock() - totalTime) / (CLOCKS_PER_SEC)
          << " seconds\n\n";
 }
@@ -242,11 +261,11 @@ int main() {
    DecompTypeBB decomp = CHOLESKY;
    NormType norm = L2NORM;
    long numSizes = 5;
-   long numRep = 50;
+   long numRep = 10;
 
    //comparePreRed<int64_t, double>(conv<int64_t>(m), norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, double>(m, norm, decomp, numSizes, numRep);
-   comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
-   comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
-   comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
+   //comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
+   //comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
+   //comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
 }

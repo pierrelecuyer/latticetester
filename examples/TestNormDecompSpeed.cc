@@ -33,6 +33,7 @@ clock_t totalTime;  // Global timer for total time.
 clock_t timer[maxNumSizes]; // Clock times in microseconds.
 double sumSq[maxNumSizes]; // Sum of squares of vector lengths (for checking).
 long numBranch[maxNumSizes]; // Total number of calls to tryZ.
+long maxZ[maxNumSizes];      // Max absolute value of a z_j.
 
 // Declaration required.
 void printResultsNormsDecomp(long numSizes, const long *dimensions, long numRep);
@@ -60,6 +61,7 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
    if (red.shortestVector(korlat)) {
          len2 = conv<double>(red.getMinLength2());
          numBranch[d] += red.getCountNodes();
+         maxZ[d] = max (maxZ[d], red.getMaxZj());
          // std::cout << "  after shortestVector, square norm of shortest = " << len2 << "\n";
    }
    else std::cout << " shortestVector failed, nodesBB = " << red.getCountNodes() << "\n";
@@ -94,6 +96,7 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
       timer[d] = 0;
       sumSq[d] = 0.0;
       numBranch[d] = 0;
+      maxZ[d] = 0;
    }
    totalTime = clock();
    for (int64_t r = 0; r < numRep; r++) {
@@ -143,6 +146,10 @@ void printResultsNormsDecomp(long numSizes, const long *dimensions, long numRep)
    std::cout << "Aver. calls BB:";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(10) << std::setprecision(10) << numBranch[d]/numRep << " ";
+   std::cout << "\n";
+   std::cout << "Max |z_j|:     ";
+   for (d = 0; d < numSizes; d++)
+      std::cout << std::setw(10) << std::setprecision(10) << maxZ[d] << " ";
    std::cout << "\n";
    std::cout << "Total time for everything: " << (double) (clock() - totalTime) / (CLOCKS_PER_SEC)
          << " seconds\n\n";

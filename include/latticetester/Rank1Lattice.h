@@ -91,12 +91,12 @@ public:
    /**
     * Copy constructor.
     */
-   Rank1Lattice(const Rank1Lattice<Int, Real> &Lat);
+   // Rank1Lattice(const Rank1Lattice<Int, Real> &Lat);
 
    /**
     * Assigns `Lat` to this object.
     */
-   Rank1Lattice& operator=(const Rank1Lattice<Int, Real> &Lat);
+   // Rank1Lattice& operator=(const Rank1Lattice<Int, Real> &Lat);
 
    /**
     * Destructor.
@@ -217,6 +217,7 @@ Rank1Lattice<Int, Real>::~Rank1Lattice() {
    this->m_a.kill();
 }
 
+/*
 //============================================================================
 template<typename Int, typename Real>
 Rank1Lattice<Int, Real>& Rank1Lattice<Int, Real>::operator=(const Rank1Lattice<Int, Real> &lat) {
@@ -234,6 +235,7 @@ Rank1Lattice<Int, Real>::Rank1Lattice(const Rank1Lattice<Int, Real> &lat) :
    this->m_a = lat.m_a;
    // Should also copy the basis and all other variables?
 }
+*/
 
 //============================================================================
 

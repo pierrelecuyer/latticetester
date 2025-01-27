@@ -31,7 +31,7 @@ This version is a significant overhaul compared to the previous official version
 ## Documentation
 
 A detailed description of _Lattice Tester_, its underlying theory, its organization, and examples, can be found in the 
-[**Lattice Tester User's Guide**](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
+[**Lattice Tester Guide**](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
 That .pdf document is the core documentation. 
 
 The interface is specified in the 

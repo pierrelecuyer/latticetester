@@ -30,8 +30,9 @@ namespace LatticeTester {
 
   /**
    * \class Coordinates
+   *
    * This is a standard C++ set, `std::set<std::size_t>`, with additional input and output operators.
-   * An object of this class is used to store a set of coordinates that represents
+   * An object of this class is used to store a set of coordinate indices that represents
    * a projection, usually with lacunary indices.  These types of objects are created
    * and returned by the classes in the `CoordinateSets` namespace.
    * This class also offers some input and output operators.

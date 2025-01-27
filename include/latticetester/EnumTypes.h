@@ -22,12 +22,15 @@
 
 using namespace std;
 
-namespace LatticeTester {
-
-/*
- * This static class collects enumeration types and global constants used in LatticeTester.
+/**
+ * \file latticetester/EnumTypes.h
+ *
+ * This file collects enumeration types and global constants used in LatticeTester.
  * Some of them may be no longer used or deprecated.
+ * This file should be cleaned up at some point, when we are done.
  */
+
+namespace LatticeTester {
 
   /**
    * The available norm types to measure the length of vectors.
@@ -37,7 +40,6 @@ namespace LatticeTester {
    * `L2NORM` corresponds to \f$\Vert X\Vert= (x_1^2+\cdots+x_t^2)^{1/2}\f$.<br>
    * `ZAREMBANORM` corresponds to \f$\Vert X\Vert= \max(1, |x_1|)\cdots\max(1, |x_t|)\f$.
    */
-  // enum NormType { SUPNORM = 1, L1NORM = 2, L2NORM = 3, ZAREMBANORM = 4 };
   enum NormType { SUPNORM, L1NORM, L2NORM, ZAREMBANORM };
 
   /**

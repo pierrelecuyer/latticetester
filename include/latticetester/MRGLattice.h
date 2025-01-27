@@ -54,12 +54,12 @@ public:
    /*
     * Copy constructor.
     */
-   MRGLattice(const MRGLattice<Int, Real> &Lat);
+   // MRGLattice(const MRGLattice<Int, Real> &Lat);
 
    /**
     * Assigns `Lat` to this object.
     */
-   MRGLattice& operator=(const MRGLattice<Int, Real> &Lat);
+   // MRGLattice& operator=(const MRGLattice<Int, Real> &Lat);
 
    /**
     * Destructor.
@@ -192,6 +192,7 @@ MRGLattice<Int, Real>::~MRGLattice() {
    m_aCoeff.kill();
 }
 
+/*
 //============================================================================
 template<typename Int, typename Real>
 MRGLattice<Int, Real>& MRGLattice<Int, Real>::operator=(const MRGLattice<Int, Real> &lat) {
@@ -215,6 +216,7 @@ MRGLattice<Int, Real>::MRGLattice(const MRGLattice<Int, Real> &lat) :
    m_y = lat.m_y;
    // Should also copy the basis and all other variables???  ******
 }
+*/
 
 //============================================================================
 

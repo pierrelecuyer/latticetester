@@ -51,12 +51,13 @@ namespace LatticeTester {
  * \file latticetester/ReducerBB.h
  *
  * This `ReducerBB` class provides functions to find a shortest nonzero vector in the lattice
- * using a BB algorithm \cite mFIN85a,
- * and also to compute a Minkowski basis reduction as in \cite rAFF85a.
+ * using a BB algorithm as in \cite mFIN85a,
+ * and to compute a Minkowski basis reduction as in \cite rAFF85a.
  *
  * Each `Reducer` must have an internal `IntLattice` object which is given upon construction
  * and can be changed via `setIntLattice`.
- * The `shortestVector` and `reductMinkowski` functions are applied to this internal object.
+ * The `shortestVector` and `reductMinkowski` functions are applied to this internal object
+ * and will use the norm associated with that `IntLattice` object.
  * These functions do not apply any pre-reduction by themselves.
  * Before calling them, one should always pre-reduce the basis via LLL or BKZ,
  * because it drastically reduces the size of the BB search tree.
@@ -76,7 +77,7 @@ namespace LatticeTester {
  * projections for several lattices.
  *
  * The functions in this class do not use or change the m-dual lattice.
- * To find a shortest nonzero vector in the dual lattice,
+ * To find a shortest nonzero vector in the m-dual lattice,
  * one should dualize the lattice (`IntLattice::dualize` does that)
  * and then apply the desired methods.
  */
@@ -103,26 +104,26 @@ public:
     */
    ReducerBB(int64_t maxDim);
 
-   /**
+   /*
     * Copy constructor.
     */
-   ReducerBB(const ReducerBB<Int, Real> &red);
+   //ReducerBB(const ReducerBB<Int, Real> &red);
 
    /**
     * Destructor.
     */
    ~ReducerBB();
 
-   /**
+   /*
     * Assignment operator that makes a deep copy of `red`
     * into the current object, using `copy`.
     */
    // ReducerBB<Int, Real>& operator=(const ReducerBB<Int, Real> &red);
 
-   /**
+   /*
     * Copies `red` into the current object.
     */
-   void copy(const ReducerBB<Int, Real> &red);
+   //void copy(const ReducerBB<Int, Real> &red);
 
    /**
     * Computes a shortest non-zero vector for the `IntLattice` stored in this `ReducerBB` object,
@@ -152,7 +153,7 @@ public:
     * This method calls `setIntLattice(lat)`, so if the max dimension for the
     * ReducerBB is not large enough for `lat`, all the internal variables of this
     * reducer will be reset and the vectors and matrices will be automatically enlarged.
-    * In particular, the bounds set by `setBoundL2` have to be reset.   *****
+    * In particular, the bounds set by `setBounds2` have to be reset.
     * If the max dimension is large enough, only a pointer is changed.
     */
    bool shortestVector(IntLattice<Int, Real> &lat);
@@ -214,29 +215,34 @@ public:
       return m_countNodes;
    }
 
-    /**
-     * Returns the number of leaves visited in the BB tree.
-     */
-     int64_t getCountLeaves() {
+   /**
+    * Returns the number of leaves visited in the BB tree.
+    */
+    int64_t getCountLeaves() {
        return m_countLeaves;
+   }
+
+   /**
+    * Returns the maximal absolute value of a `z_j` in the latest BB.
+    */
+    int64_t getMaxZj() {
+       return m_maxZj;
     }
 
-     /**
+   /**
     * Sets a vector of bounds on the square of the acceptable shortest
-    * vector lengths (for the Euclidean norm),
-    * in dimensions from `dim1+1` to `dim2`. `thresholds[i]` must
-    * contain a lower bound on the square of the length of the shortest
-    * vector in the lattice in dimension `i+1`.
+    * vector lengths, for each dimension from `dim1+1` to `dim2`.
+    * For each `i`, `thresholds[i]` must contain a lower bound on the square length
+    * of the shortest lattice vector in dimension `i+1`, for the current norm.
     * This bound will be used during during the Branch-and-Bound step
     * when computing a shortest lattice vector.  As soon as a vector shorter
-    * than the bound is found, the BB algorithm will stop. This is useful
-    * when we search for a good lattice with the spectral test, since
-    * it can reduce the work considerably.
+    * than the bound is found, the BB algorithm will stop. This is useful to reduce
+    * work when we search for a good lattice with the spectral test.
     * If these bounds are not set, the default values of 0 are used.
     * It is recommended to set these bounds before calling `shortestVector`
     * for the first time when making searches for good lattices.
     */
-   void setBoundL2(const RealVec &thresholds, int64_t dim1, int64_t dim2);
+   void setBounds2(const RealVec &thresholds, int64_t dim1, int64_t dim2);
 
    /**
     * Sets to `lat` the `IntLattice` object on which this reducer object will be working.
@@ -267,8 +273,8 @@ public:
       m_decomp = decomp;
    }
 
-   /*
-    * The level of verbosity in the terminal output.
+   /**
+    * Sets the level of verbosity in the terminal output.
     * The default value is 0 (minimal output).
     * Values from 1 to 4 give increasingly more details.
     */
@@ -315,15 +321,21 @@ private:
     * Computes the LDL Cholesky decomposition of the basis. Returns in `m_L` the
     * lower-triangular matrix of the Cholesky decomposition that are below the diagonal.
     * Returns in `m_dc2` the squared elements of the diagonal.
+    * All these elements are in `Real`.
+    * The upper-triangular part of `m_L` (including the diagonal) is not initialized.
     */
    bool calculCholeskyLDL();
 
    /**
-    * Similar, but for a triangular basis L.
+    * Computes a lower-triangular basis `L` with elements `ell_{i,j}`.
+    * Then put in `m_L` the elements `\tilde\ell_{i,j} = \ell_{i,j}/\ell_{i,i}`
+    * below the diagonal, the elements `\ell_{j,j}` on the diagonal,
+    * and puts in `m_dc2` the squared elements of the diagonal of `L`.
+    * All these elements are in `Real`.
     */
    bool calculTriangularL();
 
-   /*
+   /**
     * In this function, we assume that we have found a new shorter vector
     * \f$ \bv = \sum_{i=1}^t z_i \bv_i\f$ and we want to insert it in the basis.
     * If \f$z_j = \pm 1\f$ for some \f$j\f$, we can simply exchange \f$\bv\f$ with  \f$\bv_j\f$
@@ -337,7 +349,7 @@ private:
     */
    void insertBasisVector(std::vector<std::int64_t> &z);
 
-   /*
+   /**
     * This function provides an alternative to `insertBasisVector` when we use the \f$L^2\f$ norm
     * and we are sure that \f$\bv\f$ is actually a shortest vector.
     * It adds the new vector \f$\bv = \sum_{i=1}^t z_i \bv_i\f$ to the basis to form a set
@@ -347,7 +359,7 @@ private:
     */
    void insertBasisVectorLLL(std::vector<std::int64_t> &z);
 
-   /**
+   /*
     * Debug function that sorts and prints the primal and dual bases
     * to standard output, using the `write` function.
     */
@@ -368,7 +380,7 @@ private:
     * We could also just check this after the BKZ reduction and after the BB,
     * in the seek procedures.
     */
-   RealVec m_BoundL2;
+   RealVec m_Bounds2;
 
    /**
     * Whenever the number of nodes in the branch-and-bound tree exceeds
@@ -419,9 +431,10 @@ private:
    // We try to avoid resizing them!
    RealMat m_L, m_c2;
 
-   std::vector<std::int64_t> m_z;   // Vector of (integer) values of z_i.
-   RealVec m_zLR;       // Same z_i in floating point, needed when calculating bounds.
+   std::vector<std::int64_t> m_z;   // Vector of (integer) values of z_i.   *************  TOO SMALL!
+   RealVec m_zLR;   // Same vector in floating point (Real), needed when calculating bounds.
    std::vector<std::int64_t> m_zShort;  // Values of z_i for shortest vector.
+   int64_t m_maxZj = 0;    // Largest absolute value of a `z_j` in latest BB.
 
    int64_t m_countNodes = 0;  // Number of visited nodes in the BB tree
    int64_t m_countLeaves = 0;  // Number of visited leaves in the BB tree
@@ -471,17 +484,18 @@ void ReducerBB<Int, Real>::init(int64_t maxDim) {
    m_z.resize(dim1);
    m_zShort.resize(dim1);
    m_dc2.SetLength(dim1);
-   m_BoundL2.SetLength(dim1);
+   m_Bounds2.SetLength(dim1);
 
    m_lMin1 = std::numeric_limits<double>::max();
    m_lMin2 = m_lMin1;
    for (int64_t i = 0; i < dim1; i++) {
       m_z[i] = -1;
       m_zShort[i] = -1;
-      m_BoundL2[i] = -1;
+      m_Bounds2[i] = -1;
    }
    m_countNodes = 0;
    m_countLeaves = 0;
+   m_maxZj = 0;
    m_foundZero = false;
    PreRedLLLMink = false;
    maxNodesBB = 1000000000;
@@ -489,10 +503,12 @@ void ReducerBB<Int, Real>::init(int64_t maxDim) {
 
 //=========================================================================
 
+/*
 template<typename Int, typename Real>
 ReducerBB<Int, Real>::ReducerBB(const ReducerBB<Int, Real> &red) {
    copy(red);
 }
+*/
 
 //=========================================================================
 
@@ -507,6 +523,7 @@ ReducerBB<Int, Real>::operator=(const ReducerBB<Int, Real> &red) {
 
 //=========================================================================
 
+/*
 template<typename Int, typename Real>
 void ReducerBB<Int, Real>::copy(const ReducerBB<Int, Real> &red) {
    m_lat = red.m_lat;
@@ -525,13 +542,14 @@ void ReducerBB<Int, Real>::copy(const ReducerBB<Int, Real> &red) {
    // m_gramVD = red.m_gramVD;
    m_lMin1 = red.m_lMin1;
    m_lMin2 = red.m_lMin2;
-   m_BoundL2 = red.m_BoundL2;
+   m_Bounds2 = red.m_Bounds2;
    m_countNodes = 0;
    m_countLeaves = 0;
    m_foundZero = false;
    PreRedLLLMink = false;
    maxNodesBB = 1000000000;
 }
+*/
 
 //=========================================================================
 
@@ -546,26 +564,20 @@ ReducerBB<Int, Real>::~ReducerBB() {
    m_z.resize(0);
    m_zShort.resize(0);
    m_dc2.kill();
-   m_BoundL2.kill();
+   m_Bounds2.kill();
 }
 
 //=========================================================================
 
 template<typename Int, typename Real>
-void ReducerBB<Int, Real>::setBoundL2(const RealVec &thresholds, int64_t dim1, int64_t dim2) {
-   m_BoundL2.SetLength(dim2);
+void ReducerBB<Int, Real>::setBounds2(const RealVec &thresholds, int64_t dim1, int64_t dim2) {
+   m_Bounds2.SetLength(dim2);
    for (int64_t i = dim1; i < dim2; i++)
-      m_BoundL2[i] = thresholds[i];
+      m_Bounds2[i] = thresholds[i];
 }
 
 //=========================================================================
 
-/**
- * Performs an LDL Cholesky decomposition, then puts in `m_L` the elements of the
- * lower-triangular matrix `tilde L` (see the guide) that are below the diagonal,
- * and puts in DC2 the squared elements of the diagonal, the `d_j` in the guide.
- * The upper-triangular part of `m_L` (including the diagonal) is not initialized.
- */
 template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::calculCholeskyLDL() {
    const int64_t dim = m_lat->getDim();
@@ -595,12 +607,6 @@ bool ReducerBB<Int, Real>::calculCholeskyLDL() {
 
 //=========================================================================
 
- /**
-  * Compute a lower-triangular basis L with elements `ell_{i,j}`.
-  * Then put in `m_L` the elements `\tilde\ell_{i,j} = \ell_{i,j}/\ell_{i,i}`
-  * below the diagonal, the elements `\ell_{j,j}` on the diagonal,
-  * and the squared elements of the diagonal of L in `m_dc2`, all in `double`.
-  */
 template<typename Int, typename Real>
 bool ReducerBB<Int, Real>::calculTriangularL() {
    // If the basis is already lower triangular, this will be fast.
@@ -617,8 +623,8 @@ bool ReducerBB<Int, Real>::calculTriangularL() {
       std::cout << " triangularL, lower triangular basis = \n" << m_lat->getBasis() << "\n";
    for (int64_t i = 0; i < dim; i++) {
       for (int64_t j = 0; j < dim; j++) {
-         if (i != j) m_L[i][j] = NTL::conv < Real > (tribasis[i][j]) / NTL::conv<Real> (tribasis[j][j]);
-         else m_L[j][j] = NTL::conv < Real > (tribasis[j][j]);
+         if (i != j) m_L[i][j] = NTL::conv <Real> (tribasis[i][j]) / NTL::conv<Real> (tribasis[j][j]);
+         else m_L[j][j] = NTL::conv <Real> (tribasis[j][j]);
       }
    }
    // std::cout << " triangularL, lower triangular basis m_L = \n" << m_L << "\n";
@@ -960,6 +966,7 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       if (high) m_z[j] = zhigh;
       else m_z[j] = zlow;    // For j = dim-1, this will be 0.
       NTL::conv (m_zLR[j], m_z[j]);
+      m_maxZj = std::max(m_maxZj, std::abs(m_z[j]));  // Update largest absolute z_j.
 
       // Computing m_sjp[j-1].
       x = m_zLR[j] - center;
@@ -1048,7 +1055,7 @@ bool ReducerBB<Int, Real>::shortestVector() {
     * vector length will be in m_lMin2, regardless of the selected norm.
     *
     * This function uses (directly or indirectly) the following class variables:
-    *    m_lMin1, m_lMin2, m_decomp, m_boundL2, m_sjp, m_countNodes, m_foundZero,
+    *    m_lMin1, m_lMin2, m_decomp, m_Bounds2, m_sjp, m_countNodes, m_foundZero,
     *    m_bv, m_zShort, m_L, m_zLR, m_z, m_dc2, ....  and more.
     * From m_lat (current lattice object):
     *    norm, sortBasisNoDual, updateScalL2Norm, getBasis,
@@ -1091,7 +1098,7 @@ bool ReducerBB<Int, Real>::shortestVector() {
 
    // If we already have a shorter vector than the minimum threshold, we stop right away.
    // This is useful for the seek programs in LatMRG.
-   if (m_lMin2 <= m_BoundL2[dim - 1]) return false;
+   if (m_lMin2 <= m_Bounds2[dim - 1]) return false;
 
    // std::cout << " shortestVector, basis before decomposition = \n" << m_lat->getBasis() << "\n";
    if (m_decomp == CHOLESKY) {
@@ -1112,6 +1119,7 @@ bool ReducerBB<Int, Real>::shortestVector() {
    m_sjp[dim - 1] = 0.0;
    m_countNodes = 0;
    m_countLeaves = 0;
+   m_maxZj = 0;
    smaller = false;
    m_foundZero = false;
    for (long j=0; j < dim; j++) m_z[j] = 0;
@@ -1218,6 +1226,7 @@ bool ReducerBB<Int, Real>::tryZMink(int64_t j, int64_t i, int64_t Stage, bool &s
          m_z[j] = zlow;
       }
       m_zLR[j] = m_z[j];
+      m_maxZj = max (m_maxZj, abs(m_z[j]));
 
       // Calcul de m_sjp[j-1].
       x = m_zLR[j] - center;
@@ -1340,6 +1349,7 @@ bool ReducerBB<Int, Real>::redBBMink(int64_t i, int64_t d, int64_t Stage, bool &
    if (!calculCholeskyLDL()) return false;
    m_countNodes = 0;
    m_countLeaves = 0;
+   m_maxZj = 0;
    m_sjp[dim - 1] = 0.0;
    if (!tryZMink(dim - 1, i, Stage, smaller, WTemp)) return false;
 

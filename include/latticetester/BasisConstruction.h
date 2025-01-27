@@ -58,28 +58,29 @@ using namespace NTL;
  * to construct the basis for a projection over a given subset of coordinates,
  * and to obtain the \f$m\f$-dual of a given basis.
  *
- * The implementation relies on NTL and uses NTL matrices.
- * When the basis turns out to have fewer rows than columns, some of the functions
+ * The algorithms are described in the Lattice Tester guide \cite iLEC26ltg.
+ * The implementation relies on %NTL and uses %NTL matrices.
+ * When the basis turns out to have fewer rows than columns, most of the functions here
  * add implicitly the rescaled unit vectors to the set of generating vectors.
  * In that case, the basis matrix is always square and all the vectors of the form
- * \f$m \be_i\f$ belong to the lattice.
+ * \f$m \mathbf{e}_i\f$ belong to the lattice.
  *
- * NTL already offers an efficient procedure to construct an LLL-reduced basis from a set
- * of generating vectors.  This is the most effective way of constructing a basis
- * and it is encapsulated in the `LLLConstruction0` function given below.
- * This function does not assume that the rescaled unit vectors \f$m \be_i\f$ belong
+ * %NTL already offers an efficient procedure to construct an LLL-reduced basis from a set
+ * of generating vectors.  It is encapsulated in the `LLLConstruction0` function given below.
+ * This function does not assume that the rescaled unit vectors \f$m \mathbf{e}_i \f$ belong
  * to the lattices and it does not even know about \f$m\f$.
  * The function `LLLBasisConstruction` adds those vectors to the set of generating vectors,
  * so it always returns a square basis.
  *
  * We also offer an alternative functions that construct a triangular basis from a set of
- * generating vectors. They always add the rescaled unit vectors implicitly to the set.
+ * generating vectors. These functions are usually faster.
+ * They always add the rescaled unit vectors implicitly to the set.
  * The function `lowerTriangularBasis` constructs a lower-triangular basis, while
  * `upperTriangularBasis` constructs an upper-triangular basis.
  *
  * To compute the  \f$m\f$-dual of a given basis, we have a general (but slow) function
- * implemented in `mDualBasis`, and a much faster function in `mDualUpperTriangular`
- * that works only when the basis is upper-triangular.
+ * implemented in `mDualBasis`, and much faster functions in `mDualLowerTriangular`
+ * and `mDualUpperTriangular` that works only when the basis is triangular.
  *
  * We also have functions to compute the basis of a projection of a given lattice over
  * a specified set of coordinates.  The function `projectionConstructionLLL` does this
@@ -93,7 +94,7 @@ using namespace NTL;
  * via the optional parameters `r` and `c`.  This can permit one to use the same `IntMat`
  * object for several numbers of dimensions, to avoid doing many object creations or resizing.
  *
- * All functions in this file are static, so there is no reason to create any
+ * All functions in this file are static, so there is no notion of
  * `BasisConstruction` object. We also avoid to create new objects (such as vectors and
  * matrices) inside these functions.  These functions can be called thousands or millions
  * of times in a program, and we want the user to be able to re-use the same vectors and
@@ -107,7 +108,7 @@ using namespace NTL;
  * is the \f$m\f$-dual lattice, then once we have an \f$m\f$-dual basis we no longer need
  * a primal basis.
  *
- * The programs `BasisManipulationVerbose` and `BasisManipulation` in the examples
+ * The programs `TestBasisConstructSmall` and `TestBasisConstructSpeed` in the examples
  * illustrate how to use these functions and make speed comparisons.
  */
 
@@ -127,9 +128,7 @@ namespace LatticeTester {
  * of the matrix `gen` that are actually used. When they are 0 (the default values),
  * then these numbers are taken to be the dimensions of the matrix `gen`.
  * When `sqlen` is not 0, the square lengths of the basis
- * vectors are returned in this array, exactly as in the `LLL_FPZZflex.h` module.
- * These optional parameters are allowed to take non-default values only when
- * `Int==ZZ` and `precision = DOUBLE`.
+ * vectors are returned in this array, exactly as in the `LLL_lt.h` module.
  * The function returns the dimension (number of rows) of the newly computed basis,
  * which may differ from the number of rows of the `gen` object.
  * The latter is never resized.
@@ -144,9 +143,8 @@ static long LLLConstruction0(IntMat &gen, const double delta = 0.9, long r = 0, 
       RealVec *sqlen = 0);
 
 /**
- * Similar to `LLLConstruction0`, except that in case the set of generating
- * vectors do not generate a full-dimensional lattice, it adds the vectors
- * \f$m e_i\f$ to the generating set, so it always returns a square matrix.
+ * Similar to `LLLConstruction0`, except that this function adds implicitly the vectors
+ * \f$m \mathbf{e}_i\f$ to the generating set, so it always returns a square matrix.
  * The matrix `gen` is not resized by this function, so it can remain larger
  * than the lattice dimension.
  */
@@ -157,7 +155,7 @@ static void LLLBasisConstruction(IntMat &gen, const Int &m, const double delta =
 /**
  * Takes a set of generating vectors in the matrix `gen` and iteratively
  * transforms it into a lower triangular lattice basis into the matrix `basis`.
- * This lattice is assumed to contain all the vectors of the form @f$m e_j@f$,
+ * This lattice is assumed to contain all the vectors of the form @f$m \mathbf{e}_j@f$,
  * so these vectors are added implicitly to the generating set.
  * Apart from that, all the entries of `gen` given as input are assumed to be
  * reduced modulo the scaling factor `m` and all the computations are done modulo `m`.
@@ -181,7 +179,9 @@ static void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long 
 template<typename Int>
 static void upperTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long r = 0, long c = 0);
 
-// The old version from 1996.
+/**
+ * The old version from \cite rCOU96a and \cite iLEC00l.
+ */
 template<typename Int>
 static void upperTriangularBasisOld96(IntMat &basis, IntMat &gen, const Int &m, long r = 0, long c = 0);
 
@@ -189,7 +189,6 @@ static void upperTriangularBasisOld96(IntMat &basis, IntMat &gen, const Int &m, 
  * Takes a lower-triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
  * The function assumes that each coefficient on the diagonal of `basis` is nonzero and divides `m`.
  * That is, the basis matrix must be square and m-invertible.
- * The algorithm is described in the Lattice Tester guide \cite iLEC22l.
  * Since the basis is lower triangular, its m-dual will be upper triangular.
  * When `dim > 0`, it must give the number of rows and columns of the matrix `basis`
  * that is actually used. Otherwise (by default) the function uses `basis.numCols()`.
@@ -212,9 +211,6 @@ static void mDualUpperTriangular(IntMat &basisDual, const IntMat &basis, const I
  */
 template<typename Int>
 static void mDualUpperTriangularOld96(IntMat &basisDual, const IntMat &basis, const Int &m, long dim = 0);
-
-// static void mDualUpperTriangular96ZZ(NTL::Mat<NTL::ZZ> &basis,
-//            NTL::Mat<NTL::ZZ> &basisDual, const NTL::ZZ &m, long dim = 0);
 
 /**
  * This function assumes that `basis` contains a basis of the primal lattice
@@ -342,7 +338,7 @@ long LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c
    return NTL::LLL_RR_lt(gen, delta, r, c, sqlen);
 }
 
-//============================================================================
+//===========================================================================
 
 template<typename Int, typename Real>
 void LLLBasisConstruction(IntMat &gen, const Int &m, double delta, long r, long c, RealVec *sqlen) {
@@ -405,7 +401,7 @@ void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
             }
          }
       }
-     // If `gcd = m`, then this basis (row) vector will be `x_j = m e_j`.
+      // If `gcd = m`, then this basis (row) vector will be `x_j = m e_j`.
       if (gcd == m) {
          for (k = 0; k < dim2; k++) {
             if (k != j) basis[j][k] = 0;
@@ -540,18 +536,7 @@ void upperTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
 
 //===================================================
 
-/**
- * This is the old triangularization method that we had in Modula-2 in 1996.
- * Takes a set of generating vectors in the matrix `W` and iteratively
- * transforms it into an upper triangular lattice basis into the matrix `V`.
- * `W` and `V` have to have more rows than `lin` and more columns than `col`
- * since this algorithm will only operate on the upper `lin*col` matrix of
- * `W`. All the computations will be done modulo `m`, which means that you
- * must know the rescaling factor for the vector system to call this function.
- * After the execution, `W` will be a matrix containing irrelevant information
- * and `V` will contain an upper triangular basis.
- * A few more details are given at the end of \cite rCOU96a and in the guide.
- */
+//  This is the old triangularization method that we had in Modula-2 in 1996.
 template<typename Matr, typename Int>
 void upperTriangularBasisOld96 (Matr &V, Matr &W, const Int &m, int64_t lin, int64_t col) {
    Int T1, T2, T3, T4, T5, T6, T7, T8;
@@ -620,11 +605,6 @@ void upperTriangularBasisOld96 (Matr &V, Matr &W, const Int &m, int64_t lin, int
 
 //===================================================
 
-/**
- * For `B` to be `m`-dual to `A`, we have to have that \f$AB^t = mI\f$.
- * Since `A` is lower triangular, `B` will be a upper triangular matrix
- * The algorithm is similar to the upper triangular case
- */
 template<typename Int>
 void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
    // Note:  A = basis,  B = basisDual
@@ -649,14 +629,6 @@ void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
 
 //===================================================
 
-/**
- * For `B` to be `m`-dual to `A`, we have to have that \f$AB^t = mI\f$.
- * Since `A` is upper triangular, `B` will be a lower triangular matrix
- * with `A(i,i)*B(i,i) = m` for all `i` and
- * \f$ A_i \cdot B_j = 0\f$ for \f$i\neq j\f$. To get the second condition,
- * we simply have to recursively take for each line
- * \f[B_{i,j} = -\frac{1}{A_{j,j}}\sum_{k=j+1}^i A_{j,k} B_{i,k}.\f]
- */
 template<typename Int>
 void mDualUpperTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
    // Note:  A = basis,  B = basisDual
@@ -680,7 +652,7 @@ void mDualUpperTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
 }
 
 //======================================================
-// This is the old version from Couture and L'Ecuyer (1996).
+// This is the old Modula-2 version from Couture and L'Ecuyer (1996).
 template<typename Int>
 void mDualUpperTriangularOld96(IntMat &basisDual, const IntMat &basis, const Int &m, long dim) {
    if (!dim) dim = basis.NumRows();
@@ -799,7 +771,6 @@ void projectionConstructionLLL(IntMat &projBasis, const IntMat &inBasis, const C
 }
 
 //===================================================
-
 template<typename Int>
 void projectionConstructionUpperTri(IntMat &projBasis, const IntMat &inBasis, IntMat &genTemp,
       const Coordinates &proj, const Int &m, long r) {

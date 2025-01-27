@@ -39,7 +39,7 @@ using namespace LatticeTester;
 namespace LatticeTester {
 
 /**
- * \file latticetester/IntLattice.h
+ * \class latticetester/IntLattice.h
  *
  * An `IntLattice` object is an integral lattice, with its basis or its `m`-dual basis, or both.
  * There are tools to perform simple manipulations on those lattice bases.
@@ -49,7 +49,7 @@ namespace LatticeTester {
  *
  * The dimension `dim` of the lattice is the number of independent vectors that form a basis.
  * Usually, these vectors also have `dim` coordinates, but in general they may have more.
- * The basis and/or the `m`-dual basis are stored in `IntMat` arrays (from NTL) of sizes `maxDim x maxDim`,
+ * The basis and/or the `m`-dual basis are stored in `IntMat` arrays (from %NTL) of sizes `maxDim x maxDim`,
  * where `maxDim is usually fixed to a value as large as the largest `dim` that we want to handle.
  * We use only the upper-left `dim x dim` corner of each array to store the actual basis.
  * These arrays can then be allocated only once and never have to be resized, which improves speed.
@@ -71,8 +71,6 @@ namespace LatticeTester {
  * defined by a `Coordinates` object.  When computing figures of merit, one may want to
  * recompute a basis for a large number of different projections, which can be specified
  * by a `CoordinateSets` object.
- *
- * NOTE: There are no methods to copy or overwrite only the dual lattice!!!  Maybe not needed?
  *
  * The class `IntLatticeExt` extends this class and contains virtual methods that must
  * be defined in its subclasses.
@@ -104,21 +102,21 @@ public:
    IntLattice(const IntMat primalbasis, const IntMat dualbasis, const Int m, const int64_t maxDim,
          NormType norm = L2NORM);
 
-   /**
-    * Copy constructor. Makes a deep copy of `lat` into `*this` new object.
+   /*
+    * Copy constructor. Makes a deep copy of `lat` into `*this` new object.   ****  Remove?
     */
-   IntLattice(const IntLattice<Int, Real> &lat);
+   // IntLattice(const IntLattice<Int, Real> &lat);
 
    /**
     * Destructor.
     */
    virtual ~IntLattice();
 
-   /**
+   /*
     * Makes a deep copy of the lattice `lat` into this (existing) object.
     * New matrix and vector objects are constructed to store the bases and norms.
     */
-   void copyLattice(const IntLattice<Int, Real> &lat);
+   // void copyLattice(const IntLattice<Int, Real> &lat);
 
    /*
     * *** Previously named `copyLattice`.
@@ -129,7 +127,7 @@ public:
     * The difference with `copyLattice` is that here, no new matrix or vector is constructed;
     * the previous ones are re-used. Requirement: `dim <= maxDim`.
     */
-   void overwriteLattice(const IntLattice<Int, Real> &lat, long dim, long dimdual);
+   // void overwriteLattice(const IntLattice<Int, Real> &lat, long dim, long dimdual);
 
    /**
     * Constructs a set of generating vectors for the projection of the present lattice,
@@ -463,11 +461,6 @@ public:
     */
    std::string toString() const;
 
-   /**
-    * Writes on standard output the string returned by `toString`.
-    */
-   void write() const;
-
 protected:
 
    /**
@@ -532,10 +525,9 @@ protected:
 
 template<typename Int, typename Real>
 IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType norm) {
-//		: m_modulo(m), m_dim(dim), m_norm(norm) {
    m_modulo = m;
    m_maxDim = maxDim;
-   m_dim = 0;         // I changed this !!!   *****
+   m_dim = 0;
    m_dimdual = 0;
    m_norm = norm;
    m_basis.SetDims(maxDim, maxDim);
@@ -581,12 +573,13 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType no
  }
  */
 
-/*=========================================================================*/
+/*=========================================================================
 
 template<typename Int, typename Real>
 IntLattice<Int, Real>::IntLattice(const IntLattice<Int, Real> &lat) {
    copyLattice(lat);
 }
+*/
 
 /*=========================================================================*/
 
@@ -599,8 +592,8 @@ IntLattice<Int, Real>::~IntLattice() {
    this->m_dualvecNorm.kill();
 }
 
-/*=========================================================================*/
-
+/*=========================================================================
+ *
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::copyLattice(const IntLattice<Int, Real> &lat) {
    this->m_modulo = lat.m_modulo;
@@ -613,8 +606,8 @@ void IntLattice<Int, Real>::copyLattice(const IntLattice<Int, Real> &lat) {
    this->m_dualbasis = IntMat(lat.m_dualbasis);
    this->m_dualvecNorm = RealVec(lat.m_dualvecNorm);
 }
-
-/*=========================================================================*/
+*/
+/*=========================================================================
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat, long dim,
@@ -629,6 +622,7 @@ void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat, l
       this->m_dimdual = lat.m_dimdual;
    } else std::cout << "IntLattice::overwriteLattice: dim > m_maxDim" << std::endl;
 }
+*/
 
 //===========================================================================
 
@@ -900,21 +894,6 @@ void IntLattice<Int, Real>::sortBasis(int64_t d) {
 
 /*=========================================================================*/
 
-/*
-inline double sqrtReal(const double &a) {
-   return std::sqrt(a);
-}
-inline xdouble sqrtReal(const xdouble &a) {
-   return NTL::sqrt(a);
-}
-inline quad_float sqrtReal(const quad_float &a) {
-   return NTL::sqrt(a);
-}
-inline NTL::RR sqrtReal(const NTL::RR &a) {
-   return NTL::sqrt(a);
-}
-*/
-
 template<typename Int, typename Real>
 std::string IntLattice<Int, Real>::toString() const {
    std::ostringstream os;
@@ -972,13 +951,6 @@ std::string IntLattice<Int, Real>::toString() const {
    }
    os << std::endl;
    return os.str();
-}
-
-/*=========================================================================*/
-
-template<typename Int, typename Real>
-void IntLattice<Int, Real>::write() const {
-   std::cout << this->toString() << "\n";
 }
 
 /*=========================================================================*/
