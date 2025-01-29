@@ -33,7 +33,7 @@ Some polishing remains to be done; it should be completed by February 2025.
 ## Documentation
 
 A detailed description of _Lattice Tester_, its underlying theory, its organization, and examples, can be found in the 
-[**Lattice Tester User's Guide**](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
+[**Lattice Tester User's Guide**](https://www-labs.iro.umontreal.ca/~lecuyer/myftp/papers/lattester-guide-2025.pdf).
 That .pdf document is the core documentation. 
 
 The interface is specified in the 
