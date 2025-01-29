@@ -256,16 +256,16 @@ void comparePreRed (Int m, NormType norm, DecompTypeBB decomp, long numSizes, lo
 
 int main() {
    // NTL::ZZ m(1021);  // Prime modulus near 2^{10}
-   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
-   NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   //NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    DecompTypeBB decomp = CHOLESKY;
    NormType norm = L2NORM;
    long numSizes = 5;
-   long numRep = 10;
+   long numRep = 1000;
 
    //comparePreRed<int64_t, double>(conv<int64_t>(m), norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, double>(m, norm, decomp, numSizes, numRep);
-   //comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
-   //comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
-   //comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
+   comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
+   comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
+   comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
 }

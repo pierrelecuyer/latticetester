@@ -25,9 +25,10 @@
 namespace LatticeTester {
 
 /**
- * This Normalizer class implements upper bounds on the length of the shortest nonzero
- * vector in a lattice. The Hermite constants \f$\gamma_s\f$ are approximated
- * by using the values that correspond to the laminated lattices \cite mCON99a.
+ * This Normalizer class implements approximate upper bounds on the length of the shortest nonzero
+ * vector in a lattice. These are not strict upper bounds, because the Hermite constants
+ * \f$\gamma_s\f$ here are approximated by *lower bounds*
+ * given by the values that correspond to the laminated lattices \cite mCON99a.
  * These lattices are not always the densest lattices available, but
  * they are intuitive constructions dense lattices. In \cite mCON99a,
  * Table 6.1 gives the determinant \f$\lambda_s\f$ that can be used to recover
@@ -37,7 +38,7 @@ namespace LatticeTester {
  * \f[
  *    \gamma_s = 4 \delta_s^{2/s}.
  * \f]
- * This class is to be used with the L2NORM (the Euclidean norm) exclusively.
+ * For the L1NORM, the bounds must be multiplied by `s` in `s` dimensions.
  */
 
 class NormaLaminated: public Normalizer {
@@ -82,7 +83,7 @@ private:
 
 //=============================================================================
 
-/**
+/*
  * These laminated gamma constants are calculated as defined in
  * Conway and Sloane book (Sphere packing, Lattices and groups) :
  *    - equation (47) page 20 of chapter 1
@@ -142,7 +143,7 @@ const double NormaLaminated::m_gamma[] = {
 /*=========================================================================*/
 
 NormaLaminated::NormaLaminated(double logDensity, int64_t maxDim, NormType norm) :
-        Normalizer(maxDim, "Laminated", norm) {
+        Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument(
                 "NormaLaminated:   dimension > this->MAX_DIM");
@@ -153,7 +154,7 @@ NormaLaminated::NormaLaminated(double logDensity, int64_t maxDim, NormType norm)
 /*=========================================================================*/
 
 NormaLaminated::NormaLaminated(double logm, int64_t k, int64_t maxDim, NormType norm) :
-        Normalizer(maxDim, "Laminated", norm) {
+        Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaLaminated:   dimension > MAXDIM");
     m_name = "NormaLaminated";
@@ -170,7 +171,7 @@ inline double NormaLaminated::getGamma(int64_t j) const {
     else if (m_norm == L1NORM)
        return m_gamma[j] * j;
     else
-       throw std::domain_error("NormaLamnated:getGamma with wrong norm");
+       throw std::domain_error("NormaLaminated:getGamma with wrong norm");
 }
 
 }

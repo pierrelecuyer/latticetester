@@ -44,7 +44,7 @@
 #include "latticetester/Weights.h"
 // #include "latticetester/WeightsOrderDependent.h"
 #include "latticetester/NormaBestLat.h"
-#include "latticetester/NormaBestBound.h"
+#include "latticetester/NormaBestUpBound.h"
 #include "latticetester/WeightsUniform.h"
 #include "latticetester/CoordinateSets.h"
 

@@ -101,7 +101,7 @@ namespace LatticeTester {
    *
    * `BESTLAT`: the value used for \f$d_t^*\f$ corresponds to the best
    * lattice.<br>
-   * `BESTBOUND`: the value used for \f$d_t^*\f$ corresponds to the best
+   * `BESTUPBOUND`: the value used for \f$d_t^*\f$ corresponds to the best
    * bound known to us.<br>
    * `LAMINATED`: the value used for \f$d_t^*\f$ corresponds to the best
    * *laminated* lattice.<br>
@@ -110,13 +110,13 @@ namespace LatticeTester {
    * `MINKL1`: the value for \f$d_t^*\f$ is obtained from the theoretical bounds
    * on the length of the shortest nonzero vector in the lattice using the
    * \f${\mathcal{L}}_1\f$ norm.<br>
-   * `MINKL2`: the value for \f$d_t^*\f$ is obtained from *Minkowski’*
+   * `MINKHLAW`: the value for \f$d_t^*\f$ is obtained from *Minkowski’*
    * theoretical bounds on the length of the shortest nonzero vector in the
    * lattice using the \f${\mathcal{L}}_2\f$ norm.<br>
    * `NONE`: no normalization will be used.<br>
    */
- // enum NormaType { BESTLAT, BESTBOUND, LAMINATED, ROGERS, MINKOWSKI, MINKL1, MINK, L1, L2, NONE };
-  enum NormaType { BESTLAT, BESTBOUND, LAMINATED, ROGERS, MINKL1, MINKL2, NONE };
+ // enum NormaType { BESTLAT, BESTUPBOUND, LAMINATED, ROGERS, MINKOWSKI, MINKL1, MINK, L1, L2, NONE };
+  enum NormaType { BESTLAT, BESTUPBOUND, LAMINATED, ROGERS, MINKL1, MINKHLAW, NONE };
 
   /**
    * Indicates which type of calculation is considered for the
@@ -274,16 +274,16 @@ namespace LatticeTester {
     switch (norma) {
       case BESTLAT:
         return "BESTLAT";
-      case BESTBOUND:
-        return "BESTBOUND";
+      case BESTUPBOUND:
+        return "BESTUPBOUND";
       case LAMINATED:
         return "LAMINATED";
       case ROGERS:
         return "ROGERS";
       case MINKL1:
         return "MINKL1";
-      case MINKL2:
-        return "MINKL2";
+      case MINKHLAW:
+        return "MINKHLAW";
       case NONE:
         return "NONE";
       default:

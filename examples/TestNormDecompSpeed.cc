@@ -157,12 +157,12 @@ void printResultsNormsDecomp(long numSizes, const long *dimensions, long numRep)
 
 int main() {
    // Here, Int and Real are not yet defined.
-   //NTL::ZZ m(1021);  // Prime modulus near 2^{10}
-   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   NTL::ZZ m(1021);  // Prime modulus near 2^{10}
+   //NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
    // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
-   // compareNormsDecomp<NTL::ZZ, double> (m, 6, 1000);
-   compareNormsDecomp<NTL::ZZ, NTL::RR> (m, 4, 1000);
+   compareNormsDecomp<NTL::ZZ, double> (m, 6, 1000);
+   // compareNormsDecomp<NTL::ZZ, NTL::RR> (m, 4, 1000);
    // compareNormsDecomp<NTL::ZZ, double> (m, 2, 1);
 }
 

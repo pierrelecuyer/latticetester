@@ -25,17 +25,17 @@
 namespace LatticeTester {
 
 /**
- * This class implements theoretical bounds on the length of the shortest
- * nonzero vector in a lattice, using the \f${\mathcal{L}}_1\f$ norm.
- * Here, the length of the shortest nonzero vector is related to the minimal number
- * of hyperplanes that cover all the points of the dual lattice aasociated.
- * The following upper bound in this case was provided by Marsaglia
- * \cite rMAR68a; by applying the general convex body theorem of Minkowski:
+ * This class implements theoretical *upper bounds* on the length of the shortest
+ * nonzero vector in a lattice for the \f$L_1\f$ norm.
+ * This length in the dual lattice is related to the minimal number of hyperplanes
+ * that cover all the points in the primal lattice \cite rMAR68a,rKNU98a.
+ * The following upper bound on this length follows is obtained by applying the
+ * general convex body theorem of Minkowski:
  * \f[
- *   \ell_t^* = (t!)^{1/t}*(n)^{-1/t}) = \gamma_t^{1/2} \eta^{-1/t},
+ *   \ell_t \le (t!)^{1/t}*(n)^{-1/t}) = (\gamma_t^{(M)})^{1/2} \eta^{-1/t},
  * \f]
- * for a lattice containing \f$eta\f$ points per unit volume, in dimension \f$t\f$.
- * The Hermite constants are $\gamma_t = (t!)^{2/t}\f$.
+ * for a lattice of density \f$eta\f$ in \f$t\f$ dimensions.
+ * Here, the Hermite constants are replaced by $\gamma_t^{(M)} = (t!)^{2/t}\f$.
  */
 
 class NormaMinkL1: public Normalizer {
@@ -65,8 +65,7 @@ public:
     ~NormaMinkL1();
 
     /**
-     * Returns the value of the lattice constant \f$\gamma_j\f$ in
-     * dimension \f$j\f$.
+     * Returns the value of the lattice constant \f$\gamma_j\f$ in dimension \f$j\f$.
      */
     double getGamma(int64_t j) const;
 

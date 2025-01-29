@@ -25,17 +25,19 @@
 namespace LatticeTester {
 
 /**
- * This Normalizer class implements upper bounds on the length of the shortest nonzero
- * vector in a lattice. The Hermite constants \f$\gamma_s\f$ are approximated
- * by using the largest known density values for lattices \cite mCON99a.
- * These approximations are stored in a table accessible via the
- * `getGamma(int)` const method. In \cite mCON99a, Table I.1(a) gives the center
- * density \f$\delta_s\f$ of the densest known packings in dimension \f$s\f$.
- * We then have that
+ * This Normalizer class implements approximate upper bounds on the length of the shortest nonzero
+ * vector in a lattice. In the dimensions in which the Hermite constants \f$\gamma_s\f$ are known,
+ * the exact values are used.  For the other dimensions, they are approximated
+ * by *lower bounds* that correspond to the largest known center density values \f$\delta_s\f$ for lattices
+ * sphere packings, by using the relationship
  * \f[
  *    \gamma_s = 4 \delta_s^{2/s}.
  * \f]
- * This class is to be used with the L2NORM (the Euclidian norm) exclusively.
+ * These values are taken from able I.1(a) in the preface of \cite mCON99a.
+ * See also Table 1 in \cite mCOH17a.
+ * These approximations are stored in a table accessible via the `getGamma` method.
+ * The values given here are for the L2NORM.
+ * For the L1NORM, the bounds must be multiplied by `s` in `s` dimensions.
  */
 
 class NormaBestLat: public Normalizer {
@@ -73,14 +75,14 @@ private:
 
 const double NormaBestLat::m_gamma[] = {
 /* GamBestLat[0] = */0.0,
-/* GamBestLat[1] = */1.0,
-/* GamBestLat[2] = */1.1547005383793,
-/* GamBestLat[3] = */1.2599210498949,
-/* GamBestLat[4] = */1.4142135623731,
-/* GamBestLat[5] = */1.5157165665104,
-/* GamBestLat[6] = */1.6653663553112,
-/* GamBestLat[7] = */1.8114473285278,
-/* GamBestLat[8] = */2.0,
+/* GamBestLat[1] = */1.0,               // exact
+/* GamBestLat[2] = */1.1547005383793,   // exact
+/* GamBestLat[3] = */1.2599210498949,   // exact
+/* GamBestLat[4] = */1.4142135623731,   // exact
+/* GamBestLat[5] = */1.5157165665104,   // exact
+/* GamBestLat[6] = */1.6653663553112,   // exact
+/* GamBestLat[7] = */1.8114473285278,   // exact
+/* GamBestLat[8] = */2.0,               // exact
 /* GamBestLat[9] = */2.0,
 /* GamBestLat[10] = */2.0583720179295,
 /* GamBestLat[11] = */2.140198065871,
@@ -96,7 +98,7 @@ const double NormaBestLat::m_gamma[] = {
 /* GamBestLat[21] = */3.3914559675101,
 /* GamBestLat[22] = */3.5727801951422,
 /* GamBestLat[23] = */3.7660273525956,
-/* GamBestLat[24] = */4.0,
+/* GamBestLat[24] = */4.0,              // exact
 /* GamBestLat[25] = */3.8906197896491,
 /* GamBestLat[26] = */3.8345038118867,
 /* GamBestLat[27] = */3.8405094116889,

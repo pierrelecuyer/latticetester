@@ -30,9 +30,9 @@ namespace LatticeTester {
  * are approximated by their Rogers's bounds.
  * These bounds are calculated as explained in \cite mCON99a,
  * Eq. (47) on page 20, and in Table 1.2 on page 15.
- * `NormaBestBound` provide tighter bounds in lower dimensions, up to 36, but Rogers
+ * `NormaBestUpBound` provide tighter bounds in lower dimensions, up to 36, but Rogers
  * bounds can be computed in higher dimensions.
- * This class is to be used only with the L2NORM (the Euclidean norm).
+ * For the L1NORM, the bounds must be multiplied by `s` in `s` dimensions.
  */
 
 class NormaRogers: public Normalizer {

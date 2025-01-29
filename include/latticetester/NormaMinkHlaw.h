@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LATTICETESTER_NORMAMINKOWSKI_H
-#define LATTICETESTER_NORMAMINKOWSKI_H
+#ifndef LATTICETESTER_NORMAMINKHLAW_H
+#define LATTICETESTER_NORMAMINKHLAW_H
 
 #include "latticetester/Normalizer.h"
 
@@ -25,12 +25,11 @@
 namespace LatticeTester {
 
 /**
- * This class implements Minkowski’s theoretical **LOWER** bound on the length
- * of the shortest non-zero vector in a lattice, with the \f${\mathcal{L}}_2\f$ norm.
- * The Hermite constants \f$\gamma_s\f$ are approximated using this bound.
- * This class is to be used with the L2NORM (the Euclidean norm) exclusively.
+ * This class implements *lower bounds* on the Hermite constants based on the
+ * Minkowski-Hlawka theorem \cite mHLA43a. The Hermite constants are approximated
+ * by the \f$\gamma_t^{(Z)}\f$ given in the guide.
  */
-class NormaMinkL2: public Normalizer {
+class NormaMinkHlaw: public Normalizer {
 public:
 
     /**
@@ -38,14 +37,14 @@ public:
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
-    NormaMinkL2(double logm, int64_t k, int64_t maxDim, NormType norm = L2NORM);
+    NormaMinkHlaw(double logm, int64_t k, int64_t maxDim, NormType norm = L2NORM);
 
     /**
-     * Constructs a `NormaMinkL2` for up to `maxDim` dimensions, by assuming that the
+     * Constructs a `NormaMinkHlaw` for up to `maxDim` dimensions, by assuming that the
      * log density is `logDensity` in all dimensions and the lattice was not rescaled.
      * Restriction: `maxDim`\f$ \le 48\f$.
      */
-    NormaMinkL2(double logDensity, int64_t maxDim, NormType norm = L2NORM);
+    NormaMinkHlaw(double logDensity, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Returns the value of the lattice constant \f$\gamma_j\f$ in
@@ -56,19 +55,19 @@ public:
 private:
 
     /**
-     * Constants \f$\gamma_j\f$ for the Minkowski bounds in each
+     * Constants \f$\gamma_j\f$ for the Minkowski-Hlawka bounds in each
      * dimension \f$j\f$.
      */
     static const double m_gamma[1 + Normalizer::MAX_DIM];
 };
-// End class NormaMinkL2
+// End class NormaMinkHlaw
 
 //===========================================================================
 
 /*
- * This is (2/V_n)^(2/n) which seems wrong.
- * */
-const double NormaMinkL2::m_gamma[] = {
+ * This is (2/V_n)^(2/n) which seems wrong ?
+ */
+const double NormaMinkHlaw::m_gamma[] = {
 /* GamMinkowski[0] = */0.00000000000000,
 /* GamMinkowski[1] = */0.00000000000000,
 /* GamMinkowski[2] = */1.04719756392815,
@@ -121,35 +120,35 @@ const double NormaMinkL2::m_gamma[] = {
 
 /*=========================================================================*/
 
-NormaMinkL2::NormaMinkL2(double logDensity, int64_t maxDim, NormType norm) :
+NormaMinkHlaw::NormaMinkHlaw(double logDensity, int64_t maxDim, NormType norm) :
         Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
-        throw std::invalid_argument("NormaMinkL2:   dimension > MAX_DIM");
-    m_name = "NormaMinkL2";
+        throw std::invalid_argument("NormaMinkHlaw:   dimension > MAX_DIM");
+    m_name = "NormaMinkHlaw";
     Normalizer::computeBounds(logDensity);
 }
 
 /*=========================================================================*/
 
-NormaMinkL2::NormaMinkL2(double logm, int64_t k, int64_t maxDim, NormType norm) :
+NormaMinkHlaw::NormaMinkHlaw(double logm, int64_t k, int64_t maxDim, NormType norm) :
         Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
-        throw std::invalid_argument("NormaMinkL2:   dimension > MAXDIM");
-    m_name = "NormaMinkL2";
+        throw std::invalid_argument("NormaMinkHlaw:   dimension > MAXDIM");
+    m_name = "NormaMinkHlaw";
     Normalizer::computeBounds(logm, k);
 }
 
 /*=========================================================================*/
 
-inline double NormaMinkL2::getGamma(int64_t j) const {
+inline double NormaMinkHlaw::getGamma(int64_t j) const {
     if (j < 1 || j > this->MAX_DIM)
-        throw std::out_of_range("NormaMinkL2::getGamma");
+        throw std::out_of_range("NormaMinkHlaw::getGamma");
     if (m_norm == L2NORM)
        return m_gamma[j];
     else if (m_norm == L1NORM)
        return m_gamma[j] * j;
     else
-       throw std::domain_error("NormaMinkL2::getGamma with wrong norm");
+       throw std::domain_error("NormaMinkHlaw::getGamma with wrong norm");
 }
 
 }
