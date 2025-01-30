@@ -14,6 +14,7 @@
  * This example makes speed comparisons with the `BasisConstruction` functions,
  * with different combinations of types. See the Lattice Tester guide for more explanations.
  * This experiment concerns mostly LLL reduction in the primal and m-dual.
+ * The `main` must be changed and recompiled to change the value of `m`.
  */
 using namespace NTL;
 using namespace LatticeTester;
@@ -89,7 +90,7 @@ void transformBasesLLL(const Int &m, int64_t d, int64_t dim, IntMat &basis0,
 
 // Testing loop. The `IntMat` and `Rank1Lattice` objects are created only once.
 template<typename Int, typename Real>
-void testLoop(Int &mm, int64_t numSizes, int64_t numRep) {
+void testLoop(const Int &mm, int64_t numSizes, int64_t numRep) {
    std::string stringTypes;  // To print the selected flexible types.
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
    std::cout << "****************************************************\n";
@@ -175,7 +176,7 @@ int main() {
    int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
 
    // Here we can test with any combination of types.
-   // testLoop<int64_t, double>(m, numSizes, numRep);   // This one works only for the smaller m.
+   // testLoop<int64_t, double>(conv<int64_t>(mm), numSizes, numRep);   // This one works only for the smaller m.
    testLoop<NTL::ZZ, double>(mm, numSizes, numRep);
    testLoop<NTL::ZZ, xdouble>(mm, numSizes, numRep);
    testLoop<NTL::ZZ, quad_float>(mm, numSizes, numRep);

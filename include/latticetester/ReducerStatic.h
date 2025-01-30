@@ -39,24 +39,19 @@ namespace LatticeTester {
 /**
  * \file latticetester/ReducerStatic.h
  *
- * This file provides only static functions to reduce a lattice basis in some ways
- * (pairwise, LLL, BKZ \cite rDIE75a, \cite mLEN82a, \cite mSCH91a).
- * The LLL and BKZ ones are wrappers to slightly modified versions of the NTL
+ * Static functions to reduce a lattice basis via LLL and BKZ.
+ *
+ * These functions are wrappers to slightly modified versions of the NTL
  * functions described at https://libntl.org/doc/LLL.cpp.html .
- * These functions do not require the creation of an object like in `ReducerBB`.
+ * They do not require the creation of an object like in `ReducerBB`.
  * They take an `IntMat` object that contains a basis and return the reduced basis
  * in the same object. In our versions, the basis can occupy only part of the `IntMat`
  * object so we can use the same object for several bases of various sizes,
  * the basis entries can be of either ZZ or `int64_t` type,
  * the shortest basis vector is always placed in the first row,
  * and the squared vector lengths are also returned in a vector.
- * The norm to measure the vector lengths is always taken as the Euclidean one.
+ * The norm to measure the vector lengths is always the Euclidean norm.
  * The computations can be done either in `double` or in `RR` for the real numbers.
- *
- * All these functions take as input (and return as output) an `IntMat` object
- * whose first `dim` rows and columns (a square matrix) are assumed to form
- * be a set of independent vectors that form a basis for the lattice.
- * The same `IntMat` object can then be used for several lattices of different sizes.
  */
 
 

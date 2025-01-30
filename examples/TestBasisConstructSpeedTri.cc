@@ -1,4 +1,4 @@
-// File `testBasisConstructionTri`
+// File `testBasisConstructSpeedTri`
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -13,7 +13,8 @@
 /**
  * This example makes speed comparisons with the `BasisConstruction` functions,
  * with different combinations of types. See the Lattice Tester guide for more explanations.
- * This experiment concerns the construction of triangular bases.
+ * This experiment concerns mostly the construction of triangular bases and their m-duals.
+ * The `main` must be changed and recompiled to change the value of `m`.
  */
 using namespace NTL;
 using namespace LatticeTester;
@@ -33,20 +34,22 @@ clock_t timer[numMeth][maxNumSizes]; // Collects timings for each case.
 // Declaration required.
 void printTable(int64_t numSizes);
 
-   // Runs a speed test for dim = dimensions[d], for triangular basis constructions.
+// Runs a speed test for dim = dimensions[d], for triangular basis constructions.
 // Only basis0 needs to be initialized; the other matrices are used only for copy.
 template<typename Int, typename Real>
 void triangularBases(const Int &m, int64_t d, int64_t dim, IntMat &basis0,
       IntMat &basis1, IntMat &basis2, IntMat &basisdual) {
+
    clock_t tmp;
    NTL::Vec<Real> sqlen; // Cannot be global variable because it depends on Real.
    sqlen.SetLength(1);
 
-   // We first apply LLL to basis1.
+   // We first apply LLL to basis0.
    tmp = clock();
    LLLConstruction0<Int, Real>(basis0, 0.5, dim, dim, &sqlen);
    timer[0][d] += clock() - tmp;
-   // sumSq[0][d] += conv<double>(sqlen[0]);
+   // std::cout << "basis primal after LLL5:\n" << basis0 << "\n";
+   // std::cout << "shortest vector length: " <<  sqrt(conv<double>(sqlen[0])) << "\n\n";
 
    CopyPartMat<IntMat>(basis1, basis0, dim, dim);  // Copy basis0 to basis1.
    tmp = clock();
@@ -77,10 +80,13 @@ void triangularBases(const Int &m, int64_t d, int64_t dim, IntMat &basis0,
    mDualUpperTriangular(basisdual, basis1, m, dim);
    timer[6][d] += clock() - tmp;
 
+   // Here we start from a lower-triangular m-dual basis.
+   // std::cout << "basisdual before LLL5:\n" << basisdual << "\n";
    tmp = clock();
    LLLConstruction0<Int, Real>(basisdual, 0.5, dim, dim, &sqlen);
    timer[7][d] += clock() - tmp;
-   // sumSq[5][d] += conv<double>(sqlen[0]);
+   // std::cout << "basisdual after LLL5:\n" << basisdual << "\n";
+   // std::cout << "shortest vector length: " << sqrt(conv<double>(sqlen[0])) << "\n\n";
 
    CopyPartMat<IntMat>(basis1, basisdual, dim, dim);  // Copy basisdual to basis1.
    tmp = clock();
@@ -89,6 +95,7 @@ void triangularBases(const Int &m, int64_t d, int64_t dim, IntMat &basis0,
 
    CopyPartMat<IntMat>(basis1, basisdual, dim, dim);  // Copy basisdual to basis1.
    tmp = clock();
+   // This one is much slower than the previous (lower-triangular) one!
    upperTriangularBasis<Int>(basis2, basis1, m, dim, dim);
    timer[9][d] += clock() - tmp;
 
@@ -105,7 +112,7 @@ void triangularBases(const Int &m, int64_t d, int64_t dim, IntMat &basis0,
 
 // Testing loop. The `IntMat` and `Rank1Lattice` objects are created only once.
 template<typename Int, typename Real>
-void testLoop(Int &mm, int64_t numSizes, int64_t numRep) {
+void testLoop(const Int &mm, int64_t numSizes, int64_t numRep) {
    std::string stringTypes;  // To print the selected flexible types.
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes
    std::cout << "**************************************************************\n";
@@ -127,7 +134,6 @@ void testLoop(Int &mm, int64_t numSizes, int64_t numRep) {
    for (d = 0; d < numSizes; d++)   // Reset accumulators.
       for (int64_t meth = 0; meth < numMeth; meth++) {
          timer[meth][d] = 0;
-         // sumSq[meth][d] = 0.0;
       }
    tmpTotal = clock();
    for (int64_t r = 0; r < numRep; r++) {
@@ -165,21 +171,24 @@ void printTable(int64_t numSizes) {
 int main() {
 
    // Here, `Int` and `Real` are not yet defined, they will be passed as template parameters.
-   int64_t m(1048573);  // Prime modulus near 2^{20}
+   // NTL::ZZ mm(1021);  // Prime modulus near 2^{10}
+   // int64_t m(1048573);  // Prime modulus near 2^{20}
    NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
    // The following values of `mm` work only with ZZ.
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
    // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
+   //int64_t numSizes = 8;
+   //int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
    int64_t numSizes = 8;
    int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
 
    // Here we can test with any combination of types.
-   testLoop<int64_t, double>(m, numSizes, numRep);  // This one works only for the smaller m.
+   //testLoop<int64_t, double>(conv<int64_t>(mm), numSizes, numRep);  // This one works only for the smaller m.
    testLoop<NTL::ZZ, double>(mm, numSizes, numRep);
-   testLoop<NTL::ZZ, xdouble>(mm, numSizes, numRep);
-   testLoop<NTL::ZZ, quad_float>(mm, numSizes, numRep);
-   testLoop<NTL::ZZ, NTL::RR>(mm, numSizes, numRep);
+   //testLoop<NTL::ZZ, xdouble>(mm, numSizes, numRep);
+   //testLoop<NTL::ZZ, quad_float>(mm, numSizes, numRep);
+   //testLoop<NTL::ZZ, NTL::RR>(mm, numSizes, numRep);
    return 0;
 }
 

@@ -49,30 +49,27 @@ using namespace NTL;
 namespace NTL {
 
 
-/**
+/*
  * \name Pointers to NTL matrix rows.
  * @{
  * An extension of `NTL::Vec<T>` implemented in this module to be used as
  * a reference to a matrix row. This is essentially the same as defining a
  * variable which is a pointer to the row vector.
  */
+/*
 template <class M>
   class Mat_row : public Vec<typename M::value_type> {
     public:
-      /**
-       * No new vector is created, only a reference to the row.
-       */
+       // No new vector is created, only a reference to the row.
       inline Mat_row(M& data, long i) {
         this->_vec__rep = (typename M::value_type*&) data[i]._vec__rep;
       }
-      /**
-       * Empty constructor.
-       * */
+      // Empty constructor.
       inline ~Mat_row() {
-        this->_vec__rep = 0; /* avoid destruction in parent class */
+        this->_vec__rep = 0;   //  Avoid destruction in parent class.
       }
   };
-
+*/
 
 //============================================================================
 
@@ -227,9 +224,11 @@ inline void power2(NTL::ZZ &z, std::int64_t i) {
 //	return std::log(x);
 //}
 
+/*
 inline double inv(const double x) {
     return 1.0 / x;
 }
+*/
 
 /**
  * Transposes `A` into `X`.
@@ -241,6 +240,8 @@ inline double inv(const double x) {
  *  and it is probably slower.  Remove?                     !!!!!      *****
  *
  */
+
+/*
 template<typename T>
 static void transpose(NTL::Mat<T> &X, const NTL::Mat<T> &A) {
     int64_t n = A.NumRows();
@@ -269,18 +270,20 @@ static void transpose(NTL::Mat<T> &X, const NTL::Mat<T> &A) {
                 X[j][i] = A[i][j];
     }
 }
+*/
 
 /**
  * Another implementation of the `transpose` function.  Returns the transpose of `a`.
  * No need for this:  Just call NTL::transpose(x, a) directly!  *********
  * */
+/*
 template<typename T>
 static inline NTL::Mat<T> transpose(const NTL::Mat<T> &A) {
     NTL::Mat<T> X;
     transpose(X, A);
     return X;
 }
-
+*/
 
 //============================================================================
 

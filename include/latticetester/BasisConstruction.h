@@ -53,7 +53,7 @@ using namespace NTL;
 /**
  * \file latticetester/BasisConstruction.h
  *
- * This file offers functions to construct a basis from a set of generating
+ * Static functions to construct a basis from a set of generating
  * vectors that are not necessarily independent, to construct a triangular basis,
  * to construct the basis for a projection over a given subset of coordinates,
  * and to obtain the \f$m\f$-dual of a given basis.

@@ -11,7 +11,8 @@
 
 /**
  * \file LLL_lt.h
- * This file offers static functions that are slightly modified versions of the `LLL` and `BKZ`
+ *
+ * Static functions that are slightly modified versions of the `LLL` and `BKZ`
  * functions of NTL.
  *
  * With the modified functions, it is possible to apply the reductions only to an

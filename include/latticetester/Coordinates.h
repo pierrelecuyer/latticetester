@@ -5,7 +5,7 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// You may obtain a copy of the License a t
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
@@ -31,10 +31,10 @@ namespace LatticeTester {
   /**
    * \class Coordinates
    *
+   * An object type that contains a set of coordinate indices, used to specify a projection.
+   *
    * This is a standard C++ set, `std::set<std::size_t>`, with additional input and output operators.
-   * An object of this class is used to store a set of coordinate indices that represents
-   * a projection, usually with lacunary indices.  These types of objects are created
-   * and returned by the classes in the `CoordinateSets` namespace.
+   * These types of objects are created and returned by the classes in the `CoordinateSets` namespace.
    * This class also offers some input and output operators.
    * Important: The coordinates are assumed to start at 1.
    */

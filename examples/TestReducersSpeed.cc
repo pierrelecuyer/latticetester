@@ -7,8 +7,7 @@
  * For the BB, we use the Cholesky decomposition.
  * See the Lattice Tester Guide for more explanations and results.
  *
- * The `main` must be changed and recompiled to change the value of `m` and
- * to switch between primal and m-dual.
+ * The `main` must be changed and recompiled to change the value of `m`.
  */
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

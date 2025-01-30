@@ -32,10 +32,10 @@ using namespace std;
 namespace LatticeTester {
 
   /**
-   * \file latticetester/Chrono.h
+   * \class latticetester/Chrono.h
    *
-   * This class acts as an interface to the system clock to compute the CPU
-   * time used by parts of a program.
+   * This class provides `Chrono` objects that act as stopwatches that use the
+   * system clock to compute the CPU time used by parts of a program.
    *
    * Every object `Chrono` acts as an independent *stopwatch*. Several such
    * stopwatchs can run at any given time. An object of type `Chrono` must be

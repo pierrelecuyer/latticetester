@@ -1,5 +1,5 @@
 /**
- * We take a lattice obtained from a small LCG and we follow what happens when
+ * Here we take a lattice obtained from a small LCG and we follow what happens when
  * we run `shortestVector` from `ReducerBB` to find a shortest vector.
  * We consider the L1 and L2 norms and compare he `CHOLESKY` and `TRIANGULAR`
  * decompositions, for both the primal and $m$-dual lattices.

@@ -1,6 +1,8 @@
 /**
  * This program computes the various bounds in the `Normalizer` subclasses and display
- * them in two tables, for the L1 and L2 norms, for comparison.
+ * them in two tables, for the L1 and L2 norms, for comparison.  It also prints a table that
+ * gives the center densities \f$\delta_t\f$ that correspond to the given estimates of \f$gamma_t\f$.
+ * See the guide for more details.
  */
 
 #include <iostream>
@@ -48,8 +50,6 @@ int main() {
        std::cout << " &    " << std::setw(10) << typeBound[d];
    std::cout << " \\\\ \n";
    for (int64_t t = 1; t <= maxDim; t++) {
-//      for (auto type : { norBest, norLam, norMH, norBestUp, norRog, norML1 })
-//         std::cout << std::setw(10) << std::setprecision(10) << type.getGamma(t) << " ";
       std::cout << std::setw(4) << std::setprecision(2) << t << " & ";
       std::cout << std::setw(13) << std::setprecision(10) << norBest.getGamma(t) << " & ";
       std::cout << std::setw(13) << std::setprecision(10) << norLam.getGamma(t) << " & ";

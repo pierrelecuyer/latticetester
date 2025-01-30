@@ -29,6 +29,8 @@
 /**
  * \file FlexTypes.h
  *
+ * Tools to select and print the choices of flexible types `Int` and `Real`.
+ *
  * There are five admissible combinations of types for `(Int, Real)`.
  * They are represented by the five codes given below.
  * For example, to use Int = NTL::ZZ, Real = double in a program, it suffices to put:

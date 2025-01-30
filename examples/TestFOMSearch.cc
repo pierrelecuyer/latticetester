@@ -1,7 +1,7 @@
 /**
  * This example illustrates and compares different ways of making a search for good RNG
  * parameters in terms of the lattice structure. We do this for simple LCGs with
- * modulus m and multiplier a, based on the FOM M with a given vector t = (t_1,...,t_d),
+ * modulus m and multiplier a, based on the FOM `M_t` with a given vector `t = (t_1,...,t_d)`,
  * with coordinate 1 included in all the projections, for either the primal or the m-dual.
  * The FOM can be computed exactly using the BB, or only approximated via LLL.
  * When computing the FOM for a given a, we can either exit the procedure (early discard)
