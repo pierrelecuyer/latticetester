@@ -37,12 +37,10 @@
 #include "latticetester/BasisConstruction.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/IntLatticeExt.h"
-//#include "latticetester/LLL_lt.h"
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/ReducerStatic.h"
 #include "latticetester/ReducerBB.h"
 #include "latticetester/Weights.h"
-// #include "latticetester/WeightsOrderDependent.h"
 #include "latticetester/NormaBestLat.h"
 #include "latticetester/NormaBestUpBound.h"
 #include "latticetester/WeightsUniform.h"
@@ -51,17 +49,15 @@
 namespace LatticeTester {
 
 /**
- * This class offers funcitons to calculate the figure of merit (FOM)
- * for the m-dual of any given 'IntLatticeExt' object. It is implemented 
- * as a subclass of 'FigureOfMeritM.h' and thus requires the same input for the 
- * constructor. We refer the reader to 'FigureOfMeritM.h' for further details.
- * The main method of this class is 'computeMeritM' which calculates the actual 
- * FOM for the m-dual lattice of a given lattice. The computation is stopped 
- * (early exit) as soon as we know that the value of the FOM will be outside 
- * the interval `[low, high]`.
+ * \class FigureOfMeritDualM
+ *
+ * This class offers tools to calculate the same figure of merit (FOM)
+ * as `FigureOfMerit`, but for the m-dual lattice.
  * 
- * Note: The class works only for the case where  "PrecisionType == DOUBLE".   
- * This is a limitation.
+ * The only change from the parent class `FigureOfMerit` is in the
+ * two functions `computeMeritSucc` and `computeMeritNonSucc`.
+ * The constructor is very similar.  The computation is stopped
+ * (early exit) as soon as we know that the value of the FOM will be too small.
  */
 template<typename Int, typename Real>
 class FigureOfMeritDualM: public FigureOfMeritM<Int, Real> {
@@ -72,7 +68,7 @@ private:
 	// typedef NTL::Vec<Real> RealVec;
 public:
 
-	/*
+	/**
 	 * This constructor will call `setTVector` with the given vector `t`
 	 * and `includeFirst` variable, then set the `Weights`, `Normalizer` and `ReducerBB` to the given values.
 	 */
@@ -91,13 +87,14 @@ public:
 	 */
 	//double computeMeritDual (IntLatticeExt<Int, Real> & lat,
 	//        IntLattice<Int, Real> &proj);
-	/*
-	 * Same as computeMeritSucc but for the m-dual lattice.
+
+	/**
+	 * Same as `computeMeritSucc` in parent class, but for the m-dual lattice.
 	 */
 	double computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit = DBL_MAX) override;
 
-	/*
-	 * Same as computeMeritNonSucc but for the m-dual lattice.
+	/**
+	 * Same as `computeMeritNonSucc` in parent class, but for the m-dual lattice.
 	 */
 	double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
 			IntLattice<Int, Real> &proj, double minmerit = DBL_MAX) override;

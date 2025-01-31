@@ -48,17 +48,20 @@
 namespace LatticeTester {
 
 /**
- * This class provides a tool to calculate the figure of merit (FOM)
- * \f{equation}{
+ * \class FigureOfMeritM
+ *
+ * This class provides tools to calculate the *figure of merit* (FOM)
+ * \f$ M_{t_1,\dots,t_d}\f$ defined as
+ * \f[
  *    M_{t_1,\dots,t_d} = \min\left[ \min_{I\in S(t_1)} \omega_I \ell_I/\ell_I^*(\eta_I),\;
  *    \min_{2\le s\le d}\, \min_{I\in S(s,t_s)} \omega_I \ell_I/\ell_I^*(\eta_I) \right],
- * \f}
- * defined in Section 10 of the guide, for any given `IntLatticeExt` object.
- * The FOM is computed only for the (rescaled) primal lattice, the m-dual is never used.
+ * \f]
+ * for any given `IntLatticeExt` object.
+ * This FOM is computed only for the (rescaled) primal lattice, the m-dual is never used.
  * To compute the FOM for the dual, one should first dualize the lattice.
- * The projections in \f$S(t_1)$\f are those over successive coordinates in up to \f$t_1$\f
- * dimensions, while those is @f$S(s,t_s)@f$ are projections over \f$s$\f distinct coordinates
- * that are non necessarily successive and are all in the set \f$\{1,\dots,t_s\}$\f,
+ * The projections in \f$S(t_1)\f$ are those over successive coordinates in up to \f$t_1\f$
+ * dimensions, while those is @f$S(s,t_s)@f$ are projections over \f$s\f$ distinct coordinates
+ * that are non necessarily successive and are all in the set \f$\{1,\dots,t_s\}\f$,
  * for each order @f$s > 1@f$.
  * There are two variants for the latter: the first (default) variant takes
  * @f$S(s,t_s)@f$ as just defined (also defined in the guide), and the other considers
@@ -94,9 +97,7 @@ namespace LatticeTester {
  * will be below the lower bound, whose value can be changed via `setLowBound`.
  * The default value is 0.
  *
- * *****  WARNING: For now, this class works only for the Euclidean norm, right?    *****
  */
-
 template<typename Int, typename Real>
 class FigureOfMeritM {
 
@@ -106,7 +107,7 @@ private:
    //typedef NTL::Vec<Real> RealVec;
 public:
 
-   /*
+   /**
     * This constructor will call `setTVector (t, includeFirst)`,
     * then set the 'Weights', `Normalizer`, and `ReducerBB` to the given values.
     */
@@ -117,7 +118,7 @@ public:
 
    virtual ~FigureOfMeritM();
 
-   /*
+   /**
     * Sets the vector @f$(t_1,..., t_d)@f$ in the FOM definition to the vector `t`.
     * Note that the values of @f$t_1,..., t_d@f$ are taken from `t[0],...,t[d-1]`,
     * respectively.  When `includeFirst` is `true`, we consider only the non-successive
@@ -126,28 +127,28 @@ public:
     */
    void setTVector(const NTL::Vec<int64_t> &t, bool includeFirst);
 
-   /*
+   /**
     * Sets the weights used for calculating the FoM
     */
    void setWeights(Weights &w) {
       m_weights = &w;
    }
 
-   /*
+   /**
     * Sets the normalizer to `norma`.
     */
    void setNormalizer(Normalizer &norma) {
       m_norma = &norma;
    }
 
-   /*
+   /**
     * Sets the parameters for the LLL reduction. If `delta = 0`, LLL is not applied.
     */
    void setLLL(double delta = 0.99999) {
       m_deltaLLL = delta;
    }
 
-   /*
+   /**
     * Sets the parameters for the BKZ reduction. If `delta = 0`, BKZ is not applied.
     */
    void setBKZ(double delta = 0.99999, int64_t blocksize = 10) {
@@ -155,21 +156,21 @@ public:
       m_blocksizeBKZ = blocksize;
    }
 
-   /*
+   /**
     * The BB method will be applied iff this flag is set to true (the default value).
     */
    void setBB(bool redBB) {
       m_redBB = redBB;
    }
 
-   /*
+   /**
     * Sets the `ReducerBB` object that will be used for BB.
     */
    void setReducerBB(ReducerBB<Int, Real> *red) {
       m_red = red;
    }
 
-   /*
+   /**
     * Sets the low bound for the FOM.
     * The FOM computation is stopped as soon as we know it is below this bound.
     * The default value is 0.
@@ -178,7 +179,7 @@ public:
       m_lowbound = low;
    }
 
-   /*
+   /**
     * The level of verbosity in the terminal output.
     * The default value is 0 (minimal output).
     * Values from 1 to 4 give increasingly more details.
@@ -187,7 +188,7 @@ public:
       m_verbose = verbose;
    }
 
-   /*
+   /**
     * The level of details in the informations that are collected, such as the worst-case projection,
     * the corresponding shortest vector, its square length, etc.
     * The default value is 0 (minimal information, only the FOM).
@@ -197,7 +198,7 @@ public:
       m_collectLevel = collect;
    }
 
-   /*
+   /**
     * Returns the square length of the shortest vector for the worst-case projection.
     * The returned value is valid only if the collection level was at least 1.
     */
@@ -205,7 +206,7 @@ public:
       return m_minMeritSqlen;
    }
 
-   /*
+   /**
     * Returns the projection that gives the worst merit value.
     * The returned value is valid only if the collection level was at least 1.
     */
@@ -213,7 +214,7 @@ public:
       return m_minMeritProj;
    }
 
-   /*
+   /**
     * This function computes and returns the merit value for a single projection
     * represented in lattice `proj`, in `dim` dimensions.
     * It returns 0 if the computation is not completed for any reason.
@@ -221,7 +222,7 @@ public:
    double computeMeritOneProj(IntLattice<Int, Real> &proj, const Coordinates &coord,
          double minmerit = DBL_MAX);
 
-   /*
+   /**
     * This function computes and returns the FOM only for the projections
     * over sets of successive coordinates of the form
     * {1, 2, ..., m_t.length()} to {1, 2, ..., m_t[0]}, and returns the minimum.
@@ -229,7 +230,7 @@ public:
     */
    virtual double computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit = DBL_MAX);
 
-   /*
+   /**
     * This function computes and returns the FOM only for the projections
     * over sets on non-successive coordinates determined by
     *  @f$S(s,t_s)@f$ or  @f$S^{(1)}(s,t_s)@f$.
@@ -239,13 +240,13 @@ public:
    virtual double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj,
          double minmerit = DBL_MAX);
 
-   /*
+   /**
     * This function computes and returns the value of the FOM for the given lattice 'lat'.
     * The function returns 0 if the computation was not completed for some reason
     * (early exit, error, etc.).
     * The parameter `proj` points to a secondary `IntLattice` object used to store the
     * projections when computing the FOM.  The `maxDim` in this object must be large
-    * enough so it can store any of the projections: `maxDim`\f$\ge \max(s,t_1)$\f.
+    * enough so it can store any of the projections: `maxDim`\f$\ge \max(s,t_1)\f$.
     * Re-using this object permits one to avoid creating new objects internally.
     * We need a full `IntLattice` object (not only a basis) for when we apply BB to the projection.
     */

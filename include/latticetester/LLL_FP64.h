@@ -12,7 +12,8 @@ using namespace NTL;
 /**
  * \file LLL_FP64.h
  *
- * Contains a modified version of the `LLL_FP` module of NTL.
+ * A modified version of the `LLL_FP` module of NTL.
+ *
  * With the modified functions, the basis entries are in `long`, alias `int64_t`.
  * We can also apply LLL or BKZ only to a submatrix
  * (first `r` rows and `c` columns) of the matrix `B` that is passed in and returned.

@@ -81,8 +81,7 @@ class Normalizer {
 
 public:
     /**
-     * The maximum dimension of the lattices for which this class can give
-     * an upper bound.
+     * The maximum dimension of the lattices for which this class can compute a bound.
      */
     static const int64_t MAX_DIM = 48;
 
@@ -94,21 +93,18 @@ public:
      * The bounds \f$ d_t^*(\eta)\f$ will then be computed by assuming those densities.
      * To compute bounds for the m-dual, pass `-logm` instead of `logm`.
      * The values of \f$\log m\f$ (in natural basis) and \f$k\f$ must be given as inputs.
-     * The parameter `name` is used by subclasses
      */
     Normalizer(double logm, int64_t k, int64_t maxDim, NormType norm = L2NORM);
 
     /**
-     * *****  DEPRECATED  *****
-     *
-     * This old (legacy) constructor assumes that the lattice is not rescaled.
+     * This old (legacy) constructor assumes that the lattice is not rescaled
+     * and that the (log)density is the same in all dimensions, which practically
+     * never true when rescaling.
      * It creates a `Normalizer` by assuming that the density is
      * \f$\eta=\exp(\text{logDensity})\f$ in all dimensions.
-     * This is (probably) never true when there is rescaling.
-     * The bounds will be computed in up to `maxDim` dimensions.
+     * The bounds are computed in up to `maxDim` dimensions.
      * To compute bounds for the dual, use `-logDensity` instead of `logDensity`.
      * Only subclasses can actually compute the bounds.
-     * The `name` parameter gives name that will be printed by the ToString() method.
      * The `norm` parameter is the `NormType` used by this object.
      */
     Normalizer(double logDensity, int64_t maxDim, NormType norm = L2NORM);
@@ -116,7 +112,7 @@ public:
     /**
      * This constructor creates a Normalizer object without computing any bounds.
      * This is used in the case of rank 1 lattices in the `NormaPalpha`
-     * class with a prime density, and also by the constructors in subclasses.
+     * class with a prime density, and also by some constructors in subclasses.
      */
     Normalizer(int64_t maxDim, NormType norm = L2NORM);
 
@@ -128,27 +124,27 @@ public:
     }
 
     /**
-     * This method is rarely applicable!
-     * It computes bounds by assuming that the log density is `logDensity`
-     * for all dimensions up to the maximal dimension `maxDim`.
+     * This method computes the bounds that this normalizer will return, by assuming that
+     * the primal lattice was rescaled by the factor \f$m\f$ and has order \f$k\f$,
+     * so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
+     * exceed \f$m^s\f$ for projections in \f$s < k\f$ dimensions.
+     * It is called by the constructors of subclasses, in which the constants
+     * `gamma_t` are known.
+     * The values of \f$\log m\f$ (in natural basis) and \f$k\f$ are passed as inputs.
+     * To compute bounds for the m-dual, just pass `-logm` instead of `logm`.
+     * The bounds can be retrieved via `getBounds()` or `getBound(j)`.
+     */
+    void computeBounds(double logm, int64_t k);
+
+    /**
+     * This method computes bounds by assuming that the log density is `logDensity`
+     * for all dimensions up to the maximal dimension `maxDim`, which is rarely true.
      * It ignores all rescaling.  This will become the new `logDensity` in this object.
      * To compute bounds for the dual, use `-logDensity` instead of `logDensity`.
      * This method is called by the constructors of subclasses, in which the constants
      * `gamma_t` are known.
      */
     virtual void computeBounds(double logDensity);
-
-    /**
-     *  This method is called by the constructors of subclasses, in which the constants
-     * `gamma_t` are known. It computes the bounds that this normalizer will return, by assuming that
-     * the primal lattice was rescaled by the factor \f$m\f$ and has order \f$k\f$,
-     * so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
-     * exceed \f$m^s\f$ for projections in \f$s < k\f$ dimensions.
-     * The values of \f$\log m\f$ (in natural basis) and \f$k\f$ must be given as inputs.
-     * To compute bounds for the m-dual, just pass `-logm` instead of `logm`.
-     * The bounds can be retrieved via `getBounds()` or `getBound(j)`.
-     */
-    void computeBounds(double logm, int64_t k);
 
     /**
      * Returns a string that describes this object.

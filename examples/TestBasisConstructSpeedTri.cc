@@ -178,8 +178,6 @@ int main() {
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
    // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
-   //int64_t numSizes = 8;
-   //int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
    int64_t numSizes = 8;
    int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
 

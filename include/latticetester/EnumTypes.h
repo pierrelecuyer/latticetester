@@ -25,7 +25,7 @@ using namespace std;
 /**
  * \file latticetester/EnumTypes.h
  *
- * Collects the enumeration types and global constants used in LatticeTester.
+ * Enumeration types and global constants used in LatticeTester.
  * Some of them may be no longer used or deprecated.
  * This file should be cleaned up at some point, when we are done.
  */
