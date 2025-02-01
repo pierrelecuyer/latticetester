@@ -53,8 +53,8 @@ namespace LatticeTester {
  * This class provides tools to calculate the *figure of merit* (FOM)
  * \f$ M_{t_1,\dots,t_d}\f$ defined as
  * \f[
- *    M_{t_1,\dots,t_d} = \min\left[ \min_{I\in S(t_1)} \omega_I \ell_I/\ell_I^*(\eta_I),\;
- *    \min_{2\le s\le d}\, \min_{I\in S(s,t_s)} \omega_I \ell_I/\ell_I^*(\eta_I) \right],
+ *    M_{t_1,\dots,t_d} = \min\left[ \min_{I\in S(t_1)} \frac{\ell_I}{ \omega_I\, \ell_I^*(\eta_I)},\;
+ *    \min_{2\le s\le d}\, \min_{I\in S(s,t_s)} \frac{\ell_I}{\omega_I \,\ell_I^*(\eta_I)} \right],
  * \f]
  * for any given `IntLatticeExt` object.
  * This FOM is computed only for the (rescaled) primal lattice, the m-dual is never used.
@@ -72,14 +72,14 @@ namespace LatticeTester {
  * The lengths of the shortest vectors in the projections can be calculated exactly by using the
  * BB algorithm after applying some pre-reduction, or they can be just approximated
  * by the lengths of the shortest basis vector obtained after applying some pre-reduction
- * such as LLL or BKZ.  The latter is much faster but not exact.
+ * such as LLL or BKZ.  The latter is faster but not exact.
  *
  * The constructor has two template parameters to specify which `Int` and `Real` types are used.
  * It also requires the vector @f$(t_1,\dots,t_d)@f$,
  * a `Weights` object that gives a weight to each projection,
  * a `Normalizer` object used to normalize the merit values,
  * a `ReducerBB` object used for the reduction in case we want to apply BB, and the
- * `includeFirst` parameter in case we want to change it to `false`.
+ * `includeFirst` parameter in case we want to change it to `true`.
  * The last two parameters are optional.
  * The BB is applied if and only if a (nonzero) `ReducerBB` is given.
  * Otherwise, we just use static methods for the reduction and need no `Reducer`.

@@ -607,22 +607,22 @@ void upperTriangularBasisOld96 (Matr &V, Matr &W, const Int &m, int64_t lin, int
 
 template<typename Int>
 void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
-   // Note:  A = basis,  B = basisDual
+   // Note:  A = basis,  B = basisDual is upper triangular
    if (dim == 0) dim = A.NumRows();
    assert(dim <= A.NumCols());
    assert(dim <= B.NumRows() && dim <= B.NumCols());
    for (int64_t i = 0; i < dim; i++) {
       // Put zeros under the diagonal.
-      for (int64_t j = i + 1; j < dim; j++)
+      for (int64_t j = 0; j < i; j++)
          NTL::clear(B[i][j]);
       // Set diagonal elements.
       NTL::div(B[i][i], m, A[i][i]);
       // Compute the other ones.
-      for (int64_t j = i - 1; j >= 0; j--) {
-         NTL::clear(B[j][i]);
-         for (int64_t k = j + 1; k <= i; k++)
-            NTL::MulSubFrom(B[j][i], A[k][j], B[k][i]);
-         NTL::div(B[j][i], B[j][i], A[j][j]);
+      for (int64_t j = i + 1; j < dim; j++) {
+         NTL::clear(B[i][j]);
+         for (int64_t k = i; k < j; k++)
+            NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
+         NTL::div(B[i][j], B[i][j], A[j][j]);
       }
    }
 }
@@ -631,12 +631,12 @@ void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
 
 template<typename Int>
 void mDualUpperTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
-   // Note:  A = basis,  B = basisDual
+   // Note:  A = basis,  B = basisDual is lower triangular
    if (dim == 0) dim = A.NumRows();
    assert(dim <= A.NumCols());
    assert(dim <= B.NumRows() && dim <= B.NumCols());
    for (int64_t i = 0; i < dim; i++) {
-      // Put zeros under the diagonal.
+      // Put zeros above the diagonal.
       for (int64_t j = i + 1; j < dim; j++)
          NTL::clear(B[i][j]);
       // Set diagonal elements.

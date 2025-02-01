@@ -39,6 +39,7 @@ IntMat &basis1, IntMat &basis2, IntMat &basisdual) {
 
    CopyPartMat<IntMat>(basis1, basis0, dim, dim);  // Copy basis0 to basis1.
    lowerTriangularBasis<Int>(basis2, basis1, m, dim, dim);
+   std::cout << "lower-triangular primal basis before LLL5:\n" << basis2 << "\n";
    mDualLowerTriangular(basisdual, basis2, m, dim);
    std::cout << "upper-triangular basisdual before LLL5:\n" << basisdual << "\n";
    LLLConstruction0<Int, Real>(basisdual, 0.5, dim, dim, &sqlen);
@@ -47,6 +48,7 @@ IntMat &basis1, IntMat &basis2, IntMat &basisdual) {
 
    CopyPartMat<IntMat>(basis1, basis0, dim, dim);  // Copy basis0 to basis1.
    upperTriangularBasis<Int>(basis2, basis1, m, dim, dim);
+   std::cout << "upper-triangular primal basis before LLL5:\n" << basis2 << "\n";
    mDualUpperTriangular(basisdual, basis2, m, dim);
    std::cout << "lower-triangular basisdual before LLL5:\n" << basisdual << "\n";
    LLLConstruction0<Int, Real>(basisdual, 0.5, dim, dim, &sqlen);
@@ -88,7 +90,7 @@ NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
 // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
 //NTL::ZZ a(73245663);
 NTL::ZZ a(73);
-int64_t numSizes = 7;
+int64_t numSizes = 1;
 
 testLoop<NTL::ZZ, double>(mm, a, numSizes);
 return 0;
