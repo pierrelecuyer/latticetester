@@ -35,7 +35,7 @@ clock_t timer[numMeth][maxNumSizes]; // Collects timings for each case.
 double sumSq[numMeth][maxNumSizes];  // Sums of square lengths, for a few cases.
 
 // Declaration required.
-void printTable(int64_t numSizes);
+void printTable(int64_t numSizes, double delta);
 
 // Runs a speed test for dim = dimensions[d], for triangular basis constructions.
 // Only basis0 needs to be initialized; the other matrices are used only for copy.
@@ -174,10 +174,10 @@ void testLoop(const Int &m, int64_t numSizes, int64_t numRep, double delta) {
          triangularBases<Int, Real>(m, d, dim, delta, basis0, basis1, basis2, basisdual);  // , red, lat2);
       }
    }
-   printTable(numSizes);
+   printTable(numSizes, delta);
 }
 
-void printTable(int64_t numSizes) {
+void printTable(int64_t numSizes, double delta) {
    int64_t d;
    std::cout << "Total time (includes time for other operations between triangularizations): "
              << (double) (clock() - tmpTotal) / (CLOCKS_PER_SEC) << " seconds.\n\n";
@@ -210,10 +210,10 @@ int main() {
    // Here, `Int` and `Real` are not yet defined, they will be passed as template parameters.
    // NTL::ZZ mm(1021);  // Prime modulus near 2^{10}
    // int64_t m(1048573);  // Prime modulus near 2^{20}
-   NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
+   // NTL::ZZ mm(1048573);  // Prime modulus near 2^{20}
    // The following values of `mm` work only with ZZ.
    // NTL::ZZ mm(1073741827);  // Prime modulus near 2^{30}
-   // NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
+   NTL::ZZ mm(1099511627791);  // Prime modulus near 2^{40}
    // NTL::ZZ mm(1125899906842597);  // Prime modulus near 2^{50}
    int64_t numSizes = 8;
    int64_t numRep = 1000;   // Number of replications (multipliers) for each case.
