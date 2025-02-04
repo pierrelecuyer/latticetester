@@ -13,7 +13,7 @@
 /**
  * This example makes speed comparisons with the `BasisConstruction` functions,
  * with different combinations of types. See the Lattice Tester guide for more explanations.
- * This experiment concerns mostly LLL reduction in the primal and m-dual.
+ * It concerns mostly LLL reduction in the primal and m-dual.
  * The `main` must be changed and recompiled to change the value of `m`.
  */
 using namespace NTL;

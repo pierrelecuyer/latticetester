@@ -28,10 +28,11 @@
 namespace LatticeTester {
 
 /**
- * This subclass of `IntLatticeExt` defines an MRG lattice and is similar to Rank1Lattice,
- * but constructs lattices associated with multiple recursive generators (MRGs) with 
- * modulus m, order k, and vector of multipliers a = (a_1, . . . , a_k).
+ * \class MRGLattice
  *
+ * This subclass of `IntLatticeExt` defines an MRG lattice.  It is similar to `Rank1Lattice`,
+ * but constructs lattices associated with multiple recursive generators (MRGs) with 
+ * modulus \f$m\f$, order \f$k\f$, and vector of multipliers \f$\mathbf{a} = (a_1, . . . , a_k)\f$.
  * The functions `buildBasis` and `incDimBasis` always build and update the primal basis.
  * To build the m-dual, use `buildDualBasis`.
  */
@@ -56,7 +57,7 @@ public:
     */
    // MRGLattice(const MRGLattice<Int, Real> &Lat);
 
-   /**
+   /*
     * Assigns `Lat` to this object.
     */
    // MRGLattice& operator=(const MRGLattice<Int, Real> &Lat);
@@ -73,14 +74,16 @@ public:
    void setaa(const IntVec &aa);
 
    /**
-    * Builds a basis in `dim` dimensions. This `dim` must not exceed `this->maxDim()`.
+    * Builds a primal basis in `dim` dimensions. This `dim` must not exceed `this->maxDim()`.
     * This initial primal basis will be upper triangular.
     */
    void buildBasis(int64_t dim);
 
    /**
-    * Builds both the primal and an m-dual lower triangular basis directly
-    * in `dim` dimensions.  This `dim` must not exceed `maxDim`.
+    * Builds an m-dual lower triangular basis directly in `dim` dimensions.
+    * This `dim` must not exceed `maxDim`.
+    * This function uses the existing primal basis if it has at least `dim` dimensions,
+    * otherwise it also computes it in `dim` dimensions.
     */
    void buildDualBasis(int64_t dim);
 
@@ -91,10 +94,12 @@ public:
    void incDimBasis();
 
    /**
-    * Increases the current dimension of both the primal and m-dual basis by 1.
+    * Increases the current dimension of the m-dual basis by 1.
     * The new increased dimension must not exceed `maxDim`.
     * This function uses the simplified method for MRG lattices given in the lattice tester guide.
-    * It requires the original primal basis to update the m-dual.
+    * It requires the original primal basis to update the m-dual, so if the dimension of the
+    * primal is smaller than the new dimension of the m-dual, the dimension of the primal will
+    * also be increased to that new dimension.
     */
    void incDimDualBasis();
 
@@ -116,7 +121,7 @@ public:
    void buildProjectionDual(IntLattice<Int, Real> &projLattice, const Coordinates &proj) override;
 
    /**
-    * Returns the first `dim` components of the generating vector \f$\ba\f$ as a string,
+    * Returns the first `dim` components of the generating vector \f$\mathbf{a}\f$ as a string,
     * where `dim` is the current lattice dimension.
     */
    std::string toStringCoef() const;
@@ -159,7 +164,7 @@ protected:
    IntVec m_y;
 
    /**
-    * This auxiliary matrix is used to store the generating vectors of a projections
+    * This auxiliary matrix is used to store the generating vectors of projections
     * before reducing them into a triangular basis.
     */
    IntMat m_genTemp;

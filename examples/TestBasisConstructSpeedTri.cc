@@ -13,9 +13,9 @@
 // #include "latticetester/ReducerBB.h"
 
 /**
- * This example makes speed comparisons with the `BasisConstruction` functions,
+ * This example concerns mostly the construction of triangular bases and their m-duals.
+ * It makes speed comparisons with the `BasisConstruction` functions,
  * with different combinations of types. See the Lattice Tester guide for more explanations.
- * This experiment concerns mostly the construction of triangular bases and their m-duals.
  * The `main` must be changed and recompiled to change the value of `m`.
  */
 using namespace NTL;
@@ -63,7 +63,6 @@ void triangularBases(const Int &m, int64_t d, int64_t dim, double delta, IntMat 
    timer[1][d] += clock() - tmp;
 
    tmp = clock();
-   // CopyPartMat<IntMat>(basisdual, basis5, dim, dim);  // Copy basis0 to basis1.
    LLLConstruction0<Int, Real>(basis5, delta, dim, dim, &sqlen);
    timer[2][d] += clock() - tmp;
    // lat2.setBasis(basisdual, dim);
@@ -87,7 +86,6 @@ void triangularBases(const Int &m, int64_t d, int64_t dim, double delta, IntMat 
    tmp = clock();
    LLLConstruction0<Int, Real>(basisdual, delta, dim, dim, &sqlen);
    timer[5][d] += clock() - tmp;
-   // std::cout << "basis after LLL:\n" << basisdual << "\n";
    sumSq[5][d] += conv<double>(sqlen[0]);
 
    CopyPartMat<IntMat>(basis1, basis0, dim, dim);  // Copy basis0 to basis1.
@@ -105,7 +103,6 @@ void triangularBases(const Int &m, int64_t d, int64_t dim, double delta, IntMat 
    timer[8][d] += clock() - tmp;
 
    // Here we start from a lower-triangular m-dual basis.
-   // std::cout << "basisdual before LLL5:\n" << basisdual << "\n";
    tmp = clock();
    LLLConstruction0<Int, Real>(basisdual, delta, dim, dim, &sqlen);
    timer[9][d] += clock() - tmp;

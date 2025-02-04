@@ -1,6 +1,6 @@
 /**
  * This program computes the various bounds in the `Normalizer` subclasses and display
- * them in two tables, for the L1 and L2 norms, for comparison.  It also prints a table that
+ * them in two tables, for the L1 and L2 norms, for comparison.  It also prints another table that
  * gives the center densities \f$\delta_t\f$ that correspond to the given estimates of \f$gamma_t\f$.
  * See the guide for more details.
  */

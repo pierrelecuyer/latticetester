@@ -39,29 +39,32 @@ using namespace LatticeTester;
 namespace LatticeTester {
 
 /**
- * \class latticetester/IntLattice.h
+ * \class IntLattice
  *
  * An `IntLattice` object is an integral lattice, with its basis or its `m`-dual basis, or both.
- * There are tools to perform simple manipulations on those lattice bases.
- * The value of `m` must be chosen in a way that all coordinates of the basis and
- * of its `m`-dual are integers, so they can be represented exactly.
- * The basis or its `m`-dual is rescaled by `m`, which is typically the smallest integer with this property.
+ * There are tools to perform simple manipulations on those lattice bases, to compute and store the
+ * vector lengths, etc.  It is assumed that the value of `m` is chosen so that all coordinates
+ * of the basis and of its `m`-dual are integers.
+ * These coordinates are then represented exactly on the computer.
+ * This property is typically achieved by rescaling the primal lattice by the appropriate factor `m`,
+ * as explained in the guide.
  *
  * The dimension `dim` of the lattice is the number of independent vectors that form a basis.
- * Usually, these vectors also have `dim` coordinates, but in general they may have more.
+ * In general, these basis vectors could have more than `dim` coordinates, but in this software
+ * we assume that the number of coordinates is always equal to the lattice dimension, and that the
+ * vectors \f$m \mathbf{e}_i\f$, which are \f$m\f$ times the unit vectors, all belong to the lattice.
  * The basis and/or the `m`-dual basis are stored in `IntMat` arrays (from %NTL) of sizes `maxDim x maxDim`,
- * where `maxDim is usually fixed to a value as large as the largest `dim` that we want to handle.
+ * where `maxDim` is usually fixed to a value as large as the largest `dim` that we want to handle.
  * We use only the upper-left `dim x dim` corner of each array to store the actual basis.
  * These arrays can then be allocated only once and never have to be resized, which improves speed.
- * A boolean variable `withPrimal` indicates if we maintain the primal basis and a variable
- * `withDual` indicates if we maintain the dual basis. At least one of them (or both) should be true.
+ * There are internal variables for the dimensions of the primal and m-dual basis.
+ * For the basis that is not maintained, that variable should be set to 0.
  *
- * A norm is also chosen in `NormType` to measure the vector lengths; by default it is the
- * Euclidean norm.
- * Methods and attributes are offered to compute and store the norms of the basis and/or
+ * Methods are offered to compute and store the norms of the basis and/or
  * the m-dual basis vectors, to permute these vectors, sort them by length, etc.
- * The norms are for the vectors of the rescaled lattice and its m-dual.
- * An `IntLattice` object contains protected variables to store all these quantities.
+ * Some quantities are stored in protected variables.
+ * A norm must be chosen to measure the vector lengths in the (rescaled) primal lattice
+ * and its m-dual; by default it is the Euclidean norm.
  * For better efficiency, we should avoid creating many `IntLattice` objects, for example when
  * making searches for good lattices. We should try to reuse the same one as much as we can.
  *
@@ -72,8 +75,8 @@ namespace LatticeTester {
  * recompute a basis for a large number of different projections, which can be specified
  * by a `CoordinateSets` object.
  *
- * The class `IntLatticeExt` extends this class and contains virtual methods that must
- * be defined in its subclasses.
+ * The class `IntLatticeExt` extends this class and contains additional virtual methods that
+ * depend on the specific lattice type that is considered.  These methods must be defined in subclasses.
  */
 
 template<typename Int, typename Real>
@@ -82,8 +85,8 @@ class IntLattice {
 public:
 
    /**
-    * Constructs a lattice whose basis is the identity, in `maxDim` dimensions,
-    * with the specified norm type, and the scaling factor `m`.
+    * Constructs a lattice whose basis is uninitialized, in `maxDim` dimensions,
+    * with the scaling factor `m` and specified norm type.
     */
    IntLattice(const Int m, const int64_t maxDim, NormType norm = L2NORM);
 
@@ -96,7 +99,6 @@ public:
    /**
     * Constructs a lattice with the given basis and given m-dual basis for the given `m`,
     * in `maxDim` dimensions, and with the specified norm type.
-    * In this case, by default, both the primal and m-dual basis will be maintained.
     * The two `IntMat` objects must be of size `maxDim` by `maxDim`.
     */
    IntLattice(const IntMat primalbasis, const IntMat dualbasis, const Int m, const int64_t maxDim,
@@ -141,7 +143,7 @@ public:
     * to examine several different projections.
     * Note that representing each projection as an `IntLattice` object is required when
     * we want to call `Reducer::shortestVector` for several projections.
-    * This function can be overridden by more efficient ones in certain classes.
+    * This function can be overridden by more efficient ones in subclasses.
     */
    virtual void buildProjectionLLL(IntLattice<Int, Real> &projLattice, const Coordinates &proj,
          double delta = 0.5);
@@ -149,7 +151,7 @@ public:
    /**
     * Builds a basis for the projection of the present lattice over the set of coordinates
     * determined by `proj`. This becomes the basis in `projLattice`.
-    * By default, it uses an upper-triangular construction.
+    * By default, it uses an upper-triangular construction, but it can be overridden in subclasses.
     * It is assumed that a basis for the present lattice is already available and contains
     * all the coordinates in `proj`.
     */
@@ -209,8 +211,8 @@ public:
    }
 
    /**
-    * Returns the current dimension of the primal lattice, which is the dimension of the basis vectors,
-    * and also usually the number of independent vectors in the basis.
+    * Returns the current dimension of the primal lattice, which should be the dimension of the basis vectors
+    * and also the number of independent vectors in the basis.
     */
    int64_t getDim() const {
       return m_dim;
@@ -278,7 +280,7 @@ public:
    }
 
    /**
-    * Sets the dimension of the primal basis to `dim`. This does not change `maxDim` nor any of the
+    * Sets the dimension of the m-dual basis to `dim`. This does not change `maxDim` nor any of the
     * basis vectors, but only the dimension variable.
     */
    void setDimDual(const int64_t dim) {

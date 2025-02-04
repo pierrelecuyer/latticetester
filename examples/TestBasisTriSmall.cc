@@ -13,7 +13,8 @@
 /**
  * This program examines what happens when we apply LLL and construct triangular bases
  * for the primal and m-dual lattices associated with an LCG.
- * We want to see for instance when `m e_i` becomes a shortest vector in the primal.
+ * It shows for instance when `m e_i` becomes a shortest vector in the primal,
+ * and also some particular property of the m-dual basis after LLL.
  */
 using namespace NTL;
 using namespace LatticeTester;

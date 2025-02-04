@@ -25,6 +25,8 @@
 namespace LatticeTester {
 
 /**
+ * \class NormaBestLat
+ *
  * This Normalizer class implements approximate upper bounds on the length of the shortest nonzero
  * vector in a lattice. In the dimensions in which the Hermite constants \f$\gamma_s\f$ are known,
  * the exact values are used.  For the other dimensions, they are approximated
@@ -33,7 +35,7 @@ namespace LatticeTester {
  * \f[
  *    \gamma_s = 4 \delta_s^{2/s}.
  * \f]
- * These values are taken from able I.1(a) in the preface of \cite mCON99a.
+ * These values are taken from Table I.1(a) in the preface of \cite mCON99a.
  * See also Table 1 in \cite mCOH17a.
  * These approximations are stored in a table accessible via the `getGamma` method.
  * The values given here are for the L2NORM.

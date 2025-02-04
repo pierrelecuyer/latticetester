@@ -28,6 +28,8 @@
 namespace LatticeTester {
 
 /**
+ * \class Normalizer
+ *
  * This is a base class for implementing normalization constants used in figures of merit,
  * to normalize the length of the shortest nonzero vector in either the primal or dual lattice.
  * These constants are based on upper bounds (or approximations) on the best possible length,

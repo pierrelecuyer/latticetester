@@ -129,6 +129,8 @@ namespace LatticeTester {
   namespace CoordinateSets {
 
     /**
+     * \class FromRanges
+     *
      * A `CoordinateSets` for coordinates within a given range.
      * This contains ways to build all subsets of coordinates of a given size
      * in an interval \f$\{\mathtt{minCoord}, \dots, \mathtt{maxCoord}\}\f$.
@@ -567,6 +569,8 @@ namespace LatticeTester {
     //==========================================================================
 
     /**
+     * \class AddCoordinate
+     *
      * This template class wraps any implementation of a CoordinateSets and
      * adds a specific coordinate to each coordinate sets. When iterating
      * through the subsets of this class, they will not be ordered by cardinality

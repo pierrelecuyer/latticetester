@@ -23,7 +23,7 @@
 using namespace std;
 
 /**
- * \file latticetester/EnumTypes.h
+ * \file EnumTypes.h
  *
  * Enumeration types and global constants used in LatticeTester.
  * Some of them may be no longer used or deprecated.

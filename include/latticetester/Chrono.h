@@ -32,7 +32,7 @@ using namespace std;
 namespace LatticeTester {
 
   /**
-   * \class latticetester/Chrono.h
+   * \class Chrono
    *
    * This class provides `Chrono` objects that act as stopwatches that use the
    * system clock to compute the CPU time used by parts of a program.

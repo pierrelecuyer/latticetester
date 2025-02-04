@@ -51,12 +51,15 @@ namespace LatticeTester {
 /**
  * \class FigureOfMeritDualM
  *
- * This class offers tools to calculate the same figure of merit (FOM)
- * as `FigureOfMerit`, but for the m-dual lattice.
- * 
+ * This class offers tools to calculate the same figure of merit (FOM) as `FigureOfMerit`,
+ * but for the m-duals of the projections.
+ *
+ * That is, for each projection, a shortest vector
+ * is computed for the m-dual of the projection, as explained in the guide,
+ * and not for the projection of the $m$-dual lattice.
  * The only change from the parent class `FigureOfMerit` is in the
  * two functions `computeMeritSucc` and `computeMeritNonSucc`.
- * The constructor is very similar.  The computation is stopped
+ * The rest is essentially the same.  The computation is stopped
  * (early exit) as soon as we know that the value of the FOM will be too small.
  */
 template<typename Int, typename Real>

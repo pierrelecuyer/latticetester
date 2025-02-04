@@ -28,14 +28,13 @@
 namespace LatticeTester {
 
 /**
- * \class latticetester/IntLatticeExt.h
+ * \class IntLatticeExt
  *
  * This abstract class extends `IntLattice` and is a skeleton for the
  * specialized subclasses that define specific types of lattices.
  * It is not intended to be used directly, but only via subclasses.
  * An `IntLatticeExt` object is an `IntLattice` with additional (virtual) methods
  * that must be implemented in subclasses.
- *
  * There are virtual methods to construct a basis and/or an m-dual basis of the full lattice
  * and to extend the current basis and/or its m-dual by one coordinate.
  * These methods must be implemented in the subclasses.
@@ -54,7 +53,8 @@ class IntLatticeExt: public IntLattice<Int, Real> {
 public:
 
    /**
-    * A constructor that initializes the primal and dual bases with the identity matrix.
+    * A constructor that reserves the space for the primal and m-dual bases and vector lengths,
+    * but does not initialize them.
     * The scaling factor for the integer coordinates is set to `m`,
     * the maximal dimension of the lattice is set to `maxDim`,
     * and the norm type is set to `norm`.
@@ -83,13 +83,13 @@ public:
    /*
     * This returns the rank (order) `k` of the lattice.   Needed?
     */
+
    // int64_t getOrder() const { return m_order; }
    /**
     * This virtual method builds a basis for the lattice in `dim` dimensions,
     * and store it in the upper-left part of the internal `m_basis` variable,
     * which is assumed to be an `IntMat` object of dimensions maxDim x maxDim.
     * The parameter `dim` must not exceed `maxDim`.
-    * If `withDual` is true, it also builds an m-dual basis.
     */
    virtual void buildBasis(int64_t dim) {
    }
@@ -97,7 +97,7 @@ public:
 
    /**
     * Similar to `buildBasis`, but builds only the m-dual basis, in `dim` dimensions.
-    * This `dim` must not exceed `maxDim`. The flag  `withDual` is assumed to be true.
+    * This `dim` must not exceed `maxDim`.
     */
    virtual void buildDualBasis(int64_t dim) {
    }
@@ -107,7 +107,6 @@ public:
     * Increments the dimension `dim` of the basis by one. One coordinate is added
     * to each basis vector and one new basis vector is added as well.
     * Usually, the other coordinates are left unchanged.
-    * If `withDual` is true, then the dimension of the m-dual is also increased by 1.
     */
    virtual void incDimBasis() {
    }
@@ -120,7 +119,7 @@ public:
    }
    ;
 
-   /**
+   /*
     * Returns a string describing this lattice.
     */
    // virtual std::string toString() const {
