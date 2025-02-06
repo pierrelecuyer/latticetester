@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -114,10 +114,8 @@ $(function(){initNavTree('d8/d0e/classLatticeTester_1_1WeightsPOD.html','../../'
 </div><!--header-->
 <div class="contents">
 
-<p>Defines product and order-dependent (POD) weights.  
+<p>Defines product and order-dependent (POD) weights, for which the weight of a projection is the sum of a product weight and an order-dependent weight.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/WeightsPOD.h&gt;</code></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for LatticeTester::WeightsPOD:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -138,9 +136,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab3b41bb902b8a6077addd44ec34f069b" id="r_ab3b41bb902b8a6077addd44ec34f069b"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3b41bb902b8a6077addd44ec34f069b">~WeightsPOD</a> ()</td></tr>
 <tr class="memdesc:ab3b41bb902b8a6077addd44ec34f069b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:ab3b41bb902b8a6077addd44ec34f069b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4cbd66d3caa52613613bb8a30e482781" id="r_a4cbd66d3caa52613613bb8a30e482781"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4cbd66d3caa52613613bb8a30e482781">getWeight</a> (const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;projection) const</td></tr>
-<tr class="memdesc:a4cbd66d3caa52613613bb8a30e482781"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the weight of the projection specified by <code>projection</code>.  <br /></td></tr>
-<tr class="separator:a4cbd66d3caa52613613bb8a30e482781"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7717176cff19fd62f7c0afeb32e56883" id="r_a7717176cff19fd62f7c0afeb32e56883"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7717176cff19fd62f7c0afeb32e56883">getWeight</a> (const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;projection) const</td></tr>
+<tr class="memdesc:a7717176cff19fd62f7c0afeb32e56883"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the weight of the projection specified by <code>projection</code>.  <br /></td></tr>
+<tr class="separator:a7717176cff19fd62f7c0afeb32e56883"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3395e7d9224dbd88372f4fe5a9b57892" id="r_a3395e7d9224dbd88372f4fe5a9b57892"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dd/d7f/classLatticeTester_1_1WeightsOrderDependent.html">WeightsOrderDependent</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3395e7d9224dbd88372f4fe5a9b57892">getOrderDependentWeights</a> ()</td></tr>
 <tr class="memdesc:a3395e7d9224dbd88372f4fe5a9b57892"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the order-dependent part of the weights.  <br /></td></tr>
 <tr class="separator:a3395e7d9224dbd88372f4fe5a9b57892"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -165,9 +163,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:aa8e4087097c55f2e284da5e6b002e364" id="r_aa8e4087097c55f2e284da5e6b002e364"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8e4087097c55f2e284da5e6b002e364">format</a> (std::ostream &amp;os) const</td></tr>
-<tr class="memdesc:aa8e4087097c55f2e284da5e6b002e364"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static factory method; create a <code><a class="el" href="../../d8/d0e/classLatticeTester_1_1WeightsPOD.html" title="Defines product and order-dependent (POD) weights.">WeightsPOD</a></code> object by parsing XML data.  <br /></td></tr>
-<tr class="separator:aa8e4087097c55f2e284da5e6b002e364"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a723c4866c8b6af16a63fff9b8511f85f" id="r_a723c4866c8b6af16a63fff9b8511f85f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a723c4866c8b6af16a63fff9b8511f85f">format</a> (std::ostream &amp;os) const</td></tr>
+<tr class="memdesc:a723c4866c8b6af16a63fff9b8511f85f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identifies the type of weights, formats them and outputs them on <code>os</code>.     <br /></td></tr>
+<tr class="separator:a723c4866c8b6af16a63fff9b8511f85f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classLatticeTester_1_1Weights"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classLatticeTester_1_1Weights')"><img src="../../closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html">LatticeTester::Weights</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
@@ -185,8 +183,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:aef6c12eea0f3df2908bb03fb2675add3 inherit related_classLatticeTester_1_1Weights"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Defines product and order-dependent (POD) weights. </p>
-<p>The weight of a projection is the sum of a product weight and an order-dependent weight. </p>
+<div class="textblock"><p>Defines product and order-dependent (POD) weights, for which the weight of a projection is the sum of a product weight and an order-dependent weight. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a10e405967a0428bda4193b06de72e26f" name="a10e405967a0428bda4193b06de72e26f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a10e405967a0428bda4193b06de72e26f">&#9670;&#160;</a></span>WeightsPOD()</h2>
@@ -235,8 +232,8 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa8e4087097c55f2e284da5e6b002e364" name="aa8e4087097c55f2e284da5e6b002e364"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8e4087097c55f2e284da5e6b002e364">&#9670;&#160;</a></span>format()</h2>
+<a id="a7717176cff19fd62f7c0afeb32e56883" name="a7717176cff19fd62f7c0afeb32e56883"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7717176cff19fd62f7c0afeb32e56883">&#9670;&#160;</a></span>getWeight()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -245,24 +242,22 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void LatticeTester::WeightsPOD::format </td>
+          <td class="memname">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> LatticeTester::WeightsPOD::getWeight </td>
           <td>(</td>
-          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>projection</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Static factory method; create a <code><a class="el" href="../../d8/d0e/classLatticeTester_1_1WeightsPOD.html" title="Defines product and order-dependent (POD) weights.">WeightsPOD</a></code> object by parsing XML data. </p>
-<p>Identifies the type of weights, formats them and outputs them on <code>os</code>.   </p>
-<p>Subclasses that implement <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a> should identify themselves in the output.    </p>
+<p>Returns the weight of the projection specified by <code>projection</code>. </p>
 
-<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#af65093620c85fe29056af60dc689b143">LatticeTester::Weights</a>.</p>
+<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#a36b5b64d0859da432b61d44f6df74ca1">LatticeTester::Weights</a>.</p>
 
 </div>
 </div>
@@ -370,8 +365,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a4cbd66d3caa52613613bb8a30e482781" name="a4cbd66d3caa52613613bb8a30e482781"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4cbd66d3caa52613613bb8a30e482781">&#9670;&#160;</a></span>getWeight()</h2>
+<a id="ac5bc93222ba8c31f6da6897a2c1ad70e" name="ac5bc93222ba8c31f6da6897a2c1ad70e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5bc93222ba8c31f6da6897a2c1ad70e">&#9670;&#160;</a></span>getWeightForOrder()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -380,22 +375,18 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> LatticeTester::WeightsPOD::getWeight </td>
+          <td class="memname">double LatticeTester::WeightsPOD::getWeightForOrder </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>projection</em></span></td><td>)</td>
+          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Returns the weight of the projection specified by <code>projection</code>. </p>
-
-<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#a36b5b64d0859da432b61d44f6df74ca1">LatticeTester::Weights</a>.</p>
 
 </div>
 </div>
@@ -424,8 +415,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ac5bc93222ba8c31f6da6897a2c1ad70e" name="ac5bc93222ba8c31f6da6897a2c1ad70e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5bc93222ba8c31f6da6897a2c1ad70e">&#9670;&#160;</a></span>getWeightForOrder()</h2>
+<a id="a723c4866c8b6af16a63fff9b8511f85f" name="a723c4866c8b6af16a63fff9b8511f85f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a723c4866c8b6af16a63fff9b8511f85f">&#9670;&#160;</a></span>format()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -434,18 +425,23 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double LatticeTester::WeightsPOD::getWeightForOrder </td>
+          <td class="memname">virtual void LatticeTester::WeightsPOD::format </td>
           <td>(</td>
-          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span></td><td>)</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Identifies the type of weights, formats them and outputs them on <code>os</code>.    </p>
+<p>Subclasses that implement <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a> should identify themselves in the output.    </p>
+
+<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#af65093620c85fe29056af60dc689b143">LatticeTester::Weights</a>.</p>
 
 </div>
 </div>
@@ -494,9 +490,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/latticetester/<a class="el" href="../../d3/d35/WeightsPOD_8h.html">WeightsPOD.h</a></li>
-<li>src/<a class="el" href="../../d7/df2/WeightsPOD_8cc.html">WeightsPOD.cc</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

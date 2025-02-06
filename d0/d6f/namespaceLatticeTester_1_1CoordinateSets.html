@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -123,13 +123,13 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> for coordinates within a given range.  <a href="../../d8/d34/classLatticeTester_1_1CoordinateSets_1_1FromRanges.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d6d/classLatticeTester_1_1CoordinateSets_1_1Subsets.html">Subsets</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class implements a <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> object that will build all the subsets of a <code><a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="This is basically a std::set&lt;std::size_t&gt;, i.e., a standard C++ set.">Coordinates</a></code> object that are of a cardinality in a certain range.  <a href="../../d8/d6d/classLatticeTester_1_1CoordinateSets_1_1Subsets.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class implements a <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> object that will build all the subsets of a <code><a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="An object type that contains a set of coordinate indices, used to specify a projection.">Coordinates</a></code> object that are of a cardinality in a certain range.  <a href="../../d8/d6d/classLatticeTester_1_1CoordinateSets_1_1Subsets.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The classes <code>FromRange</code>, <code>SubSets</code>, and <code><a class="el" href="../../d7/d31/classLatticeTester_1_1CoordinateSets_1_1AddCoordinate.html" title="This template class wraps any implementation of a CoordinateSets and adds a specific coordinate to ea...">AddCoordinate</a></code> are defined here. </p>
-<p>They are implemented in <code><a class="el" href="../../dc/d8a/CoordinateSets_8cc.html">CoordinateSets.cc</a></code>.</p>
-<p><code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> (below) is a namespace that contains different implementations of sets of coordinates. They resemble Set objects in standard C++. Such sets can be used to specify a set of projections of lattices or point sets. The classes in this namespace are iterable but are not containers, so they require very little storage. They virtually contain objects of type <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="This is basically a std::set&lt;std::size_t&gt;, i.e., a standard C++ set.">LatticeTester::Coordinates</a>.</p>
+<p>They are implemented in <code>CoordinateSets.cc</code>.</p>
+<p><code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> (below) is a namespace that contains different implementations of sets of coordinates. They resemble Set objects in standard C++. Such sets can be used to specify a set of projections of lattices or point sets. The classes in this namespace are iterable but are not containers, so they require very little storage. They virtually contain objects of type <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="An object type that contains a set of coordinate indices, used to specify a projection.">LatticeTester::Coordinates</a>.</p>
 <div class="fragment"><div class="line"><span class="keyword">class </span>CoordinateSets {</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// An iterator over a set of subsets of coordinates.</span></div>
@@ -180,7 +180,7 @@ Classes</h2></td></tr>
 <div class="line"> </div>
 <div class="line">      <span class="comment">// dereference operator. This should return the Coordinates this</span></div>
 <div class="line">      <span class="comment">// iterator is at.</span></div>
-<div class="line">      <span class="keyword">const</span> Coordinates&amp; <a class="code hl_function" href="../../d2/d5a/namespaceNTL.html#ab3d98c37520044c4da3012225d7ec249">operator*</a>()<span class="keyword"> const </span>{</div>
+<div class="line">      <span class="keyword">const</span> Coordinates&amp; operator*()<span class="keyword"> const </span>{</div>
 <div class="line">        <span class="keywordflow">return</span> m_value;</div>
 <div class="line">      }</div>
 <div class="line"> </div>
@@ -217,7 +217,6 @@ Classes</h2></td></tr>
 <div class="line">    <span class="keywordflow">return</span> const_iterator(*<span class="keyword">this</span>, <span class="keyword">typename</span> const_iterator::end_tag{});</div>
 <div class="line">  }</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespaceNTL_html_ab3d98c37520044c4da3012225d7ec249"><div class="ttname"><a href="../../d2/d5a/namespaceNTL.html#ab3d98c37520044c4da3012225d7ec249">NTL::operator*</a></div><div class="ttdeci">Vec_64 operator*(const Vec_64 &amp;vec, std::int64_t a)</div><div class="ttdoc">These are operator overloads for Mat_64 and Vec_64 types.</div><div class="ttdef"><b>Definition</b> NTLWrap.cc:5</div></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.8.15-->

@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -110,9 +110,6 @@ $(function(){initNavTree('d3/dfe/namespaceLatticeTester_1_1Random.html','../../'
   <div class="headertitle"><div class="title">LatticeTester::Random Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>This class generates random numbers (in fact pseudo-random numbers).  
-<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -125,64 +122,36 @@ Functions</h2></td></tr>
 <tr class="memitem:a64666a8459c3d5f56c5435236a593be3" id="r_a64666a8459c3d5f56c5435236a593be3"><td class="memItemLeft" align="right" valign="top">NTL::ZZ&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64666a8459c3d5f56c5435236a593be3">randInt</a> (NTL::ZZ i, NTL::ZZ j)</td></tr>
 <tr class="memdesc:a64666a8459c3d5f56c5435236a593be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overload of the previous method to create an NTL::ZZ integer in the range \([i,j]\).  <br /></td></tr>
 <tr class="separator:a64666a8459c3d5f56c5435236a593be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c53311b8aada86fa8b9ee877c308ba7" id="r_a2c53311b8aada86fa8b9ee877c308ba7"><td class="memItemLeft" align="right" valign="top">std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c53311b8aada86fa8b9ee877c308ba7">randBits</a> (int64_t s)</td></tr>
-<tr class="memdesc:a2c53311b8aada86fa8b9ee877c308ba7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns random blocks of \(s\) bits ( \(s\)-bit integers).  <br /></td></tr>
-<tr class="separator:a2c53311b8aada86fa8b9ee877c308ba7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c0fedf8c7847f795ce4900a6a977ee4" id="r_a6c0fedf8c7847f795ce4900a6a977ee4"><td class="memItemLeft" align="right" valign="top">std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c0fedf8c7847f795ce4900a6a977ee4">randBits</a> (int64_t s)</td></tr>
+<tr class="memdesc:a6c0fedf8c7847f795ce4900a6a977ee4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns random blocks of \(s\) bits ( \(s\)-bit integers).  <br /></td></tr>
+<tr class="separator:a6c0fedf8c7847f795ce4900a6a977ee4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6d5f121924c4f8bb4809567de5945f1" id="r_ac6d5f121924c4f8bb4809567de5945f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6d5f121924c4f8bb4809567de5945f1">setSeed</a> (std::uint64_t seed=<a class="el" href="../../dd/d6d/Random_8h.html#ada91db0fe905fcb9849b305e059b896a">GERME</a>)</td></tr>
 <tr class="memdesc:ac6d5f121924c4f8bb4809567de5945f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the seed of the generator.  <br /></td></tr>
 <tr class="separator:ac6d5f121924c4f8bb4809567de5945f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d2a3315f177d0d4adffbc46e154fa9c" id="r_a4d2a3315f177d0d4adffbc46e154fa9c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d2a3315f177d0d4adffbc46e154fa9c">setSeed</a> (uint64_t seed)</td></tr>
-<tr class="separator:a4d2a3315f177d0d4adffbc46e154fa9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This class generates random numbers (in fact pseudo-random numbers). </p>
-<p>The generator used is the 64-bits generator <code>LFSR258</code> from L'Ecuyer <a class="el" href="../../d0/de3/citelist.html#CITEREF_rlec99a">[8]</a> with period length near \(2^{258}\) for 64-bits machines, and the 32-bits generator <code>LFSR113</code> from L'Ecuyer <a class="el" href="../../d0/de3/citelist.html#CITEREF_rlec99a">[8]</a> with period length near \(2^{113}\) on 32-bits machines. Thus the random numbers generated will be different on 32-bits and 64-bits machines. </p>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a2c53311b8aada86fa8b9ee877c308ba7" name="a2c53311b8aada86fa8b9ee877c308ba7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c53311b8aada86fa8b9ee877c308ba7">&#9670;&#160;</a></span>randBits()</h2>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ad46dca46626fa9fcb2111cdb2702497d" name="ad46dca46626fa9fcb2111cdb2702497d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad46dca46626fa9fcb2111cdb2702497d">&#9670;&#160;</a></span>randU01()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint64_t LatticeTester::Random::randBits </td>
+          <td class="memname">double LatticeTester::Random::randU01 </td>
           <td>(</td>
-          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns random blocks of \(s\) bits ( \(s\)-bit integers). </p>
-
-</div>
-</div>
-<a id="a64666a8459c3d5f56c5435236a593be3" name="a64666a8459c3d5f56c5435236a593be3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64666a8459c3d5f56c5435236a593be3">&#9670;&#160;</a></span>randInt() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">NTL::ZZ LatticeTester::Random::randInt </td>
-          <td>(</td>
-          <td class="paramtype">NTL::ZZ</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">NTL::ZZ</td>          <td class="paramname"><span class="paramname"><em>j</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>This is an overload of the previous method to create an NTL::ZZ integer in the range \([i,j]\). </p>
-<p><a class="el" href="../../d2/d5a/namespaceNTL.html" title="This module extends the Vec and Mat classes of NTL.">NTL</a> has a method to generate pseudo random numbers in a given range, but it is not deterministic. This method concatenates random bits until it has a big enough number and tries to assign the correct integer to it. </p>
+<p>Returns a random number in \([0, 1)\). </p>
+<p>The number has 53 random bits of resolution on 64-bits machines, and 32 random bits on 32-bits machines. </p>
 
 </div>
 </div>
 <a id="a03b48e1545dfe5d6b8778fec48f4000d" name="a03b48e1545dfe5d6b8778fec48f4000d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03b48e1545dfe5d6b8778fec48f4000d">&#9670;&#160;</a></span>randInt() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a03b48e1545dfe5d6b8778fec48f4000d">&#9670;&#160;</a></span>randInt() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -205,28 +174,51 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad46dca46626fa9fcb2111cdb2702497d" name="ad46dca46626fa9fcb2111cdb2702497d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad46dca46626fa9fcb2111cdb2702497d">&#9670;&#160;</a></span>randU01()</h2>
+<a id="a64666a8459c3d5f56c5435236a593be3" name="a64666a8459c3d5f56c5435236a593be3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64666a8459c3d5f56c5435236a593be3">&#9670;&#160;</a></span>randInt() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double LatticeTester::Random::randU01 </td>
+          <td class="memname">NTL::ZZ LatticeTester::Random::randInt </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">NTL::ZZ</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">NTL::ZZ</td>          <td class="paramname"><span class="paramname"><em>j</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This is an overload of the previous method to create an NTL::ZZ integer in the range \([i,j]\). </p>
+<p><a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> has a method to generate pseudo random numbers in a given range, but it is not deterministic. This method concatenates random bits until it has a big enough number and tries to assign the correct integer to it. </p>
+
+</div>
+</div>
+<a id="a6c0fedf8c7847f795ce4900a6a977ee4" name="a6c0fedf8c7847f795ce4900a6a977ee4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c0fedf8c7847f795ce4900a6a977ee4">&#9670;&#160;</a></span>randBits()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::uint64_t LatticeTester::Random::randBits </td>
+          <td>(</td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns a random number in \([0, 1)\). </p>
-<p>The number has 53 random bits of resolution on 64-bits machines, and 32 random bits on 32-bits machines. </p>
+<p>Returns random blocks of \(s\) bits ( \(s\)-bit integers). </p>
 
 </div>
 </div>
 <a id="ac6d5f121924c4f8bb4809567de5945f1" name="ac6d5f121924c4f8bb4809567de5945f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6d5f121924c4f8bb4809567de5945f1">&#9670;&#160;</a></span>setSeed() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6d5f121924c4f8bb4809567de5945f1">&#9670;&#160;</a></span>setSeed()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -242,23 +234,6 @@ Functions</h2></td></tr>
 
 <p>Sets the seed of the generator. </p>
 <p>If not called, a default seed is used. </p>
-
-</div>
-</div>
-<a id="a4d2a3315f177d0d4adffbc46e154fa9c" name="a4d2a3315f177d0d4adffbc46e154fa9c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d2a3315f177d0d4adffbc46e154fa9c">&#9670;&#160;</a></span>setSeed() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void LatticeTester::Random::setSeed </td>
-          <td>(</td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>seed</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
 
 </div>
 </div>

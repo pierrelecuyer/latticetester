@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -115,8 +115,6 @@ $(function(){initNavTree('d4/dc5/classLatticeTester_1_1Writer.html','../../'); i
 
 <p>This is an abstract class that represents an interface to <code><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html" title="This is an abstract class that represents an interface to Writer classes.">Writer</a></code> classes.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/Writer.h&gt;</code></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for LatticeTester::Writer&lt; Int &gt;:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -179,7 +177,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a655b59c3b00319d97abad616fa649be0" id="r_a655b59c3b00319d97abad616fa649be0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a655b59c3b00319d97abad616fa649be0">writeIntScal</a> (const Int &amp;value)</td></tr>
 <tr class="memdesc:a655b59c3b00319d97abad616fa649be0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a <code>IntScal</code> on the stream.  <br /></td></tr>
 <tr class="separator:a655b59c3b00319d97abad616fa649be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b51448a23614cbff1249c84369735f3" id="r_a0b51448a23614cbff1249c84369735f3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b51448a23614cbff1249c84369735f3">writeMMat</a> (const <a class="el" href="../../d4/d6f/classNTL_1_1matrix.html">IntMat</a> &amp;A)</td></tr>
+<tr class="memitem:a0b51448a23614cbff1249c84369735f3" id="r_a0b51448a23614cbff1249c84369735f3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b51448a23614cbff1249c84369735f3">writeMMat</a> (const IntMat &amp;A)</td></tr>
 <tr class="memdesc:a0b51448a23614cbff1249c84369735f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a <code>IntMat</code> on the stream.  <br /></td></tr>
 <tr class="separator:a0b51448a23614cbff1249c84369735f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a800702acbf4433e003aa7b923d4dff" id="r_a6a800702acbf4433e003aa7b923d4dff"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a800702acbf4433e003aa7b923d4dff">writeMathString</a> (const std::string)=0</td></tr>
@@ -278,6 +276,71 @@ template&lt;typename Int &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a5997437aed166c30edf29ec909cf58fd" name="a5997437aed166c30edf29ec909cf58fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5997437aed166c30edf29ec909cf58fd">&#9670;&#160;</a></span>beginTabbedSection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Int &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::beginTabbedSection </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Begins a tabbed section. </p>
+<p>In a tabbed section, every newline character is followed by a series of whitespace or tab characters such that the first non-blank characters of the lines in this section are aligned. The amount of tabs in the begginning of the section can be modified with the <code><a class="el" href="#afc4dc08b00d2667905a309a18bc83bf0" title="After this is called, newlines in tabbed sections will have an additional tab.">addTab()</a></code>, <code><a class="el" href="#a1aec9e76d39bef0449070618cc1d8d1d" title="After this is called, newlines in tabbed sections will have one less tab.">removeTab()</a></code> and <code><a class="el" href="#a1e4e597a2d4f1df20dc754d0159faafa" title="After this is called, newlines in tabbed sections will have no tab.">clearTab()</a></code> methods.</p>
+<p>This is a pure virtual method that has no implementation. </p>
+
+<p>Implemented in <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html#a2919231629ef3b7fd227566da7a624f1">LatticeTester::WriterRes&lt; Int &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a2c8c2dcd76a0bc5e86f0b57ea3a8b259" name="a2c8c2dcd76a0bc5e86f0b57ea3a8b259"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c8c2dcd76a0bc5e86f0b57ea3a8b259">&#9670;&#160;</a></span>endTabbedSection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Int &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::endTabbedSection </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Ends a tabbed section. </p>
+<p>This is a pure virtual method that has no implementation. </p>
+
+<p>Implemented in <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html#a284502a7d88db19fdb4d71396d1c81f2">LatticeTester::WriterRes&lt; Int &gt;</a>.</p>
+
+</div>
+</div>
 <a id="afc4dc08b00d2667905a309a18bc83bf0" name="afc4dc08b00d2667905a309a18bc83bf0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afc4dc08b00d2667905a309a18bc83bf0">&#9670;&#160;</a></span>addTab()</h2>
 
@@ -310,8 +373,8 @@ template&lt;typename Int &gt; </div>
 
 </div>
 </div>
-<a id="a5997437aed166c30edf29ec909cf58fd" name="a5997437aed166c30edf29ec909cf58fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5997437aed166c30edf29ec909cf58fd">&#9670;&#160;</a></span>beginTabbedSection()</h2>
+<a id="a1aec9e76d39bef0449070618cc1d8d1d" name="a1aec9e76d39bef0449070618cc1d8d1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1aec9e76d39bef0449070618cc1d8d1d">&#9670;&#160;</a></span>removeTab()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -322,7 +385,7 @@ template&lt;typename Int &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::beginTabbedSection </td>
+          <td class="memname">virtual void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::removeTab </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -335,11 +398,10 @@ template&lt;typename Int &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Begins a tabbed section. </p>
-<p>In a tabbed section, every newline character is followed by a series of whitespace or tab characters such that the first non-blank characters of the lines in this section are aligned. The amount of tabs in the begginning of the section can be modified with the <code><a class="el" href="#afc4dc08b00d2667905a309a18bc83bf0" title="After this is called, newlines in tabbed sections will have an additional tab.">addTab()</a></code>, <code><a class="el" href="#a1aec9e76d39bef0449070618cc1d8d1d" title="After this is called, newlines in tabbed sections will have one less tab.">removeTab()</a></code> and <code><a class="el" href="#a1e4e597a2d4f1df20dc754d0159faafa" title="After this is called, newlines in tabbed sections will have no tab.">clearTab()</a></code> methods.</p>
+<p>After this is called, newlines in tabbed sections will have one less tab. </p>
 <p>This is a pure virtual method that has no implementation. </p>
 
-<p>Implemented in <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html#a2919231629ef3b7fd227566da7a624f1">LatticeTester::WriterRes&lt; Int &gt;</a>.</p>
+<p>Implemented in <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html#a89ff0f6229643ed39d01139f2cbfe043">LatticeTester::WriterRes&lt; Int &gt;</a>.</p>
 
 </div>
 </div>
@@ -404,68 +466,6 @@ template&lt;typename Int &gt; </div>
 <p>This is a pure virtual method that has no implementation. </p>
 
 <p>Implemented in <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html#af87a29499b71b5183221ac392ff3d167">LatticeTester::WriterRes&lt; Int &gt;</a>.</p>
-
-</div>
-</div>
-<a id="a2c8c2dcd76a0bc5e86f0b57ea3a8b259" name="a2c8c2dcd76a0bc5e86f0b57ea3a8b259"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c8c2dcd76a0bc5e86f0b57ea3a8b259">&#9670;&#160;</a></span>endTabbedSection()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Int &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::endTabbedSection </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Ends a tabbed section. </p>
-<p>This is a pure virtual method that has no implementation. </p>
-
-<p>Implemented in <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html#a284502a7d88db19fdb4d71396d1c81f2">LatticeTester::WriterRes&lt; Int &gt;</a>.</p>
-
-</div>
-</div>
-<a id="ade185e3d36316412ee0054746f898822" name="ade185e3d36316412ee0054746f898822"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade185e3d36316412ee0054746f898822">&#9670;&#160;</a></span>getStream()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Int &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual std::ostream &amp; <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::getStream </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns the stream on which this object writes. </p>
-<p>If the stream is a simple <code>ostream</code>, this can be used to then print on standard output for example. If this is a file. It can be possible to used different writers in succession. </p>
 
 </div>
 </div>
@@ -534,38 +534,6 @@ template&lt;typename Int &gt; </div>
 
 </div>
 </div>
-<a id="a1aec9e76d39bef0449070618cc1d8d1d" name="a1aec9e76d39bef0449070618cc1d8d1d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1aec9e76d39bef0449070618cc1d8d1d">&#9670;&#160;</a></span>removeTab()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Int &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::removeTab </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>After this is called, newlines in tabbed sections will have one less tab. </p>
-<p>This is a pure virtual method that has no implementation. </p>
-
-<p>Implemented in <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html#a89ff0f6229643ed39d01139f2cbfe043">LatticeTester::WriterRes&lt; Int &gt;</a>.</p>
-
-</div>
-</div>
 <a id="a0b191bf4848aa96a00385850d13999b4" name="a0b191bf4848aa96a00385850d13999b4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0b191bf4848aa96a00385850d13999b4">&#9670;&#160;</a></span>writeBool()</h2>
 
@@ -592,35 +560,6 @@ template&lt;typename Int &gt; </div>
 </div><div class="memdoc">
 
 <p>Writes a <code>bool</code> on the stream. </p>
-
-</div>
-</div>
-<a id="afe5f397a20f2d1550aa99f2ab4adfbf3" name="afe5f397a20f2d1550aa99f2ab4adfbf3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe5f397a20f2d1550aa99f2ab4adfbf3">&#9670;&#160;</a></span>writeDouble()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Int &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::writeDouble </td>
-          <td>(</td>
-          <td class="paramtype">const double &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Writes a <code>double</code> on the stream. </p>
 
 </div>
 </div>
@@ -653,6 +592,64 @@ template&lt;typename Int &gt; </div>
 
 </div>
 </div>
+<a id="a6321a5dffd4b07f24776e5bd3da4f043" name="a6321a5dffd4b07f24776e5bd3da4f043"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6321a5dffd4b07f24776e5bd3da4f043">&#9670;&#160;</a></span>writeString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Int &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::writeString </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Writes a <code>string</code> on the stream. </p>
+
+</div>
+</div>
+<a id="afe5f397a20f2d1550aa99f2ab4adfbf3" name="afe5f397a20f2d1550aa99f2ab4adfbf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe5f397a20f2d1550aa99f2ab4adfbf3">&#9670;&#160;</a></span>writeDouble()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Int &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::writeDouble </td>
+          <td>(</td>
+          <td class="paramtype">const double &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Writes a <code>double</code> on the stream. </p>
+
+</div>
+</div>
 <a id="a655b59c3b00319d97abad616fa649be0" name="a655b59c3b00319d97abad616fa649be0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a655b59c3b00319d97abad616fa649be0">&#9670;&#160;</a></span>writeIntScal()</h2>
 
@@ -679,6 +676,35 @@ template&lt;typename Int &gt; </div>
 </div><div class="memdoc">
 
 <p>Writes a <code>IntScal</code> on the stream. </p>
+
+</div>
+</div>
+<a id="a0b51448a23614cbff1249c84369735f3" name="a0b51448a23614cbff1249c84369735f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b51448a23614cbff1249c84369735f3">&#9670;&#160;</a></span>writeMMat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Int &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::writeMMat </td>
+          <td>(</td>
+          <td class="paramtype">const IntMat &amp;</td>          <td class="paramname"><span class="paramname"><em>A</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Writes a <code>IntMat</code> on the stream. </p>
 
 </div>
 </div>
@@ -716,35 +742,6 @@ template&lt;typename Int &gt; </div>
 
 </div>
 </div>
-<a id="a0b51448a23614cbff1249c84369735f3" name="a0b51448a23614cbff1249c84369735f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b51448a23614cbff1249c84369735f3">&#9670;&#160;</a></span>writeMMat()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Int &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::writeMMat </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="../../d4/d6f/classNTL_1_1matrix.html">IntMat</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>A</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Writes a <code>IntMat</code> on the stream. </p>
-
-</div>
-</div>
 <a id="a8665f22d5d3fdfbfb976fbbd6def7907" name="a8665f22d5d3fdfbfb976fbbd6def7907"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8665f22d5d3fdfbfb976fbbd6def7907">&#9670;&#160;</a></span>writeStandOutMathString()</h2>
 
@@ -779,8 +776,8 @@ template&lt;typename Int &gt; </div>
 
 </div>
 </div>
-<a id="a6321a5dffd4b07f24776e5bd3da4f043" name="a6321a5dffd4b07f24776e5bd3da4f043"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6321a5dffd4b07f24776e5bd3da4f043">&#9670;&#160;</a></span>writeString()</h2>
+<a id="ade185e3d36316412ee0054746f898822" name="ade185e3d36316412ee0054746f898822"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade185e3d36316412ee0054746f898822">&#9670;&#160;</a></span>getStream()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -791,20 +788,21 @@ template&lt;typename Int &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::writeString </td>
+          <td class="memname">virtual std::ostream &amp; <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html">LatticeTester::Writer</a>&lt; Int &gt;::getStream </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Writes a <code>string</code> on the stream. </p>
+<p>Returns the stream on which this object writes. </p>
+<p>If the stream is a simple <code>ostream</code>, this can be used to then print on standard output for example. If this is a file. It can be possible to used different writers in succession. </p>
 
 </div>
 </div>

@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -113,10 +113,8 @@ $(function(){initNavTree('d8/d6d/classLatticeTester_1_1CoordinateSets_1_1Subsets
 </div><!--header-->
 <div class="contents">
 
-<p>This class implements a <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> object that will build all the subsets of a <code><a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="This is basically a std::set&lt;std::size_t&gt;, i.e., a standard C++ set.">Coordinates</a></code> object that are of a cardinality in a certain range.  
+<p>This class implements a <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> object that will build all the subsets of a <code><a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="An object type that contains a set of coordinate indices, used to specify a projection.">Coordinates</a></code> object that are of a cardinality in a certain range.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/CoordinateSets.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -146,7 +144,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aff9b28ec58fe0122c2e87d24a0821fee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This class implements a <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> object that will build all the subsets of a <code><a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="This is basically a std::set&lt;std::size_t&gt;, i.e., a standard C++ set.">Coordinates</a></code> object that are of a cardinality in a certain range. </p>
+<div class="textblock"><p>This class implements a <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> object that will build all the subsets of a <code><a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="An object type that contains a set of coordinate indices, used to specify a projection.">Coordinates</a></code> object that are of a cardinality in a certain range. </p>
 <p>This is a less flexible class than <code><a class="el" href="../../d8/d34/classLatticeTester_1_1CoordinateSets_1_1FromRanges.html" title="A CoordinateSets for coordinates within a given range.">FromRanges</a></code> but, in the example <code>Subsets.cc</code> it has been slightly faster in our tests.</p>
 <dl class="section remark"><dt>Remarks</dt><dd>it is somewhat hard to build an object of this class, maybe this could be done in a better way. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -180,33 +178,6 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="abeec7841df31a08ff25cc2d0442d84bb" name="abeec7841df31a08ff25cc2d0442d84bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abeec7841df31a08ff25cc2d0442d84bb">&#9670;&#160;</a></span>begin()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="../../d7/de4/classLatticeTester_1_1CoordinateSets_1_1Subsets_1_1const__iterator.html">const_iterator</a> LatticeTester::CoordinateSets::Subsets::begin </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns an iterator pointing to the first element of <code>*this</code>. </p>
-
-</div>
-</div>
 <a id="ab7c481fc6e11a6e3c2fc7d393dbc34d5" name="ab7c481fc6e11a6e3c2fc7d393dbc34d5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab7c481fc6e11a6e3c2fc7d393dbc34d5">&#9670;&#160;</a></span>coords()</h2>
 
@@ -231,60 +202,6 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the coordinates, as passed to the constructor. </p>
-
-</div>
-</div>
-<a id="aff9b28ec58fe0122c2e87d24a0821fee" name="aff9b28ec58fe0122c2e87d24a0821fee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff9b28ec58fe0122c2e87d24a0821fee">&#9670;&#160;</a></span>end()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="../../d7/de4/classLatticeTester_1_1CoordinateSets_1_1Subsets_1_1const__iterator.html">const_iterator</a> LatticeTester::CoordinateSets::Subsets::end </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns an iterator pointing past the last element of <code>*this</code>. </p>
-
-</div>
-</div>
-<a id="a1da2cca150a8e2380008ef64af0545d4" name="a1da2cca150a8e2380008ef64af0545d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1da2cca150a8e2380008ef64af0545d4">&#9670;&#160;</a></span>maxOrder()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Coordinates::size_type LatticeTester::CoordinateSets::Subsets::maxOrder </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns <code>maxOrder</code>, as passed to the constructor. </p>
 
 </div>
 </div>
@@ -315,9 +232,89 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a id="a1da2cca150a8e2380008ef64af0545d4" name="a1da2cca150a8e2380008ef64af0545d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1da2cca150a8e2380008ef64af0545d4">&#9670;&#160;</a></span>maxOrder()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Coordinates::size_type LatticeTester::CoordinateSets::Subsets::maxOrder </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns <code>maxOrder</code>, as passed to the constructor. </p>
+
+</div>
+</div>
+<a id="abeec7841df31a08ff25cc2d0442d84bb" name="abeec7841df31a08ff25cc2d0442d84bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abeec7841df31a08ff25cc2d0442d84bb">&#9670;&#160;</a></span>begin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d7/de4/classLatticeTester_1_1CoordinateSets_1_1Subsets_1_1const__iterator.html">const_iterator</a> LatticeTester::CoordinateSets::Subsets::begin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element of <code>*this</code>. </p>
+
+</div>
+</div>
+<a id="aff9b28ec58fe0122c2e87d24a0821fee" name="aff9b28ec58fe0122c2e87d24a0821fee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff9b28ec58fe0122c2e87d24a0821fee">&#9670;&#160;</a></span>end()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d7/de4/classLatticeTester_1_1CoordinateSets_1_1Subsets_1_1const__iterator.html">const_iterator</a> LatticeTester::CoordinateSets::Subsets::end </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing past the last element of <code>*this</code>. </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/latticetester/<a class="el" href="../../d5/d92/CoordinateSets_8h.html">CoordinateSets.h</a></li>
-<li>src/<a class="el" href="../../dc/d8a/CoordinateSets_8cc.html">CoordinateSets.cc</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

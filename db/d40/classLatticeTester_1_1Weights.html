@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -117,8 +117,6 @@ $(function(){initNavTree('db/d40/classLatticeTester_1_1Weights.html','../../'); 
 
 <p>Abstract class that defines an interface to specify <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a> given to projections in figures of merit.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/Weights.h&gt;</code></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for LatticeTester::Weights:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -127,11 +125,11 @@ $(function(){initNavTree('db/d40/classLatticeTester_1_1Weights.html','../../'); 
  <div class="center">
   <img src="../../db/d40/classLatticeTester_1_1Weights.png" usemap="#LatticeTester::Weights_map" alt=""/>
   <map id="LatticeTester::Weights_map" name="LatticeTester::Weights_map">
-<area href="../../dd/d7f/classLatticeTester_1_1WeightsOrderDependent.html" title="Defines order-dependent weights." alt="LatticeTester::WeightsOrderDependent" shape="rect" coords="0,56,252,80"/>
-<area href="../../d8/d0e/classLatticeTester_1_1WeightsPOD.html" title="Defines product and order-dependent (POD) weights." alt="LatticeTester::WeightsPOD" shape="rect" coords="262,56,514,80"/>
-<area href="../../d1/d8a/classLatticeTester_1_1WeightsProduct.html" title="Defines product weights." alt="LatticeTester::WeightsProduct" shape="rect" coords="524,56,776,80"/>
-<area href="../../d2/d23/classLatticeTester_1_1WeightsProjectionDependent.html" title="Defines projection-dependent weights." alt="LatticeTester::WeightsProjectionDependent" shape="rect" coords="786,56,1038,80"/>
-<area href="../../dd/d8f/classLatticeTester_1_1WeightsUniform.html" title="Specifies projection weights that are the same (usually 1) for all projections." alt="LatticeTester::WeightsUniform" shape="rect" coords="1048,56,1300,80"/>
+<area href="../../dd/d7f/classLatticeTester_1_1WeightsOrderDependent.html" title="Defines order-dependent weights, for which the weight of a projection depends only on its order (card..." alt="LatticeTester::WeightsOrderDependent" shape="rect" coords="0,56,252,80"/>
+<area href="../../d8/d0e/classLatticeTester_1_1WeightsPOD.html" title="Defines product and order-dependent (POD) weights, for which the weight of a projection is the sum of..." alt="LatticeTester::WeightsPOD" shape="rect" coords="262,56,514,80"/>
+<area href="../../d1/d8a/classLatticeTester_1_1WeightsProduct.html" title="Defines product weights, for which the weight of a projection is equal to the product of the weights ..." alt="LatticeTester::WeightsProduct" shape="rect" coords="524,56,776,80"/>
+<area href="../../d2/d23/classLatticeTester_1_1WeightsProjectionDependent.html" title="Defines projection-dependent weights, for which the weight for any given projection can be set indivi..." alt="LatticeTester::WeightsProjectionDependent" shape="rect" coords="786,56,1038,80"/>
+<area href="../../dd/d8f/classLatticeTester_1_1WeightsUniform.html" title="Specifies weights that are the same (usually 1) for all projections." alt="LatticeTester::WeightsUniform" shape="rect" coords="1048,56,1300,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -168,7 +166,7 @@ Related Symbols</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract class that defines an interface to specify <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a> given to projections in figures of merit. </p>
-<p>This class and its subclasses are not used directly by <a class="el" href="../../d8/d74/namespaceLatticeTester.html" title="Lattice namespace.">LatticeTester</a> since <a class="el" href="../../d8/d74/namespaceLatticeTester.html" title="Lattice namespace.">LatticeTester</a> does not implement figures of merit. For examples of usages, one may look at LatNetBuilder and LatMRG. </p>
+<p>This class and its subclasses are not used directly by <a class="el" href="../../d8/d74/namespaceLatticeTester.html" title="LatticeTester namespace.">LatticeTester</a> since <a class="el" href="../../d8/d74/namespaceLatticeTester.html" title="LatticeTester namespace.">LatticeTester</a> does not implement figures of merit. For examples of usages, one may look at LatNetBuilder and LatMRG. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad5354a36601505921210464c17bcc45a" name="ad5354a36601505921210464c17bcc45a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5354a36601505921210464c17bcc45a">&#9670;&#160;</a></span>~Weights()</h2>
@@ -198,36 +196,6 @@ Related Symbols</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="af65093620c85fe29056af60dc689b143" name="af65093620c85fe29056af60dc689b143"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af65093620c85fe29056af60dc689b143">&#9670;&#160;</a></span>format()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void LatticeTester::Weights::format </td>
-          <td>(</td>
-          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Identifies the type of weights, formats them and outputs them on <code>os</code>. </p>
-<p>Subclasses that implement <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a> should identify themselves in the output. </p>
-
-<p>Implemented in <a class="el" href="../../dd/d7f/classLatticeTester_1_1WeightsOrderDependent.html#a6499b479cf595f62b557a0eb4d2ffd54">LatticeTester::WeightsOrderDependent</a>, <a class="el" href="../../d8/d0e/classLatticeTester_1_1WeightsPOD.html#aa8e4087097c55f2e284da5e6b002e364">LatticeTester::WeightsPOD</a>, <a class="el" href="../../d1/d8a/classLatticeTester_1_1WeightsProduct.html#a982e505799755c74bde5a4bcb9e4e0f4">LatticeTester::WeightsProduct</a>, <a class="el" href="../../d2/d23/classLatticeTester_1_1WeightsProjectionDependent.html#a54c459b1641f031dd1fe58dfcedb445c">LatticeTester::WeightsProjectionDependent</a>, and <a class="el" href="../../dd/d8f/classLatticeTester_1_1WeightsUniform.html#af46459e5e47e69826b993bbc19db19c3">LatticeTester::WeightsUniform</a>.</p>
-
-</div>
-</div>
 <a id="a36b5b64d0859da432b61d44f6df74ca1" name="a36b5b64d0859da432b61d44f6df74ca1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a36b5b64d0859da432b61d44f6df74ca1">&#9670;&#160;</a></span>getWeight()</h2>
 
@@ -253,7 +221,7 @@ Related Symbols</h2></td></tr>
 
 <p>Returns the weight of the projection (subset of coordinates) specified by <code>projection</code>. </p>
 
-<p>Implemented in <a class="el" href="../../dd/d7f/classLatticeTester_1_1WeightsOrderDependent.html#a575b607a1a72125cf4312327b9258309">LatticeTester::WeightsOrderDependent</a>, <a class="el" href="../../d8/d0e/classLatticeTester_1_1WeightsPOD.html#a4cbd66d3caa52613613bb8a30e482781">LatticeTester::WeightsPOD</a>, <a class="el" href="../../d1/d8a/classLatticeTester_1_1WeightsProduct.html#a073def4e5569fb7f68dbd254469b57b2">LatticeTester::WeightsProduct</a>, <a class="el" href="../../d2/d23/classLatticeTester_1_1WeightsProjectionDependent.html#a2b9d795a56ec2b33b85a8bf8edf4b41e">LatticeTester::WeightsProjectionDependent</a>, and <a class="el" href="../../dd/d8f/classLatticeTester_1_1WeightsUniform.html#ad7eb685304b5515dc5970aa192b9364f">LatticeTester::WeightsUniform</a>.</p>
+<p>Implemented in <a class="el" href="../../dd/d7f/classLatticeTester_1_1WeightsOrderDependent.html#a0f92bbbd6af19559c69c73541ad1bd8f">LatticeTester::WeightsOrderDependent</a>, <a class="el" href="../../d8/d0e/classLatticeTester_1_1WeightsPOD.html#a7717176cff19fd62f7c0afeb32e56883">LatticeTester::WeightsPOD</a>, <a class="el" href="../../d1/d8a/classLatticeTester_1_1WeightsProduct.html#ae6f9a1851584f94b07d130bffab24910">LatticeTester::WeightsProduct</a>, <a class="el" href="../../d2/d23/classLatticeTester_1_1WeightsProjectionDependent.html#a29f19e6e31ce9297807d55d779cc7277">LatticeTester::WeightsProjectionDependent</a>, and <a class="el" href="../../dd/d8f/classLatticeTester_1_1WeightsUniform.html#ad7eb685304b5515dc5970aa192b9364f">LatticeTester::WeightsUniform</a>.</p>
 
 </div>
 </div>
@@ -285,9 +253,68 @@ Related Symbols</h2></td></tr>
 
 </div>
 </div>
+<a id="af65093620c85fe29056af60dc689b143" name="af65093620c85fe29056af60dc689b143"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af65093620c85fe29056af60dc689b143">&#9670;&#160;</a></span>format()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void LatticeTester::Weights::format </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Identifies the type of weights, formats them and outputs them on <code>os</code>. </p>
+<p>Subclasses that implement <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a> should identify themselves in the output. </p>
+
+<p>Implemented in <a class="el" href="../../dd/d7f/classLatticeTester_1_1WeightsOrderDependent.html#adcba43278b09772b832818535c8a6af9">LatticeTester::WeightsOrderDependent</a>, <a class="el" href="../../d8/d0e/classLatticeTester_1_1WeightsPOD.html#a723c4866c8b6af16a63fff9b8511f85f">LatticeTester::WeightsPOD</a>, <a class="el" href="../../d1/d8a/classLatticeTester_1_1WeightsProduct.html#a4e16d80faa6dfc3fd726b4716b45a117">LatticeTester::WeightsProduct</a>, <a class="el" href="../../d2/d23/classLatticeTester_1_1WeightsProjectionDependent.html#a79fd14a1b7c77dafcabd514eac564697">LatticeTester::WeightsProjectionDependent</a>, and <a class="el" href="../../dd/d8f/classLatticeTester_1_1WeightsUniform.html#af46459e5e47e69826b993bbc19db19c3">LatticeTester::WeightsUniform</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a1b21baaf513c81b1d398854fd990a7fd" name="a1b21baaf513c81b1d398854fd990a7fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b21baaf513c81b1d398854fd990a7fd">&#9670;&#160;</a></span>operator&lt;&lt; <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html">Weights</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aef6c12eea0f3df2908bb03fb2675add3" name="aef6c12eea0f3df2908bb03fb2675add3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef6c12eea0f3df2908bb03fb2675add3">&#9670;&#160;</a></span>operator&lt;&lt;() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aef6c12eea0f3df2908bb03fb2675add3">&#9670;&#160;</a></span>operator&lt;&lt;() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -314,35 +341,6 @@ Related Symbols</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Identifies the type of weights, formats them and outputs them on <code>os</code>. </p>
-
-</div>
-</div>
-<a id="a1b21baaf513c81b1d398854fd990a7fd" name="a1b21baaf513c81b1d398854fd990a7fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b21baaf513c81b1d398854fd990a7fd">&#9670;&#160;</a></span>operator&lt;&lt; <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ostream &amp; operator&lt;&lt; </td>
-          <td>(</td>
-          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html">Weights</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
 
 </div>
 </div>

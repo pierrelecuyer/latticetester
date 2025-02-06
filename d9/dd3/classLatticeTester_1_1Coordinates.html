@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -113,10 +113,8 @@ $(function(){initNavTree('d9/dd3/classLatticeTester_1_1Coordinates.html','../../
 </div><!--header-->
 <div class="contents">
 
-<p>This is basically a <code>std::set&lt;std::size_t&gt;</code>, i.e., a standard C++ set.  
+<p>An object type that contains a set of coordinate indices, used to specify a projection.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/Coordinates.h&gt;</code></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for LatticeTester::Coordinates:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -154,8 +152,8 @@ Related Symbols</h2></td></tr>
 <tr class="separator:ac71356dcc070f0bc5a4ed43864bd9971"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This is basically a <code>std::set&lt;std::size_t&gt;</code>, i.e., a standard C++ set. </p>
-<p>An object of this class is used to store a set of coordinates that represents a projection, usually with lacunary indices. These types of objects are created and returned by the classes in the <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> namespace. This class also offers some input and output operators. Note that the coordinates are assumed to start at 1. </p>
+<div class="textblock"><p>An object type that contains a set of coordinate indices, used to specify a projection. </p>
+<p>This is a standard C++ set, <code>std::set&lt;std::size_t&gt;</code>, with additional input and output operators. These types of objects are created and returned by the classes in the <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> namespace. This class also offers some input and output operators. Important: The coordinates are assumed to start at 1. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a016df1881b17c1d0d29f6b3b67662571" name="a016df1881b17c1d0d29f6b3b67662571"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a016df1881b17c1d0d29f6b3b67662571">&#9670;&#160;</a></span>Coordinates() <span class="overload">[1/4]</span></h2>
@@ -331,7 +329,7 @@ template&lt;typename InputIterator &gt; </div>
 </div><div class="memdoc">
 
 <p>Reads a formatted coordinate set from <code>is</code>. </p>
-<p>The input must consist of positive integers separated by whitespace and/or by commas, and optionally enclosed in braces. The ordering is not important. Repeated values are ignored. For example, the following strings are valid input that would produce equivalent <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="This is basically a std::set&lt;std::size_t&gt;, i.e., a standard C++ set.">Coordinates</a> objects:</p><ul>
+<p>The input must consist of positive integers separated by whitespace and/or by commas, and optionally enclosed in braces. The ordering is not important. Repeated values are ignored. For example, the following strings are valid input that would produce equivalent <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html" title="An object type that contains a set of coordinate indices, used to specify a projection.">Coordinates</a> objects:</p><ul>
 <li><code>1 2 5</code></li>
 <li><code>1, 2, 5</code></li>
 <li><code>{1 2 5}</code></li>

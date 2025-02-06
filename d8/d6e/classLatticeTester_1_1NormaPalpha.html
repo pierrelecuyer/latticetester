@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -112,10 +112,8 @@ $(function(){initNavTree('d8/d6e/classLatticeTester_1_1NormaPalpha.html','../../
 </div><!--header-->
 <div class="contents">
 
-<p>This class implements some theoretical bounds on the values of \(P_{\alpha}\) for a lattice (see class <code>Palpha</code>).  
+<p>This class implements theoretical bounds on the values of \(P_{\alpha}\) for a lattice (see class <code>Palpha</code>).  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/NormaPalpha.h&gt;</code></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for LatticeTester::NormaPalpha:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -134,7 +132,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a382840b34c515319d43bc8ccf5d54bf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the bounds \(B_{\alpha}(s)\) obtained for lattices, in all dimensions \(\le s\), where \(\alpha= {}\)<code>alpha</code>.  <br /></td></tr>
 <tr class="separator:a382840b34c515319d43bc8ccf5d54bf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83a55d3906f0468c9796980591e1b5a1" id="r_a83a55d3906f0468c9796980591e1b5a1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83a55d3906f0468c9796980591e1b5a1">calcBound</a> (int64_t alpha, int64_t s)</td></tr>
-<tr class="memdesc:a83a55d3906f0468c9796980591e1b5a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes and returns the bound \(B_{\alpha}(s)\) given in <a class="el" href="../../d0/de3/citelist.html#CITEREF_mslo94a">[12]</a>&thinsp; (p.  <br /></td></tr>
+<tr class="memdesc:a83a55d3906f0468c9796980591e1b5a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes and returns the bound \(B_{\alpha}(s)\) given in <a class="el" href="../../d0/de3/citelist.html#CITEREF_mslo94a">[11]</a>&thinsp; (p.  <br /></td></tr>
 <tr class="separator:a83a55d3906f0468c9796980591e1b5a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09e13d5804704d183eea4fc41f34d2f0" id="r_a09e13d5804704d183eea4fc41f34d2f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09e13d5804704d183eea4fc41f34d2f0">computeBounds</a> (int64_t alpha)</td></tr>
 <tr class="memdesc:a09e13d5804704d183eea4fc41f34d2f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the bounds for the Palpha normalization.  <br /></td></tr>
@@ -145,27 +143,27 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acef769cabafcee74d6c06995a1c10f33" id="r_acef769cabafcee74d6c06995a1c10f33"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acef769cabafcee74d6c06995a1c10f33">getAlpha</a> () const</td></tr>
 <tr class="memdesc:acef769cabafcee74d6c06995a1c10f33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of \(\alpha\).  <br /></td></tr>
 <tr class="separator:acef769cabafcee74d6c06995a1c10f33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3f01ad5693cba65eeaea1d9cfbe8595" id="r_ab3f01ad5693cba65eeaea1d9cfbe8595"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3f01ad5693cba65eeaea1d9cfbe8595">computeBounds</a> (double logDensity)</td></tr>
-<tr class="memdesc:ab3f01ad5693cba65eeaea1d9cfbe8595"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preventing the compiler from raising the warning: '' <a class="el" href="../../d0/d40/NormaPalpha_8h.html">latticetester/NormaPalpha.h</a>:59:9: warning: 'LatticeTester::NormaPalpha::init' hides overloaded virtual function [-Woverloaded-virtual] void init (int64_t alpha); ''.  <br /></td></tr>
-<tr class="separator:ab3f01ad5693cba65eeaea1d9cfbe8595"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3cf818ff819a52c1a8082835e74948db" id="r_a3cf818ff819a52c1a8082835e74948db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3cf818ff819a52c1a8082835e74948db">computeBounds</a> (double logm, int64_t k)</td></tr>
 <tr class="memdesc:a3cf818ff819a52c1a8082835e74948db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preventing the compiler from raising the warning: '' <a class="el" href="../../d0/d40/NormaPalpha_8h.html">latticetester/NormaPalpha.h</a>:59:9: warning: 'LatticeTester::NormaPalpha::init' hides overloaded virtual function [-Woverloaded-virtual] void init (int64_t alpha); ''.  <br /></td></tr>
 <tr class="separator:a3cf818ff819a52c1a8082835e74948db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3f01ad5693cba65eeaea1d9cfbe8595" id="r_ab3f01ad5693cba65eeaea1d9cfbe8595"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3f01ad5693cba65eeaea1d9cfbe8595">computeBounds</a> (double logDensity)</td></tr>
+<tr class="memdesc:ab3f01ad5693cba65eeaea1d9cfbe8595"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preventing the compiler from raising the warning: '' <a class="el" href="../../d0/d40/NormaPalpha_8h.html">latticetester/NormaPalpha.h</a>:59:9: warning: 'LatticeTester::NormaPalpha::init' hides overloaded virtual function [-Woverloaded-virtual] void init (int64_t alpha); ''.  <br /></td></tr>
+<tr class="separator:ab3f01ad5693cba65eeaea1d9cfbe8595"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classLatticeTester_1_1Normalizer"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classLatticeTester_1_1Normalizer')"><img src="../../closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html">LatticeTester::Normalizer</a></td></tr>
-<tr class="memitem:a440380e78c86b1f46a699fe8febff4d3 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a440380e78c86b1f46a699fe8febff4d3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a440380e78c86b1f46a699fe8febff4d3">Normalizer</a> (double logm, int64_t k, int64_t maxDim, std::string name=&quot;&quot;, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:a440380e78c86b1f46a699fe8febff4d3 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the preferred constructor in all the subclasses.  <br /></td></tr>
-<tr class="separator:a440380e78c86b1f46a699fe8febff4d3 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a651719b74b4f0e3d4dc14b1f5a8b4e94 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a651719b74b4f0e3d4dc14b1f5a8b4e94"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a651719b74b4f0e3d4dc14b1f5a8b4e94">Normalizer</a> (double logDensity, int64_t maxDim, std::string name=&quot;&quot;, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:a651719b74b4f0e3d4dc14b1f5a8b4e94 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">***** DEPRECATED *****  <br /></td></tr>
-<tr class="separator:a651719b74b4f0e3d4dc14b1f5a8b4e94 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61f2201f62fdae9935e66ba0832f9b85 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a61f2201f62fdae9935e66ba0832f9b85"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a61f2201f62fdae9935e66ba0832f9b85">Normalizer</a> (int64_t maxDim, std::string name, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:a61f2201f62fdae9935e66ba0832f9b85 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor creates a <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html" title="This is a base class for implementing normalization constants used in figures of merit,...">Normalizer</a> object without computing any bounds.  <br /></td></tr>
-<tr class="separator:a61f2201f62fdae9935e66ba0832f9b85 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c7879f6f99a98a4ee02a708f0030a0a inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a1c7879f6f99a98a4ee02a708f0030a0a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a1c7879f6f99a98a4ee02a708f0030a0a">Normalizer</a> (double logm, int64_t k, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a1c7879f6f99a98a4ee02a708f0030a0a inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the preferred constructor in all the subclasses.  <br /></td></tr>
+<tr class="separator:a1c7879f6f99a98a4ee02a708f0030a0a inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a068e6716adbe015bb63809281b711b15 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a068e6716adbe015bb63809281b711b15"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a068e6716adbe015bb63809281b711b15">Normalizer</a> (double logDensity, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a068e6716adbe015bb63809281b711b15 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This old (legacy) constructor assumes that the lattice is not rescaled and that the (log)density is the same in all dimensions, which is practically never true when rescaling.  <br /></td></tr>
+<tr class="separator:a068e6716adbe015bb63809281b711b15 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87b77a6eca350a8cad10183bc5b88c81 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a87b77a6eca350a8cad10183bc5b88c81"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a87b77a6eca350a8cad10183bc5b88c81">Normalizer</a> (int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a87b77a6eca350a8cad10183bc5b88c81 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor creates a <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html" title="This is a base class for implementing normalization constants used in figures of merit,...">Normalizer</a> object without computing any bounds.  <br /></td></tr>
+<tr class="separator:a87b77a6eca350a8cad10183bc5b88c81 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17c57e90311702db588165ba5b4881bb inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a17c57e90311702db588165ba5b4881bb"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a17c57e90311702db588165ba5b4881bb">~Normalizer</a> ()</td></tr>
 <tr class="memdesc:a17c57e90311702db588165ba5b4881bb inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a17c57e90311702db588165ba5b4881bb inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3cf818ff819a52c1a8082835e74948db inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a3cf818ff819a52c1a8082835e74948db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a3cf818ff819a52c1a8082835e74948db">computeBounds</a> (double logm, int64_t k)</td></tr>
-<tr class="memdesc:a3cf818ff819a52c1a8082835e74948db inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called by the constructors of subclasses, in which the constants <code>gamma_t</code> are known.  <br /></td></tr>
+<tr class="memdesc:a3cf818ff819a52c1a8082835e74948db inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method computes the bounds that this normalizer will return, by assuming that the primal lattice was rescaled by the factor \(m\) and has order \(k\), so its density is \(m^{k-t}\) for \(t\geq k\), and cannot exceed \(m^s\) for projections in \(s &lt; k\) dimensions.  <br /></td></tr>
 <tr class="separator:a3cf818ff819a52c1a8082835e74948db inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8047c740758b34256b19c03c41500852 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a8047c740758b34256b19c03c41500852"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a8047c740758b34256b19c03c41500852">toString</a> () const</td></tr>
 <tr class="memdesc:a8047c740758b34256b19c03c41500852 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a string that describes this object.  <br /></td></tr>
@@ -183,14 +181,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a3fe22275dbaaaf9cd1437d6dc6709b81 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the bound on the length of the shortest nonzero vector in <code>j</code> dimensions.  <br /></td></tr>
 <tr class="separator:a3fe22275dbaaaf9cd1437d6dc6709b81 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4365472cf8fc3ad190af85842a737d4 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_ad4365472cf8fc3ad190af85842a737d4"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#ad4365472cf8fc3ad190af85842a737d4">getGamma</a> (int64_t j) const</td></tr>
-<tr class="memdesc:ad4365472cf8fc3ad190af85842a737d4 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of a lattice constant \(\gamma\) in dimension \(j\).  <br /></td></tr>
+<tr class="memdesc:ad4365472cf8fc3ad190af85842a737d4 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This virtual function must be implemented in subclasses.  <br /></td></tr>
 <tr class="separator:ad4365472cf8fc3ad190af85842a737d4 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_attribs_classLatticeTester_1_1Normalizer"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_static_attribs_classLatticeTester_1_1Normalizer')"><img src="../../closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html">LatticeTester::Normalizer</a></td></tr>
 <tr class="memitem:a5ca31d2e5ebe3b0da1ac19fc12f34913 inherit pub_static_attribs_classLatticeTester_1_1Normalizer" id="r_a5ca31d2e5ebe3b0da1ac19fc12f34913"><td class="memItemLeft" align="right" valign="top">static const int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a5ca31d2e5ebe3b0da1ac19fc12f34913">MAX_DIM</a> = 48</td></tr>
-<tr class="memdesc:a5ca31d2e5ebe3b0da1ac19fc12f34913 inherit pub_static_attribs_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum dimension of the lattices for which this class can give an upper bound.  <br /></td></tr>
+<tr class="memdesc:a5ca31d2e5ebe3b0da1ac19fc12f34913 inherit pub_static_attribs_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum dimension of the lattices for which this class can compute a bound.  <br /></td></tr>
 <tr class="separator:a5ca31d2e5ebe3b0da1ac19fc12f34913 inherit pub_static_attribs_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classLatticeTester_1_1Normalizer"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classLatticeTester_1_1Normalizer')"><img src="../../closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html">LatticeTester::Normalizer</a></td></tr>
 <tr class="memitem:abc6fced742a3042ee6c2c9cde39c6fad inherit pro_attribs_classLatticeTester_1_1Normalizer" id="r_abc6fced742a3042ee6c2c9cde39c6fad"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#abc6fced742a3042ee6c2c9cde39c6fad">m_name</a></td></tr>
@@ -207,7 +205,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:aa3938121e5777a0c91cb8bc90b01cc19 inherit pro_attribs_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This class implements some theoretical bounds on the values of \(P_{\alpha}\) for a lattice (see class <code>Palpha</code>). </p>
+<div class="textblock"><p>This class implements theoretical bounds on the values of \(P_{\alpha}\) for a lattice (see class <code>Palpha</code>). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a382840b34c515319d43bc8ccf5d54bf4" name="a382840b34c515319d43bc8ccf5d54bf4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a382840b34c515319d43bc8ccf5d54bf4">&#9670;&#160;</a></span>NormaPalpha()</h2>
@@ -263,7 +261,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Computes and returns the bound \(B_{\alpha}(s)\) given in <a class="el" href="../../d0/de3/citelist.html#CITEREF_mslo94a">[12]</a>&thinsp; (p. </p>
+<p>Computes and returns the bound \(B_{\alpha}(s)\) given in <a class="el" href="../../d0/de3/citelist.html#CITEREF_mslo94a">[11]</a>&thinsp; (p. </p>
 <p>83, Theorem 4.4). Given \(s &gt; 1\), \(\alpha&gt; 1\), \(m\) prime, and  \(m &gt;
 e^{\alpha s/(\alpha-1)}\), then there exists an integer vector \(\mathbf{a} \in\mathbb Z^s\) such that   </p><p class="formulaDsp">
 \[
@@ -274,8 +272,8 @@ e^{\alpha s/(\alpha-1)}\), then there exists an integer vector \(\mathbf{a} \in\
 
 </div>
 </div>
-<a id="a6321fc9b2efb83e8209237ca75bd45b7" name="a6321fc9b2efb83e8209237ca75bd45b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6321fc9b2efb83e8209237ca75bd45b7">&#9670;&#160;</a></span>computeBounds() <span class="overload">[1/4]</span></h2>
+<a id="a09e13d5804704d183eea4fc41f34d2f0" name="a09e13d5804704d183eea4fc41f34d2f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09e13d5804704d183eea4fc41f34d2f0">&#9670;&#160;</a></span>computeBounds() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -283,7 +281,7 @@ e^{\alpha s/(\alpha-1)}\), then there exists an integer vector \(\mathbf{a} \in\
         <tr>
           <td class="memname">void LatticeTester::NormaPalpha::computeBounds </td>
           <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>alpha</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -293,60 +291,8 @@ e^{\alpha s/(\alpha-1)}\), then there exists an integer vector \(\mathbf{a} \in\
 
 </div>
 </div>
-<a id="ab3f01ad5693cba65eeaea1d9cfbe8595" name="ab3f01ad5693cba65eeaea1d9cfbe8595"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3f01ad5693cba65eeaea1d9cfbe8595">&#9670;&#160;</a></span>computeBounds() <span class="overload">[2/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void LatticeTester::Normalizer::computeBounds </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>logDensity</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Preventing the compiler from raising the warning: '' <a class="el" href="../../d0/d40/NormaPalpha_8h.html">latticetester/NormaPalpha.h</a>:59:9: warning: 'LatticeTester::NormaPalpha::init' hides overloaded virtual function [-Woverloaded-virtual] void init (int64_t alpha); ''. </p>
-
-<p>Reimplemented from <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#ab3f01ad5693cba65eeaea1d9cfbe8595">LatticeTester::Normalizer</a>.</p>
-
-</div>
-</div>
-<a id="a3cf818ff819a52c1a8082835e74948db" name="a3cf818ff819a52c1a8082835e74948db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cf818ff819a52c1a8082835e74948db">&#9670;&#160;</a></span>computeBounds() <span class="overload">[3/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void LatticeTester::Normalizer::computeBounds </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>logm</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>k</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Preventing the compiler from raising the warning: '' <a class="el" href="../../d0/d40/NormaPalpha_8h.html">latticetester/NormaPalpha.h</a>:59:9: warning: 'LatticeTester::NormaPalpha::init' hides overloaded virtual function [-Woverloaded-virtual] void init (int64_t alpha); ''. </p>
-
-</div>
-</div>
-<a id="a09e13d5804704d183eea4fc41f34d2f0" name="a09e13d5804704d183eea4fc41f34d2f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09e13d5804704d183eea4fc41f34d2f0">&#9670;&#160;</a></span>computeBounds() <span class="overload">[4/4]</span></h2>
+<a id="a6321fc9b2efb83e8209237ca75bd45b7" name="a6321fc9b2efb83e8209237ca75bd45b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6321fc9b2efb83e8209237ca75bd45b7">&#9670;&#160;</a></span>computeBounds() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -354,7 +300,7 @@ e^{\alpha s/(\alpha-1)}\), then there exists an integer vector \(\mathbf{a} \in\
         <tr>
           <td class="memname">void LatticeTester::NormaPalpha::computeBounds </td>
           <td>(</td>
-          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>alpha</em></span></td><td>)</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -388,6 +334,58 @@ e^{\alpha s/(\alpha-1)}\), then there exists an integer vector \(\mathbf{a} \in\
 </div><div class="memdoc">
 
 <p>Returns the value of \(\alpha\). </p>
+
+</div>
+</div>
+<a id="a3cf818ff819a52c1a8082835e74948db" name="a3cf818ff819a52c1a8082835e74948db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cf818ff819a52c1a8082835e74948db">&#9670;&#160;</a></span>computeBounds() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LatticeTester::Normalizer::computeBounds </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>logm</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>k</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Preventing the compiler from raising the warning: '' <a class="el" href="../../d0/d40/NormaPalpha_8h.html">latticetester/NormaPalpha.h</a>:59:9: warning: 'LatticeTester::NormaPalpha::init' hides overloaded virtual function [-Woverloaded-virtual] void init (int64_t alpha); ''. </p>
+
+</div>
+</div>
+<a id="ab3f01ad5693cba65eeaea1d9cfbe8595" name="ab3f01ad5693cba65eeaea1d9cfbe8595"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3f01ad5693cba65eeaea1d9cfbe8595">&#9670;&#160;</a></span>computeBounds() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LatticeTester::Normalizer::computeBounds </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>logDensity</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Preventing the compiler from raising the warning: '' <a class="el" href="../../d0/d40/NormaPalpha_8h.html">latticetester/NormaPalpha.h</a>:59:9: warning: 'LatticeTester::NormaPalpha::init' hides overloaded virtual function [-Woverloaded-virtual] void init (int64_t alpha); ''. </p>
+
+<p>Reimplemented from <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#ab3f01ad5693cba65eeaea1d9cfbe8595">LatticeTester::Normalizer</a>.</p>
 
 </div>
 </div>

@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -114,10 +114,8 @@ $(function(){initNavTree('dd/d7f/classLatticeTester_1_1WeightsOrderDependent.htm
 </div><!--header-->
 <div class="contents">
 
-<p>Defines order-dependent weights.  
+<p>Defines order-dependent weights, for which the weight of a projection depends only on its order (cardinality).  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/WeightsOrderDependent.h&gt;</code></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for LatticeTester::WeightsOrderDependent:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -133,22 +131,22 @@ $(function(){initNavTree('dd/d7f/classLatticeTester_1_1WeightsOrderDependent.htm
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab1869ce0e3fe01d3451e579c0e7b3fcb" id="r_ab1869ce0e3fe01d3451e579c0e7b3fcb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1869ce0e3fe01d3451e579c0e7b3fcb">WeightsOrderDependent</a> (<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> defaultWeight=0.0)</td></tr>
-<tr class="memdesc:ab1869ce0e3fe01d3451e579c0e7b3fcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs order-dependent weights with default weight.  <br /></td></tr>
+<tr class="memdesc:ab1869ce0e3fe01d3451e579c0e7b3fcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs order-dependent weights with given default weight.  <br /></td></tr>
 <tr class="separator:ab1869ce0e3fe01d3451e579c0e7b3fcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7f6eaa3ae7552c5c7ee509aaf7e29dc" id="r_aa7f6eaa3ae7552c5c7ee509aaf7e29dc"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7f6eaa3ae7552c5c7ee509aaf7e29dc">~WeightsOrderDependent</a> ()</td></tr>
 <tr class="memdesc:aa7f6eaa3ae7552c5c7ee509aaf7e29dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:aa7f6eaa3ae7552c5c7ee509aaf7e29dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a575b607a1a72125cf4312327b9258309" id="r_a575b607a1a72125cf4312327b9258309"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a575b607a1a72125cf4312327b9258309">getWeight</a> (const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;projection) const</td></tr>
-<tr class="memdesc:a575b607a1a72125cf4312327b9258309"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the weight of the projection specified by <code>projection</code>.  <br /></td></tr>
-<tr class="separator:a575b607a1a72125cf4312327b9258309"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f92bbbd6af19559c69c73541ad1bd8f" id="r_a0f92bbbd6af19559c69c73541ad1bd8f"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f92bbbd6af19559c69c73541ad1bd8f">getWeight</a> (const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;projection) const</td></tr>
+<tr class="memdesc:a0f92bbbd6af19559c69c73541ad1bd8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the weight of the projection specified by <code>projection</code>.  <br /></td></tr>
+<tr class="separator:a0f92bbbd6af19559c69c73541ad1bd8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a423db4503079ce629d6cf91199249399" id="r_a423db4503079ce629d6cf91199249399"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a423db4503079ce629d6cf91199249399">getWeightForOrder</a> (Coordinates::size_type order) const</td></tr>
 <tr class="memdesc:a423db4503079ce629d6cf91199249399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the weight associated to the given <code>order</code>.  <br /></td></tr>
 <tr class="separator:a423db4503079ce629d6cf91199249399"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07e4c3f3d9dc0acebcd553dad07449d0" id="r_a07e4c3f3d9dc0acebcd553dad07449d0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07e4c3f3d9dc0acebcd553dad07449d0">setWeightForOrder</a> (Coordinates::size_type order, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> weight)</td></tr>
-<tr class="memdesc:a07e4c3f3d9dc0acebcd553dad07449d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the weight for the order specified by <code>order</code>.  <br /></td></tr>
-<tr class="separator:a07e4c3f3d9dc0acebcd553dad07449d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ef4e34a628996d7c0830e37d3312a91" id="r_a6ef4e34a628996d7c0830e37d3312a91"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ef4e34a628996d7c0830e37d3312a91">setWeightForOrder</a> (Coordinates::size_type order, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> weight)</td></tr>
+<tr class="memdesc:a6ef4e34a628996d7c0830e37d3312a91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the weight for the order specified by <code>order</code>.  <br /></td></tr>
+<tr class="separator:a6ef4e34a628996d7c0830e37d3312a91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0371132d369695e4a2b9b46e39ce927" id="r_ab0371132d369695e4a2b9b46e39ce927"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0371132d369695e4a2b9b46e39ce927">setDefaultWeight</a> (<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> weight)</td></tr>
-<tr class="memdesc:ab0371132d369695e4a2b9b46e39ce927"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the default weight of all orders for which a weight has not been set explicitly set using <a class="el" href="#a07e4c3f3d9dc0acebcd553dad07449d0" title="Sets the weight for the order specified by order.">setWeightForOrder()</a>.  <br /></td></tr>
+<tr class="memdesc:ab0371132d369695e4a2b9b46e39ce927"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the default weight of all orders for which a weight has not been set explicitly set using <a class="el" href="#a6ef4e34a628996d7c0830e37d3312a91" title="Sets the weight for the order specified by order.">setWeightForOrder()</a>.  <br /></td></tr>
 <tr class="separator:ab0371132d369695e4a2b9b46e39ce927"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0035c94d7884656f7e7b34eba55b294" id="r_ad0035c94d7884656f7e7b34eba55b294"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0035c94d7884656f7e7b34eba55b294">getDefaultWeight</a> () const</td></tr>
 <tr class="separator:ad0035c94d7884656f7e7b34eba55b294"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,9 +162,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a6499b479cf595f62b557a0eb4d2ffd54" id="r_a6499b479cf595f62b557a0eb4d2ffd54"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6499b479cf595f62b557a0eb4d2ffd54">format</a> (std::ostream &amp;os) const</td></tr>
-<tr class="memdesc:a6499b479cf595f62b557a0eb4d2ffd54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static factory method; create a <code><a class="el" href="../../dd/d7f/classLatticeTester_1_1WeightsOrderDependent.html" title="Defines order-dependent weights.">WeightsOrderDependent</a></code> object by parsing XML data.  <br /></td></tr>
-<tr class="separator:a6499b479cf595f62b557a0eb4d2ffd54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcba43278b09772b832818535c8a6af9" id="r_adcba43278b09772b832818535c8a6af9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adcba43278b09772b832818535c8a6af9">format</a> (std::ostream &amp;os) const</td></tr>
+<tr class="memdesc:adcba43278b09772b832818535c8a6af9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identifies the type of weights, formats them and outputs them on <code>os</code>.     <br /></td></tr>
+<tr class="separator:adcba43278b09772b832818535c8a6af9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classLatticeTester_1_1Weights"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classLatticeTester_1_1Weights')"><img src="../../closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html">LatticeTester::Weights</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
@@ -184,9 +182,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:aef6c12eea0f3df2908bb03fb2675add3 inherit related_classLatticeTester_1_1Weights"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Defines order-dependent weights. </p>
-<p>The weight of a projection depends only on the order (cardinality) of the projection. <br  />
- </p>
+<div class="textblock"><p>Defines order-dependent weights, for which the weight of a projection depends only on its order (cardinality). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab1869ce0e3fe01d3451e579c0e7b3fcb" name="ab1869ce0e3fe01d3451e579c0e7b3fcb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab1869ce0e3fe01d3451e579c0e7b3fcb">&#9670;&#160;</a></span>WeightsOrderDependent()</h2>
@@ -211,13 +207,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Constructs order-dependent weights with default weight. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">defaultWeight</td><td>Default weight. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Constructs order-dependent weights with given default weight. </p>
 
 </div>
 </div>
@@ -249,8 +239,8 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6499b479cf595f62b557a0eb4d2ffd54" name="a6499b479cf595f62b557a0eb4d2ffd54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6499b479cf595f62b557a0eb4d2ffd54">&#9670;&#160;</a></span>format()</h2>
+<a id="a0f92bbbd6af19559c69c73541ad1bd8f" name="a0f92bbbd6af19559c69c73541ad1bd8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f92bbbd6af19559c69c73541ad1bd8f">&#9670;&#160;</a></span>getWeight()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -259,24 +249,107 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void LatticeTester::WeightsOrderDependent::format </td>
+          <td class="memname">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> LatticeTester::WeightsOrderDependent::getWeight </td>
           <td>(</td>
-          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>projection</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Static factory method; create a <code><a class="el" href="../../dd/d7f/classLatticeTester_1_1WeightsOrderDependent.html" title="Defines order-dependent weights.">WeightsOrderDependent</a></code> object by parsing XML data. </p>
-<p>Identifies the type of weights, formats them and outputs them on <code>os</code>.   </p>
-<p>Subclasses that implement <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a> should identify themselves in the output.    </p>
+<p>Returns the weight of the projection specified by <code>projection</code>. </p>
 
-<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#af65093620c85fe29056af60dc689b143">LatticeTester::Weights</a>.</p>
+<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#a36b5b64d0859da432b61d44f6df74ca1">LatticeTester::Weights</a>.</p>
+
+</div>
+</div>
+<a id="a423db4503079ce629d6cf91199249399" name="a423db4503079ce629d6cf91199249399"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a423db4503079ce629d6cf91199249399">&#9670;&#160;</a></span>getWeightForOrder()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> LatticeTester::WeightsOrderDependent::getWeightForOrder </td>
+          <td>(</td>
+          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the weight associated to the given <code>order</code>. </p>
+
+</div>
+</div>
+<a id="a6ef4e34a628996d7c0830e37d3312a91" name="a6ef4e34a628996d7c0830e37d3312a91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ef4e34a628996d7c0830e37d3312a91">&#9670;&#160;</a></span>setWeightForOrder()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void LatticeTester::WeightsOrderDependent::setWeightForOrder </td>
+          <td>(</td>
+          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a></td>          <td class="paramname"><span class="paramname"><em>weight</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the weight for the order specified by <code>order</code>. </p>
+
+</div>
+</div>
+<a id="ab0371132d369695e4a2b9b46e39ce927" name="ab0371132d369695e4a2b9b46e39ce927"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0371132d369695e4a2b9b46e39ce927">&#9670;&#160;</a></span>setDefaultWeight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void LatticeTester::WeightsOrderDependent::setDefaultWeight </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a></td>          <td class="paramname"><span class="paramname"><em>weight</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the default weight of all orders for which a weight has not been set explicitly set using <a class="el" href="#a6ef4e34a628996d7c0830e37d3312a91" title="Sets the weight for the order specified by order.">setWeightForOrder()</a>. </p>
 
 </div>
 </div>
@@ -330,8 +403,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a575b607a1a72125cf4312327b9258309" name="a575b607a1a72125cf4312327b9258309"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a575b607a1a72125cf4312327b9258309">&#9670;&#160;</a></span>getWeight()</h2>
+<a id="adcba43278b09772b832818535c8a6af9" name="adcba43278b09772b832818535c8a6af9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcba43278b09772b832818535c8a6af9">&#9670;&#160;</a></span>format()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -340,107 +413,23 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> LatticeTester::WeightsOrderDependent::getWeight </td>
+          <td class="memname">virtual void LatticeTester::WeightsOrderDependent::format </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>projection</em></span></td><td>)</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns the weight of the projection specified by <code>projection</code>. </p>
+<p>Identifies the type of weights, formats them and outputs them on <code>os</code>.    </p>
+<p>Subclasses that implement <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a> should identify themselves in the output.    </p>
 
-<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#a36b5b64d0859da432b61d44f6df74ca1">LatticeTester::Weights</a>.</p>
-
-</div>
-</div>
-<a id="a423db4503079ce629d6cf91199249399" name="a423db4503079ce629d6cf91199249399"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a423db4503079ce629d6cf91199249399">&#9670;&#160;</a></span>getWeightForOrder()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> LatticeTester::WeightsOrderDependent::getWeightForOrder </td>
-          <td>(</td>
-          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns the weight associated to the given <code>order</code>. </p>
-
-</div>
-</div>
-<a id="ab0371132d369695e4a2b9b46e39ce927" name="ab0371132d369695e4a2b9b46e39ce927"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0371132d369695e4a2b9b46e39ce927">&#9670;&#160;</a></span>setDefaultWeight()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void LatticeTester::WeightsOrderDependent::setDefaultWeight </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a></td>          <td class="paramname"><span class="paramname"><em>weight</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Sets the default weight of all orders for which a weight has not been set explicitly set using <a class="el" href="#a07e4c3f3d9dc0acebcd553dad07449d0" title="Sets the weight for the order specified by order.">setWeightForOrder()</a>. </p>
-
-</div>
-</div>
-<a id="a07e4c3f3d9dc0acebcd553dad07449d0" name="a07e4c3f3d9dc0acebcd553dad07449d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07e4c3f3d9dc0acebcd553dad07449d0">&#9670;&#160;</a></span>setWeightForOrder()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void LatticeTester::WeightsOrderDependent::setWeightForOrder </td>
-          <td>(</td>
-          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a></td>          <td class="paramname"><span class="paramname"><em>weight</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Sets the weight for the order specified by <code>order</code>. </p>
+<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#af65093620c85fe29056af60dc689b143">LatticeTester::Weights</a>.</p>
 
 </div>
 </div>
@@ -489,9 +478,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/latticetester/<a class="el" href="../../d1/dc9/WeightsOrderDependent_8h.html">WeightsOrderDependent.h</a></li>
-<li>src/<a class="el" href="../../db/d99/WeightsOrderDependent_8cc.html">WeightsOrderDependent.cc</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

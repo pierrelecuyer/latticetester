@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -107,50 +107,22 @@ $(function(){initNavTree('d5/d7d/ReducerBB_8h.html','../../'); initResizable(tru
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">ReducerBB.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;NTL/LLL.h&quot;</code><br />
-<code>#include &quot;NTL/tools.h&quot;</code><br />
-<code>#include &quot;NTL/ZZ.h&quot;</code><br />
-<code>#include &quot;NTL/RR.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="../../dd/d8f/EnumTypes_8h.html">latticetester/EnumTypes.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="../../d1/dc8/Util_8h.html">latticetester/Util.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="../../dc/df1/IntLattice_8h.html">latticetester/IntLattice.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="../../d6/daa/NTLWrap_8h.html">latticetester/NTLWrap.h</a>&quot;</code><br />
-<code>#include &lt;fstream&gt;</code><br />
-<code>#include &lt;sstream&gt;</code><br />
-<code>#include &lt;vector&gt;</code><br />
-<code>#include &lt;limits&gt;</code><br />
-<code>#include &lt;cstdint&gt;</code><br />
-<code>#include &lt;iostream&gt;</code><br />
-<code>#include &lt;ctime&gt;</code><br />
-<code>#include &lt;string&gt;</code><br />
-<code>#include &lt;iomanip&gt;</code><br />
-<code>#include &lt;set&gt;</code><br />
-<code>#include &lt;map&gt;</code><br />
-<code>#include &lt;cmath&gt;</code><br />
-<code>#include &lt;cstdlib&gt;</code><br />
-<code>#include &lt;type_traits&gt;</code><br />
-</div><table class="memberdecls">
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html">LatticeTester::ReducerBB&lt; Int, Real &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This <code><a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html" title="This ReducerBB class provides facilities to reduce the basis of a lattice (an IntLattice object) in v...">ReducerBB</a></code> class provides facilities to reduce the basis of a lattice (an <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code> object) in various ways (pairwise, LLL, BKZ, Minkowski <a class="el" href="../../d0/de3/citelist.html#CITEREF_rdie75a">[4]</a>, <a class="el" href="../../d0/de3/citelist.html#CITEREF_mlen82a">[9]</a>, <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[10]</a>), and to find a shortest nonzero vector in the lattice using a BB algorithm <b>[rFIN85a]</b>.  <a href="../../d0/dea/classLatticeTester_1_1ReducerBB.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class provides functions to find a shortest nonzero vector in the lattice using a BB algorithm as in <a class="el" href="../../d0/de3/citelist.html#CITEREF_mfin85a">[4]</a>, and to compute a Minkowski basis reduction as in <a class="el" href="../../d0/de3/citelist.html#CITEREF_raff85a">[1]</a>.  <a href="../../d0/dea/classLatticeTester_1_1ReducerBB.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d74/namespaceLatticeTester.html">LatticeTester</a></td></tr>
-<tr class="memdesc:d8/d74/namespaceLatticeTester"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lattice namespace. <br /></td></tr>
+<tr class="memdesc:d8/d74/namespaceLatticeTester"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="../../d8/d74/namespaceLatticeTester.html" title="LatticeTester namespace.">LatticeTester</a> namespace. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a6b0960569f7f194c12022073a0ec7bbe" id="r_a6b0960569f7f194c12022073a0ec7bbe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a6b0960569f7f194c12022073a0ec7bbe">LatticeTester::negativeCholesky</a> ()</td></tr>
-<tr class="separator:a6b0960569f7f194c12022073a0ec7bbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

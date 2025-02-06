@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -115,8 +115,6 @@ $(function(){initNavTree('d8/d34/classLatticeTester_1_1CoordinateSets_1_1FromRan
 
 <p>A <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> for coordinates within a given range.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/CoordinateSets.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -214,6 +212,62 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a0ba528c77e2cb2c2e57e9481bd5713a7" name="a0ba528c77e2cb2c2e57e9481bd5713a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ba528c77e2cb2c2e57e9481bd5713a7">&#9670;&#160;</a></span>includeOrder()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LatticeTester::CoordinateSets::FromRanges::includeOrder </td>
+          <td>(</td>
+          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Coordinates::value_type</td>          <td class="paramname"><span class="paramname"><em>minCoord</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Coordinates::value_type</td>          <td class="paramname"><span class="paramname"><em>maxCoord</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>includeFirst</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Include all subsets \(\mathfrak u\) of \(\{\mathtt{minCoord}, \dots, \mathtt{maxCoord}\}\) of <code>order</code> \(|\mathfrak u| = \mathtt{order}\). </p>
+<p>For example, calling <code>includeOrder(3, 1, 5)</code> causes all 3-tuples over coordinates \(1, \dots, 5\) to be included. If <code>order = 0</code> (corresponding to the empty set), <code>minCoord</code> and <code>maxCoord</code> are ignored.</p>
+<p>Except for the case where <code>order = 0</code>, an exception is thrown if \(\mathtt{maxCoord} &lt; \mathtt{minCoord} + \mathtt{order} - 1\).</p>
+<p>If the object already contains an interval for size <code>order</code>, this interval is overwritten by the new one. </p>
+
+</div>
+</div>
+<a id="afdbda16b603fbd23602a724a326a8af0" name="afdbda16b603fbd23602a724a326a8af0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdbda16b603fbd23602a724a326a8af0">&#9670;&#160;</a></span>excludeOrder()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LatticeTester::CoordinateSets::FromRanges::excludeOrder </td>
+          <td>(</td>
+          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Removes the element associated with <code>order</code> from the list of of intervals to generate from. </p>
+<p>This means that no coordinate set \(\mathfrak u\) of order \(|\mathfrak u| = \mathtt{order}\) will be returned by the iterator until a new interval is given to the object for this order. </p>
+
+</div>
+</div>
 <a id="a11cbb61e36113a543d470b1853765913" name="a11cbb61e36113a543d470b1853765913"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a11cbb61e36113a543d470b1853765913">&#9670;&#160;</a></span>begin()</h2>
 
@@ -270,65 +324,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="afdbda16b603fbd23602a724a326a8af0" name="afdbda16b603fbd23602a724a326a8af0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afdbda16b603fbd23602a724a326a8af0">&#9670;&#160;</a></span>excludeOrder()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void LatticeTester::CoordinateSets::FromRanges::excludeOrder </td>
-          <td>(</td>
-          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Removes the element associated with <code>order</code> from the list of of intervals to generate from. </p>
-<p>This means that no coordinate set \(\mathfrak u\) of order \(|\mathfrak u| = \mathtt{order}\) will be returned by the iterator until a new interval is given to the object for this order. </p>
-
-</div>
-</div>
-<a id="a0ba528c77e2cb2c2e57e9481bd5713a7" name="a0ba528c77e2cb2c2e57e9481bd5713a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ba528c77e2cb2c2e57e9481bd5713a7">&#9670;&#160;</a></span>includeOrder()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void LatticeTester::CoordinateSets::FromRanges::includeOrder </td>
-          <td>(</td>
-          <td class="paramtype">Coordinates::size_type</td>          <td class="paramname"><span class="paramname"><em>order</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Coordinates::value_type</td>          <td class="paramname"><span class="paramname"><em>minCoord</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Coordinates::value_type</td>          <td class="paramname"><span class="paramname"><em>maxCoord</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>includeFirst</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Include all subsets \(\mathfrak u\) of \(\{\mathtt{minCoord}, \dots, \mathtt{maxCoord}\}\) of <code>order</code> \(|\mathfrak u| = \mathtt{order}\). </p>
-<p>For example, calling <code>includeOrder(3, 1, 5)</code> causes all 3-tuples over coordinates \(1, \dots, 5\) to be included. If <code>order = 0</code> (corresponding to the empty set), <code>minCoord</code> and <code>maxCoord</code> are ignored.</p>
-<p>Except for the case where <code>order = 0</code>, an exception is thrown if \(\mathtt{maxCoord} &lt; \mathtt{minCoord} + \mathtt{order} - 1\).</p>
-<p>If the object already contains an interval for size <code>order</code>, this interval is overwritten by the new one. </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/latticetester/<a class="el" href="../../d5/d92/CoordinateSets_8h.html">CoordinateSets.h</a></li>
-<li>src/<a class="el" href="../../dc/d8a/CoordinateSets_8cc.html">CoordinateSets.cc</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

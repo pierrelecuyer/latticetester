@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lacunary_0',['Lacunary',['../d8/d3b/classLatticeTester_1_1Lacunary.html',1,'LatticeTester']]]
+  ['mrglattice_0',['MRGLattice',['../d9/d4e/classLatticeTester_1_1MRGLattice.html',1,'LatticeTester']]]
 ];

@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -115,8 +115,6 @@ $(function(){initNavTree('d2/d30/classLatticeTester_1_1WriterRes.html','../../')
 
 <p>This class is a simple implementation of the <code><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html" title="This is an abstract class that represents an interface to Writer classes.">Writer</a></code> abstract class to write in plain text format on the stream.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/WriterRes.h&gt;</code></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for LatticeTester::WriterRes&lt; Int &gt;:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -192,7 +190,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a655b59c3b00319d97abad616fa649be0 inherit pub_methods_classLatticeTester_1_1Writer" id="r_a655b59c3b00319d97abad616fa649be0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#a655b59c3b00319d97abad616fa649be0">writeIntScal</a> (const Int &amp;value)</td></tr>
 <tr class="memdesc:a655b59c3b00319d97abad616fa649be0 inherit pub_methods_classLatticeTester_1_1Writer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a <code>IntScal</code> on the stream.  <br /></td></tr>
 <tr class="separator:a655b59c3b00319d97abad616fa649be0 inherit pub_methods_classLatticeTester_1_1Writer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b51448a23614cbff1249c84369735f3 inherit pub_methods_classLatticeTester_1_1Writer" id="r_a0b51448a23614cbff1249c84369735f3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#a0b51448a23614cbff1249c84369735f3">writeMMat</a> (const <a class="el" href="../../d4/d6f/classNTL_1_1matrix.html">IntMat</a> &amp;A)</td></tr>
+<tr class="memitem:a0b51448a23614cbff1249c84369735f3 inherit pub_methods_classLatticeTester_1_1Writer" id="r_a0b51448a23614cbff1249c84369735f3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#a0b51448a23614cbff1249c84369735f3">writeMMat</a> (const IntMat &amp;A)</td></tr>
 <tr class="memdesc:a0b51448a23614cbff1249c84369735f3 inherit pub_methods_classLatticeTester_1_1Writer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a <code>IntMat</code> on the stream.  <br /></td></tr>
 <tr class="separator:a0b51448a23614cbff1249c84369735f3 inherit pub_methods_classLatticeTester_1_1Writer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade185e3d36316412ee0054746f898822 inherit pub_methods_classLatticeTester_1_1Writer" id="r_ade185e3d36316412ee0054746f898822"><td class="memItemLeft" align="right" valign="top">virtual std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#ade185e3d36316412ee0054746f898822">getStream</a> ()</td></tr>
@@ -261,6 +259,69 @@ template&lt;typename Int &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a2919231629ef3b7fd227566da7a624f1" name="a2919231629ef3b7fd227566da7a624f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2919231629ef3b7fd227566da7a624f1">&#9670;&#160;</a></span>beginTabbedSection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Int &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html">LatticeTester::WriterRes</a>&lt; Int &gt;::beginTabbedSection </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implementation of the method defined in <code><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html" title="This is an abstract class that represents an interface to Writer classes.">Writer</a></code>. </p>
+<p>In this class, by default, a tabbed section has 2 spaces at the beginning of lines. Calling this methods resets the prefix of tabbed sections to the default. </p>
+
+<p>Implements <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#a5997437aed166c30edf29ec909cf58fd">LatticeTester::Writer&lt; Int &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a284502a7d88db19fdb4d71396d1c81f2" name="a284502a7d88db19fdb4d71396d1c81f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a284502a7d88db19fdb4d71396d1c81f2">&#9670;&#160;</a></span>endTabbedSection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Int &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html">LatticeTester::WriterRes</a>&lt; Int &gt;::endTabbedSection </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implementation of the method defined in <code><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html" title="This is an abstract class that represents an interface to Writer classes.">Writer</a></code>. </p>
+
+<p>Implements <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#a2c8c2dcd76a0bc5e86f0b57ea3a8b259">LatticeTester::Writer&lt; Int &gt;</a>.</p>
+
+</div>
+</div>
 <a id="ad5fd6d3351d50d16a80b8c64dfd121a1" name="ad5fd6d3351d50d16a80b8c64dfd121a1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5fd6d3351d50d16a80b8c64dfd121a1">&#9670;&#160;</a></span>addTab()</h2>
 
@@ -293,8 +354,8 @@ template&lt;typename Int &gt; </div>
 
 </div>
 </div>
-<a id="a2919231629ef3b7fd227566da7a624f1" name="a2919231629ef3b7fd227566da7a624f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2919231629ef3b7fd227566da7a624f1">&#9670;&#160;</a></span>beginTabbedSection()</h2>
+<a id="a89ff0f6229643ed39d01139f2cbfe043" name="a89ff0f6229643ed39d01139f2cbfe043"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89ff0f6229643ed39d01139f2cbfe043">&#9670;&#160;</a></span>removeTab()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -305,7 +366,7 @@ template&lt;typename Int &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html">LatticeTester::WriterRes</a>&lt; Int &gt;::beginTabbedSection </td>
+          <td class="memname">void <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html">LatticeTester::WriterRes</a>&lt; Int &gt;::removeTab </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -319,9 +380,9 @@ template&lt;typename Int &gt; </div>
 </div><div class="memdoc">
 
 <p>Implementation of the method defined in <code><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html" title="This is an abstract class that represents an interface to Writer classes.">Writer</a></code>. </p>
-<p>In this class, by default, a tabbed section has 2 spaces at the beginning of lines. Calling this methods resets the prefix of tabbed sections to the default. </p>
+<p>This removes 2 spaces to the prefix of tabbed sections. </p>
 
-<p>Implements <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#a5997437aed166c30edf29ec909cf58fd">LatticeTester::Writer&lt; Int &gt;</a>.</p>
+<p>Implements <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#a1aec9e76d39bef0449070618cc1d8d1d">LatticeTester::Writer&lt; Int &gt;</a>.</p>
 
 </div>
 </div>
@@ -389,37 +450,6 @@ template&lt;typename Int &gt; </div>
 
 </div>
 </div>
-<a id="a284502a7d88db19fdb4d71396d1c81f2" name="a284502a7d88db19fdb4d71396d1c81f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a284502a7d88db19fdb4d71396d1c81f2">&#9670;&#160;</a></span>endTabbedSection()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Int &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html">LatticeTester::WriterRes</a>&lt; Int &gt;::endTabbedSection </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implementation of the method defined in <code><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html" title="This is an abstract class that represents an interface to Writer classes.">Writer</a></code>. </p>
-
-<p>Implements <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#a2c8c2dcd76a0bc5e86f0b57ea3a8b259">LatticeTester::Writer&lt; Int &gt;</a>.</p>
-
-</div>
-</div>
 <a id="a2e4ccd289a048759199424a371ec2cb5" name="a2e4ccd289a048759199424a371ec2cb5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2e4ccd289a048759199424a371ec2cb5">&#9670;&#160;</a></span>newLine()</h2>
 
@@ -481,38 +511,6 @@ template&lt;typename Int &gt; </div>
 <p>Prints 2 newline characters and ends the tabbed section if the program is in a tabbed section. </p>
 
 <p>Implements <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#afefd2866bad293913c9dbaf6520234b5">LatticeTester::Writer&lt; Int &gt;</a>.</p>
-
-</div>
-</div>
-<a id="a89ff0f6229643ed39d01139f2cbfe043" name="a89ff0f6229643ed39d01139f2cbfe043"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89ff0f6229643ed39d01139f2cbfe043">&#9670;&#160;</a></span>removeTab()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Int &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="../../d2/d30/classLatticeTester_1_1WriterRes.html">LatticeTester::WriterRes</a>&lt; Int &gt;::removeTab </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implementation of the method defined in <code><a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html" title="This is an abstract class that represents an interface to Writer classes.">Writer</a></code>. </p>
-<p>This removes 2 spaces to the prefix of tabbed sections. </p>
-
-<p>Implements <a class="el" href="../../d4/dc5/classLatticeTester_1_1Writer.html#a1aec9e76d39bef0449070618cc1d8d1d">LatticeTester::Writer&lt; Int &gt;</a>.</p>
 
 </div>
 </div>

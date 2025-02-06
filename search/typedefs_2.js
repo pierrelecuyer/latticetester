@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['vec_5f64_0',['Vec_64',['../d2/d5a/namespaceNTL.html#aab2c03c6ebdc24ad122abcc86be689c1',1,'NTL']]],
-  ['vector64_1',['vector64',['../d4/d9e/LLL__FPInt_8h.html#a0b0595095c9e60c398f53d802df702e9',1,'vector64:&#160;LLL_FPInt.h'],['../d2/d5a/namespaceNTL.html#a6e971f332c36fa9b3927460cf177836a',1,'NTL::vector64']]]
+  ['weight_0',['Weight',['../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec',1,'LatticeTester']]],
+  ['weightsmap_1',['WeightsMap',['../d2/d23/classLatticeTester_1_1WeightsProjectionDependent.html#acad0b80804d73b79fb6f674d06f51e29',1,'LatticeTester::WeightsProjectionDependent']]]
 ];

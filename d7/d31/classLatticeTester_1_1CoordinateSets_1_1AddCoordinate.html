@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -115,8 +115,6 @@ $(function(){initNavTree('d7/d31/classLatticeTester_1_1CoordinateSets_1_1AddCoor
 
 <p>This template class wraps any implementation of a <a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a> and adds a specific coordinate to each coordinate sets.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/CoordinateSets.h&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -147,7 +145,7 @@ Public Member Functions</h2></td></tr>
 class LatticeTester::CoordinateSets::AddCoordinate&lt; BASE &gt;</div><p>This template class wraps any implementation of a <a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a> and adds a specific coordinate to each coordinate sets. </p>
 <p>When iterating through the subsets of this class, they will not be ordered by cardinality because the sets are generated on the fly and the coordinate is added if it is not already contained.</p>
 <p><code>BASE</code> is a type of coordinate sets that serves as a base. This should be one of the classes defined in the <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> namespace.</p>
-<dl class="todo"><dt><b><a class="el" href="../../dd/da0/todo.html#_todo000001">Todo</a></b></dt><dd>This class needs to be benchmarked to see how much slower it is (because it will be). </dd></dl>
+<p>Note: This class should be benchmarked to see how much slower it is (because it will be). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afeff63f7814f601cdb01f76edca0e5f7" name="afeff63f7814f601cdb01f76edca0e5f7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afeff63f7814f601cdb01f76edca0e5f7">&#9670;&#160;</a></span>AddCoordinate()</h2>
@@ -212,35 +210,6 @@ template&lt;typename BASE &gt; </div>
 
 </div>
 </div>
-<a id="ad47c3e84fc9b3d8ddb30f2191419d865" name="ad47c3e84fc9b3d8ddb30f2191419d865"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad47c3e84fc9b3d8ddb30f2191419d865">&#9670;&#160;</a></span>begin()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename BASE &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="../../df/d75/classLatticeTester_1_1CoordinateSets_1_1AddCoordinate_1_1const__iterator.html">const_iterator</a> <a class="el" href="../../d7/d31/classLatticeTester_1_1CoordinateSets_1_1AddCoordinate.html">LatticeTester::CoordinateSets::AddCoordinate</a>&lt; BASE &gt;::begin </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns an iterator pointing to the first element in the seq. </p>
-
-</div>
-</div>
 <a id="ae71d97c65f44240a1edefc186c4b195f" name="ae71d97c65f44240a1edefc186c4b195f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae71d97c65f44240a1edefc186c4b195f">&#9670;&#160;</a></span>coord()</h2>
 
@@ -267,6 +236,35 @@ template&lt;typename BASE &gt; </div>
 </div><div class="memdoc">
 
 <p>Returns the coordinate this object adds. </p>
+
+</div>
+</div>
+<a id="ad47c3e84fc9b3d8ddb30f2191419d865" name="ad47c3e84fc9b3d8ddb30f2191419d865"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad47c3e84fc9b3d8ddb30f2191419d865">&#9670;&#160;</a></span>begin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename BASE &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../df/d75/classLatticeTester_1_1CoordinateSets_1_1AddCoordinate_1_1const__iterator.html">const_iterator</a> <a class="el" href="../../d7/d31/classLatticeTester_1_1CoordinateSets_1_1AddCoordinate.html">LatticeTester::CoordinateSets::AddCoordinate</a>&lt; BASE &gt;::begin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element in the seq. </p>
 
 </div>
 </div>

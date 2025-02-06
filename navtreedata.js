@@ -25,10 +25,10 @@
 var NAVTREE =
 [
   [ "Lattice Tester Online Documentation", "index.html", [
-    [ "Todo List", "dd/da0/todo.html", null ],
     [ "Bibliography", "d0/de3/citelist.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Overview of files and classes", "index.html#overview", null ],
+      [ "Notes on this documentation", "index.html#notes", null ],
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", "namespacemembers_dup" ],
@@ -58,8 +58,6 @@ var NAVTREE =
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
         [ "Functions", "globals_func.html", null ],
-        [ "Variables", "globals_vars.html", null ],
-        [ "Typedefs", "globals_type.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
@@ -69,13 +67,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"d1/dea/classLatticeTester_1_1NormaMinkL2.html#a66e01a570a3727bf5a64fc8760db1634",
-"d6/d0b/structLatticeTester_1_1CoordinateSets_1_1Subsets_1_1const__iterator_1_1end__tag.html",
-"d7/dad/LLL__FP__lt_8cc.html#a7b80bd49abbf21083739a2091b07569b",
-"d8/d74/namespaceLatticeTester.html#a0d0e87ed1324a4d20f9289b472fe7152",
-"d9/d32/classLatticeTester_1_1Chrono.html#afd6d46c7ce75e32bdbb9dbfe49728dbfa76e7acb5aa152cb48e5ed083874b8569",
-"dd/d1d/Weights_8h.html",
-"df/de5/classLatticeTester_1_1NormaBestBound.html#a63d045807de2d7363738db34e796174b"
+"d2/d5a/namespaceNTL.html#a564af4b395ff8dbedf4fe4d00500abff",
+"d7/d27/structLatticeTester_1_1CoordinateSets_1_1AddCoordinate_1_1const__iterator_1_1end__tag.html",
+"d8/d74/namespaceLatticeTester.html#a33e21410fcd60b6dc1a9bf1ac58ad029",
+"d9/dd3/classLatticeTester_1_1Coordinates.html#ac71356dcc070f0bc5a4ed43864bd9971",
+"functions_func_d.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

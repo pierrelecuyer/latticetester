@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['size_5ftype_0',['size_type',['../d0/d01/classNTL_1_1vector.html#a613d08ffd63bbb802f6c737b40fd26c0',1,'NTL::vector::size_type'],['../d4/d6f/classNTL_1_1matrix.html#a8e33ea7c2003d234f531ab5c736d650f',1,'NTL::matrix::size_type']]]
+  ['vec_5f64_0',['Vec_64',['../d2/d5a/namespaceNTL.html#aab2c03c6ebdc24ad122abcc86be689c1',1,'NTL']]],
+  ['vector64_1',['vector64',['../d2/d5a/namespaceNTL.html#ad1332666799d99b61c6a0f4c6d657fce',1,'NTL']]]
 ];

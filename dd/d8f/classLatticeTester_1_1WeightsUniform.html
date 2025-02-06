@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -114,10 +114,8 @@ $(function(){initNavTree('dd/d8f/classLatticeTester_1_1WeightsUniform.html','../
 </div><!--header-->
 <div class="contents">
 
-<p>Specifies projection weights that are the same (usually 1) for all projections.  
+<p>Specifies weights that are the same (usually 1) for all projections.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/WeightsUniform.h&gt;</code></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for LatticeTester::WeightsUniform:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -169,7 +167,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:aef6c12eea0f3df2908bb03fb2675add3 inherit related_classLatticeTester_1_1Weights"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Specifies projection weights that are the same (usually 1) for all projections. </p>
+<div class="textblock"><p>Specifies weights that are the same (usually 1) for all projections. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8b0bbbffef85abbfbd1041cec6654724" name="a8b0bbbffef85abbfbd1041cec6654724"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8b0bbbffef85abbfbd1041cec6654724">&#9670;&#160;</a></span>WeightsUniform()</h2>
@@ -195,12 +193,6 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Constructs uniform weights. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">weight</td><td>Weight given to all projections. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -232,6 +224,35 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad7eb685304b5515dc5970aa192b9364f" name="ad7eb685304b5515dc5970aa192b9364f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7eb685304b5515dc5970aa192b9364f">&#9670;&#160;</a></span>getWeight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> LatticeTester::WeightsUniform::getWeight </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the same weight regardless of the specified indices. </p>
+
+<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#a36b5b64d0859da432b61d44f6df74ca1">LatticeTester::Weights</a>.</p>
+
+</div>
+</div>
 <a id="af46459e5e47e69826b993bbc19db19c3" name="af46459e5e47e69826b993bbc19db19c3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af46459e5e47e69826b993bbc19db19c3">&#9670;&#160;</a></span>format()</h2>
 
@@ -259,35 +280,6 @@ Additional Inherited Members</h2></td></tr>
 <p>Subclasses that implement <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a> should identify themselves in the output.    </p>
 
 <p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#af65093620c85fe29056af60dc689b143">LatticeTester::Weights</a>.</p>
-
-</div>
-</div>
-<a id="ad7eb685304b5515dc5970aa192b9364f" name="ad7eb685304b5515dc5970aa192b9364f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad7eb685304b5515dc5970aa192b9364f">&#9670;&#160;</a></span>getWeight()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a951f7e7b03767aa0971dde55f9d328ec">Weight</a> LatticeTester::WeightsUniform::getWeight </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns the same weight regardless of the specified indices. </p>
-
-<p>Implements <a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html#a36b5b64d0859da432b61d44f6df74ca1">LatticeTester::Weights</a>.</p>
 
 </div>
 </div>

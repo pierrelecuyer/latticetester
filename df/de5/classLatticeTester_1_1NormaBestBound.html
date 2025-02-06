@@ -35,7 +35,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;0.1.0-861</span>
+   <div id="projectname">Lattice Tester Online Documentation<span id="projectnumber">&#160;unknown</span>
    </div>
    <div id="projectbrief">Software Package For Testing The Uniformity Of Integral Lattices In The Real Space</div>
   </td>
@@ -114,8 +114,6 @@ $(function(){initNavTree('df/de5/classLatticeTester_1_1NormaBestBound.html','../
 
 <p>In this normalizer, the Hermite constants \(\gamma_s\) are approximated using the best upper bounds that are available.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;latticetester/NormaBestBound.h&gt;</code></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for LatticeTester::NormaBestBound:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -130,12 +128,12 @@ $(function(){initNavTree('df/de5/classLatticeTester_1_1NormaBestBound.html','../
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5daf15998d61b366fb312e1c655c32b8" id="r_a5daf15998d61b366fb312e1c655c32b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5daf15998d61b366fb312e1c655c32b8">NormaBestBound</a> (double logm, int k, int maxDim)</td></tr>
-<tr class="memdesc:a5daf15998d61b366fb312e1c655c32b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor assumes that the rescaled primal lattice has scaling factor \(m\) and order \(k\), so its density is \(m^{k-t}\) for \(t\geq k\), and cannot exceed 1 for projections in \(s &lt; k\) dimensions.  <br /></td></tr>
-<tr class="separator:a5daf15998d61b366fb312e1c655c32b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae321ecf0bf1c57ffbda461716db88c30" id="r_ae321ecf0bf1c57ffbda461716db88c30"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae321ecf0bf1c57ffbda461716db88c30">NormaBestBound</a> (double logDensity, int maxDim)</td></tr>
-<tr class="memdesc:ae321ecf0bf1c57ffbda461716db88c30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <code><a class="el" href="../../df/de5/classLatticeTester_1_1NormaBestBound.html" title="In this normalizer, the Hermite constants  are approximated using the best upper bounds that are avai...">NormaBestBound</a></code> for up to <code>maxDim</code> dimensions, by assuming that the log density is <code>logDensity</code> in all dimensions and the lattice was not rescaled.  <br /></td></tr>
-<tr class="separator:ae321ecf0bf1c57ffbda461716db88c30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b56d1e308986367115e761949408aa8" id="r_a1b56d1e308986367115e761949408aa8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b56d1e308986367115e761949408aa8">NormaBestBound</a> (double logm, int k, int maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a1b56d1e308986367115e761949408aa8"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor assumes that the rescaled primal lattice has scaling factor \(m\) and order \(k\), so its density is \(m^{k-t}\) for \(t\geq k\), and cannot exceed 1 for projections in \(s &lt; k\) dimensions.  <br /></td></tr>
+<tr class="separator:a1b56d1e308986367115e761949408aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c3604048479ebd5f2f48f9067bf7881" id="r_a6c3604048479ebd5f2f48f9067bf7881"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c3604048479ebd5f2f48f9067bf7881">NormaBestBound</a> (double logDensity, int maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a6c3604048479ebd5f2f48f9067bf7881"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <code><a class="el" href="../../df/de5/classLatticeTester_1_1NormaBestBound.html" title="In this normalizer, the Hermite constants  are approximated using the best upper bounds that are avai...">NormaBestBound</a></code> for up to <code>maxDim</code> dimensions, by assuming that the log density is <code>logDensity</code> in all dimensions and the lattice was not rescaled.  <br /></td></tr>
+<tr class="separator:a6c3604048479ebd5f2f48f9067bf7881"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5f6b8b0ec02467e8016beda2b4879d1" id="r_aa5f6b8b0ec02467e8016beda2b4879d1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5f6b8b0ec02467e8016beda2b4879d1">~NormaBestBound</a> ()</td></tr>
 <tr class="memdesc:aa5f6b8b0ec02467e8016beda2b4879d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:aa5f6b8b0ec02467e8016beda2b4879d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,15 +141,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a63d045807de2d7363738db34e796174b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the bound on the Hermite's constant \(\gamma_j\) in dimension \(j\).  <br /></td></tr>
 <tr class="separator:a63d045807de2d7363738db34e796174b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classLatticeTester_1_1Normalizer"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classLatticeTester_1_1Normalizer')"><img src="../../closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html">LatticeTester::Normalizer</a></td></tr>
-<tr class="memitem:a440380e78c86b1f46a699fe8febff4d3 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a440380e78c86b1f46a699fe8febff4d3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a440380e78c86b1f46a699fe8febff4d3">Normalizer</a> (double logm, int64_t k, int64_t maxDim, std::string name=&quot;&quot;, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:a440380e78c86b1f46a699fe8febff4d3 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the preferred constructor in all the subclasses.  <br /></td></tr>
-<tr class="separator:a440380e78c86b1f46a699fe8febff4d3 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a651719b74b4f0e3d4dc14b1f5a8b4e94 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a651719b74b4f0e3d4dc14b1f5a8b4e94"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a651719b74b4f0e3d4dc14b1f5a8b4e94">Normalizer</a> (double logDensity, int64_t maxDim, std::string name=&quot;&quot;, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:a651719b74b4f0e3d4dc14b1f5a8b4e94 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">***** DEPRECATED *****  <br /></td></tr>
-<tr class="separator:a651719b74b4f0e3d4dc14b1f5a8b4e94 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61f2201f62fdae9935e66ba0832f9b85 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a61f2201f62fdae9935e66ba0832f9b85"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a61f2201f62fdae9935e66ba0832f9b85">Normalizer</a> (int64_t maxDim, std::string name, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:a61f2201f62fdae9935e66ba0832f9b85 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor creates a <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html" title="This is a base class for implementing normalization constants used in figures of merit,...">Normalizer</a> object without computing any bounds.  <br /></td></tr>
-<tr class="separator:a61f2201f62fdae9935e66ba0832f9b85 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c7879f6f99a98a4ee02a708f0030a0a inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a1c7879f6f99a98a4ee02a708f0030a0a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a1c7879f6f99a98a4ee02a708f0030a0a">Normalizer</a> (double logm, int64_t k, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a1c7879f6f99a98a4ee02a708f0030a0a inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the preferred constructor in all the subclasses.  <br /></td></tr>
+<tr class="separator:a1c7879f6f99a98a4ee02a708f0030a0a inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a068e6716adbe015bb63809281b711b15 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a068e6716adbe015bb63809281b711b15"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a068e6716adbe015bb63809281b711b15">Normalizer</a> (double logDensity, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a068e6716adbe015bb63809281b711b15 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">***** DEPRECATED *****  <br /></td></tr>
+<tr class="separator:a068e6716adbe015bb63809281b711b15 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87b77a6eca350a8cad10183bc5b88c81 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a87b77a6eca350a8cad10183bc5b88c81"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a87b77a6eca350a8cad10183bc5b88c81">Normalizer</a> (int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a87b77a6eca350a8cad10183bc5b88c81 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor creates a <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html" title="This is a base class for implementing normalization constants used in figures of merit,...">Normalizer</a> object without computing any bounds.  <br /></td></tr>
+<tr class="separator:a87b77a6eca350a8cad10183bc5b88c81 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17c57e90311702db588165ba5b4881bb inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_a17c57e90311702db588165ba5b4881bb"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#a17c57e90311702db588165ba5b4881bb">~Normalizer</a> ()</td></tr>
 <tr class="memdesc:a17c57e90311702db588165ba5b4881bb inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a17c57e90311702db588165ba5b4881bb inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -177,7 +175,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a3fe22275dbaaaf9cd1437d6dc6709b81 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the bound on the length of the shortest nonzero vector in <code>j</code> dimensions.  <br /></td></tr>
 <tr class="separator:a3fe22275dbaaaf9cd1437d6dc6709b81 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4365472cf8fc3ad190af85842a737d4 inherit pub_methods_classLatticeTester_1_1Normalizer" id="r_ad4365472cf8fc3ad190af85842a737d4"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html#ad4365472cf8fc3ad190af85842a737d4">getGamma</a> (int64_t j) const</td></tr>
-<tr class="memdesc:ad4365472cf8fc3ad190af85842a737d4 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of a lattice constant \(\gamma\) in dimension \(j\).  <br /></td></tr>
+<tr class="memdesc:ad4365472cf8fc3ad190af85842a737d4 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="mdescLeft">&#160;</td><td class="mdescRight">This virtual function must be implemented in subclasses.  <br /></td></tr>
 <tr class="separator:ad4365472cf8fc3ad190af85842a737d4 inherit pub_methods_classLatticeTester_1_1Normalizer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
@@ -202,10 +200,10 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>In this normalizer, the Hermite constants \(\gamma_s\) are approximated using the best upper bounds that are available. </p>
-<p>For dimensions 0 through 8, the Hermite constant are known exactly. For dimensions 9 through 36, they are computed using the article "A Conceptual breakthrough in sphere packing" from Henry Cohn (2016). see <a href="https://doi.org/10.4007/annals.2003.157.689">https://doi.org/10.4007/annals.2003.157.689</a>. For dimensions 37 through 48 we use Rogers's bound. This class is to be used with the L2NORM (the Euclidean norm) exclusively. </p>
+<p>For dimensions 0 through 8, the Hermite constant are known exactly. For dimensions 9 through 36, they are computed using the article "A Conceptual breakthrough in sphere packing" from Henry Cohn (2016). see <a href="https://doi.org/10.4007/annals.2003.157.689">https://doi.org/10.4007/annals.2003.157.689</a>. For dimensions 37 through 48 we use Rogers's bound. This values given here are for the L2NORM. For the L1NORM, the bounds must be multiplied by <code>s</code> in <code>s</code> dimensions. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5daf15998d61b366fb312e1c655c32b8" name="a5daf15998d61b366fb312e1c655c32b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5daf15998d61b366fb312e1c655c32b8">&#9670;&#160;</a></span>NormaBestBound() <span class="overload">[1/2]</span></h2>
+<a id="a1b56d1e308986367115e761949408aa8" name="a1b56d1e308986367115e761949408aa8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b56d1e308986367115e761949408aa8">&#9670;&#160;</a></span>NormaBestBound() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -223,7 +221,12 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>maxDim</em></span>&#160;)</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>maxDim</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a></td>          <td class="paramname"><span class="paramname"><em>norm</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -232,8 +235,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ae321ecf0bf1c57ffbda461716db88c30" name="ae321ecf0bf1c57ffbda461716db88c30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae321ecf0bf1c57ffbda461716db88c30">&#9670;&#160;</a></span>NormaBestBound() <span class="overload">[2/2]</span></h2>
+<a id="a6c3604048479ebd5f2f48f9067bf7881" name="a6c3604048479ebd5f2f48f9067bf7881"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c3604048479ebd5f2f48f9067bf7881">&#9670;&#160;</a></span>NormaBestBound() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -246,7 +249,12 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>maxDim</em></span>&#160;)</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>maxDim</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a></td>          <td class="paramname"><span class="paramname"><em>norm</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
