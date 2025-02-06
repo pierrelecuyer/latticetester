@@ -22,91 +22,80 @@
 #include "latticetester/Weights.h"
 
 namespace LatticeTester {
-  /**
-   * Defines product weights.
-   * The weight of a projection is equal to the product of the individual weights
-   * of each coordinate involved.
-   */
-  class WeightsProduct : public Weights {
-    protected:
 
-      Weight m_defaultWeight;
-      std::vector<Weight> m_weights;
+/**
+ * \class WeightsProduct
+ *
+ * Defines product weights, for which the weight of a projection is equal to the product
+ * of the weights of the individual coordinates.
+ */
+class WeightsProduct: public Weights {
 
-    public:
+protected:
 
-      /**
-       * Constructs product weights with a default weight.
-       *
-       * \param defaultWeight    Default weight.
-       */
-      explicit WeightsProduct (Weight defaultWeight = 0.0);
+   Weight m_defaultWeight;
+   std::vector<Weight> m_weights;
 
-      /**
-       * Destructor.
-       */
-      virtual ~WeightsProduct()  {}
+public:
 
-      /**
-       * Returns the weight of the projection specified by `projection`.
-       */
-      virtual Weight getWeight (const Coordinates & projection) const;
-
-      /**
-       * Returns the weight associated to the given coordinate.
-       */
-      virtual Weight getWeightForCoordinate (
-          Coordinates::size_type coordinate) const
-      {
-        return coordinate < m_weights.size() ?
-          m_weights[coordinate] : m_defaultWeight;
-      }
-
-      /**
-       * Sets the weight for the coordinate specified by `coordinate`.
-       */
-      virtual void setWeightForCoordinate (
-          Coordinates::size_type coordinate, Weight weight);
-
-      /**
-       * Sets the default weight of all coordinates for which a weight
-       * has not been set explicitly set using #setWeightForCoordinate().
-       */
-      virtual void setDefaultWeight (Weight weight)
-      { m_defaultWeight = weight; }
-
-      virtual const std::vector<Weight>& getWeights() const
-      {
-        return m_weights;
-      }
-
-      virtual Weight getDefaultWeight() const
-      {
-        return m_defaultWeight;
-      }
-
-    /**
-    * Multiply each weight by a constant.
+   /**
+    * Constructs product weights with a default weight.
     */
-   void multiplyWeights(Weight c){
-       for (auto& w: m_weights){
-           w *= c;
-       }
-       m_defaultWeight *= c;
+   explicit WeightsProduct(Weight defaultWeight = 0.0);
+
+   /**
+    * Destructor.
+    */
+   virtual ~WeightsProduct() {
    }
 
-// #ifdef WITH_XML
-//       /**
-//        * Static factory method; create a \c WeightsProduct object by
-//        * parsing XML data.
-//        */
-//       static WeightsProduct* createFromXML (const pugi::xml_node & node);
-// #endif
+   /**
+    * Returns the weight of the projection specified by `projection`.
+    */
+   virtual Weight getWeight(const Coordinates &projection) const;
 
-    protected:
-      /// \copydoc LatticeTester::Weights::format()
-      virtual void format(std::ostream& os) const;
-  };
+   /**
+    * Returns the weight associated to the given coordinate.
+    */
+   virtual Weight getWeightForCoordinate(Coordinates::size_type coordinate) const {
+      return coordinate < m_weights.size() ? m_weights[coordinate] : m_defaultWeight;
+   }
+
+   /**
+    * Sets the weight for the coordinate specified by `coordinate`.
+    */
+   virtual void setWeightForCoordinate(Coordinates::size_type coordinate, Weight weight);
+
+   /**
+    * Sets the default weight of all coordinates for which a weight
+    * has not been set explicitly set using #setWeightForCoordinate().
+    */
+   virtual void setDefaultWeight(Weight weight) {
+      m_defaultWeight = weight;
+   }
+
+   virtual const std::vector<Weight>& getWeights() const {
+      return m_weights;
+   }
+
+   virtual Weight getDefaultWeight() const {
+      return m_defaultWeight;
+   }
+
+   /**
+    * Multiply each weight by a constant.
+    */
+   void multiplyWeights(Weight c) {
+      for (auto &w : m_weights) {
+         w *= c;
+      }
+      m_defaultWeight *= c;
+   }
+
+protected:
+   /// \copydoc LatticeTester::Weights::format()
+   virtual void format(std::ostream &os) const;
+};
 
 }
 

@@ -26,16 +26,17 @@ namespace LatticeTester {
 
 #define GERME (ULONG_MAX / 54321)
 
-   /**
-   * This class generates random numbers (in fact pseudo-random numbers).
-   * The generator used is the 64-bits generator `LFSR258`
-   * from L'Ecuyer \cite rLEC99a  with period length near \f$2^{258}\f$
-   * for 64-bits machines, and the 32-bits generator `LFSR113`
-   * from L'Ecuyer \cite rLEC99a  with period length near \f$2^{113}\f$
-   * on  32-bits machines. Thus the random numbers generated will be
-   * different on 32-bits and 64-bits machines.
+  /**
+   * \file Random.h
+   *
+   * This file offers functions to generate random numbers use when making random searches.
+   * The base generator is the 64-bit `LFSR258` from \cite rLEC99a,
+   * with period near \f$2^{258}\f$, for 64-bit computers,
+   * and the 32-bit generator `LFSR113` from \cite rLEC99a, with period length near \f$2^{113}\f$
+   * on  32-bits computers. Thus the random numbers are different on 32-bits and 64-bits machines.
    */
   namespace Random {
+
     /**
      * Returns a random number in \f$[0, 1)\f$. The number has 53 random bits
      * of resolution on 64-bits machines, and 32 random bits

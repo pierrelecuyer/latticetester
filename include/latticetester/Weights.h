@@ -31,6 +31,8 @@ namespace LatticeTester {
   typedef double Weight;
 
   /**
+   * \class Weights
+   *
    * Abstract class that defines an interface to specify Weights given to projections
    * in figures of merit. This class and its subclasses are not used directly by
    * LatticeTester since LatticeTester does not implement figures of merit.

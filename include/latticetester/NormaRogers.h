@@ -25,6 +25,8 @@
 namespace LatticeTester {
 
 /**
+ * \class NormaRogers
+ *
  * This class implements upper bounds on the length of the shortest nonzero
  * vector in a lattice, in which the Hermite constants \f$\gamma_s\f$
  * are approximated by their Rogers's bounds.

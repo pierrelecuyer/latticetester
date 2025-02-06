@@ -25,6 +25,8 @@
 namespace LatticeTester {
 
 /**
+ * \class NormaLaminated
+ *
  * This Normalizer class implements approximate upper bounds on the length of the shortest nonzero
  * vector in a lattice. These are not strict upper bounds, because the Hermite constants
  * \f$\gamma_s\f$ here are approximated by *lower bounds*

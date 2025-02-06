@@ -22,71 +22,69 @@
 #include "latticetester/Weights.h"
 
 namespace LatticeTester {
-  /**
-   * Defines order-dependent weights.
-   * The weight of a projection depends only on the order (cardinality) of the projection.   */
-  class WeightsOrderDependent : public Weights {
-    protected:
 
-      Weight m_defaultWeight;
-      std::vector<Weight> m_weights;
+/**
+ * \class  WeightsOrderDependent
+ *
+ * Defines order-dependent weights, for which the weight of a projection depends only
+ * on its order (cardinality).
+ */
+class WeightsOrderDependent: public Weights {
+protected:
 
-    public:
+   Weight m_defaultWeight;
+   std::vector<Weight> m_weights;
 
-      /**
-       * Constructs order-dependent weights with default weight.
-       *
-       * \param defaultWeight   Default weight.
-       */
-      explicit WeightsOrderDependent (Weight defaultWeight = 0.0);
+public:
 
-      /**
-       * Destructor.
-       */
-      virtual ~WeightsOrderDependent()
-      { }
+   /**
+    * Constructs order-dependent weights with given default weight.
+    */
+   explicit WeightsOrderDependent(Weight defaultWeight = 0.0);
 
-      /**
-       * Returns the weight of the projection specified by `projection`.
-       */
-      virtual Weight getWeight (const Coordinates & projection) const;
+   /**
+    * Destructor.
+    */
+   virtual ~WeightsOrderDependent() {
+   }
 
-      /**
-       * Returns the weight associated to the given `order`.
-       */
-      virtual Weight getWeightForOrder (Coordinates::size_type order) const
-      { return order < m_weights.size() ? m_weights[order] : m_defaultWeight; }
+   /**
+    * Returns the weight of the projection specified by `projection`.
+    */
+   virtual Weight getWeight(const Coordinates &projection) const;
 
-      /**
-       * Sets the weight for the order specified by `order`.
-       */
-      virtual void setWeightForOrder (Coordinates::size_type order, Weight weight);
+   /**
+    * Returns the weight associated to the given `order`.
+    */
+   virtual Weight getWeightForOrder(Coordinates::size_type order) const {
+      return order < m_weights.size() ? m_weights[order] : m_defaultWeight;
+   }
 
-      /**
-       * Sets the default weight of all orders for which a weight
-       * has not been set explicitly set using #setWeightForOrder().
-       */
-      virtual void setDefaultWeight (Weight weight)
-      { m_defaultWeight = weight; }
+   /**
+    * Sets the weight for the order specified by `order`.
+    */
+   virtual void setWeightForOrder(Coordinates::size_type order, Weight weight);
 
-      virtual Weight getDefaultWeight () const 
-      { return m_defaultWeight; } 
+   /**
+    * Sets the default weight of all orders for which a weight
+    * has not been set explicitly set using #setWeightForOrder().
+    */
+   virtual void setDefaultWeight(Weight weight) {
+      m_defaultWeight = weight;
+   }
 
-      virtual uint64_t getSize () const
-      { return (unsigned int) m_weights.size(); } 
+   virtual Weight getDefaultWeight() const {
+      return m_defaultWeight;
+   }
 
-// #ifdef WITH_XML
-//       /**
-//        * Static factory method; create a \c WeightsOrderDependent object by
-//        * parsing XML data.
-//        */
-//       static WeightsOrderDependent* createFromXML (const pugi::xml_node & node);
-// #endif
+   virtual uint64_t getSize() const {
+      return (unsigned int) m_weights.size();
+   }
 
-    protected:
-      /// \copydoc LatticeTester::Weights::format()
-      virtual void format(std::ostream& os) const;
-  };
+protected:
+   /// \copydoc LatticeTester::Weights::format()
+   virtual void format(std::ostream &os) const;
+};
 
 }
 

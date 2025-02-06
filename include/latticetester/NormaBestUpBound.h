@@ -25,6 +25,8 @@
 namespace LatticeTester {
 
 /**
+ * \class NormaBestUpBound
+ *
  * In this normalizer, the Hermite constants \f$\gamma_s\f$ are approximated using the
  * best upper bounds that are available.
  * For dimensions 0 through 8, and 24, the Hermite constant are known exactly.

@@ -48,23 +48,23 @@
 namespace LatticeTester {
 
 /**
- * \file latticetester/ReducerBB.h
+ * \class ReducerBB
  *
- * This `ReducerBB` class provides functions to find a shortest nonzero vector in the lattice
+ * This class provides functions to find a shortest nonzero vector in the lattice
  * using a BB algorithm as in \cite mFIN85a,
  * and to compute a Minkowski basis reduction as in \cite rAFF85a.
  *
- * Each `Reducer` must have an internal `IntLattice` object which is given upon construction
- * and can be changed via `setIntLattice`.
+ * Each `ReducerBB` has an internal `IntLattice` object given upon construction
+ * and modifiable via `setIntLattice`.
  * The `shortestVector` and `reductMinkowski` functions are applied to this internal object
- * and will use the norm associated with that `IntLattice` object.
+ * and always use the norm associated with that `IntLattice` object.
  * These functions do not apply any pre-reduction by themselves.
  * Before calling them, one should always pre-reduce the basis via LLL or BKZ,
  * because it drastically reduces the size of the BB search tree.
  *
- * The `Reducer` object maintains several internal variables, vectors, and matrices
+ * The `ReducerBB` object maintains several internal variables, vectors, and matrices
  * used by the `shortestVector` and `reductMinkowski` functions.
- * It is recommended to create a single `Reducer` object with a large enough maximal dimension
+ * It is recommended to create a single `ReducerBB` object with a large enough maximal dimension
  * and then call the main functions with the relevant `IntLattice` object as a parameter.
  * One may also re-use the same `IntLattice` objects for many different lattices,
  * for example when performing a search for a good lattice.
@@ -72,14 +72,15 @@ namespace LatticeTester {
  * will be taken from this internal `IntLattice` object.  The dimensions of the internal vectors
  * and matrices can be larger than required; the methods will use only the
  * entries that are needed for the given `IntLattice` basis.
- * Creating a new `Reducer` object for each `IntLattice` that we want to handle is very
+ * Creating a new `ReducerBB` object for each `IntLattice` that we want to handle is very
  * inefficient and should be avoided, especially when we want to examine several
  * projections for several lattices.
  *
  * The functions in this class do not use or change the m-dual lattice.
  * To find a shortest nonzero vector in the m-dual lattice,
  * one should dualize the lattice (`IntLattice::dualize` does that)
- * and then apply the desired methods.
+ * and then apply the desired functions.  For the m-dual lattice of a projection,
+ * one should take the m-dual of a basis for the projection.
  */
 
 template<typename Int, typename Real>
@@ -176,22 +177,25 @@ public:
    bool reductMinkowski(IntLattice<Int, Real> &lat, int64_t d = 0);
 
    /**
-    * Returns the current shortest vector found in this lattice.  It may not be in the basis.
+    * Returns the current shortest vector found in this lattice.
+    * It is usually the first basis vector, but during the BB procedure it may happen that'
+    * this shortest vector is not in the basis.
     */
    IntVec getShortVec() {
       return m_bv;
    }
 
    /**
-    * Returns the *square length* of the current shortest basis vector in the lattice,
+    * Returns the *square length* of the current shortest vector in the lattice,
     * usually computed with the current norm.
+    * During the BB procedure, it may happen that this shortest vector is not yet in the basis.
     */
    Real getMinLength2() {
       return m_lMin2;
    }
 
    /**
-    * Returns the *length* (not squared) of the current shortest basis vector in the lattice,
+    * Returns the *length* (not squared) of the current shortest vector in the lattice,
     * which is stored in a local variable.
     * This depends only on the lattice, but this length is stored and used in this class.
     */
@@ -292,12 +296,12 @@ public:
 
 private:
 
-   /**
+   /*
     * Initializes all matrices and vectors used in this object.
     */
    void init(int64_t maxDim);
 
-   /**
+   /*
     * Recursive procedure that tries to find a shorter vector using BB.
     * It is called by `redBBShortVec`. The parameter j indicates the level of the
     * BB tree. The first call is for level i=0.
@@ -306,18 +310,18 @@ private:
 
    bool tryZShortVecOld(int64_t j, bool &smaller, NormType norm);
 
-   /**
+   /*
     * Used by `reductMinkowski` to try shorten the vectors of the primal basis using
     * branch-and-bound.
     */
    bool redBBMink(int64_t i, int64_t d, int64_t Stage, bool &smaller, bool taboo[] = NULL);
 
-   /**
+   /*
     * Recursive procedure used in `redBBMink` to try find shorter vectors.
     */
    bool tryZMink(int64_t j, int64_t i, int64_t Stage, bool &smaller, const IntMat &WTemp);
 
-   /**
+   /*
     * Computes the LDL Cholesky decomposition of the basis. Returns in `m_L` the
     * lower-triangular matrix of the Cholesky decomposition that are below the diagonal.
     * Returns in `m_dc2` the squared elements of the diagonal.
@@ -326,7 +330,7 @@ private:
     */
    bool calculCholeskyLDL();
 
-   /**
+   /*
     * Computes a lower-triangular basis `L` with elements `ell_{i,j}`.
     * Then put in `m_L` the elements `\tilde\ell_{i,j} = \ell_{i,j}/\ell_{i,i}`
     * below the diagonal, the elements `\ell_{j,j}` on the diagonal,
@@ -335,7 +339,7 @@ private:
     */
    bool calculTriangularL();
 
-   /**
+   /*
     * In this function, we assume that we have found a new shorter vector
     * \f$ \bv = \sum_{i=1}^t z_i \bv_i\f$ and we want to insert it in the basis.
     * If \f$z_j = \pm 1\f$ for some \f$j\f$, we can simply exchange \f$\bv\f$ with  \f$\bv_j\f$
@@ -349,7 +353,7 @@ private:
     */
    void insertBasisVector(std::vector<std::int64_t> &z);
 
-   /**
+   /*
     * This function provides an alternative to `insertBasisVector` when we use the \f$L^2\f$ norm
     * and we are sure that \f$\bv\f$ is actually a shortest vector.
     * It adds the new vector \f$\bv = \sum_{i=1}^t z_i \bv_i\f$ to the basis to form a set
@@ -365,12 +369,12 @@ private:
     */
    // void tracePrintBasis(char *mess);
 
-   /**
+   /*
     * The lattice that this object is working on.
     */
    IntLattice<Int, Real> *m_lat;
 
-   /**
+   /*
     * A vector that contains a lower bound on the acceptable (squared) length
     * of the shortest vector, for each number of dimensions.
     * If any vector of the lattice is shorter than this bound,

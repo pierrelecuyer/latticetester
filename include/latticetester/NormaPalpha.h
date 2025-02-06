@@ -25,7 +25,7 @@
 namespace LatticeTester {
 
 /**
- * This class implements some theoretical bounds on the values of
+ * This class implements theoretical bounds on the values of
  * \f$P_{\alpha}\f$ for a lattice (see class <tt>Palpha</tt>).
  */
 

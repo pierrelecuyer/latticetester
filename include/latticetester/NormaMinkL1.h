@@ -25,6 +25,8 @@
 namespace LatticeTester {
 
 /**
+ * \class NormaMinkL1
+ *
  * This class implements theoretical *upper bounds* on the length of the shortest
  * nonzero vector in a lattice for the \f$L_1\f$ norm.
  * This length in the dual lattice is related to the minimal number of hyperplanes

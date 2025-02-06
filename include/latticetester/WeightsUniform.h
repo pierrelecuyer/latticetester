@@ -24,41 +24,45 @@
 #include <vector>
 
 namespace LatticeTester {
-  /**
-   * Specifies projection weights that are the same (usually 1) for all projections.
-   */
-  class WeightsUniform : public Weights {
-    protected:
 
-      Weight m_weight;
+/**
+ * \class WeightsUniform
+ *
+ * Specifies weights that are the same (usually 1) for all projections.
+ */
+class WeightsUniform: public Weights {
+protected:
 
-    public:
+   Weight m_weight;
 
-      /**
-       * Constructs uniform weights.
-       *
-       * \param weight     Weight given to all projections.
-       */
-      explicit WeightsUniform (Weight weight)
-      { m_weight = weight; }
+public:
 
-      /**
-       * Destructor.
-       */
-      virtual ~WeightsUniform()
-      { }
+   /**
+    * Constructs uniform weights.
+    */
+   explicit WeightsUniform(Weight weight) {
+      m_weight = weight;
+   }
 
-      /**
-       * Returns the same weight regardless of the specified indices.
-       */
-      virtual Weight getWeight (const Coordinates &) const  { return m_weight; }
+   /**
+    * Destructor.
+    */
+   virtual ~WeightsUniform() {
+   }
 
-    protected:
-      /// \copydoc LatticeTester::Weights::format()
-      virtual void format(std::ostream& os) const {
-        os << "WeightsUniform(" << m_weight << ")";
-      }
-  };
+   /**
+    * Returns the same weight regardless of the specified indices.
+    */
+   virtual Weight getWeight(const Coordinates&) const {
+      return m_weight;
+   }
+
+protected:
+   /// \copydoc LatticeTester::Weights::format()
+   virtual void format(std::ostream &os) const {
+      os << "WeightsUniform(" << m_weight << ")";
+   }
+};
 
 }
 

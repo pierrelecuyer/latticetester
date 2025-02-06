@@ -38,7 +38,7 @@ namespace LatticeTester {
  * as explained in Section 9 of the user's guide.
  *
  * The preferred constructor assumes that the rescaled primal lattice has scaling factor \f$m\f$
- * and order \f$k\f$, so its density is \f$\min(1, m^{k-t})\f$ in \f$t\geq 1\f$ dimensions,
+ * and order \f$k\f$, so its density is \f$ \tilde\eta_t = \min(1, m^{k-t})\f$ in \f$t\geq 1\f$ dimensions,
  * and cannot exceed 1 for projections in \f$s < k\f$ dimensions.
  * This constructor take \f$ \log m \f$ and  \f$k\f$ as inputs.
  * It invokes `computeBounds` internally to compute the bounds.
@@ -48,25 +48,28 @@ namespace LatticeTester {
  * Given a (non-rescaled) lattice of density \f$ \eta_t \f$ in \f$t\f$ dimensions,
  * the Euclidean length \f$ d_t \f$ of a shortest nonzero lattice vector is upper-bounded as follows:
  * \f[
- *    d_t \le  d_t^*(\eta_t) \eqdef \gamma_t^{1/2} \eta_t^{-1/t},
+ *    d_t \le  d_t^*(\eta_t) := \gamma_t^{1/2} \eta_t^{-1/t},
  * \f]
- * where the constants  \f$ \gamma_t \f$ are known exactly only for  \f$ t\leq 8\f$.
- * For larger values of  \f$ t \f$, we use bounds or approximations of these constants,
+ * where the constants \f$ \gamma_t \f$ are called the Hermite constants.
+ * For the rescaled primal lattice, the density \f$ \eta_t \f$ must be replaced by
+ * \f$ \tilde\eta_t\f$ defined above.
+ * The Hermite constants are known exactly only for \f$ t\leq 8\f$ and $t=24$.
+ * For other values of  \f$ t \f$, we use bounds or approximations of these constants,
  * which are defined in subclasses of `Normalizer`.
  * These bounds also hold for the  \f$ L^1\f$ lengths of the shortest vectors,
- * but with different constants  \f$ \gamma_t \f$.
+ * but with different constants  \f$ \gamma_t \f$.  In particular, if we use \f$t\gamma_t\f$
+ * in place of \f$\gamma_t\f$ in the bounds for the  \f$ L^2\f$ norm, we get bounds for
+ * the  \f$ L^1\f$ norm.
+ *
  * In the dual lattice, the density is \f$1/\eta_t\f$ instead, and the Euclidean length
  * \f$ \ell_t \f$ of a shortest nonzero lattice vector then obeys:
  * \f[
- *    \ell_t \le  \ell_t^*(\eta_t) \eqdef \gamma_t^{1/2} \eta_t^{1/t}.
+ *    \ell_t \le  \ell_t^*(\eta_t) := \gamma_t^{1/2} \eta_t^{1/t}.
  * \f]
  * The bounds \f$ d_t^*(\eta_t)\f$ and \f$ \ell_t^*(\eta_t)\f$ are used to normalize
  * the values of \f$ d_t \f$ or \f$ \ell_t \f$ computed by the software for given lattices
  * to obtain standardized measures that lie between 0 and 1.
- * For the best lattices, these measures should be close to 1.
- *
- * The bounds that we actually use are a bit different and are described
- * in Section 9 of the guide.                                              ******
+ * For the good lattices, these measures should be close to 1.
  *
  * In subclasses, it suffices to implement the `getGamma(int) const` function
  * and the specialized constructors.
@@ -100,7 +103,7 @@ public:
 
     /**
      * This old (legacy) constructor assumes that the lattice is not rescaled
-     * and that the (log)density is the same in all dimensions, which practically
+     * and that the (log)density is the same in all dimensions, which is practically
      * never true when rescaling.
      * It creates a `Normalizer` by assuming that the density is
      * \f$\eta=\exp(\text{logDensity})\f$ in all dimensions.

@@ -30,27 +30,17 @@
 using namespace NTL;
 
 /**
- * \file This module extends the `Vec` and `Mat` classes of NTL. It was previously
- * necessary because NTL and boost (an old dependency) did not use the same 
- * function names and indices.
- * Most of the methods below only define alias names for some NTL methods.
- * This was done at the time to have the same names for methods that are in both
- * boost and NTL, allowing LatticeTester to work with either the boost or NTL library,
- * depending on pre-processing statements.  These alias could probably be removed
- * because we no longer use boost in LatticeTester.
- * However, they may still be used in LatNet Builder (?)              **************
+ * \file NTLWrap.h
  *
- * New functions have also been implemented in this module as a way to overload a
- * few operators and methods of NTL (especially on matrix and vector types) to
- * the usage of `NTL::Mat<std::int64_t>` because some basic utilities that we need
- * for those integers are not offered in NTL.
+ * This file offers a few basic utilities not available in NTL. It is in the NTL namespace
+ * because it was initially seen (historically) as an expansion of NTL.
  */
 
 namespace NTL {
 
 
 /*
- * \name Pointers to NTL matrix rows.
+ * \name Pointers to %NTL matrix rows.
  * @{
  * An extension of `NTL::Vec<T>` implemented in this module to be used as
  * a reference to a matrix row. This is essentially the same as defining a
@@ -97,7 +87,7 @@ inline void conv(double &r, const char *c) {
     r = strtod(c, (char**) NULL);
 }
 
-/**
+/*
  * Converts a `int64_t` to a `double`.
  *
  inline void conv(double &x, int64_t a) {
@@ -147,7 +137,7 @@ inline void conv(double &r, const char *c) {
  }
  */
 
-/**
+/*
  * @}
  * \name Function overloads
  * @{
@@ -230,7 +220,7 @@ inline double inv(const double x) {
 }
 */
 
-/**
+/*
  * Transposes `A` into `X`.
  * This is a template overload of the transpose function of NTL.
  * It does basically the same thing as in NTL. It might
@@ -272,10 +262,10 @@ static void transpose(NTL::Mat<T> &X, const NTL::Mat<T> &A) {
 }
 */
 
-/**
+/*
  * Another implementation of the `transpose` function.  Returns the transpose of `a`.
  * No need for this:  Just call NTL::transpose(x, a) directly!  *********
- * */
+*/
 /*
 template<typename T>
 static inline NTL::Mat<T> transpose(const NTL::Mat<T> &A) {
@@ -413,7 +403,7 @@ void static sub(Vec_64 &x, const Vec_64 &a, const Vec_64 &b) {
 }
 */
 
-/**
+/*
  * These are operator overloads for Mat_64 and Vec_64 types. Only the
  * overloads we currently use are defined.
  */
@@ -429,13 +419,13 @@ Mat_64& operator*=(Mat_64 &mat, std::int64_t a);
 Mat_64 operator*(const Mat_64 &mat1, const Mat_64 &mat2);
 */
 
-/**
+/*
  * Transforms `mat` into the identity matrix of dimensions
  * \f$\text{dim}\times\text{dim}\f$.
  */
 //void ident(Mat_64 &mat, int64_t dim);
 
-/**
+/*
  * Computes and returns the determinant of `mat'.
  */
 //double determinant(const Mat_64 &mat);

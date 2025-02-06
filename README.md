@@ -285,10 +285,8 @@ and you must first configure with
 
    ./waf configure --build-docs
 
-The waf script in `doc/wscript` manages the documentation build.  
-The source of the main page is in `doc/dox/main.dox`.
-The Doxygen options are selected in the file `Doxyfile.in`. 
-For example, one may select if members from the `.cc` files are included or not
+The waf script in `doc/wscript` manages the documentation build. The source of the main page is in `doc/dox/main.dox`.
+The Doxygen options are selected in the file `doc/Doxyfile.in`. For example, one may select if members from the `.cc` files are included or not
 by changing the `FILE_PATTERNS` option, select if the `#include` statements at the head of a file
 are shown or not with the `SHOW_INCLUDE_FILES` option, etc. 
 The built documentation is placed in `build/doc/html/` with `index.html` as its main entry.
@@ -296,7 +294,7 @@ To deploy the documentation on the `pierrelecuyer.github.io/latticetester/` GitH
 the contents of this `html` directory must be moved to the `gh-pages` branch of `latticetester`. 
 The `README.md` in that branch provides more details on how to proceed for this deployment.
 
-If NTL, and GMP are not part of the standard system installation and were
+If NTL and GMP are not part of the standard system installation and were
 manually installed under, say, the `/opt/ntl`, and `/opt/gmp` directories,
 which means that `/opt/ntl` and `/opt/gmp` all contain subdirectories named
 `include` and `lib`, you should do:

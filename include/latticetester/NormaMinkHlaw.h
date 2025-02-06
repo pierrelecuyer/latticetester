@@ -25,9 +25,12 @@
 namespace LatticeTester {
 
 /**
+ * \class NormaMinkHlaw
+ *
  * This class implements *lower bounds* on the Hermite constants based on the
  * Minkowski-Hlawka theorem \cite mHLA43a. The Hermite constants are approximated
  * by the \f$\gamma_t^{(Z)}\f$ given in the guide.
+ * These lower bounds are all smaller than the lower bounds from `NormaBestLat`.
  */
 class NormaMinkHlaw: public Normalizer {
 public:

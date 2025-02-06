@@ -15,13 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
- *
- * \file latticetester/Num.h
- *
- * This file implements some mathematical functions.
- */
-
 #ifndef LATTICETESTER__NUM_H
 #define LATTICETESTER__NUM_H
 
@@ -31,6 +24,14 @@
  * These functions are in the latticetester namespace.
  */
 namespace LatticeTester {
+
+
+ /**
+  * \file Num.h
+  *
+  * This file implements some mathematical functions needed in some places.
+  */
+
 
   /**
    * Calculates \f$t!\f$, the factorial of \f$t\f$. Might throw an error if `t` is too
