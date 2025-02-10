@@ -20,7 +20,7 @@ using namespace LatticeTester;
 const int64_t maxNumSizes = 7; // Number of matrix sizes (choices of dimensions).
 const int64_t dimensions[maxNumSizes] = { 5, 10, 15, 20, 25, 30, 35 };
 const int64_t numMeth = 4;
-const int64_t numChanges = 3; // Stores the sqrt of the numbers of manipulations applied to each matrix
+const int64_t numChanges = 5; // Stores the sqrt of the numbers of manipulations applied to each matrix
 clock_t timer[numMeth][maxNumSizes];
 std::string names[numMeth] = { "One Matrix, no Resize       ", "One Matrix, Resize if nec.  ", "One Matrix, numRep Resize   ", "numRep Matrices             "};
 
@@ -200,7 +200,7 @@ int main() {
 // Here, `Int` and `Real` are not yet defined, they will be passed as template parameters.
 const int64_t numSizes = 7;
 const int64_t numRepetitions = 100000;
-const int64_t nu = 3;
+const int64_t nu = 5;
 
 testLoop<int64_t, double>(numRepetitions, numSizes, nu);
 return 0;
