@@ -1,4 +1,4 @@
-// File `testBasisTriSmall`
+// File `testMatrixCreationSpeed`
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -202,7 +202,7 @@ int main() {
 
 // Here, `Int` and `Real` are not yet defined, they will be passed as template parameters.
 const int64_t numSizes = 7;
-const int64_t numRepetitions = 10000;
+const int64_t numRepetitions = 100000;
 const int64_t nu = 3;
 
 testLoop<int64_t, double>(numRepetitions, numSizes, nu);
