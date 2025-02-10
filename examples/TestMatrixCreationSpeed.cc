@@ -1,4 +1,4 @@
-// File `testMatrixCreationSpeed`
+// File `tesMatrixCreationSpped`
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -11,10 +11,7 @@
 #include "latticetester/BasisConstruction.h"
 
 /**
- * This program examines what happens when we apply LLL and construct triangular bases
- * for the primal and m-dual lattices associated with an LCG.
- * It shows for instance when `m e_i` becomes a shortest vector in the primal,
- * and also some particular property of the m-dual basis after LLL.
+ * This program examines what is the fastest way to use an IntMat object.
  */
 using namespace NTL;
 using namespace LatticeTester;
@@ -57,7 +54,7 @@ void testLoop(const int64_t & numRepetitions, const int64_t & numSizes, const in
    std::cout << "**************************************************************\n";
    std::cout << "TestMatrixCreationSpeed \n";
    std::cout << "Types: " << stringTypes << "\n";
-   std::cout << "Number of replications: " << numRepetitions << "\n";
+   std::cout << "Number of repetitions: " << numRepetitions << "\n";
    std::cout << "With flexible number of changes" << "\n";
    std::cout << "Timings for the different tasks, in basic clock units (microseconds): \n";    
    
@@ -130,7 +127,7 @@ void testLoop(const int64_t & numRepetitions, const int64_t & numSizes, const in
    std::cout << "**************************************************************\n";
    std::cout << "TestMatrixCreationSpeed \n";
    std::cout << "Types: " << stringTypes << "\n";
-   std::cout << "Number of replications: " << numRepetitions << "\n";
+   std::cout << "Number of repetitions: " << numRepetitions << "\n";
    std::cout << "With number of changes fixed in advance" << "\n";
    std::cout << "Timings for the different tasks, in basic clock units (microseconds): \n";    
    
