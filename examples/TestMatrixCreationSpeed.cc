@@ -18,8 +18,9 @@
  * smaller matrices. Alternatively we can just use one matrix object and resize it.
  * As LatticeTester releis on NTL this means that a new object is created whenever
  * there is an actual resizing, i.e. the dimension of the object really changes.
- * The last alternative would be to create an IntMat object whenever we want to 
- * use one.
+ * However, NTK does not create a new object if the number of rows remains constant
+ * which is another possibility to use IntMat object. The last alternative would be 
+ * to create an IntMat object whenever we want to use one.
  */
 using namespace NTL;
 using namespace LatticeTester;
