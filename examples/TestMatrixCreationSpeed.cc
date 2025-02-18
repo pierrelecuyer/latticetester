@@ -1,4 +1,7 @@
-// File `tesMatrixCreationSpped`
+// File `testMatrixCreationSpped`
+
+// #define TYPES_CODE  LD     // Int = int64_t
+#define TYPES_CODE  ZD     // Int = ZZ
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -11,243 +14,159 @@
 #include "latticetester/BasisConstruction.h"
 
 /**
- * This program examines what is the fastest way to use IntMat objects
- * when many many matrices of different dimensions are used througout the program.
- * We can either just use one big matrix object of the biggest possible dimension
- * and only fill the upper left part of the big matrix to store the values of 
- * smaller matrices. Alternatively we can just use one matrix object and resize it.
- * As LatticeTester releis on NTL this means that a new object is created whenever
- * there is an actual resizing, i.e. the dimension of the object really changes.
- * However, NTK does not create a new object if the number of rows remains constant
- * which is another possibility to use IntMat object. The last alternative would be 
- * to create an IntMat object whenever we want to use one.
+ * This program compares the effectiveness of different resizing options when using
+ * an `IntMat` object whose required size changes frequently.
+ * One option is to create a single matrix of sufficiently large dimension for all
+ * cases and never resize it, but just use the upper left part for the size that we need.
+ * Other options are to resize it when the required dimension changes if this is
+ * not too frequent, or to resize only the number of rows,
+ * or to resize the whole matrix each time, or to simply create a new matrix object
+ * each time. We compare all these methods, in dimensions that vary from 5 to 50.
  */
 using namespace NTL;
 using namespace LatticeTester;
 
 // The types Int and Real are will be passed as template parameters from the `main`.
-const int64_t maxNumSizes = 7; // Number of matrix sizes (choices of dimensions).
-const int64_t dimensions[maxNumSizes] = { 5, 10, 15, 20, 25, 30, 35 };
-const int64_t numMeth = 5; // Number of differnt methods to be tested.
-const int64_t numChanges = 5; // Stores the sqrt of the numbers of manipulations applied to each matrix
+const int64_t maxNumSizes = 6; // Number of matrix sizes (choices of dimensions).
+const int64_t dimensions[maxNumSizes] = { 5, 10, 20, 30, 40, 50 };
+const int64_t numMeth = 5; // Number of different methods to be tested.
 clock_t timer[numMeth][maxNumSizes];
-std::string names[numMeth] = { "One Matrix, no Resize       ", "One Matrix, Resize if nec.  ", "One Matrix, numRep Resize   ", "One Matrix, num Rows const  ", "numRep Matrices             "};
+Int sum[numMeth][maxNumSizes];
+std::string names[numMeth] = {
+      "One matrix, no resize        ", "One matrix, resize rarely    ",
+      "One matrix, resize rows often", "One matrix, resize all often ",
+      "New matrix for each repet.   " };
 
-void printTable(int64_t numSizes) {
-  
+// template<typename Int>
+void printTables(int64_t numSizes) {
    int64_t d;
-   std::cout << "Dimension:                 ";
+   std::cout << "Dimension:                    ";
    for (d = 0; d < numSizes; d++)
       std::cout << std::setw(8) << dimensions[d] << "  ";
    std::cout << "\n\n";
-   
+   std::cout << "Timings for the different tasks, in basic clock units (microseconds): \n";
    for (int meth = 0; meth < numMeth; meth++) {
       std::cout << names[meth] << " ";
       for (d = 0; d < numSizes; d++)
-          std::cout << std::setw(9) << timer[meth][d] << " ";
+         std::cout << std::setw(9) << timer[meth][d] << " ";
+      std::cout << "\n";
+   }
+   std::cout << "\n";
+   std::cout << "Sums of diagonal entries:\n";
+   for (int meth = 0; meth < numMeth; meth++) {
+      std::cout << names[meth] << " ";
+      for (d = 0; d < numSizes; d++)
+         std::cout << std::setw(9) << sum[meth][d] << " ";
       std::cout << "\n";
    }
    std::cout << "\n";
 }
 
-
-// Testing loop. The `numRepetitions' number of repetitions, 'numSizes' of different matrix sizes and 'numFlex'^2 number of matrix changes
-// In the seconde loop a fixed number of matrix changes is applied according to 'numFlex'^2
-template<typename Int, typename Real>
-void testLoop(const int64_t & numRepetitions, const int64_t & numSizes, const int64_t & numFlex) {
+// Testing loop. For each matrix size, we fill the diagonal `numReps' times.
+// template<typename Int>
+void testLoop(const int64_t &numReps, const int64_t &numSizes) {
    clock_t tmp;
-   int64_t i, j, k, d;
-      
+   int64_t i, j, d, dim;
+   int64_t maxdim = dimensions[numSizes - 1];
+   IntMat A, B;
+
    std::string stringTypes;  // To print the selected flexible types.
    strTypes<Int, Real>(stringTypes);  // Functions from FlexTypes   
    std::cout << "**************************************************************\n";
    std::cout << "TestMatrixCreationSpeed \n";
    std::cout << "Types: " << stringTypes << "\n";
-   std::cout << "Number of repetitions: " << numRepetitions << "\n";
-   std::cout << "With flexible number of changes" << "\n";
-   std::cout << "Timings for the different tasks, in basic clock units (microseconds): \n";    
-   
-   // The first part of the test examines the case when the upp
-   
-   // Method 1: Only create matrix object once, set the dimension once and fill all entries of the matrix
-   IntMat A;
-   A.SetDims(dimensions[numSizes-1], dimensions[numSizes-1]);
+   std::cout << "Number of repetitions: " << numReps << "\n";
+
+   // Method 1: Create a single matrix object of maximal dimension, never resize.
+   A.SetDims(maxdim, maxdim);
    for (d = 0; d < numSizes; d++) {
+      dim = dimensions[d];
       tmp = clock();
-      for (i = 0; i < numRepetitions; i++) {
-         for (j = 0; j < numFlex; j++) {
-            for (k = 0; k < numFlex; k++) {
-               A[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
+      for (i = 0; i < numReps; i++) {
+         for (j = 0; j < dim; j++) {
+            A[j][j] = i + j;
          }
       }
       timer[0][d] = clock() - tmp;
+      sum[0][d] = 0;
+      for (j = 0; j < dim; j++)
+         sum[0][d] += A[j][j];
    }
-   
-      
-   // Method 2: Only create matrix object once, resize it if necessary and fill the entries
-   IntMat B;   
+
+   // Method 2: Create a single matrix object, resize each time, but the resize
+   // is effective only when the dimension changes.
    for (d = 0; d < numSizes; d++) {
-      tmp = clock(); 
-      for (i = 0; i < numRepetitions; i++) {  
-         B.SetDims(dimensions[d], dimensions[d]);   
-         for (j = 0; j < numFlex; j++) {
-            for (k = 0; k < numFlex; k++) {
-               B[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
+      dim = dimensions[d];
+      tmp = clock();
+      for (i = 0; i < numReps; i++) {
+         B.SetDims(dim, dim);   // This does something only when the dim has changed.
+         for (j = 0; j < dim; j++) {
+            B[j][j] = i + j;
          }
       }
       timer[1][d] = clock() - tmp;
+      sum[1][d] = 0;
+      for (j = 0; j < dim; j++)
+         sum[1][d] += B[j][j];
    }
-   
-   // Method 3: Only create matrix object once, always resize it and fill the entries  
+
+   // Method 3: Create a single matrix object, and resize only the number of rows, each time.
    for (d = 0; d < numSizes; d++) {
-      tmp = clock(); 
-      for (i = 0; i < numRepetitions; i++) {  
+      dim = dimensions[d];
+      tmp = clock();
+      for (i = 0; i < numReps; i++) {
+         B.SetDims(0, maxdim);
+         B.SetDims(dim, maxdim);
+         for (j = 0; j < dim; j++)
+            B[j][j] = i + j;
+      }
+      timer[2][d] = clock() - tmp;
+      sum[2][d] = 0;
+      for (j = 0; j < dim; j++)
+         sum[2][d] += B[j][j];
+   }
+
+   // Method 4: Create a single matrix object, but resize it completely each time.
+   for (d = 0; d < numSizes; d++) {
+      dim = dimensions[d];
+      tmp = clock();
+      for (i = 0; i < numReps; i++) {
          B.SetDims(0, 0);
-         B.SetDims(dimensions[d], dimensions[d]);   
-         for (j = 0; j < numFlex; j++) {
-            for (k = 0; k < numFlex; k++) {
-               B[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
-         }
-      }
-      timer[2][d] = clock() - tmp;
-   }
-   
-   // Method 4: Only create matrix object once, always resize the number of rows but not the number of columns  
-   for (d = 0; d < numSizes; d++) {
-      tmp = clock(); 
-      for (i = 0; i < numRepetitions; i++) {  
-         B.SetDims(0, dimensions[numSizes - 1]);
-         B.SetDims(dimensions[d], dimensions[numSizes - 1]);   
-         for (j = 0; j < numFlex; j++) {
-            for (k = 0; k < numFlex; k++) {
-               B[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
-         }
+         B.SetDims(dim, dim);
+         for (j = 0; j < dim; j++)
+            B[j][j] = i + j;
       }
       timer[3][d] = clock() - tmp;
+      sum[3][d] = 0;
+      for (j = 0; j < dim; j++)
+         sum[3][d] += B[j][j];
    }
-   
-   // Method 5: Create the matrix again and again and fill the entries
-   
+
+   // Method 5: Declare and create a new matrix object each time.
    for (d = 0; d < numSizes; d++) {
+      dim = dimensions[d];
       tmp = clock();
-      for (i = 0; i < numRepetitions; i++) {    
-      IntMat C;
-      C.SetDims(dimensions[d], dimensions[d]);     
-         for (j = 0; j < numChanges; j++) {
-            for (k = 0; k < numChanges; k++) {
-               C[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
+      for (i = 0; i < numReps; i++) {
+         IntMat C;
+         C.SetDims(dim, dim);
+         sum[4][d] = 0;
+         for (j = 0; j < dim; j++) {
+            C[j][j] = i + j;
+            sum[4][d] += C[j][j];  // Removing this statement does not impact the speed much.
          }
       }
       timer[4][d] = clock() - tmp;
    }
-   
-   
-   printTable(numSizes);   
-   
-   // To better understand what is the influence of the for loop to refill the entries,
-   // we also look at the case where the number of changes is not set by the user via
-   // a local parameter but by a globar variable. This has significant effect.
 
-
-   std::cout << "**************************************************************\n";
-   std::cout << "TestMatrixCreationSpeed \n";
-   std::cout << "Types: " << stringTypes << "\n";
-   std::cout << "Number of repetitions: " << numRepetitions << "\n";
-   std::cout << "With number of changes fixed in advance" << "\n";
-   std::cout << "Timings for the different tasks, in basic clock units (microseconds): \n";    
-   
-   IntMat D;
-   D.SetDims(dimensions[numSizes-1], dimensions[numSizes-1]);
-   for (d = 0; d < numSizes; d++) {
-      tmp = clock();
-      for (i = 0; i < numRepetitions; i++) {
-         for (j = 0; j < numChanges; j++) {
-            for (k = 0; k < numChanges; k++) {
-               D[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
-         }
-      }
-      timer[0][d] = clock() - tmp;
-   }
-   
-      
-   // Method 2: Only create matrix object once, resize it if necessary and fill the entries
-   IntMat E;   
-   for (d = 0; d < numSizes; d++) {
-      tmp = clock(); 
-      for (i = 0; i < numRepetitions; i++) {
-         E.SetDims(dimensions[d], dimensions[d]);   
-         for (j = 0; j < numChanges; j++) {
-            for (k = 0; k < numChanges; k++) {
-               E[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
-         }
-      }
-      timer[1][d] = clock() - tmp;
-   }
-   
-   
-   // Method 3: Only create matrix object once, always resize it and fill the entries
-   for (d = 0; d < numSizes; d++) {
-      tmp = clock(); 
-      for (i = 0; i < numRepetitions; i++) {
-         E.SetDims(0, 0);
-         E.SetDims(dimensions[d], dimensions[d]);   
-         for (j = 0; j < numChanges; j++) {
-            for (k = 0; k < numChanges; k++) {
-               E[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
-         }
-      }
-      timer[2][d] = clock() - tmp;
-   }
-   
-   // Method 4: Only create matrix object once, always resize it and fill the entries
-   for (d = 0; d < numSizes; d++) {
-      tmp = clock(); 
-      for (i = 0; i < numRepetitions; i++) {
-         E.SetDims(0, dimensions[numSizes - 1]);
-         E.SetDims(dimensions[d], dimensions[numSizes - 1]);   
-         for (j = 0; j < numChanges; j++) {
-            for (k = 0; k < numChanges; k++) {
-               E[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
-         }
-      }
-      timer[3][d] = clock() - tmp;
-   }
-   
-   // Method 5: Create the matrix again and again and fill the entries
-   for (d = 0; d < numSizes; d++) {
-      tmp = clock();
-      for (i = 0; i < numRepetitions; i++) {    
-      IntMat F;
-      F.SetDims(dimensions[d], dimensions[d]);     
-         for (j = 0; j < numChanges; j++) {
-            for (k = 0; k < numChanges; k++) {
-               F[j % dimensions[d]][k % dimensions[d]] = i+j+k;
-            }
-         }
-      }
-      timer[4][d] = clock() - tmp;
-   }
-   
-   printTable(numSizes);   
+   printTables(numSizes);
 }
 
 int main() {
 
-// Here, `Int` and `Real` are not yet defined, they will be passed as template parameters.
-const int64_t numSizes = 7;
-const int64_t numRepetitions = 100000;
-const int64_t numberOfChanges = 5;
+   const int64_t numSizes = 6;
+   const int64_t numReps = 100000;
 
-testLoop<int64_t, double>(numRepetitions, numSizes, numberOfChanges);
-return 0;
+   testLoop(numReps, numSizes);
+   return 0;
 }
 
