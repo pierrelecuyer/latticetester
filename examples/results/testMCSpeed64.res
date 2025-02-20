@@ -1,31 +1,30 @@
 **************************************************************
 TestMatrixCreationSpeed, outside loop is on dimension, inside loop on replications. 
 Types: Int = long, Real = double
-Number of repetitions: 100000
-Dimension:                            5        10        20        30        40        50      total 
+Number of replications: 1000000
+Sums of diagonal entries (the sums are not the same for all 5 methods):
+Dimension:                                5            10            20            30            40            50  
+One matrix, no resize          2500007500000 7500047500000 17500227500000 32500647500000 52501407500000 77502607500000 
+One matrix, resize only rows   2500007500000 7500047500000 17500227500000 32500647500000 52501407500000 77502607500000 
+One matrix, resize when needed 2500007500000 5000040000000 10000180000052 18000563001234 20000760000258 26001234000203 
+One matrix, resize all often   2500007500000 5000040000000 10000180000000 15000420000000 20000760000000 25001200000000 
+New matrix for each repet.     2500007500000 5000040000000 10000180000000 15000420000000 20000760000000 25001200000000 
 
-Timings for the different tasks, in basic clock units (microseconds): 
-One matrix, no resize                503       822      1540      2189      2631      2534     10219 
-One matrix, resize rows often        386       462       712       930      1148      1360      4998 
-One matrix, resize when needed       247       552       963      1129      1508      1568      5967 
-One matrix, resize all often        7329     17072     36514     54565     73899     89775    279154 
-New matrix for each repet.          6432     16344     36227     52236     69288     84726    265253 
-
-Sums of diagonal entries:
-One matrix, no resize             500005   1000035   2000170   3000405   4000740   5001175 
-One matrix, resize rows often     500005   1000035   2000170   3000405   4000740   5001175 
-One matrix, resize when needed    500005   1000035   2000170   3000405   4000740   5001175 
-One matrix, resize all often      500005   1000035   2000170   3000405   4000740   5001175 
-New matrix for each repet.        500005   1000035   2000170   3000405   4000740   5001175 
+Timings (total) with the different methods, in basic clock units (microseconds): 
+One matrix, no resize              49653 
+One matrix, resize only rows       58172 
+One matrix, resize when needed     52884 
+One matrix, resize all often     2682655 
+New matrix for each repet.       2413822 
 
 **************************************************************
 TestMatrixCreationSpeed, inside loop is on dimension. 
 Types: Int = long, Real = double
-Number of repetitions: 100000
+Number of replications: 1000000
 Timings (total) in basic clock units (microseconds): 
-One matrix, no resize               3495
-One matrix, resize rows often       4306
-One matrix, resize when needed    279681
-One matrix, resize all often      286974
-New matrix for each repet.        261856
+One matrix, no resize              66500
+One matrix, resize only rows       58178
+One matrix, resize when needed   2654279
+One matrix, resize all often     2706314
+New matrix for each repet.       2393043
 
