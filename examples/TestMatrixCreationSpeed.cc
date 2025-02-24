@@ -1,18 +1,21 @@
 // File `testMatrixCreationSpeed`
 
 /**
- * This program compares the effectiveness of different resizing options when using
+ * This program compares the effectiveness of five different resizing options when using
  * an `IntMat` object whose required size changes frequently.
  * One option is to create a single matrix of sufficiently large dimension for all
- * cases and never resize it, but just use the upper left part for the size that we need.
+ * cases and never resize it, but just use the upper left part for the size needed.
  * Other options are to resize only the number of rows, or resize the full matrix only when
  * the required dimension changes if this is not too frequent,
  * or to resize the full matrix each time, or to create a new matrix object
- * each time. We compare all these methods, in dimensions that vary from 5 to 50.
+ * each time. We compare these five methods, in dimensions that vary from 5 to 50.
+ * We do this in two ways.  The function `testLoopDimOut` performs many replications in a
+ * row for each dimension, whereas `testLoopDimIn` does all the dimensions before going
+ * to the next replication.  In other words, the two `for` loops are in a different order.
  */
 
-#define TYPES_CODE  LD     // Int = int64_t
-// #define TYPES_CODE  ZD     // Int = ZZ
+// #define TYPES_CODE  LD     // Int = int64_t
+#define TYPES_CODE  ZD     // Int = ZZ
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>
@@ -35,34 +38,37 @@ clock_t timer[numMeth][maxNumSizes+1]; // timer[meth][0] used for total over dim
 Int sum[numMeth][maxNumSizes+1];
 std::string names[numMeth] = {
       "One matrix, no resize         ",
-      "One matrix, resize rows often ",
+      "One matrix, resize only rows  ",
       "One matrix, resize when needed",
       "One matrix, resize all often  ",
       "New matrix for each repet.    " };
 
 void printTables(int64_t numSizes) {
-   int64_t d, total;
+   int64_t d;
+   std::cout << "Sums of diagonal entries (the sums are not the same for all 5 methods):\n";
    std::cout << "Dimension:                     ";
    for (d = 0; d < numSizes; d++)
-      std::cout << std::setw(8) << dimensions[d] << "  ";
-   std::cout << "    total \n\n";
-   std::cout << "Timings for the different tasks, in basic clock units (microseconds): \n";
+      std::cout << std::setw(12) << dimensions[d] << "  ";
+   std::cout << "\n";
    for (int meth = 0; meth < numMeth; meth++) {
       std::cout << names[meth] << " ";
-      total = 0;
+      for (d = 0; d < numSizes; d++)
+         std::cout << std::setw(9) << sum[meth][d] << " ";
+      std::cout << "\n";
+   }
+   // std::cout << " total time \n\n";
+   std::cout << "\nTimings (total) with the different methods, in basic clock units (microseconds): \n";
+   for (int meth = 0; meth < numMeth; meth++) {
+      std::cout << names[meth] << " ";
+      /*
+      int64_t total = 0;
       for (d = 0; d < numSizes; d++) {
          std::cout << std::setw(9) << timer[meth][d] << " ";
          total += timer[meth][d];
       }
       std::cout << std::setw(9) << total << " ";
-      std::cout << "\n";
-   }
-   std::cout << "\n";
-   std::cout << "Sums of diagonal entries:\n";
-   for (int meth = 0; meth < numMeth; meth++) {
-      std::cout << names[meth] << " ";
-      for (d = 0; d < numSizes; d++)
-         std::cout << std::setw(9) << sum[meth][d] << " ";
+      */
+      std::cout << std::setw(9) << timer[meth][numSizes] << " ";
       std::cout << "\n";
    }
    std::cout << "\n";
@@ -77,9 +83,9 @@ void printTablesSwapLoops() {
    std::cout << "\n";
 }
 
-// Testing loop. For each matrix size, we fill the diagonal `numReps' times.  We do that in 5 different ways.
-void testLoop(const int64_t &numReps, const int64_t &numSizes) {
-   clock_t tmp;
+// For each matrix size, we fill the diagonal `numReps' times.  We do that in 5 different ways.
+void testLoopDimOut(const int64_t &numReps, const int64_t &numSizes) {
+   clock_t tmp;  //, tmp2;
    int64_t i, j, d, dim;
    int64_t maxdim = dimensions[numSizes - 1];  // The largest dimension that we actually use.
    IntMat A, B;
@@ -89,94 +95,106 @@ void testLoop(const int64_t &numReps, const int64_t &numSizes) {
    std::cout << "**************************************************************\n";
    std::cout << "TestMatrixCreationSpeed, outside loop is on dimension, inside loop on replications. \n";
    std::cout << "Types: " << stringTypes << "\n";
-   std::cout << "Number of repetitions: " << numReps << "\n";
+   std::cout << "Number of replications: " << numReps << "\n";
 
    // Method 1: Create a single matrix object of maximal dimension, never resize.
    A.SetDims(maxdim, maxdim);
+   tmp = clock();
    for (d = 0; d < numSizes; d++) {
       dim = dimensions[d];
-      tmp = clock();
+      //tmp2 = clock();
       for (i = 0; i < numReps; i++) {
-         for (j = 0; j < dim; j++)
-            A[j][j] = i + j;
+         for (j = 0; j < dim; j++) {
+            A[j][j] += i + j;
+         }
       }
-      timer[0][d] = clock() - tmp;
+      //timer[0][d] = clock() - tmp2;
       sum[0][d] = 0;
       for (j = 0; j < dim; j++)  // This summation part is not timed.
          sum[0][d] += A[j][j];
    }
+   timer[0][numSizes] = clock() - tmp;
 
    // Method 2: Create a single matrix object, and resize only the number of rows, each time.
+   tmp = clock();
    for (d = 0; d < numSizes; d++) {
       dim = dimensions[d];
-      tmp = clock();
+      //tmp2 = clock();
       for (i = 0; i < numReps; i++) {
          B.SetDims(0, maxdim);
-         B.SetDims(dim, maxdim);
+         B.SetDims(dim, maxdim);  // When dim changes, it increases the number of row.
          for (j = 0; j < dim; j++)
-            B[j][j] = i + j;
+            B[j][j] += i + j;
       }
-      timer[1][d] = clock() - tmp;
+      //timer[1][d] = clock() - tmp2;
       sum[1][d] = 0;
       for (j = 0; j < dim; j++)
          sum[1][d] += B[j][j];
    }
+   timer[1][numSizes] = clock() - tmp;
 
    // Method 3: Create a single matrix object, resize each time, but the resize
-   // is effective only when the dimension changes.
+   // does something only when the dimension changes.
+   B.SetDims(0, 0);
+   tmp = clock();
    for (d = 0; d < numSizes; d++) {
       dim = dimensions[d];
-      tmp = clock();
+      //tmp2 = clock();
       for (i = 0; i < numReps; i++) {
-         B.SetDims(dim, dim);   // This does something only when the dim has changed.
+         B.SetDims(dim, dim);   // When dim changes, it reallocates and initialize memory.
          for (j = 0; j < dim; j++)
-            B[j][j] = i + j;
+            B[j][j] += i + j;
       }
-      timer[2][d] = clock() - tmp;
+      //timer[2][d] = clock() - tmp2;
       sum[2][d] = 0;
       for (j = 0; j < dim; j++)
          sum[2][d] += B[j][j];
    }
+   timer[2][numSizes] = clock() - tmp;
 
    // Method 4: Create a single matrix object, but resize it completely each time.
+   sum[3][d] = 0;
+   tmp = clock();
    for (d = 0; d < numSizes; d++) {
       dim = dimensions[d];
-      tmp = clock();
+      //tmp2 = clock();
       for (i = 0; i < numReps; i++) {
          B.SetDims(0, 0);
          B.SetDims(dim, dim);
-         for (j = 0; j < dim; j++)
+         for (j = 0; j < dim; j++) {
             B[j][j] = i + j;
+            sum[3][d] += B[j][j];
+         }
       }
-      timer[3][d] = clock() - tmp;
-      sum[3][d] = 0;
-      for (j = 0; j < dim; j++)
-         sum[3][d] += B[j][j];
+      //timer[3][d] = clock() - tmp2;
    }
+   timer[3][numSizes] = clock() - tmp;
 
    // Method 5: Declare and create a new matrix object each time.
+   tmp = clock();
    for (d = 0; d < numSizes; d++) {
+      sum[4][d] = 0;
       dim = dimensions[d];
-      tmp = clock();
+      //tmp2 = clock();
       for (i = 0; i < numReps; i++) {
          IntMat C;
          C.SetDims(dim, dim);
-         sum[4][d] = 0;
          for (j = 0; j < dim; j++) {
             C[j][j] = i + j;
             sum[4][d] += C[j][j];  // Removing this statement does not impact the speed much.
          }
       }
-      timer[4][d] = clock() - tmp;
+      //timer[4][d] = clock() - tmp2;
    }
+   timer[4][numSizes] = clock() - tmp;
 
    printTables(numSizes);
 }
 
 
-// Testing loop. For each matrix size, we fill the diagonal `numReps' times.
-// Here we exchange the order of the loops.
-void testSwapLoops(const int64_t &numReps, const int64_t &numSizes) {
+// For each matrix size, we fill the diagonal, and we repeat this `numReps' times.
+// This function exchanges the order of the loops compared with the previous one.
+void testLoopDimIn(const int64_t &numReps, const int64_t &numSizes) {
    clock_t tmp;
    int64_t i, j, d, dim;
    int64_t maxdim = dimensions[numSizes - 1];
@@ -187,7 +205,7 @@ void testSwapLoops(const int64_t &numReps, const int64_t &numSizes) {
    std::cout << "**************************************************************\n";
    std::cout << "TestMatrixCreationSpeed, inside loop is on dimension. \n";
    std::cout << "Types: " << stringTypes << "\n";
-   std::cout << "Number of repetitions: " << numReps << "\n";
+   std::cout << "Number of replications: " << numReps << "\n";
 
    // Method 1: Create a single matrix object of maximal dimension, never resize.
    tmp = clock();
@@ -196,7 +214,7 @@ void testSwapLoops(const int64_t &numReps, const int64_t &numSizes) {
       for (d = 0; d < numSizes; d++) {
          dim = dimensions[d];
          for (j = 0; j < dim; j++) {
-            A[j][j] = i + j;
+            A[j][j] += i + j;
          }
       }
    }
@@ -207,24 +225,24 @@ void testSwapLoops(const int64_t &numReps, const int64_t &numSizes) {
    for (i = 0; i < numReps; i++) {
       for (d = 0; d < numSizes; d++) {
          dim = dimensions[d];
-         // B.SetDims(0, maxdim);
+         B.SetDims(0, maxdim);
          B.SetDims(dim, maxdim);
          for (j = 0; j < dim; j++) {
-            B[j][j] = i + j;
+            B[j][j] += i + j;
          }
       }
    }
    timer[1][0] = clock() - tmp;
 
    // Method 3: Create a single matrix object, resize each time, but the resize
-   // is effective only when the dimension changes.
+   // does something only when the dimension changes.
    tmp = clock();
    for (i = 0; i < numReps; i++) {
       for (d = 0; d < numSizes; d++) {
          dim = dimensions[d];
          B.SetDims(dim, dim);   // This does something only when the dim has changed.
          for (j = 0; j < dim; j++) {
-            B[j][j] = i + j;
+            B[j][j] += i + j;
          }
       }
    }
@@ -238,7 +256,7 @@ void testSwapLoops(const int64_t &numReps, const int64_t &numSizes) {
          B.SetDims(0, 0);
          B.SetDims(dim, dim);
          for (j = 0; j < dim; j++) {
-            B[j][j] = i + j;
+            B[j][j] += i + j;
          }
       }
    }
@@ -265,10 +283,10 @@ void testSwapLoops(const int64_t &numReps, const int64_t &numSizes) {
 int main() {
 
    const int64_t numSizes = 6;
-   const int64_t numReps = 100000;
+   const int64_t numReps = 1000000;
 
-   testLoop(numReps, numSizes);
-   testSwapLoops(numReps, numSizes);
+   testLoopDimOut(numReps, numSizes);
+   testLoopDimIn(numReps, numSizes);
    return 0;
 }
 
