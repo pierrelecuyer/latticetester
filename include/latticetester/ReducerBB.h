@@ -715,6 +715,7 @@ bool ReducerBB<Int, Real>::tryZShortVecOld(int64_t j, bool &smaller, NormType no
    Real dc, center, x, m_spjm1;
    std::int64_t min0, max0;     // Interval boundaries for the z_j.
    std::int64_t zlow, zhigh;    // Current pointers on the left and right of the center.
+   int64_t epsilon = 0.0000001; // Threshold to account for rounding precision
    bool high;      // Indicates if we are on the right (true) or the left of the center.
    bool stillHope;
    int64_t i, k;
@@ -800,9 +801,9 @@ bool ReducerBB<Int, Real>::tryZShortVecOld(int64_t j, bool &smaller, NormType no
       if (j == 0) {
          // All the zj have been selected: we now have a candidate vector to test!
          if (m_decomp == TRIANGULAR && norm == L1NORM)
-            stillHope =  (m_lMin1 > m_spjm1);
+            stillHope =  (m_lMin1 - m_spjm1 > -epsilon);
          else
-            stillHope =  (m_lMin2 > m_spjm1);
+            stillHope =  (m_lMin2 - m_spjm1 > -epsilon);
          if (stillHope) {
             ++m_countLeaves;
             // Length of shortest is not too yet too small. Check if we have a shorter nonzero vector.
@@ -851,9 +852,9 @@ bool ReducerBB<Int, Real>::tryZShortVecOld(int64_t j, bool &smaller, NormType no
          }
       } else {
          if (m_decomp == TRIANGULAR && norm == L1NORM)
-            stillHope = (m_lMin1 > m_spjm1);
+            stillHope = (m_lMin1 - m_spjm1 > -epsilon);
          else
-            stillHope = (m_lMin2 > m_spjm1);
+            stillHope = (m_lMin2 - m_spjm1 > -epsilon);
          if (stillHope) {
             // There is still hope; we continue the recursion.
             m_sjp[j - 1] = m_spjm1;
@@ -891,11 +892,12 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
    int64_t min0, max0;     // Interval boundaries for the z_j.
    int64_t zlow, zhigh;    // Current pointers on the left and right of the center.
    int64_t temp;
+   int64_t epsilon = 0.0000001; // Threshold to account for rounding precision
    bool high;      // Indicates if we are on the right (true) or the left of the center.
    bool stillHope;
    int64_t i, k;
    const int64_t dim = m_lat->getDim();
-
+   
    ++m_countNodes;
    if (m_countNodes > maxNodesBB) {
       std::cerr << "*****   m_countNodes > maxNodesBB = " << maxNodesBB << std::endl;
@@ -982,9 +984,9 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       if (j == 0) {
          // All the z_j have been selected: we now have a candidate vector to test!
          if (m_decomp == TRIANGULAR && norm == L1NORM)
-            stillHope =  (m_lMin1 > spjm1);
+            stillHope =  (m_lMin1 - spjm1 > -epsilon);
          else
-            stillHope =  (m_lMin2 > spjm1);
+            stillHope =  (m_lMin2 - spjm1 > -epsilon);
          if (stillHope) {
             ++m_countLeaves;
             // Length of shortest is not too yet too small. Check if we have a shorter nonzero vector.
@@ -1029,9 +1031,9 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
          }
       } else {
          if (m_decomp == TRIANGULAR && norm == L1NORM)
-            stillHope = (m_lMin1 > spjm1);
+            stillHope = (m_lMin1 - spjm1 > -epsilon);
          else
-            stillHope = (m_lMin2 > spjm1);
+            stillHope = (m_lMin2 - spjm1 > -epsilon);
          if (stillHope) {
             // There is still hope; we continue the recursion.
             m_sjp[j - 1] = spjm1;
