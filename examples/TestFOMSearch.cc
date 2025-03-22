@@ -109,11 +109,11 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
 template<typename Int, typename Real>
 static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, const Int a0,
       const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
-      int64_t numMultShort, int64_t numBest0, int64_t numBest) {
+      int64_t numMultShort, int64_t numBest0, int64_t numBest, NormType norm = L2NORM) {
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    // WeightsUniform weights(1.0);
-   Rank1Lattice<Int, Real> lat(m, maxdim);  // The current lattice for which the FoM is calculated.   ****  L2NORM
-   IntLattice<Int, Real> proj(m, t.length()); // Lattice used for projections.
+   Rank1Lattice<Int, Real> lat(m, maxdim, norm);  // The current lattice for which the FoM is calculated.   ****  L2NORM CW
+   IntLattice<Int, Real> proj(m, t.length(), norm); // Lattice used for projections. CW
    Int emptyList[0];
    Int inList[numBest0];
    Int outList[numBest0];
@@ -155,6 +155,8 @@ int main() {
    typedef NTL::ZZ Int;
    typedef double Real;
    std::cout << "Types: Int = NTL::ZZ, Real = double \n";
+   
+   NormType norm = L1NORM;
 
    NTL::ZZ m(1048573); // Prime modulus near 2^{20}
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
@@ -177,14 +179,14 @@ int main() {
 
    int64_t maxdim = t[0];  // Maximum dimension of the lattice
    WeightsUniform weights(1.0);
-   NormaBestLat normaPrimal(log(m), 1, maxdim, L2NORM);  // Factors computed for primal.
-   NormaBestLat normaDual(-log(m), 1, maxdim, L2NORM);  // Factors computed for dual.
+   NormaBestLat normaPrimal(log(m), 1, maxdim, norm);  // Factors computed for primal. 
+   NormaBestLat normaDual(-log(m), 1, maxdim, norm);  // Factors computed for dual. 
    ReducerBB<Int, Real> red(maxdim);   // Single ReducerBB with internal lattice `lat`.
    FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
    FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true); // FoM for dual lattice.
 
-   int64_t numMultLong = 10000;  // Total number of multipliers to examine.
-   int64_t numMultShort = 1000;  // Number to examine in the `no early discard` case.
+   int64_t numMultLong = 100;  // Total number of multipliers to examine.
+   int64_t numMultShort = 10;  // Number to examine in the `no early discard` case.
    int64_t numBest0 = 10;  // When doing two rounds, we retain `numBest1` from the first round.
    int64_t numBest = 3;   // We want the best three at the end.
 
@@ -192,12 +194,12 @@ int main() {
    std::cout << "\n=========================================================\n";
    std::cout << "FOM experiments in primal lattices \n";
    compareSearchMethods<Int, Real>(&fomPrimal, m, a0, t, t0, numMultLong, numMultShort, numBest0,
-         numBest);
+         numBest, norm);
 
    std::cout << "\n=========================================================\n";
    std::cout << "FOM experiments in dual lattices \n";
    compareSearchMethods<Int, Real>(&fomDual, m, a0, t, t0, numMultLong, numMultShort, numBest0,
-         numBest);
+         numBest, norm);
    std::cout << "\n***     DONE     ***\n";
    return 0;
 }
