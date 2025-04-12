@@ -12,13 +12,13 @@
 /**
  * \file LLL_lt.h
  *
- * Static functions that are slightly modified versions of the `LLL` and `BKZ`
+ * These static functions are slightly modified versions of the `LLL` and `BKZ`
  * functions of %NTL.
  *
- * With the modified functions, it is possible to apply the reductions only to an
- * upper-left corner of the basis matrix, i.e., only the first `r` rows and
- * first `c` columns of the matrix `B`.  The other elements of
- * `B` are ignored. The basis is returned in the upper left corner of `B`,
+ * With the modifications, one can apply the reductions only to an
+ * upper-left corner of the basis matrix `B`, the first `r` rows and
+ * first `c` columns.  The other elements of `B` are ignored.
+ * The basis is returned in the same upper left corner of `B`,
  * with the shortest basis vector always in the first row.
  * This differs from the `LLL_FP` functions, which returns the zero vectors at the top.
  * If `r=0`, then all the rows of the `IntMat` object are taken.
@@ -26,7 +26,7 @@
  * With this added flexibility the same block of memory can be reused
  * for millions of lattices even if their bases have different dimensions.
  * The square lengths of the returned basis vectors are also returned in the
- * `double` vector `sqlen`,  in `sqlen[0],..., sqlen[d-1]` if this vector given.
+ * `double` vector `sqlen`,  in `sqlen[0],..., sqlen[d-1]`, if this vector given.
  * The indices of `B` and `sqlen` start at 0.
  * Each function returns the dimension of the computed basis (number of independent rows).
  */

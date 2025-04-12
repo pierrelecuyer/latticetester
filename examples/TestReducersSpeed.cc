@@ -105,7 +105,6 @@ static void compareManyReductions(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int
       performReduction(korlat, red, inDual, d, dim, 4, 0.5, 0.0, 0.0, 1, true, sqlen);
       performReduction(korlat, red, inDual, d, dim, 5, 0.8, 0.0, 0.0, 1, true, sqlen);
    }
-   performReduction(korlat, red, inDual, d, dim, 5, 0.8, 0.0, 0.0, 1, true, sqlen);
    performReduction(korlat, red, inDual, d, dim, 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
    performReduction(korlat, red, inDual, d, dim, 7, 0.0, 0.0, 0.99999, 6, true, sqlen);
 
@@ -135,12 +134,16 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
    if (inDual) std::cout << "DUAL lattice,  ";
    else std::cout << "PRIMAL lattice,  ";
    std::cout << "Norm: " << toStringNorm(norm) << ",  ";
-   std::cout << "Decomposition: " << toStringDecomp(decomp) << ".\n\n";
+   std::cout << "Decomposition: " << toStringDecomp(decomp) << ".\n";
    long d;  // dim = dimensions[d].
    long maxdim = dimensions[numSizes - 1];   // Maximum dimension
    Rank1Lattice<Int, Real> korlat(m, maxdim, norm); // We use single lattice object.
    ReducerBB<Int, Real> red(korlat);   // Single ReducerBB with internal lattice `korlat`.
    red.setDecompTypeBB(decomp);
+   Real epsBounds = Real(0.00000000000000001);
+   // Real epsBounds = Real(0.000001);  // 10^{-6}
+   red.setEpsBounds(epsBounds);  // Safety margin on the bounds in the BB.
+   std::cout << "Safety margin on the BB bounds: epsBounds = " << epsBounds << ".\n\n";
    //  red.setVerbosity(4);
 
    NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
@@ -162,7 +165,7 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
       for (d = 0; d < numSizes; d++)   // Each matrix size.
          // performReduction(korlat, red, inDual, d, dimensions[d], 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
          compareManyReductions<Int, Real>(korlat, red, inDual, d, dimensions[d], sqlen);
-      a = a * a0 % m;   // The multiplier we use for this rep. First one is 113.
+      a = a * a0 % m;   // The multiplier we use for this rep.
       }
    printTables(numMeth, numSizes, numRep, dimensions);
 }
@@ -244,7 +247,7 @@ void printTables(long numMeth, long numSizes, long numRep, const long *dimension
 }
 
 // This function compares the speed with different `Real` types.
-// For each type, it compares different pre-reduction strategies.
+// For each type, it compares different pre-reduction strategies, for the primal and for the m-dual.
 template<typename Int, typename Real>
 void comparePreRed (Int m, NormType norm, DecompTypeBB decomp, long numSizes, long numRep) {
    std::cout << "\n========================================================================\n";
@@ -256,15 +259,17 @@ void comparePreRed (Int m, NormType norm, DecompTypeBB decomp, long numSizes, lo
 int main() {
    // NTL::ZZ m(1021);  // Prime modulus near 2^{10}
    NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
-   //NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    DecompTypeBB decomp = CHOLESKY;
    NormType norm = L2NORM;
    long numSizes = 5;
-   long numRep = 1000;
+   long numRep = 50;
 
    //comparePreRed<int64_t, double>(conv<int64_t>(m), norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, double>(m, norm, decomp, numSizes, numRep);
-   comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
+   //comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
+   //NTL::RR::SetPrecision(250);
+   //comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
 }
