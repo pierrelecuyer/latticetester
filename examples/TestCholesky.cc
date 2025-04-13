@@ -21,7 +21,7 @@ const long maxNumSizes = 3; // Number of matrix sizes (choices of dimension), ca
 
 std::string methNames[] = { "No pre-reduction", "LLL5            ", "LLL999          ",
       "BKZ99999-12+BB ", "BKZ9999999-20+BB " };
-const long numMeth = 4;   // Number of methods, and their short names.
+const long numMeth = 5;   // Number of methods, and their short names.
 
 // We use ctime directly for the timings.
 clock_t tmp;
@@ -44,7 +44,7 @@ long maxZ[numMeth][maxNumSizes];     // Max absolute value of z_j.
 template<typename Int, typename Real>
 void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
       long d, long dim, long meth, double deltaLLL1, double deltaLLL2, double deltaBKZ, long k,
-      bool BB, NTL::Vec<Real> sqlen) {
+      bool doBB, NTL::Vec<Real> sqlen) {
    if (inDual) {
       korlat.buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
       korlat.dualize();
@@ -54,10 +54,11 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
    std::cout << std::setprecision(10);
    //std::cout << "Before pre-reduction, initial basis = \n" << korlat.getBasis() << "\n";
    std::cout << "\n**************************************\n";
+   std::cout << "Dimension: " << dim << "\n";
    std::cout << "Pre-reduction: " << methNames[meth] << "\n";
    if (deltaLLL1 > 0.0) redLLL(korlat.getBasis(), deltaLLL1, dim, &sqlen);
    if (deltaBKZ > 0.0) redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
-   if (!red.shortestVector(korlat))
+   if (doBB && !red.shortestVector(korlat))
       std::cout << " shortestVector failed for " << methNames[meth] << "\n";
 }
 
@@ -96,13 +97,13 @@ static void testLoop(Int m, Int a, NormType norm, DecompTypeBB decomp, bool inDu
    korlat.seta(a);
    for (d = 0; d < numSizes; d++) {  // Each matrix size.
       if (!doBB)
-         performReduction(korlat, red, inDual, d, dimensions[d], 0, 0.0, 0.0, 0.0, 0, true, sqlen);
+         performReduction(korlat, red, inDual, d, dimensions[d], 0, 0.0, 0.0, 0.0, 0, doBB, sqlen);
       // if ((korlat.getModulus() <= 1024 * 1024) || !doBB)
-      performReduction(korlat, red, inDual, d, dimensions[d], 1, 0.5, 0.0, 0.0, 1, true, sqlen);
-      performReduction(korlat, red, inDual, d, dimensions[d], 1, 0.999, 0.0, 0.0, 1, true, sqlen);
-      performReduction(korlat, red, inDual, d, dimensions[d], 2, 0.99999, 0.0, 0.0, 12, true, sqlen);
+      performReduction(korlat, red, inDual, d, dimensions[d], 1, 0.5, 0.0, 0.0, 1, doBB, sqlen);
+      performReduction(korlat, red, inDual, d, dimensions[d], 2, 0.999, 0.0, 0.0, 1, doBB, sqlen);
+      performReduction(korlat, red, inDual, d, dimensions[d], 3, 0.99999, 0.0, 0.0, 12, doBB, sqlen);
       if (d > 0)
-         performReduction(korlat, red, inDual, d, dimensions[d], 3, 0.9999999, 0.0, 0.0, 20, true, sqlen);
+         performReduction(korlat, red, inDual, d, dimensions[d], 4, 0.9999999, 0.0, 0.0, 20, doBB, sqlen);
    }
 }
 

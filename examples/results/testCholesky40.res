@@ -64,7 +64,7 @@ shortestVector: total number of calls to tryZ: 5
  square length m_lMin2 = 28083
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[-46 -106 -63 99 31 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -117,7 +117,7 @@ shortestVector: total number of calls to tryZ: 5
  square length m_lMin2 = 28083
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-46 -106 -63 99 31 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -330,7 +330,7 @@ shortestVector: total number of calls to tryZ: 5628538
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -404,7 +404,7 @@ shortestVector: total number of calls to tryZ: 24945
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -471,7 +471,7 @@ shortestVector: total number of calls to tryZ: 18466
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: BKZ99999-12+BB 
+Pre-reduction: BKZ9999999-20+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -649,7 +649,7 @@ tryZ: found shorter vector candidate m_vtest: [0 -1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 
  shortestVector failed for LLL5            
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[0 0 0 -1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0]
@@ -740,7 +740,7 @@ shortestVector: total number of calls to tryZ: 20920057
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -812,7 +812,7 @@ shortestVector: total number of calls to tryZ: 18583011
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: BKZ99999-12+BB 
+Pre-reduction: BKZ9999999-20+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -951,7 +951,7 @@ shortestVector: total number of calls to tryZ: 5
  square length m_lMin2 = 28083
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[-46 -106 -63 99 31 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -1004,7 +1004,7 @@ shortestVector: total number of calls to tryZ: 5
  square length m_lMin2 = 28083
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-46 -106 -63 99 31 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -1217,7 +1217,7 @@ shortestVector: total number of calls to tryZ: 5628539
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -1291,7 +1291,7 @@ shortestVector: total number of calls to tryZ: 24945
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -1358,7 +1358,7 @@ shortestVector: total number of calls to tryZ: 18467
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: BKZ99999-12+BB 
+Pre-reduction: BKZ9999999-20+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -1536,7 +1536,7 @@ tryZ: found shorter vector candidate m_vtest: [0 -1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 
  shortestVector failed for LLL5            
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[0 0 0 -1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0]
@@ -1627,7 +1627,7 @@ shortestVector: total number of calls to tryZ: 20920055
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -1699,7 +1699,7 @@ shortestVector: total number of calls to tryZ: 18583012
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: BKZ99999-12+BB 
+Pre-reduction: BKZ9999999-20+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -1838,7 +1838,7 @@ shortestVector: total number of calls to tryZ: 5
  square length m_lMin2 = 28083
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[-46 -106 -63 99 31 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -1891,7 +1891,7 @@ shortestVector: total number of calls to tryZ: 5
  square length m_lMin2 = 28083
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-46 -106 -63 99 31 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -2104,7 +2104,7 @@ shortestVector: total number of calls to tryZ: 5628538
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -2178,7 +2178,7 @@ shortestVector: total number of calls to tryZ: 24945
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -2245,7 +2245,7 @@ shortestVector: total number of calls to tryZ: 18466
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: BKZ99999-12+BB 
+Pre-reduction: BKZ9999999-20+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -2423,7 +2423,7 @@ tryZ: found shorter vector candidate m_vtest: [0 -1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 
  shortestVector failed for LLL5            
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[0 0 0 -1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0]
@@ -2514,7 +2514,7 @@ shortestVector: total number of calls to tryZ: 20920059
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -2586,7 +2586,7 @@ shortestVector: total number of calls to tryZ: 18583010
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: BKZ99999-12+BB 
+Pre-reduction: BKZ9999999-20+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -2728,7 +2728,7 @@ shortestVector: total number of calls to tryZ: 5
  square length m_lMin2 = 28083
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[-46 -106 -63 99 31 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -2781,7 +2781,7 @@ shortestVector: total number of calls to tryZ: 5
  square length m_lMin2 = 28083
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-46 -106 -63 99 31 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -2994,7 +2994,7 @@ shortestVector: total number of calls to tryZ: 5628538
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -3068,7 +3068,7 @@ shortestVector: total number of calls to tryZ: 24946
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -3135,7 +3135,7 @@ shortestVector: total number of calls to tryZ: 18466
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: BKZ99999-12+BB 
+Pre-reduction: BKZ9999999-20+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -3313,7 +3313,7 @@ tryZ: found shorter vector candidate m_vtest: [0 -1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 
  shortestVector failed for LLL5            
 
 **************************************
-Pre-reduction: LLL5            
+Pre-reduction: LLL999          
 
 shortestVector: basis = 
 [[0 0 0 -1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0]
@@ -3404,7 +3404,7 @@ shortestVector: total number of calls to tryZ: 20920054
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: LLL999          
+Pre-reduction: BKZ99999-12+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -3476,7 +3476,7 @@ shortestVector: total number of calls to tryZ: 18583013
  square length m_lMin2 = 11
 
 **************************************
-Pre-reduction: BKZ99999-12+BB 
+Pre-reduction: BKZ9999999-20+BB 
 
 shortestVector: basis = 
 [[-1 0 0 0 -1 0 0 0 0 -1 1 0 1 0 -1 0 0 0 0 1 0 1 0 0 -1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
