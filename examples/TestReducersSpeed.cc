@@ -140,7 +140,8 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
    Rank1Lattice<Int, Real> korlat(m, maxdim, norm); // We use single lattice object.
    ReducerBB<Int, Real> red(korlat);   // Single ReducerBB with internal lattice `korlat`.
    red.setDecompTypeBB(decomp);
-   Real epsBounds = Real(0.00000000000000001);
+   Real epsBounds = Real(0.0);
+   // Real epsBounds = Real(0.00000000000000001);
    // Real epsBounds = Real(0.000001);  // 10^{-6}
    red.setEpsBounds(epsBounds);  // Safety margin on the bounds in the BB.
    std::cout << "Safety margin on the BB bounds: epsBounds = " << epsBounds << ".\n\n";
@@ -258,8 +259,8 @@ void comparePreRed (Int m, NormType norm, DecompTypeBB decomp, long numSizes, lo
 
 int main() {
    // NTL::ZZ m(1021);  // Prime modulus near 2^{10}
-   NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
-   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   // NTL::ZZ m(1048573);  // Prime modulus near 2^{20}
+   NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    DecompTypeBB decomp = CHOLESKY;
    NormType norm = L2NORM;
    long numSizes = 5;
@@ -270,6 +271,6 @@ int main() {
    //comparePreRed<NTL::ZZ, xdouble>(m, norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, quad_float>(m, norm, decomp, numSizes, numRep);
    comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
-   //NTL::RR::SetPrecision(250);
-   //comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
+   NTL::RR::SetPrecision(250);
+   comparePreRed<NTL::ZZ, NTL::RR>(m, norm, decomp, numSizes, numRep);
 }

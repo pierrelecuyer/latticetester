@@ -89,9 +89,8 @@ static void testLoop(Int m, Int a, NormType norm, DecompTypeBB decomp, bool inDu
    if (!doBB) red.maxNodesBB = 1;
    Real eps = Real(epsBounds);
    red.setEpsBounds(eps);// Safety margin on the bounds in the BB.
-   std::cout << "Safety margin on the BB bounds: epsBounds = " << epsBounds << ".\n";
+   std::cout << std::setprecision(10) << "Safety margin on the BB bounds: epsBounds = " << eps << ".\n";
    red.setVerbosity(verbose);
-
    NTL::Vec<Real> sqlen;// Cannot be global because it depends on Real.
    sqlen.SetLength(1);// We retrieve only the shortest vector square length.
    korlat.seta(a);
@@ -117,7 +116,7 @@ int main() {
    NormType norm = L2NORM;
    long numSizes = 3;  // Number of values to test for the dimension.
    bool doBB = true;  // Perform the BB ?
-   double epsBounds = 0.0;  // Safety margin on the bounds in the BB.
+   double epsBounds = 0.000001;  // Safety margin on the bounds in the BB.
    long verbose = 3;  // Level of detail in the output trace.
 
    testLoop<NTL::ZZ, double>(m, a, norm, decomp, true, numSizes, doBB, epsBounds, verbose);

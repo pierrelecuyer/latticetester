@@ -733,12 +733,12 @@ bool ReducerBB<Int, Real>::tryZShortVecOld(int64_t j, bool &smaller, NormType no
    // This computation works for the L2 or L1 norm.
    // m_sjp[j] is s_j(p) in the guide.
    center = 0.0;
-   dc = m_epsBounds;
    for (i = j + 1; i < dim; ++i)
       center -= m_L[i][j] * m_zLR[i];  // This is `c_j` in the guide.
    // m_L contains the \tilde\ell_{i,j} of the guide.
-   // This dc is the distance from the center to the boundaries.
+   // dc is the distance from the center to the boundaries.
    // m_lMin2 contains the square length of current shortest vector with the selected norm.
+   dc = m_epsBounds;
    if (m_decomp == CHOLESKY) {
       dc += sqrt((m_lMin2 - m_sjp[j]) / m_dc2[j]);
       // std::cout << " With Cholesky, j = " << j << ", center = " << center << ",  dc = " << dc << "\n";
@@ -934,6 +934,7 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
    x = center + dc;
    NTL::conv(max0, trunc(x));
    if (x < 0.0) --max0;
+   m_maxZj = std::max(m_maxZj, max(abs(min0), abs(max0)));  // Update largest absolute z_j.
 
    if (m_verbose > 3) {
       for (i = 0; i <= j; ++i)
@@ -965,7 +966,6 @@ bool ReducerBB<Int, Real>::tryZShortVec(int64_t j, bool &smaller, NormType norm)
       if (high) m_z[j] = zhigh;
       else m_z[j] = zlow;    // For j = dim-1, this will be 0.
       NTL::conv(m_zLR[j], m_z[j]);
-      m_maxZj = std::max(m_maxZj, std::abs(m_z[j]));  // Update largest absolute z_j.
 
       // Computing m_sjp[j-1].
       x = m_zLR[j] - center;
