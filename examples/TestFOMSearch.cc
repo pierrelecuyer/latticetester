@@ -107,20 +107,19 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
  * vector t, with a restricted number of projections, to try speed up the screening.
  */
 template<typename Int, typename Real>
-static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, const Int a0,
+static void compareSearchMethods(NormType norm, FigureOfMeritM<Int, Real> *fom, const Int m, const Int a0,
       const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
-      int64_t numMultShort, int64_t numBest0, int64_t numBest, NormType norm = L2NORM) {
-   int64_t maxdim = t[0];  // Maximum dimension of the lattice
-   // WeightsUniform weights(1.0);
-   Rank1Lattice<Int, Real> lat(m, maxdim, norm);  // The current lattice for which the FoM is calculated.   ****  L2NORM CW
+      int64_t numMultShort, int64_t numBest0, int64_t numBest) {
+   int64_t maxdim = max(t[0], t[1]);  // Maximum dimension of the lattice
+   Rank1Lattice<Int, Real> lat(m, maxdim, norm);  // The current lattice for which the FoM is calculated.
    IntLattice<Int, Real> proj(m, t.length(), norm); // Lattice used for projections. CW
    Int emptyList[0];
    Int inList[numBest0];
    Int outList[numBest0];
 
    // 1. Full computation (no discard), with default BKZ + BB.
- //  findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
- //        true, "BKZ + BB");
+   findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
+         true, "BKZ + BB");
 
    // 2. Early discard, with BKZ + BB.
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
@@ -151,17 +150,44 @@ static void compareSearchMethods(FigureOfMeritM<Int, Real> *fom, const Int m, co
          "LLL + BB, stage 2");
 }
 
+template<typename Int, typename Real>
+static void testPrimalDual (NormType norm, const Int m, const Int a0,
+      const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
+      int64_t numMultShort, int64_t numBest0, int64_t numBest) {
+   WeightsUniform weights(1.0);
+   int64_t maxdim = max(t[0], t[1]);  // Maximum dimension of the lattice
+   NormaBestLat normaPrimal(log(m), 1, maxdim, norm);  // Factors computed for primal. 
+   NormaBestLat normaDual(-log(m), 1, maxdim, norm);  // Factors computed for dual. 
+   ReducerBB<Int, Real> red(maxdim);   // Single ReducerBB with internal lattice `lat`.
+   FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
+   FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true); // FoM for dual lattice.
+
+   // We do first the primal, then the dual.
+   std::cout << "\n=========================================================\n";
+   std::cout << "Norm type: " << norm << "\n";
+   std::cout << "FOM experiments in primal lattices \n";
+   compareSearchMethods<Int, Real>(norm, &fomPrimal, m, a0, t, t0, numMultLong, numMultShort, numBest0,
+         numBest);
+
+   std::cout << "\n=========================================================\n";
+   std::cout << "Norm type: " << norm << "\n";
+   std::cout << "FOM experiments in dual lattices \n";
+   compareSearchMethods<Int, Real>(norm, &fomDual, m, a0, t, t0, numMultLong, numMultShort, numBest0,
+         numBest);
+   std::cout << "\n***     DONE     ***\n";
+}
+
 int main() {
    typedef NTL::ZZ Int;
    typedef double Real;
    std::cout << "Types: Int = NTL::ZZ, Real = double \n";
-   
-   NormType norm = L1NORM;
 
+   // For a different m, change the `m` below and recompile.
    NTL::ZZ m(1048573); // Prime modulus near 2^{20}
+   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
-   //NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
 
+   // We first do the Euclidean norm.
    NTL::Vec<int64_t> t; // The t-vector for the FOM.
    t.SetLength(5);
    t[0] = 32;    // We look at successive coordinates in up to t[0] dimensions.
@@ -169,37 +195,26 @@ int main() {
    t[2] = 16;
    t[3] = 12;
    t[4] = 10;
-
    NTL::Vec<int64_t> t0; // A reduced t-vector for the FOM.
    t0.SetLength(4);
    t0[0] = 4;
    t0[1] = 32;
    t0[2] = 16;
    t0[3] = 12;
+   testPrimalDual<Int, Real>(L2NORM, m, a0, t, t0, 100000, 1000, 50, 3);
+   // testPrimalDualInt, Real>(L2NORM, m, a0, t, t0, numMultLong, numMultShort, numBest0, numBest);
 
-   int64_t maxdim = t[0];  // Maximum dimension of the lattice
-   WeightsUniform weights(1.0);
-   NormaBestLat normaPrimal(log(m), 1, maxdim, norm);  // Factors computed for primal. 
-   NormaBestLat normaDual(-log(m), 1, maxdim, norm);  // Factors computed for dual. 
-   ReducerBB<Int, Real> red(maxdim);   // Single ReducerBB with internal lattice `lat`.
-   FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
-   FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true); // FoM for dual lattice.
-
-   int64_t numMultLong = 100;  // Total number of multipliers to examine.
-   int64_t numMultShort = 10;  // Number to examine in the `no early discard` case.
-   int64_t numBest0 = 10;  // When doing two rounds, we retain `numBest1` from the first round.
-   int64_t numBest = 3;   // We want the best three at the end.
-
-   // We do first the primal, then the dual.
-   std::cout << "\n=========================================================\n";
-   std::cout << "FOM experiments in primal lattices \n";
-   compareSearchMethods<Int, Real>(&fomPrimal, m, a0, t, t0, numMultLong, numMultShort, numBest0,
-         numBest, norm);
-
-   std::cout << "\n=========================================================\n";
-   std::cout << "FOM experiments in dual lattices \n";
-   compareSearchMethods<Int, Real>(&fomDual, m, a0, t, t0, numMultLong, numMultShort, numBest0,
-         numBest, norm);
-   std::cout << "\n***     DONE     ***\n";
+   // Then we try the L1 norm.
+   t[0] = 16;    // We look at successive coordinates in up to t[0] dimensions.
+   t[1] = 16;    // Then pairs, triples, etc.
+   t[2] = 8;
+   t[3] = 6;
+   t[4] = 5;
+   t0[0] = 4;
+   t0[1] = 16;
+   t0[2] = 8;
+   t0[3] = 6;
+   // For the large m, comment-out the following line. *****
+   testPrimalDual<Int, Real>(L1NORM, m, a0, t, t0, 100, 0, 10, 3);
    return 0;
 }
