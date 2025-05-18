@@ -91,7 +91,7 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
 }
 
 /*
- * This function tests different ways of making a search for the `numBest2` multipliers a
+ * This function tests different ways of making a search for the `numBest2` multipliers `a`
  * among `numMultLong` candidates, for the FOM M with vector `t`, for either the primal
  * (if `dual` is false) or the m-dual (if `dual` is true).
  * We start by testing a naive (inefficient) method that computes everything (no early discarding)
@@ -183,8 +183,8 @@ int main() {
    std::cout << "Types: Int = NTL::ZZ, Real = double \n";
 
    // For a different m, change the `m` below and recompile.
-   NTL::ZZ m(1048573); // Prime modulus near 2^{20}
-   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   //NTL::ZZ m(1048573); // Prime modulus near 2^{20}
+   NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
 
    // We first do the Euclidean norm.
@@ -215,6 +215,6 @@ int main() {
    t0[2] = 8;
    t0[3] = 6;
    // For the large m, comment-out the following line. *****
-   testPrimalDual<Int, Real>(L1NORM, m, a0, t, t0, 100, 0, 10, 3);
+   // testPrimalDual<Int, Real>(L1NORM, m, a0, t, t0, 100, 0, 10, 3);
    return 0;
 }

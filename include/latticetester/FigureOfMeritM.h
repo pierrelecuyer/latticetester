@@ -418,7 +418,7 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
    if (m_deltaBKZ > 0.0)
       redBKZ<Int, Real>(proj.getBasis(), m_deltaBKZ, m_blocksizeBKZ, 0, dim,
             &m_sqlen);
-   if (m_red) {       // We do the BB.
+   if (m_redBB) {       // We do the BB.
       // If `proj` is already the internal lattice for `m_red`, the following does nothing.
       // Otherwise it just sets a pointer to `proj`, and enlarges the arrays in m_red if needed.
       // m_red->setIntLattice(proj);
