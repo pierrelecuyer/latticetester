@@ -60,7 +60,8 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
       if (fromList) a = inList[j];
       else a = a * a0 % m;
       lat.seta(a);
-      merit = fom->computeMerit(lat, proj);  // Here we compute the FOM.
+      merit = fom->computeMerit(lat, proj);  // Here we compute the FOM for this `a`.
+      // std::cout << "findBestFOMs, a = " << a << ", merit = " << merit << "\n";
       posComp = numBest - 1;  // The last index in the list.
       if (merit > bestFoms[posComp]) {
          // Overwrite the currently smallest FoM and corresponding a in the stored list.
@@ -112,42 +113,42 @@ static void compareSearchMethods(NormType norm, FigureOfMeritM<Int, Real> *fom, 
       int64_t numMultShort, int64_t numBest0, int64_t numBest) {
    int64_t maxdim = max(t[0], t[1]);  // Maximum dimension of the lattice
    Rank1Lattice<Int, Real> lat(m, maxdim, norm);  // The current lattice for which the FoM is calculated.
-   IntLattice<Int, Real> proj(m, t.length(), norm); // Lattice used for projections. CW
+   IntLattice<Int, Real> proj(m, t.length(), norm); // Lattice used for projections.
    Int emptyList[0];
    Int inList[numBest0];
    Int outList[numBest0];
 
    // 1. Full computation (no discard), with default BKZ + BB.
    findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
-         true, "BKZ + BB");
+         true, "1. BKZ + BB");
 
    // 2. Early discard, with BKZ + BB.
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
-         "BKZ + BB");
+         "2. BKZ + BB");
 
+   // 3. Early discard, approximation with LLL only.
    fom->setLLL(0.99999);
    fom->setBKZ(0.0);
    fom->setBB(false);
-   // 3. Early discard, approximation with LLL only.
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
-         "LLL only");
+         "3. LLL only");
 
    // 4. Early discard, two stages, retain numBest0 in inList, with LLL only in first stage.
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, inList, numBest0, false,
-         "LLL only, stage 1, with vector t");
+         "4. LLL only, stage 1, with vector t");
    // We use LLL + BB on second stage, only for the numBest0 retained.
    fom->setBB(true);
    findBestFOMs(m, a0, lat, proj, fom, true, true, inList, numBest0, outList, numBest, true,
-         "LLL + BB, stage 2");
+         "4. LLL + BB, stage 2");
 
    // 5. Early discard, two stages, retain numBest0 in inList, with LLL only and vector `t0` in first stage.
    fom->setTVector(t0, true);
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, inList, numBest0, false,
-         "LLL only, stage 1 with vector t0");
+         "5. LLL only, stage 1 with vector t0");
    // We use LLL + BB on second stage, only for the numBest0 retained.
    fom->setTVector(t, true);   fom->setBB(true);
    findBestFOMs(m, a0, lat, proj, fom, true, true, inList, numBest0, outList, numBest, true,
-         "LLL + BB, stage 2");
+         "5. LLL + BB, stage 2");
 }
 
 template<typename Int, typename Real>
@@ -183,21 +184,21 @@ int main() {
    std::cout << "Types: Int = NTL::ZZ, Real = double \n";
 
    // For a different m, change the `m` below and recompile.
-   //NTL::ZZ m(1048573); // Prime modulus near 2^{20}
-   NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   NTL::ZZ m(1048573); // Prime modulus near 2^{20}
+   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
 
    // We first do the Euclidean norm.
    NTL::Vec<int64_t> t; // The t-vector for the FOM.
    t.SetLength(5);
-   t[0] = 32;    // We look at successive coordinates in up to t[0] dimensions.
-   t[1] = 32;    // Then pairs, triples, etc.
+   t[0] = 24;    // We look at successive coordinates in up to t[0] dimensions.
+   t[1] = 32;    // For pairs, triples, etc.
    t[2] = 16;
    t[3] = 12;
    t[4] = 10;
    NTL::Vec<int64_t> t0; // A reduced t-vector for the FOM.
    t0.SetLength(4);
-   t0[0] = 4;
+   t0[0] = 8;
    t0[1] = 32;
    t0[2] = 16;
    t0[3] = 12;
@@ -205,16 +206,16 @@ int main() {
    // testPrimalDualInt, Real>(L2NORM, m, a0, t, t0, numMultLong, numMultShort, numBest0, numBest);
 
    // Then we try the L1 norm.
-   t[0] = 16;    // We look at successive coordinates in up to t[0] dimensions.
-   t[1] = 16;    // Then pairs, triples, etc.
+   t[0] = 12;    // We look at successive coordinates in up to t[0] dimensions.
+   t[1] = 16;    // For pairs, triples, etc.
    t[2] = 8;
    t[3] = 6;
    t[4] = 5;
-   t0[0] = 4;
+   t0[0] = 8;
    t0[1] = 16;
    t0[2] = 8;
    t0[3] = 6;
    // For the large m, comment-out the following line. *****
-   // testPrimalDual<Int, Real>(L1NORM, m, a0, t, t0, 100, 0, 10, 3);
+   testPrimalDual<Int, Real>(L1NORM, m, a0, t, t0, 1000, 10, 20, 3);
    return 0;
 }

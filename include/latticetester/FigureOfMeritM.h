@@ -427,7 +427,14 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
    }
    double merit;
    if (proj.getNormType() == L2NORM) NTL::conv(merit, sqrt(m_sqlen[0]) / m_norma->getBound(dim));
-   else NTL::conv(merit, m_red->getMinLength() / m_norma->getBound(dim));   // For L1 norm.
+   else if (m_redBB) NTL::conv(merit, m_red->getMinLength() / m_norma->getBound(dim));   // For L1 norm.
+   else {   // L1 norm and no BB
+      proj.updateSingleVecNorm(0, dim);
+      NTL::conv(merit, proj.getVecNorm(0) / m_norma->getBound(dim));
+   }
+
+//  Does not work if no BB !!!!
+
    merit *= m_weights->getWeight(coord);
    if (merit < minmerit) {
       m_minMerit = merit;
