@@ -232,7 +232,7 @@ namespace LatticeTester {
          * contains with the increment (`++`) operator.
          */
         class const_iterator :
-        	public std::iterator<std::forward_iterator_tag, const Coordinates> {
+        	 public std::iterator<std::forward_iterator_tag, const Coordinates> {
 
         public:
           struct end_tag {};
@@ -421,7 +421,7 @@ namespace LatticeTester {
          * contains with the increment (`++`) operator.
          * */
         class const_iterator :
-        	public std::iterator<std::forward_iterator_tag, const Coordinates> {
+        	 public std::iterator<std::forward_iterator_tag, const Coordinates> {
 
         public:
           struct end_tag {};

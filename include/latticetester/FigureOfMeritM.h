@@ -126,12 +126,17 @@ public:
 
    /**
     * Sets the vector @f$(t_1,..., t_d)@f$ in the FOM definition to the vector `t`.
-    * Note that the values of @f$t_1,..., t_d@f$ are taken from `t[0],...,t[d-1]`,
+    * The values of @f$t_1,..., t_d@f$ are taken from `t[0],...,t[d-1]`,
     * respectively.  When `includeFirst` is `true`, we consider only the non-successive
     * projections that contain coordinate 1.
     * See the doc of the class `FromRanges` in `CoordinateSets` for more details.
     */
    void setTVector(const NTL::Vec<int64_t> &t, bool includeFirst);
+
+   /**
+    * Counts and returns the total number of projections that are considered for the given `t`.
+    */
+   int64_t countProjections();
 
    /**
     * Sets the weights used for calculating the FoM
@@ -403,6 +408,16 @@ void FigureOfMeritM<Int, Real>::setTVector(const NTL::Vec<int64_t> &t, bool incl
 }
 
 //=========================================================================
+
+template<typename Int, typename Real>
+int64_t FigureOfMeritM<Int, Real>::countProjections() {
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
+   int64_t numProj = 1 + m_t[0] - lower_dim;
+   for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) numProj++;
+   return numProj;
+}
+
+//=========================================================================
 // Computes the merit value for one projection in `dim` dimensions.
 // The dimension of `proj` must equal the size of coord.
 template<typename Int, typename Real>
@@ -432,9 +447,6 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
       proj.updateSingleVecNorm(0, dim);
       NTL::conv(merit, proj.getVecNorm(0) / m_norma->getBound(dim));
    }
-
-//  Does not work if no BB !!!!
-
    merit *= m_weights->getWeight(coord);
    if (merit < minmerit) {
       m_minMerit = merit;

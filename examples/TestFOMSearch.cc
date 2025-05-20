@@ -165,13 +165,17 @@ static void testPrimalDual (NormType norm, const Int m, const Int a0,
 
    // We do first the primal, then the dual.
    std::cout << "\n=========================================================\n";
-   std::cout << "Norm type: " << norm << "\n";
+   std::cout << "Norm type: L" << norm << "\n";
+   std::cout << "Total number of projections with t:  " << fomPrimal.countProjections() << "\n";
+   fomPrimal.setTVector (t0, true);
+   std::cout << "Total number of projections with t0: " << fomPrimal.countProjections() << "\n";
+   fomPrimal.setTVector (t, true);
+
    std::cout << "FOM experiments in primal lattices \n";
    compareSearchMethods<Int, Real>(norm, &fomPrimal, m, a0, t, t0, numMultLong, numMultShort, numBest0,
          numBest);
 
-   std::cout << "\n=========================================================\n";
-   std::cout << "Norm type: " << norm << "\n";
+   std::cout << "\n==================================\n";
    std::cout << "FOM experiments in dual lattices \n";
    compareSearchMethods<Int, Real>(norm, &fomDual, m, a0, t, t0, numMultLong, numMultShort, numBest0,
          numBest);
@@ -189,14 +193,14 @@ int main() {
    NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
 
    // We first do the Euclidean norm.
-   NTL::Vec<int64_t> t; // The t-vector for the FOM.
+   NTL::Vec<int64_t> t; // The t-vector for the FOM, with 446 projections
    t.SetLength(5);
    t[0] = 24;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 32;    // For pairs, triples, etc.
    t[2] = 16;
    t[3] = 12;
    t[4] = 10;
-   NTL::Vec<int64_t> t0; // A reduced t-vector for the FOM.
+   NTL::Vec<int64_t> t0; // A reduced t-vector for the FOM, with 305 projections
    t0.SetLength(4);
    t0[0] = 8;
    t0[1] = 32;
@@ -205,17 +209,18 @@ int main() {
    testPrimalDual<Int, Real>(L2NORM, m, a0, t, t0, 100000, 1000, 50, 3);
    // testPrimalDualInt, Real>(L2NORM, m, a0, t, t0, numMultLong, numMultShort, numBest0, numBest);
 
-   // Then we try the L1 norm.
-   t[0] = 12;    // We look at successive coordinates in up to t[0] dimensions.
-   t[1] = 16;    // For pairs, triples, etc.
-   t[2] = 8;
-   t[3] = 6;
-   t[4] = 5;
-   t0[0] = 8;
-   t0[1] = 16;
-   t0[2] = 8;
-   t0[3] = 6;
+   // Then we try the L1 norm.  // 54 projections
+   t[0] = 12;  // We look at successive coordinates in up to t[0] dimensions.  // 7
+   t[1] = 16;  // For pairs, triples, etc.   // 15
+   t[2] = 8;   // 21
+   t[3] = 6;   // 10
+   t[4] = 5;   // 1
+   // The reduced vector has 50 projections, we remove the 4 having largest dimension.
+   t0[0] = 8;  // 4
+   t0[1] = 16; // 15
+   t0[2] = 8;  // 21
+   t0[3] = 6;  // 10
    // For the large m, comment-out the following line. *****
-   testPrimalDual<Int, Real>(L1NORM, m, a0, t, t0, 1000, 10, 20, 3);
+   testPrimalDual<Int, Real>(L1NORM, m, a0, t, t0, 100000, 1000, 20, 3);
    return 0;
 }
