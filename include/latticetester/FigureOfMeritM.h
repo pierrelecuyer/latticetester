@@ -116,6 +116,7 @@ public:
    /**
     * This constructor will call `setTVector (t, includeFirst)`,
     * then set the 'Weights', `Normalizer`, and `ReducerBB` to the given values.
+    * See the text above for other default values.
     */
    FigureOfMeritM(const NTL::Vec<int64_t> &t, Weights &w, Normalizer &norma,
          ReducerBB<Int, Real> *red = 0, bool includeFirst = false);
@@ -511,7 +512,6 @@ double FigureOfMeritM<Int, Real>::computeMeritNonSucc(IntLatticeExt<Int, Real> &
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMerit(IntLatticeExt<Int, Real> &lat,
       IntLattice<Int, Real> &proj, double minmerit) {
-   m_minMerit = minmerit;
    this->computeMeritNonSucc(lat, proj, minmerit);
    if (m_minMerit == 0) return 0;
    this->computeMeritSucc(lat, m_minMerit);

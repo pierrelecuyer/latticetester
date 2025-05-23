@@ -44,6 +44,12 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
       IntLattice<Int, Real> &proj, FigureOfMeritM<Int, Real> *fom, bool earlyDiscard, bool fromList,
       Int inList[], int64_t numMult, Int outList[], int64_t numBest, bool verbose = false,
       std::string strMethod = " ") {
+   std::cout << "\n--------------------------------------\n";
+   std::cout << "Function findBestFOMs with m = " << m << "\n";
+   std::cout << std::boolalpha << "Discard: " << earlyDiscard << ",  from List: " << fromList;
+   std::cout << ",  method: " << strMethod << "\n";
+   std::cout << "Number of multipliers a examined: " << numMult << "\n";
+   std::cout << "Number retained: " << numBest << "\n";
    Int a = a0;
    double merit;
    fom->setLowBound(0.0);
@@ -73,16 +79,10 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
          bestFoms[posComp] = merit;
          // If earlyDiscard, set the new lower bound to the current smallest FoM value in the list.
          // This value represents the FOM for the worst candidate still in the list.
-         if (earlyDiscard) fom->setLowBound(bestFoms[posComp]);
+         if (earlyDiscard) fom->setLowBound(bestFoms[numBest-1]);
       }
    }
    tmp = clock() - tmp;
-   std::cout << "\n--------------------------------------\n";
-   std::cout << "Function findBestFOMs with m = " << m << "\n";
-   std::cout << std::boolalpha << "Discard: " << earlyDiscard << ",  from List: " << fromList;
-   std::cout << ",  method: " << strMethod << "\n";
-   std::cout << "Number of multipliers a examined: " << numMult << "\n";
-   std::cout << "Number retained: " << numBest << "\n";
    std::cout << "Running Time in seconds: " << (double) tmp / (CLOCKS_PER_SEC) << "\n";
    if (verbose) {
       std::cout << "\nBest " << numBest << " multipliers `a` found, and their FOMs:\n";
@@ -117,10 +117,14 @@ static void compareSearchMethods(NormType norm, FigureOfMeritM<Int, Real> *fom, 
    Int emptyList[0];
    Int inList[numBest0];
    Int outList[numBest0];
+   fom->setTVector (t, true);
+   //fom->setLLL(0.0);      // Default values.
+   //fom->setBKZ(0.99999);
+   //fom->setBB(true);
 
    // 1. Full computation (no discard), with default BKZ + BB.
-   findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
-         true, "1. BKZ + BB");
+//   findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
+//         true, "1. BKZ + BB");
 
    // 2. Early discard, with BKZ + BB.
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
@@ -143,10 +147,12 @@ static void compareSearchMethods(NormType norm, FigureOfMeritM<Int, Real> *fom, 
 
    // 5. Early discard, two stages, retain numBest0 in inList, with LLL only and vector `t0` in first stage.
    fom->setTVector(t0, true);
+   fom->setBB(false);
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, inList, numBest0, false,
          "5. LLL only, stage 1 with vector t0");
    // We use LLL + BB on second stage, only for the numBest0 retained.
-   fom->setTVector(t, true);   fom->setBB(true);
+   fom->setTVector(t, true);
+   fom->setBB(true);
    findBestFOMs(m, a0, lat, proj, fom, true, true, inList, numBest0, outList, numBest, true,
          "5. LLL + BB, stage 2");
 }
@@ -160,7 +166,7 @@ static void testPrimalDual (NormType norm, const Int m, const Int a0,
    NormaBestLat normaPrimal(log(m), 1, maxdim, norm);  // Factors computed for primal. 
    NormaBestLat normaDual(-log(m), 1, maxdim, norm);  // Factors computed for dual. 
    ReducerBB<Int, Real> red(maxdim);   // Single ReducerBB with internal lattice `lat`.
-   FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true);
+   FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true); // includeFirst = true.
    FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true); // FoM for dual lattice.
 
    // We do first the primal, then the dual.
@@ -188,9 +194,9 @@ int main() {
    std::cout << "Types: Int = NTL::ZZ, Real = double \n";
 
    // For a different m, change the `m` below and recompile.
-   NTL::ZZ m(1048573); // Prime modulus near 2^{20}
-   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
-   NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
+   Int m(1048573); // Prime modulus near 2^{20}
+   // Int m(1099511627791);  // Prime modulus near 2^{40}
+   Int a0(91);     // This a0 is a primitive element mod m=1048573.
 
    // We first do the Euclidean norm.
    NTL::Vec<int64_t> t; // The t-vector for the FOM, with 446 projections

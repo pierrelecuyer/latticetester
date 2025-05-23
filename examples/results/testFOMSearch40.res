@@ -1,7 +1,9 @@
 Types: Int = NTL::ZZ, Real = double 
 
 =========================================================
-Norm type: 2
+Norm type: L2
+Total number of projections with t:  446
+Total number of projections with t0: 305
 FOM experiments in primal lattices 
 
 --------------------------------------
@@ -9,7 +11,7 @@ Function findBestFOMs with m = 1099511627791
 Discard: false,  from List: false,  method: 1. BKZ + BB
 Number of multipliers a examined: 1000
 Number retained: 3
-Running Time in seconds: 8.83675
+Running Time in seconds: 10.2585
 
 Best 3 multipliers `a` found, and their FOMs:
   315661629133, 0.241259
@@ -21,65 +23,64 @@ Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 2. BKZ + BB
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 6.96725
+Running Time in seconds: 7.56466
 
 Best 3 multipliers `a` found, and their FOMs:
   918927574849, 0.264833
   1089166524987, 0.259433
-  171393147616, 0.259224
+  242005322085, 0.255688
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 3. LLL only
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 5.08196
+Running Time in seconds: 5.45658
 
 Best 3 multipliers `a` found, and their FOMs:
   918927574849, 0.264833
   1089166524987, 0.259433
-  171393147616, 0.259224
+  242005322085, 0.255688
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 4. LLL only, stage 1, with vector t
 Number of multipliers a examined: 100000
 Number retained: 50
-Running Time in seconds: 7.7053
+Running Time in seconds: 9.36604
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: true,  method: 4. LLL + BB, stage 2
 Number of multipliers a examined: 50
 Number retained: 3
-Running Time in seconds: 0.014828
+Running Time in seconds: 0.03977
 
 Best 3 multipliers `a` found, and their FOMs:
   918927574849, 0.264833
   1089166524987, 0.259433
-  242005322085, 0.258113
+  242005322085, 0.255688
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 5. LLL only, stage 1 with vector t0
 Number of multipliers a examined: 100000
 Number retained: 50
-Running Time in seconds: 7.11925
+Running Time in seconds: 6.44163
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: true,  method: 5. LLL + BB, stage 2
 Number of multipliers a examined: 50
 Number retained: 3
-Running Time in seconds: 0.013838
+Running Time in seconds: 0.047886
 
 Best 3 multipliers `a` found, and their FOMs:
   918927574849, 0.264833
-  762166242329, 0.260906
   1089166524987, 0.259433
+  242005322085, 0.255688
 
-=========================================================
-Norm type: 2
+==================================
 FOM experiments in dual lattices 
 
 --------------------------------------
@@ -87,7 +88,7 @@ Function findBestFOMs with m = 1099511627791
 Discard: false,  from List: false,  method: 1. BKZ + BB
 Number of multipliers a examined: 1000
 Number retained: 3
-Running Time in seconds: 6.98938
+Running Time in seconds: 7.00604
 
 Best 3 multipliers `a` found, and their FOMs:
   772303778413, 0.223998
@@ -99,219 +100,220 @@ Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 2. BKZ + BB
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 8.26174
+Running Time in seconds: 9.1811
 
 Best 3 multipliers `a` found, and their FOMs:
   452005645564, 0.269388
-  82812160887, 0.268489
-  168117566166, 0.267981
+  107648311535, 0.267524
+  353522122454, 0.25459
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 3. LLL only
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 6.56822
+Running Time in seconds: 7.27348
 
 Best 3 multipliers `a` found, and their FOMs:
   452005645564, 0.269388
-  82812160887, 0.268489
-  168117566166, 0.267981
+  107648311535, 0.267524
+  353522122454, 0.25459
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 4. LLL only, stage 1, with vector t
 Number of multipliers a examined: 100000
 Number retained: 50
-Running Time in seconds: 9.27435
+Running Time in seconds: 10.6766
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: true,  method: 4. LLL + BB, stage 2
 Number of multipliers a examined: 50
 Number retained: 3
-Running Time in seconds: 0.017412
+Running Time in seconds: 0.035774
 
 Best 3 multipliers `a` found, and their FOMs:
   452005645564, 0.269388
   107648311535, 0.267524
-  640724520050, 0.263781
+  353522122454, 0.25459
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 5. LLL only, stage 1 with vector t0
 Number of multipliers a examined: 100000
 Number retained: 50
-Running Time in seconds: 9.31724
+Running Time in seconds: 8.66812
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: true,  method: 5. LLL + BB, stage 2
 Number of multipliers a examined: 50
 Number retained: 3
-Running Time in seconds: 0.024185
+Running Time in seconds: 0.046859
 
 Best 3 multipliers `a` found, and their FOMs:
   452005645564, 0.269388
-  799579270544, 0.267973
   107648311535, 0.267524
+  353522122454, 0.25459
 
 ***     DONE     ***
 
 =========================================================
-Norm type: 1
+Norm type: L1
+Total number of projections with t:  54
+Total number of projections with t0: 50
 FOM experiments in primal lattices 
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: false,  from List: false,  method: 1. BKZ + BB
-Number of multipliers a examined: 10
+Number of multipliers a examined: 1000
 Number retained: 3
-Running Time in seconds: 6.92161
+Running Time in seconds: 570.403
 
 Best 3 multipliers `a` found, and their FOMs:
-  547520220786, 0.257552
-  1013555717205, 0.224149
-  1098567057345, 0.17999
+  399450937967, 0.354632
+  182815190781, 0.323092
+  113816658047, 0.306782
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 2. BKZ + BB
-Number of multipliers a examined: 1000
+Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 10.1832
+Running Time in seconds: 28.5876
 
 Best 3 multipliers `a` found, and their FOMs:
-  399450937967, 0.354632
-  314928091774, 0.333084
-  1083307892214, 0.329762
+  893774817428, 0.37854
+  473774920134, 0.371557
+  98649027740, 0.366513
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 3. LLL only
-Number of multipliers a examined: 1000
+Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 0.037476
+Running Time in seconds: 2.98645
 
 Best 3 multipliers `a` found, and their FOMs:
-  399450937967, 0.354632
-  314928091774, 0.333084
-  1083307892214, 0.329762
+  893774817428, 0.37854
+  473774920134, 0.371557
+  98649027740, 0.366513
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 4. LLL only, stage 1, with vector t
-Number of multipliers a examined: 1000
+Number of multipliers a examined: 100000
 Number retained: 20
-Running Time in seconds: 0.054982
+Running Time in seconds: 3.22148
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: true,  method: 4. LLL + BB, stage 2
 Number of multipliers a examined: 20
 Number retained: 3
-Running Time in seconds: 0.29157
+Running Time in seconds: 1.82957
 
 Best 3 multipliers `a` found, and their FOMs:
-  399450937967, 0.354632
-  182815190781, 0.346219
-  113816658047, 0.333457
+  893774817428, 0.37854
+  473774920134, 0.371557
+  98649027740, 0.366513
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 5. LLL only, stage 1 with vector t0
-Number of multipliers a examined: 1000
+Number of multipliers a examined: 100000
 Number retained: 20
-Running Time in seconds: 0.117048
+Running Time in seconds: 2.39519
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: true,  method: 5. LLL + BB, stage 2
 Number of multipliers a examined: 20
 Number retained: 3
-Running Time in seconds: 0.292023
+Running Time in seconds: 2.37291
 
 Best 3 multipliers `a` found, and their FOMs:
-  399450937967, 0.354632
-  18373762695, 0.345076
-  182815190781, 0.323092
+  893774817428, 0.37854
+  473774920134, 0.371557
+  98649027740, 0.366513
 
-=========================================================
-Norm type: 1
+==================================
 FOM experiments in dual lattices 
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: false,  from List: false,  method: 1. BKZ + BB
-Number of multipliers a examined: 10
+Number of multipliers a examined: 1000
 Number retained: 3
-Running Time in seconds: 7.02336
+Running Time in seconds: 549.124
 
 Best 3 multipliers `a` found, and their FOMs:
-  547520220786, 0.280436
-  1098567057345, 0.193693
-  68574961, 0.175868
+  451314873491, 0.348062
+  182815190781, 0.346219
+  178647025976, 0.330939
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 2. BKZ + BB
-Number of multipliers a examined: 1000
+Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 10.1264
+Running Time in seconds: 26.1178
 
 Best 3 multipliers `a` found, and their FOMs:
-  451314873491, 0.348062
-  182815190781, 0.346219
-  754312809687, 0.343581
+  878116461874, 0.377746
+  577626986586, 0.375141
+  657702149524, 0.371948
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 3. LLL only
-Number of multipliers a examined: 1000
+Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 0.037103
+Running Time in seconds: 3.09748
 
 Best 3 multipliers `a` found, and their FOMs:
-  451314873491, 0.348062
-  182815190781, 0.346219
-  754312809687, 0.343581
+  878116461874, 0.377746
+  577626986586, 0.375141
+  657702149524, 0.371948
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 4. LLL only, stage 1, with vector t
-Number of multipliers a examined: 1000
+Number of multipliers a examined: 100000
 Number retained: 20
-Running Time in seconds: 0.053701
+Running Time in seconds: 3.31546
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: true,  method: 4. LLL + BB, stage 2
 Number of multipliers a examined: 20
 Number retained: 3
-Running Time in seconds: 0.916716
+Running Time in seconds: 0.58439
 
 Best 3 multipliers `a` found, and their FOMs:
-  451314873491, 0.348062
-  182815190781, 0.346219
-  98444517362, 0.335006
+  878116461874, 0.377746
+  577626986586, 0.375141
+  657702149524, 0.371948
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: false,  method: 5. LLL only, stage 1 with vector t0
-Number of multipliers a examined: 1000
+Number of multipliers a examined: 100000
 Number retained: 20
-Running Time in seconds: 0.116458
+Running Time in seconds: 2.80035
 
 --------------------------------------
 Function findBestFOMs with m = 1099511627791
 Discard: true,  from List: true,  method: 5. LLL + BB, stage 2
 Number of multipliers a examined: 20
 Number retained: 3
-Running Time in seconds: 0.915438
+Running Time in seconds: 0.584845
 
 Best 3 multipliers `a` found, and their FOMs:
-  451314873491, 0.348062
-  182815190781, 0.346219
-  98444517362, 0.335006
+  878116461874, 0.377746
+  577626986586, 0.375141
+  657702149524, 0.371948
 
 ***     DONE     ***
