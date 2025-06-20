@@ -9,5 +9,6 @@ var searchData=
   ['normaminkl1_2eh_6',['NormaMinkL1.h',['../da/d04/NormaMinkL1_8h.html',1,'']]],
   ['normapalpha_2eh_7',['NormaPalpha.h',['../d0/d40/NormaPalpha_8h.html',1,'']]],
   ['normarogers_2eh_8',['NormaRogers.h',['../da/dba/NormaRogers_8h.html',1,'']]],
-  ['ntlwrap_2eh_9',['NTLWrap.h',['../d6/daa/NTLWrap_8h.html',1,'']]]
+  ['ntlwrap_2eh_9',['NTLWrap.h',['../d6/daa/NTLWrap_8h.html',1,'']]],
+  ['num_2eh_10',['Num.h',['../d8/d53/Num_8h.html',1,'']]]
 ];

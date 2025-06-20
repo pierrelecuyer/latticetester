@@ -23,5 +23,6 @@ var searchData=
   ['normtype_20',['NormType',['../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4',1,'LatticeTester']]],
   ['notes_20on_20this_20documentation_21',['Notes on this documentation',['../index.html#notes',1,'']]],
   ['ntl_22',['NTL',['../d2/d5a/namespaceNTL.html',1,'']]],
-  ['ntlwrap_2eh_23',['NTLWrap.h',['../d6/daa/NTLWrap_8h.html',1,'']]]
+  ['ntlwrap_2eh_23',['NTLWrap.h',['../d6/daa/NTLWrap_8h.html',1,'']]],
+  ['num_2eh_24',['Num.h',['../d8/d53/Num_8h.html',1,'']]]
 ];

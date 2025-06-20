@@ -109,6 +109,7 @@
           <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8a2641e524a04c2f361c6915683f2ad3"/>
           <topic label="~FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac2a33bf19d7f65d7f2a006ac71d0b6e3"/>
           <topic label="setTVector" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab254796b0bf07839dc819ce0b18300b2"/>
+          <topic label="countProjections" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad6525fd3b4be99656c61c4d9e8177c37"/>
           <topic label="setWeights" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab405e7992725d162ec243db0f39ea6e4"/>
           <topic label="setNormalizer" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a5885073d6a50871be475e7dad6b40cbf"/>
           <topic label="setLLL" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac13ae1727e5dec235aa7d504d141b3fa"/>
@@ -326,6 +327,7 @@
           <topic label="setIntLattice" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a729ca775e213d53f46a5f9883b1cf421"/>
           <topic label="getIntLattice" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a4c7b8a716a1db527e6827c903a2af4cf"/>
           <topic label="setDecompTypeBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html#ad3521441e951420d76c46b02bf2182d9"/>
+          <topic label="setEpsBounds" href="d0/dea/classLatticeTester_1_1ReducerBB.html#ae314fb92f5aa78d03d22e87b6493e4a5"/>
           <topic label="setVerbosity" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a86f0100616f8b8c71d5e4c552f7dd6fa"/>
           <topic label="maxNodesBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a7a746627d303197f8ef36363c0baa7d3"/>
         </topic>
@@ -521,6 +523,13 @@
         <topic label="toStringDecomp" href="d8/d74/namespaceLatticeTester.html#a21f1a550ff7e4344554a043faceb7c55"/>
         <topic label="toStringProjConstruct" href="d8/d74/namespaceLatticeTester.html#a12e050957b719073c06de41c7486f1ce"/>
         <topic label="toStringMeritType" href="d8/d74/namespaceLatticeTester.html#a1a2fb1307d0863e4d38a3b813b180014"/>
+        <topic label="lFactorial" href="d8/d74/namespaceLatticeTester.html#a71110e4d0e1c979d7f5da2593e8edddb"/>
+        <topic label="Digamma" href="d8/d74/namespaceLatticeTester.html#a886c94b54767104cea58e0f1b6c0d11e"/>
+        <topic label="BernoulliPoly" href="d8/d74/namespaceLatticeTester.html#a67515c2643b5f7029486e8118ede05d6"/>
+        <topic label="Harmonic" href="d8/d74/namespaceLatticeTester.html#a61a4b5013c295f9f07b9b2d8f26ee5f4"/>
+        <topic label="Harmonic2" href="d8/d74/namespaceLatticeTester.html#a3aefa49a034495dcc46721c275f329b0"/>
+        <topic label="FourierC1" href="d8/d74/namespaceLatticeTester.html#a0bb56e7569fb24800973df89d757f2fd"/>
+        <topic label="FourierE1" href="d8/d74/namespaceLatticeTester.html#ab5f708fa0e8d6aa53427b3e8927f5504"/>
         <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a617ba189e7b633cbc81f08d3512bc3fb"/>
         <topic label="redLLLExact" href="d8/d74/namespaceLatticeTester.html#a9b34105ff26302078324b66592bbff4c"/>
         <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#adde2fbdfda54db87c5b68656822db927"/>
@@ -655,6 +664,7 @@
         <topic label="e" href="namespacemembers_e.html"/>
         <topic label="f" href="namespacemembers_f.html"/>
         <topic label="g" href="namespacemembers_g.html"/>
+        <topic label="h" href="namespacemembers_h.html"/>
         <topic label="i" href="namespacemembers_i.html"/>
         <topic label="l" href="namespacemembers_l.html"/>
         <topic label="m" href="namespacemembers_m.html"/>
@@ -777,6 +787,7 @@
           <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8a2641e524a04c2f361c6915683f2ad3"/>
           <topic label="~FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac2a33bf19d7f65d7f2a006ac71d0b6e3"/>
           <topic label="setTVector" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab254796b0bf07839dc819ce0b18300b2"/>
+          <topic label="countProjections" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad6525fd3b4be99656c61c4d9e8177c37"/>
           <topic label="setWeights" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab405e7992725d162ec243db0f39ea6e4"/>
           <topic label="setNormalizer" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a5885073d6a50871be475e7dad6b40cbf"/>
           <topic label="setLLL" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac13ae1727e5dec235aa7d504d141b3fa"/>
@@ -994,6 +1005,7 @@
           <topic label="setIntLattice" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a729ca775e213d53f46a5f9883b1cf421"/>
           <topic label="getIntLattice" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a4c7b8a716a1db527e6827c903a2af4cf"/>
           <topic label="setDecompTypeBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html#ad3521441e951420d76c46b02bf2182d9"/>
+          <topic label="setEpsBounds" href="d0/dea/classLatticeTester_1_1ReducerBB.html#ae314fb92f5aa78d03d22e87b6493e4a5"/>
           <topic label="setVerbosity" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a86f0100616f8b8c71d5e4c552f7dd6fa"/>
           <topic label="maxNodesBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a7a746627d303197f8ef36363c0baa7d3"/>
         </topic>
@@ -1444,6 +1456,7 @@
               <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8a2641e524a04c2f361c6915683f2ad3"/>
               <topic label="~FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac2a33bf19d7f65d7f2a006ac71d0b6e3"/>
               <topic label="setTVector" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab254796b0bf07839dc819ce0b18300b2"/>
+              <topic label="countProjections" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad6525fd3b4be99656c61c4d9e8177c37"/>
               <topic label="setWeights" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab405e7992725d162ec243db0f39ea6e4"/>
               <topic label="setNormalizer" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a5885073d6a50871be475e7dad6b40cbf"/>
               <topic label="setLLL" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac13ae1727e5dec235aa7d504d141b3fa"/>
@@ -1697,6 +1710,15 @@
             <topic label="LeftShift" href="d6/daa/NTLWrap_8h.html#adaf7cf0f02336d79aff2ffd34b83405f"/>
             <topic label="RightShift" href="d6/daa/NTLWrap_8h.html#ad42c7563fab61201df7026f4bec83a95"/>
           </topic>
+          <topic label="Num.h" href="d8/d53/Num_8h.html">
+            <topic label="lFactorial" href="d8/d53/Num_8h.html#a71110e4d0e1c979d7f5da2593e8edddb"/>
+            <topic label="Digamma" href="d8/d53/Num_8h.html#a886c94b54767104cea58e0f1b6c0d11e"/>
+            <topic label="BernoulliPoly" href="d8/d53/Num_8h.html#a67515c2643b5f7029486e8118ede05d6"/>
+            <topic label="Harmonic" href="d8/d53/Num_8h.html#a61a4b5013c295f9f07b9b2d8f26ee5f4"/>
+            <topic label="Harmonic2" href="d8/d53/Num_8h.html#a3aefa49a034495dcc46721c275f329b0"/>
+            <topic label="FourierC1" href="d8/d53/Num_8h.html#a0bb56e7569fb24800973df89d757f2fd"/>
+            <topic label="FourierE1" href="d8/d53/Num_8h.html#ab5f708fa0e8d6aa53427b3e8927f5504"/>
+          </topic>
           <topic label="Random.h" href="dd/d6d/Random_8h.html">
             <topic label="GERME" href="dd/d6d/Random_8h.html#ada91db0fe905fcb9849b305e059b896a"/>
             <topic label="randU01" href="dd/d6d/Random_8h.html#ad46dca46626fa9fcb2111cdb2702497d"/>
@@ -1744,6 +1766,7 @@
               <topic label="setIntLattice" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a729ca775e213d53f46a5f9883b1cf421"/>
               <topic label="getIntLattice" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a4c7b8a716a1db527e6827c903a2af4cf"/>
               <topic label="setDecompTypeBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html#ad3521441e951420d76c46b02bf2182d9"/>
+              <topic label="setEpsBounds" href="d0/dea/classLatticeTester_1_1ReducerBB.html#ae314fb92f5aa78d03d22e87b6493e4a5"/>
               <topic label="setVerbosity" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a86f0100616f8b8c71d5e4c552f7dd6fa"/>
               <topic label="maxNodesBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a7a746627d303197f8ef36363c0baa7d3"/>
             </topic>

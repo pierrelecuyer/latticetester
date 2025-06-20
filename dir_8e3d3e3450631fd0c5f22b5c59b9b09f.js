@@ -22,6 +22,7 @@ var dir_8e3d3e3450631fd0c5f22b5c59b9b09f =
     [ "NormaPalpha.h", "d0/d40/NormaPalpha_8h.html", "d0/d40/NormaPalpha_8h" ],
     [ "NormaRogers.h", "da/dba/NormaRogers_8h.html", "da/dba/NormaRogers_8h" ],
     [ "NTLWrap.h", "d6/daa/NTLWrap_8h.html", "d6/daa/NTLWrap_8h" ],
+    [ "Num.h", "d8/d53/Num_8h.html", "d8/d53/Num_8h" ],
     [ "Random.h", "dd/d6d/Random_8h.html", "dd/d6d/Random_8h" ],
     [ "Rank1Lattice.h", "d9/df6/Rank1Lattice_8h.html", "d9/df6/Rank1Lattice_8h" ],
     [ "ReducerBB.h", "d5/d7d/ReducerBB_8h.html", "d5/d7d/ReducerBB_8h" ],

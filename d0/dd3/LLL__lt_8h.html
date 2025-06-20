@@ -112,7 +112,7 @@ $(function(){initNavTree('d0/dd3/LLL__lt_8h.html','../../'); initResizable(true)
 </div><!--header-->
 <div class="contents">
 
-<p>Static functions that are slightly modified versions of the <code>LLL</code> and <code>BKZ</code> functions of NTL.  
+<p>These static functions are slightly modified versions of the <code>LLL</code> and <code>BKZ</code> functions of NTL.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -146,8 +146,8 @@ Functions</h2></td></tr>
 <tr class="separator:ac056e9b87ae29faf72cf6516ffb2eb5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Static functions that are slightly modified versions of the <code>LLL</code> and <code>BKZ</code> functions of NTL. </p>
-<p>With the modified functions, it is possible to apply the reductions only to an upper-left corner of the basis matrix, i.e., only the first <code>r</code> rows and first <code>c</code> columns of the matrix <code>B</code>. The other elements of <code>B</code> are ignored. The basis is returned in the upper left corner of <code>B</code>, with the shortest basis vector always in the first row. This differs from the <code>LLL_FP</code> functions, which returns the zero vectors at the top. If <code>r=0</code>, then all the rows of the <code>IntMat</code> object are taken. If <code>c=0</code>, then all the columns are taken. With this added flexibility the same block of memory can be reused for millions of lattices even if their bases have different dimensions. The square lengths of the returned basis vectors are also returned in the <code>double</code> vector <code>sqlen</code>, in <code>sqlen[0],..., sqlen[d-1]</code> if this vector given. The indices of <code>B</code> and <code>sqlen</code> start at 0. Each function returns the dimension of the computed basis (number of independent rows). </p>
+<div class="textblock"><p>These static functions are slightly modified versions of the <code>LLL</code> and <code>BKZ</code> functions of NTL. </p>
+<p>With the modifications, one can apply the reductions only to an upper-left corner of the basis matrix <code>B</code>, the first <code>r</code> rows and first <code>c</code> columns. The other elements of <code>B</code> are ignored. The basis is returned in the same upper left corner of <code>B</code>, with the shortest basis vector always in the first row. This differs from the <code>LLL_FP</code> functions, which returns the zero vectors at the top. If <code>r=0</code>, then all the rows of the <code>IntMat</code> object are taken. If <code>c=0</code>, then all the columns are taken. With this added flexibility the same block of memory can be reused for millions of lattices even if their bases have different dimensions. The square lengths of the returned basis vectors are also returned in the <code>double</code> vector <code>sqlen</code>, in <code>sqlen[0],..., sqlen[d-1]</code>, if this vector given. The indices of <code>B</code> and <code>sqlen</code> start at 0. Each function returns the dimension of the computed basis (number of independent rows). </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.8.15-->

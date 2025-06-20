@@ -323,7 +323,7 @@ Functions</h2></td></tr>
 <tr class="separator:a6a4f630a4729e98fe79e334181e26ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf5110b05c562288e6c78894b67309d1" id="r_abf5110b05c562288e6c78894b67309d1"><td class="memTemplParams" colspan="2">template&lt;typename Int &gt; </td></tr>
 <tr class="memitem:abf5110b05c562288e6c78894b67309d1"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abf5110b05c562288e6c78894b67309d1">upperTriangularBasisOld96</a> (<a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;basis, <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;gen, const Int &amp;m, long r=0, long c=0)</td></tr>
-<tr class="memdesc:abf5110b05c562288e6c78894b67309d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The old version from <a class="el" href="../../d0/de3/citelist.html#CITEREF_rcou96a">[3]</a> and <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec00l">[6]</a>.  <br /></td></tr>
+<tr class="memdesc:abf5110b05c562288e6c78894b67309d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The old version from <a class="el" href="../../d0/de3/citelist.html#CITEREF_rcou96a">[3]</a> and <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec00l">[7]</a>.  <br /></td></tr>
 <tr class="separator:abf5110b05c562288e6c78894b67309d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a577b7e284f468095fc9063219950a309" id="r_a577b7e284f468095fc9063219950a309"><td class="memTemplParams" colspan="2">template&lt;typename Int &gt; </td></tr>
 <tr class="memitem:a577b7e284f468095fc9063219950a309"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a577b7e284f468095fc9063219950a309">mDualLowerTriangular</a> (<a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;basisDual, const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;basis, const Int &amp;m, long dim=0)</td></tr>
@@ -455,9 +455,30 @@ Functions</h2></td></tr>
 <tr class="separator:a12e050957b719073c06de41c7486f1ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a2fb1307d0863e4d38a3b813b180014" id="r_a1a2fb1307d0863e4d38a3b813b180014"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a2fb1307d0863e4d38a3b813b180014">toStringMeritType</a> (<a class="el" href="#a5e9e347d07097a1a3c82f1699ff93d58">MeritType</a> merit)</td></tr>
 <tr class="separator:a1a2fb1307d0863e4d38a3b813b180014"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71110e4d0e1c979d7f5da2593e8edddb" id="r_a71110e4d0e1c979d7f5da2593e8edddb"><td class="memItemLeft" align="right" valign="top">std::int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71110e4d0e1c979d7f5da2593e8edddb">lFactorial</a> (int64_t t)</td></tr>
+<tr class="memdesc:a71110e4d0e1c979d7f5da2593e8edddb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates \(t!\), the factorial of \(t\).  <br /></td></tr>
+<tr class="separator:a71110e4d0e1c979d7f5da2593e8edddb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a886c94b54767104cea58e0f1b6c0d11e" id="r_a886c94b54767104cea58e0f1b6c0d11e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a886c94b54767104cea58e0f1b6c0d11e">Digamma</a> (double x)</td></tr>
+<tr class="memdesc:a886c94b54767104cea58e0f1b6c0d11e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the logarithmic derivative of the Gamma function \(\psi(x) = \Gamma&#39;(x) / \Gamma(x)\).  <br /></td></tr>
+<tr class="separator:a886c94b54767104cea58e0f1b6c0d11e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67515c2643b5f7029486e8118ede05d6" id="r_a67515c2643b5f7029486e8118ede05d6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67515c2643b5f7029486e8118ede05d6">BernoulliPoly</a> (int64_t n, double x)</td></tr>
+<tr class="memdesc:a67515c2643b5f7029486e8118ede05d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the Bernoulli polynomial \(B_n(x)\) of degree \(n\) at \(x\).  <br /></td></tr>
+<tr class="separator:a67515c2643b5f7029486e8118ede05d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61a4b5013c295f9f07b9b2d8f26ee5f4" id="r_a61a4b5013c295f9f07b9b2d8f26ee5f4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61a4b5013c295f9f07b9b2d8f26ee5f4">Harmonic</a> (std::int64_t n)</td></tr>
+<tr class="memdesc:a61a4b5013c295f9f07b9b2d8f26ee5f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the \(n\)-th harmonic number \(H_n  = \sum_{j=1}^n 1/j\).  <br /></td></tr>
+<tr class="separator:a61a4b5013c295f9f07b9b2d8f26ee5f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3aefa49a034495dcc46721c275f329b0" id="r_a3aefa49a034495dcc46721c275f329b0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3aefa49a034495dcc46721c275f329b0">Harmonic2</a> (std::int64_t n)</td></tr>
+<tr class="memdesc:a3aefa49a034495dcc46721c275f329b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the sum.  <br /></td></tr>
+<tr class="separator:a3aefa49a034495dcc46721c275f329b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bb56e7569fb24800973df89d757f2fd" id="r_a0bb56e7569fb24800973df89d757f2fd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0bb56e7569fb24800973df89d757f2fd">FourierC1</a> (double x, std::int64_t n)</td></tr>
+<tr class="memdesc:a0bb56e7569fb24800973df89d757f2fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes and returns the value of the series (see <a class="el" href="../../d0/de3/citelist.html#CITEREF_vjoe92b">[5]</a>)  <br /></td></tr>
+<tr class="separator:a0bb56e7569fb24800973df89d757f2fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5f708fa0e8d6aa53427b3e8927f5504" id="r_ab5f708fa0e8d6aa53427b3e8927f5504"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5f708fa0e8d6aa53427b3e8927f5504">FourierE1</a> (double x, std::int64_t n)</td></tr>
+<tr class="memdesc:ab5f708fa0e8d6aa53427b3e8927f5504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes and returns the value of the series.  <br /></td></tr>
+<tr class="separator:ab5f708fa0e8d6aa53427b3e8927f5504"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a617ba189e7b633cbc81f08d3512bc3fb" id="r_a617ba189e7b633cbc81f08d3512bc3fb"><td class="memTemplParams" colspan="2">template&lt;typename Int , typename Real &gt; </td></tr>
 <tr class="memitem:a617ba189e7b633cbc81f08d3512bc3fb"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a617ba189e7b633cbc81f08d3512bc3fb">redLLL</a> (<a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;basis, double delta=0.99999, long dim=0, <a class="el" href="../../df/dca/FlexTypes_8h.html#ac31ec1900f910a5d820901146696b5cb">RealVec</a> *sqlen=0)</td></tr>
-<tr class="memdesc:a617ba189e7b633cbc81f08d3512bc3fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function uses the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the LLL reduction algorithm with factor <code>delta</code>, presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[9]</a> (see also <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[7]</a>).  <br /></td></tr>
+<tr class="memdesc:a617ba189e7b633cbc81f08d3512bc3fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function uses the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the LLL reduction algorithm with factor <code>delta</code>, presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[10]</a> (see also <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[8]</a>).  <br /></td></tr>
 <tr class="separator:a617ba189e7b633cbc81f08d3512bc3fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b34105ff26302078324b66592bbff4c" id="r_a9b34105ff26302078324b66592bbff4c"><td class="memTemplParams" colspan="2">template&lt;typename Int &gt; </td></tr>
 <tr class="memitem:a9b34105ff26302078324b66592bbff4c"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9b34105ff26302078324b66592bbff4c">redLLLExact</a> (<a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;basis, double delta=0.99999)</td></tr>
@@ -465,11 +486,11 @@ Functions</h2></td></tr>
 <tr class="separator:a9b34105ff26302078324b66592bbff4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adde2fbdfda54db87c5b68656822db927" id="r_adde2fbdfda54db87c5b68656822db927"><td class="memTemplParams" colspan="2">template&lt;typename Int , typename Real &gt; </td></tr>
 <tr class="memitem:adde2fbdfda54db87c5b68656822db927"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#adde2fbdfda54db87c5b68656822db927">redBKZ</a> (<a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;basis, double delta=0.99999, int64_t blocksize=10, long prune=0, long dim=0, <a class="el" href="../../df/dca/FlexTypes_8h.html#ac31ec1900f910a5d820901146696b5cb">RealVec</a> *sqlen=0)</td></tr>
-<tr class="memdesc:adde2fbdfda54db87c5b68656822db927"><td class="mdescLeft">&#160;</td><td class="mdescRight">This calls the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the floating point version of the BKZ reduction algorithm presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[9]</a>, with reduction factor <code>delta</code>, block size <code>blocksize</code>, pruning parameter &lsquo;prune&rsquo;; see <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[7]</a>.  <br /></td></tr>
+<tr class="memdesc:adde2fbdfda54db87c5b68656822db927"><td class="mdescLeft">&#160;</td><td class="mdescRight">This calls the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the floating point version of the BKZ reduction algorithm presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[10]</a>, with reduction factor <code>delta</code>, block size <code>blocksize</code>, pruning parameter &lsquo;prune&rsquo;; see <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[8]</a>.  <br /></td></tr>
 <tr class="separator:adde2fbdfda54db87c5b68656822db927"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63dafe7fe191c17bcb7c178149db6570" id="r_a63dafe7fe191c17bcb7c178149db6570"><td class="memTemplParams" colspan="2">template&lt;typename Int , typename Real &gt; </td></tr>
 <tr class="memitem:a63dafe7fe191c17bcb7c178149db6570"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a63dafe7fe191c17bcb7c178149db6570">redLLL</a> (<a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;basis, double delta, long dim, <a class="el" href="../../df/dca/FlexTypes_8h.html#ac31ec1900f910a5d820901146696b5cb">RealVec</a> *sqlen)</td></tr>
-<tr class="memdesc:a63dafe7fe191c17bcb7c178149db6570"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function uses the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the LLL reduction algorithm with factor <code>delta</code>, presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[9]</a> (see also <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[7]</a>).  <br /></td></tr>
+<tr class="memdesc:a63dafe7fe191c17bcb7c178149db6570"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function uses the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the LLL reduction algorithm with factor <code>delta</code>, presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[10]</a> (see also <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[8]</a>).  <br /></td></tr>
 <tr class="separator:a63dafe7fe191c17bcb7c178149db6570"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ba0cc62c4a1f60207e43f96b0b8b505" id="r_a7ba0cc62c4a1f60207e43f96b0b8b505"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
 <tr class="memitem:a7ba0cc62c4a1f60207e43f96b0b8b505"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7ba0cc62c4a1f60207e43f96b0b8b505">redLLL</a> (NTL::Mat&lt; int64_t &gt; &amp;basis, double delta, long dim, NTL::Vec&lt; double &gt; *sqlen)</td></tr>
@@ -806,6 +827,7 @@ Variables</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="../../d8/d74/namespaceLatticeTester.html" title="LatticeTester namespace.">LatticeTester</a> namespace. </p>
+<p>These functions are in the latticetester namespace. </p>
 </div><h2 class="groupheader">Typedef Documentation</h2>
 <a id="a951f7e7b03767aa0971dde55f9d328ec" name="a951f7e7b03767aa0971dde55f9d328ec"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a951f7e7b03767aa0971dde55f9d328ec">&#9670;&#160;</a></span>Weight</h2>
@@ -963,7 +985,7 @@ Variables</h2></td></tr>
 <p><code>LENGTH</code>: Only using the length of the shortest vector as a criterion. <code>SPECTRAL</code>: figure of merit \(S_T\) based on the spectral test.<br  />
  <code>BEYER</code>: figure of merit is the Beyer quotient \(Q_T\).<br  />
  <code>PALPHA</code>: figure of merit based on \(P_{\alpha}\).<br  />
- <code>BOUND_JS</code>: figure of merit based on the Joe-Sinescu bound <a class="el" href="../../d0/de3/citelist.html#CITEREF_rsin08a">[10]</a>.<br  />
+ <code>BOUND_JS</code>: figure of merit based on the Joe-Sinescu bound <a class="el" href="../../d0/de3/citelist.html#CITEREF_rsin08a">[11]</a>.<br  />
  ??? </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a2cf3c4f4181718b7adc6f5e4513695a0ab6783128c1344cbef4cc8429cc63d0b5" name="a2cf3c4f4181718b7adc6f5e4513695a0ab6783128c1344cbef4cc8429cc63d0b5"></a>LENGTH&#160;</td><td class="fielddoc"></td></tr>
@@ -1171,7 +1193,7 @@ template&lt;typename Int , typename Real &gt; </div>
 </div><div class="memdoc">
 
 <p>This function takes a set of generating vectors of a lattice in matrix <code>gen</code> and finds a lattice basis by applying LLL reduction with the given value of <code>delta</code>, using the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation specified by <code>prec</code>. </p>
-<p>The basis is returned in the first rows of <code>gen</code>, in a number of rows equal to its rank. See the file <code>EnumTypes</code> and the documentation of LLL in <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> for the meaning and choices for <code>prec</code>. The default value of delta is not very close to 1 because the goal here is just to compute a basis. It can be taken much closer to 1 if we really prefer a highly-reduced basis. The optional parameters <code>r</code> and <code>c</code> indicate the numbers of rows and columns of the matrix <code>gen</code> that are actually used. When they are 0 (the default values), then these numbers are taken to be the dimensions of the matrix <code>gen</code>. When <code>sqlen</code> is not 0, the square lengths of the basis vectors are returned in this array, exactly as in the <code><a class="el" href="../../d0/dd3/LLL__lt_8h.html" title="Static functions that are slightly modified versions of the LLL and BKZ functions of NTL.">LLL_lt.h</a></code> module. The function returns the dimension (number of rows) of the newly computed basis, which may differ from the number of rows of the <code>gen</code> object. The latter is never resized.</p>
+<p>The basis is returned in the first rows of <code>gen</code>, in a number of rows equal to its rank. See the file <code>EnumTypes</code> and the documentation of LLL in <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> for the meaning and choices for <code>prec</code>. The default value of delta is not very close to 1 because the goal here is just to compute a basis. It can be taken much closer to 1 if we really prefer a highly-reduced basis. The optional parameters <code>r</code> and <code>c</code> indicate the numbers of rows and columns of the matrix <code>gen</code> that are actually used. When they are 0 (the default values), then these numbers are taken to be the dimensions of the matrix <code>gen</code>. When <code>sqlen</code> is not 0, the square lengths of the basis vectors are returned in this array, exactly as in the <code><a class="el" href="../../d0/dd3/LLL__lt_8h.html" title="These static functions are slightly modified versions of the LLL and BKZ functions of NTL.">LLL_lt.h</a></code> module. The function returns the dimension (number of rows) of the newly computed basis, which may differ from the number of rows of the <code>gen</code> object. The latter is never resized.</p>
 <p>This function <em>does not</em> assume that all vectors \(m e_i\) belong to the lattice, so it may return a basis matrix that has fewer rows than columns! To make sure that these vectors belong to the lattice, we can add them explicitly beforehand to the set of generating vectors, or call the next function. </p>
 
 </div>
@@ -1372,7 +1394,7 @@ template&lt;typename Int &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>The old version from <a class="el" href="../../d0/de3/citelist.html#CITEREF_rcou96a">[3]</a> and <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec00l">[6]</a>. </p>
+<p>The old version from <a class="el" href="../../d0/de3/citelist.html#CITEREF_rcou96a">[3]</a> and <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec00l">[7]</a>. </p>
 
 </div>
 </div>
@@ -2877,6 +2899,184 @@ template&lt;typename Int &gt; </div>
 
 </div>
 </div>
+<a id="a71110e4d0e1c979d7f5da2593e8edddb" name="a71110e4d0e1c979d7f5da2593e8edddb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71110e4d0e1c979d7f5da2593e8edddb">&#9670;&#160;</a></span>lFactorial()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::int64_t LatticeTester::lFactorial </td>
+          <td>(</td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>t</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculates \(t!\), the factorial of \(t\). </p>
+<p>Might throw an error if <code>t</code> is too large or if std::int64_t cannot contain the factorial asked for. </p>
+
+</div>
+</div>
+<a id="a886c94b54767104cea58e0f1b6c0d11e" name="a886c94b54767104cea58e0f1b6c0d11e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a886c94b54767104cea58e0f1b6c0d11e">&#9670;&#160;</a></span>Digamma()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double LatticeTester::Digamma </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>x</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the value of the logarithmic derivative of the Gamma function \(\psi(x) = \Gamma&#39;(x) / \Gamma(x)\). </p>
+
+</div>
+</div>
+<a id="a67515c2643b5f7029486e8118ede05d6" name="a67515c2643b5f7029486e8118ede05d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67515c2643b5f7029486e8118ede05d6">&#9670;&#160;</a></span>BernoulliPoly()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double LatticeTester::BernoulliPoly </td>
+          <td>(</td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>x</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evaluates the Bernoulli polynomial \(B_n(x)\) of degree \(n\) at \(x\). </p>
+<p>The first Bernoulli polynomials are:           </p><p class="formulaDsp">
+\begin{align*}
+B_0(x) &amp;= 1  \\
+B_1(x) &amp;= x - 1/2  \\
+B_2(x) &amp;= x^2-x+1/6  \\
+B_3(x) &amp;= x^3 - 3x^2/2 + x/2  \\
+B_4(x) &amp;= x^4-2x^3+x^2-1/30 \\
+B_5(x) &amp;= x^5 - 5x^4/2 + 5x^3/3 - x/6  \\
+B_6(x) &amp;= x^6-3x^5+5x^4/2-x^2/2+1/42  \\
+B_7(x) &amp;= x^7 - 7x^6/2 +  7x^5/2 - 7x^3/6 + x/6  \\
+B_8(x) &amp;= x^8-4x^7+14x^6/3 - 7x^4/3 +2x^2/3-1/30.
+\end{align*}
+</p>
+<p> Only degrees \(n \le 8\) are programmed for now. </p>
+
+</div>
+</div>
+<a id="a61a4b5013c295f9f07b9b2d8f26ee5f4" name="a61a4b5013c295f9f07b9b2d8f26ee5f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61a4b5013c295f9f07b9b2d8f26ee5f4">&#9670;&#160;</a></span>Harmonic()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double LatticeTester::Harmonic </td>
+          <td>(</td>
+          <td class="paramtype">std::int64_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes the \(n\)-th harmonic number \(H_n  = \sum_{j=1}^n 1/j\). </p>
+
+</div>
+</div>
+<a id="a3aefa49a034495dcc46721c275f329b0" name="a3aefa49a034495dcc46721c275f329b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3aefa49a034495dcc46721c275f329b0">&#9670;&#160;</a></span>Harmonic2()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double LatticeTester::Harmonic2 </td>
+          <td>(</td>
+          <td class="paramtype">std::int64_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes the sum. </p>
+<p class="formulaDsp">
+\[
+\sideset{}{&#39;}\sum_{-n/2&lt;j\le n/2}\; \frac 1{|j|},
+\]
+</p>
+<p> where the symbol \(\sum^\prime\) means that the term with \(j=0\) is excluded from the sum. </p>
+
+</div>
+</div>
+<a id="a0bb56e7569fb24800973df89d757f2fd" name="a0bb56e7569fb24800973df89d757f2fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bb56e7569fb24800973df89d757f2fd">&#9670;&#160;</a></span>FourierC1()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double LatticeTester::FourierC1 </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::int64_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes and returns the value of the series (see <a class="el" href="../../d0/de3/citelist.html#CITEREF_vjoe92b">[5]</a>) </p>
+<p class="formulaDsp">
+\[
+S(x, n) = \sum_{j=1}^{n} \frac{\cos(2\pi j x)}{j}.
+\]
+</p>
+<p> Restrictions: \(n&gt;0\) and \(0 \le x \le 1\). </p>
+
+</div>
+</div>
+<a id="ab5f708fa0e8d6aa53427b3e8927f5504" name="ab5f708fa0e8d6aa53427b3e8927f5504"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5f708fa0e8d6aa53427b3e8927f5504">&#9670;&#160;</a></span>FourierE1()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double LatticeTester::FourierE1 </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::int64_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes and returns the value of the series. </p>
+<p class="formulaDsp">
+\[
+G(x, n) = \sideset{}{&#39;}\sum_{-n/2&lt;h\le n/2}\;  \frac{e^{2\pi i h x}}{|h|},
+\]
+</p>
+<p> where the symbol \(\sum^\prime\) means that the term with \(h=0\) is excluded from the sum, and assuming that the imaginary part of \(G(x, n)\) vanishes. Restrictions: \(n&gt;0\) and \(0 \le x \le 1\). </p>
+
+</div>
+</div>
 <a id="a617ba189e7b633cbc81f08d3512bc3fb" name="a617ba189e7b633cbc81f08d3512bc3fb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a617ba189e7b633cbc81f08d3512bc3fb">&#9670;&#160;</a></span>redLLL() <span class="overload">[1/7]</span></h2>
 
@@ -2916,7 +3116,7 @@ template&lt;typename Int , typename Real &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>This function uses the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the LLL reduction algorithm with factor <code>delta</code>, presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[9]</a> (see also <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[7]</a>). </p>
+<p>This function uses the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the LLL reduction algorithm with factor <code>delta</code>, presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[10]</a> (see also <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[8]</a>). </p>
 <p>The reduction is applied to the first <code>dim</code> basis vectors and coordinates when <code>dim &gt; 0</code>, and to the entire basis (all vectors) when <code>dim=0</code>. In the former case, the transformations are not applied to all the columns, so we will no longer have a consistent basis for the original lattice if it had more than <code>dim</code> dimensions. To recover a basis for the full lattice in this case, we may save it before calling this function, or rebuild it.</p>
 <p>This function always uses the Euclidean norm. The factor <code>delta</code> must be in [1/2, 1). The closer it is to 1, the more the basis is reduced, in the sense that the LLL algorithm will enforce tighter conditions on the basis. The returned basis always has its shortest vector in first place. The vector pointed by <code>sqlen</code> (if given) will contain the square lengths of the basis vectors. To recover these values in a <code>Vec&lt;double&gt; v</code> one can pass <code>&amp;v</code> to the function. The parameter <code>precision</code> specifies the precision of the floating point numbers that the algorithm will use. <code><a class="el" href="../../dd/d8f/EnumTypes_8h.html" title="Enumeration types and global constants used in LatticeTester.">EnumTypes.h</a></code> provides a list of the possible values, and their description is done in the module <code>LLL</code> of <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a>. </p>
 
@@ -3005,7 +3205,7 @@ template&lt;typename Int , typename Real &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>This calls the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the floating point version of the BKZ reduction algorithm presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[9]</a>, with reduction factor <code>delta</code>, block size <code>blocksize</code>, pruning parameter &lsquo;prune&rsquo;; see <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[7]</a>. </p>
+<p>This calls the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the floating point version of the BKZ reduction algorithm presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[10]</a>, with reduction factor <code>delta</code>, block size <code>blocksize</code>, pruning parameter &lsquo;prune&rsquo;; see <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[8]</a>. </p>
 <p>The other paraameters have the same meaning as in <code>redLLLNTL</code>. The parameter <code>blocksize</code> gives the size of the blocks in the BKZ reduction. Roughly, larger blocks means a stronger condition. A <code>blocksize</code> of 2 is equivalent to LLL reduction. </p>
 
 </div>
@@ -3041,7 +3241,7 @@ template&lt;typename Int , typename Real &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>This function uses the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the LLL reduction algorithm with factor <code>delta</code>, presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[9]</a> (see also <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[7]</a>). </p>
+<p>This function uses the <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a> implementation of the LLL reduction algorithm with factor <code>delta</code>, presented in <a class="el" href="../../d0/de3/citelist.html#CITEREF_msch91a">[10]</a> (see also <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[8]</a>). </p>
 <p>The reduction is applied to the first <code>dim</code> basis vectors and coordinates when <code>dim &gt; 0</code>, and to the entire basis (all vectors) when <code>dim=0</code>. In the former case, the transformations are not applied to all the columns, so we will no longer have a consistent basis for the original lattice if it had more than <code>dim</code> dimensions. To recover a basis for the full lattice in this case, we may save it before calling this function, or rebuild it.</p>
 <p>This function always uses the Euclidean norm. The factor <code>delta</code> must be in [1/2, 1). The closer it is to 1, the more the basis is reduced, in the sense that the LLL algorithm will enforce tighter conditions on the basis. The returned basis always has its shortest vector in first place. The vector pointed by <code>sqlen</code> (if given) will contain the square lengths of the basis vectors. To recover these values in a <code>Vec&lt;double&gt; v</code> one can pass <code>&amp;v</code> to the function. The parameter <code>precision</code> specifies the precision of the floating point numbers that the algorithm will use. <code><a class="el" href="../../dd/d8f/EnumTypes_8h.html" title="Enumeration types and global constants used in LatticeTester.">EnumTypes.h</a></code> provides a list of the possible values, and their description is done in the module <code>LLL</code> of <a class="el" href="../../d2/d5a/namespaceNTL.html" title="These functions are in the NTL namespace.">NTL</a>. </p>
 

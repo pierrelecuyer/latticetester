@@ -137,6 +137,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab254796b0bf07839dc819ce0b18300b2" id="r_ab254796b0bf07839dc819ce0b18300b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab254796b0bf07839dc819ce0b18300b2">setTVector</a> (const NTL::Vec&lt; int64_t &gt; &amp;t, bool includeFirst)</td></tr>
 <tr class="memdesc:ab254796b0bf07839dc819ce0b18300b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the vector \((t_1,..., t_d)\) in the FOM definition to the vector <code>t</code>.  <br /></td></tr>
 <tr class="separator:ab254796b0bf07839dc819ce0b18300b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6525fd3b4be99656c61c4d9e8177c37" id="r_ad6525fd3b4be99656c61c4d9e8177c37"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6525fd3b4be99656c61c4d9e8177c37">countProjections</a> ()</td></tr>
+<tr class="memdesc:ad6525fd3b4be99656c61c4d9e8177c37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counts and returns the total number of projections that are considered for the given <code>t</code>.  <br /></td></tr>
+<tr class="separator:ad6525fd3b4be99656c61c4d9e8177c37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab405e7992725d162ec243db0f39ea6e4" id="r_ab405e7992725d162ec243db0f39ea6e4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab405e7992725d162ec243db0f39ea6e4">setWeights</a> (<a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html">Weights</a> &amp;w)</td></tr>
 <tr class="memdesc:ab405e7992725d162ec243db0f39ea6e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the weights used for calculating the FoM.  <br /></td></tr>
 <tr class="separator:ab405e7992725d162ec243db0f39ea6e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -277,6 +280,7 @@ template&lt;typename Int , typename Real &gt; </div>
 </div><div class="memdoc">
 
 <p>This constructor will call <code>setTVector (t, includeFirst)</code>, then set the '<a class="el" href="../../db/d40/classLatticeTester_1_1Weights.html" title="Abstract class that defines an interface to specify Weights given to projections in figures of merit.">Weights</a>', <code><a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html" title="This is a base class for implementing normalization constants used in figures of merit,...">Normalizer</a></code>, and <code><a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html" title="This class provides functions to find a shortest nonzero vector in the lattice using a BB algorithm a...">ReducerBB</a></code> to the given values. </p>
+<p>See the text above for other default values. </p>
 
 </div>
 </div>
@@ -330,7 +334,28 @@ template&lt;typename Int , typename Real &gt; </div>
 </div><div class="memdoc">
 
 <p>Sets the vector \((t_1,..., t_d)\) in the FOM definition to the vector <code>t</code>. </p>
-<p>Note that the values of \(t_1,..., t_d\) are taken from <code>t[0],...,t[d-1]</code>, respectively. When <code>includeFirst</code> is <code>true</code>, we consider only the non-successive projections that contain coordinate 1. See the doc of the class <code>FromRanges</code> in <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> for more details. </p>
+<p>The values of \(t_1,..., t_d\) are taken from <code>t[0],...,t[d-1]</code>, respectively. When <code>includeFirst</code> is <code>true</code>, we consider only the non-successive projections that contain coordinate 1. See the doc of the class <code>FromRanges</code> in <code><a class="el" href="../../d0/d6f/namespaceLatticeTester_1_1CoordinateSets.html" title="The classes FromRange, SubSets, and AddCoordinate are defined here.">CoordinateSets</a></code> for more details. </p>
+
+</div>
+</div>
+<a id="ad6525fd3b4be99656c61c4d9e8177c37" name="ad6525fd3b4be99656c61c4d9e8177c37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6525fd3b4be99656c61c4d9e8177c37">&#9670;&#160;</a></span>countProjections()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Int , typename Real &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int64_t <a class="el" href="../../d7/dca/classLatticeTester_1_1FigureOfMeritM.html">LatticeTester::FigureOfMeritM</a>&lt; Int, Real &gt;::countProjections </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Counts and returns the total number of projections that are considered for the given <code>t</code>. </p>
 
 </div>
 </div>

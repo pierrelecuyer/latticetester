@@ -18,6 +18,7 @@ var classLatticeTester_1_1ReducerBB =
     [ "setIntLattice", "d0/dea/classLatticeTester_1_1ReducerBB.html#a729ca775e213d53f46a5f9883b1cf421", null ],
     [ "getIntLattice", "d0/dea/classLatticeTester_1_1ReducerBB.html#a4c7b8a716a1db527e6827c903a2af4cf", null ],
     [ "setDecompTypeBB", "d0/dea/classLatticeTester_1_1ReducerBB.html#ad3521441e951420d76c46b02bf2182d9", null ],
+    [ "setEpsBounds", "d0/dea/classLatticeTester_1_1ReducerBB.html#ae314fb92f5aa78d03d22e87b6493e4a5", null ],
     [ "setVerbosity", "d0/dea/classLatticeTester_1_1ReducerBB.html#a86f0100616f8b8c71d5e4c552f7dd6fa", null ],
     [ "maxNodesBB", "d0/dea/classLatticeTester_1_1ReducerBB.html#a7a746627d303197f8ef36363c0baa7d3", null ]
 ];

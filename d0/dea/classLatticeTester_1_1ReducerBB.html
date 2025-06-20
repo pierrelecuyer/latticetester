@@ -128,7 +128,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a821a9b301fbd3fed846fc33988871e62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a821a9b301fbd3fed846fc33988871e62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2af897ebb1841f87caf05c902a8a1f8b" id="r_a2af897ebb1841f87caf05c902a8a1f8b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2af897ebb1841f87caf05c902a8a1f8b">shortestVector</a> ()</td></tr>
-<tr class="memdesc:a2af897ebb1841f87caf05c902a8a1f8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a shortest non-zero vector for the <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code> stored in this <code><a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html" title="This class provides functions to find a shortest nonzero vector in the lattice using a BB algorithm a...">ReducerBB</a></code> object, for the norm stored in this <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code>, using the BB algorithm described in <a class="el" href="../../d0/de3/citelist.html#CITEREF_rlec97c">[5]</a> and <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[7]</a>.  <br /></td></tr>
+<tr class="memdesc:a2af897ebb1841f87caf05c902a8a1f8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a shortest non-zero vector for the <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code> stored in this <code><a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html" title="This class provides functions to find a shortest nonzero vector in the lattice using a BB algorithm a...">ReducerBB</a></code> object, for the norm stored in this <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code>, using the BB algorithm described in <a class="el" href="../../d0/de3/citelist.html#CITEREF_rlec97c">[6]</a> and <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[8]</a>.  <br /></td></tr>
 <tr class="separator:a2af897ebb1841f87caf05c902a8a1f8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f1c22070da010f55ebe1c8ebd3d52f5" id="r_a1f1c22070da010f55ebe1c8ebd3d52f5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f1c22070da010f55ebe1c8ebd3d52f5">shortestVector</a> (<a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; Int, Real &gt; &amp;lat)</td></tr>
 <tr class="memdesc:a1f1c22070da010f55ebe1c8ebd3d52f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">In this version, the lattice is passed as a parameter.  <br /></td></tr>
@@ -172,13 +172,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad3521441e951420d76c46b02bf2182d9" id="r_ad3521441e951420d76c46b02bf2182d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3521441e951420d76c46b02bf2182d9">setDecompTypeBB</a> (<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a5bf461b8f167cc8c7ebebc8ee6a96ee4">DecompTypeBB</a> decomp)</td></tr>
 <tr class="memdesc:ad3521441e951420d76c46b02bf2182d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the decomposition method used by this reduced to compute bounds in the BB procedures.  <br /></td></tr>
 <tr class="separator:ad3521441e951420d76c46b02bf2182d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae314fb92f5aa78d03d22e87b6493e4a5" id="r_ae314fb92f5aa78d03d22e87b6493e4a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae314fb92f5aa78d03d22e87b6493e4a5">setEpsBounds</a> (Real eps)</td></tr>
+<tr class="memdesc:ae314fb92f5aa78d03d22e87b6493e4a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value of epsilon added to the bounds in the BB for safety, as explained in the guide.  <br /></td></tr>
+<tr class="separator:ae314fb92f5aa78d03d22e87b6493e4a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86f0100616f8b8c71d5e4c552f7dd6fa" id="r_a86f0100616f8b8c71d5e4c552f7dd6fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86f0100616f8b8c71d5e4c552f7dd6fa">setVerbosity</a> (int64_t verbose)</td></tr>
 <tr class="memdesc:a86f0100616f8b8c71d5e4c552f7dd6fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the level of verbosity in the terminal output.  <br /></td></tr>
 <tr class="separator:a86f0100616f8b8c71d5e4c552f7dd6fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a7a746627d303197f8ef36363c0baa7d3" id="r_a7a746627d303197f8ef36363c0baa7d3"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a746627d303197f8ef36363c0baa7d3">maxNodesBB</a> = 10000000</td></tr>
+<tr class="memitem:a7a746627d303197f8ef36363c0baa7d3" id="r_a7a746627d303197f8ef36363c0baa7d3"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a746627d303197f8ef36363c0baa7d3">maxNodesBB</a> = 1000000000</td></tr>
 <tr class="memdesc:a7a746627d303197f8ef36363c0baa7d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of nodes in the branch-and-bound tree when calling <code>shortestVector</code> or <code>reductMinkowski</code>.  <br /></td></tr>
 <tr class="separator:a7a746627d303197f8ef36363c0baa7d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -272,7 +275,7 @@ template&lt;typename Int , typename Real &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Computes a shortest non-zero vector for the <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code> stored in this <code><a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html" title="This class provides functions to find a shortest nonzero vector in the lattice using a BB algorithm a...">ReducerBB</a></code> object, for the norm stored in this <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code>, using the BB algorithm described in <a class="el" href="../../d0/de3/citelist.html#CITEREF_rlec97c">[5]</a> and <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[7]</a>. </p>
+<p>Computes a shortest non-zero vector for the <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code> stored in this <code><a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html" title="This class provides functions to find a shortest nonzero vector in the lattice using a BB algorithm a...">ReducerBB</a></code> object, for the norm stored in this <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code>, using the BB algorithm described in <a class="el" href="../../d0/de3/citelist.html#CITEREF_rlec97c">[6]</a> and <a class="el" href="../../d0/de3/citelist.html#CITEREF_ilec22l">[8]</a>. </p>
 <p>The admissible norm types are <code>L1NORM</code> and <code>L2NORM</code> (see <code><a class="el" href="../../dd/d8f/EnumTypes_8h.html" title="Enumeration types and global constants used in LatticeTester.">EnumTypes.h</a></code>). If the constant <code>ReducerBB::MaxNodesBB</code> (see below) is exceeded during the branch-and-bound, the method aborts and returns <code>false</code>. Otherwise, it returns <code>true</code>. If the reduction was successful, the new reduced basis can be accessed via <code><a class="el" href="#a4c7b8a716a1db527e6827c903a2af4cf" title="Returns the IntLattice object that this object is working on.">getIntLattice()</a></code>. The shortest vector is placed in first position and its norm is updated. The other vectors are not sorted.</p>
 <p>This function uses only the basis of the internal lattice, its vector lengths, and scalar products. It never uses its m-dual. To compute a shortest vector in the m-dual, one must first call <code>dualize</code> on the target <code><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></code> object. It is strongly recommended to use <code>redBKZ</code> or <code>redLLLNTL</code> to pre-reduce the basis before invoking this method; this is not done automatically. It is assumed that <code>getDim</code> returns the correct dimension of the internal lattice. </p>
 
@@ -674,6 +677,35 @@ template&lt;typename Int , typename Real &gt; </div>
 
 </div>
 </div>
+<a id="ae314fb92f5aa78d03d22e87b6493e4a5" name="ae314fb92f5aa78d03d22e87b6493e4a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae314fb92f5aa78d03d22e87b6493e4a5">&#9670;&#160;</a></span>setEpsBounds()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Int , typename Real &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html">LatticeTester::ReducerBB</a>&lt; Int, Real &gt;::setEpsBounds </td>
+          <td>(</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>eps</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the value of epsilon added to the bounds in the BB for safety, as explained in the guide. </p>
+
+</div>
+</div>
 <a id="a86f0100616f8b8c71d5e4c552f7dd6fa" name="a86f0100616f8b8c71d5e4c552f7dd6fa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a86f0100616f8b8c71d5e4c552f7dd6fa">&#9670;&#160;</a></span>setVerbosity()</h2>
 
@@ -714,7 +746,7 @@ template&lt;typename Int , typename Real &gt; </div>
 template&lt;typename Int , typename Real &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int64_t <a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html">LatticeTester::ReducerBB</a>&lt; Int, Real &gt;::maxNodesBB = 10000000</td>
+          <td class="memname">int64_t <a class="el" href="../../d0/dea/classLatticeTester_1_1ReducerBB.html">LatticeTester::ReducerBB</a>&lt; Int, Real &gt;::maxNodesBB = 1000000000</td>
         </tr>
       </table>
 </div><div class="memdoc">

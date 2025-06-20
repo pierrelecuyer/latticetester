@@ -3,6 +3,7 @@ var classLatticeTester_1_1FigureOfMeritM =
     [ "FigureOfMeritM", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8a2641e524a04c2f361c6915683f2ad3", null ],
     [ "~FigureOfMeritM", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac2a33bf19d7f65d7f2a006ac71d0b6e3", null ],
     [ "setTVector", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab254796b0bf07839dc819ce0b18300b2", null ],
+    [ "countProjections", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad6525fd3b4be99656c61c4d9e8177c37", null ],
     [ "setWeights", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab405e7992725d162ec243db0f39ea6e4", null ],
     [ "setNormalizer", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a5885073d6a50871be475e7dad6b40cbf", null ],
     [ "setLLL", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac13ae1727e5dec235aa7d504d141b3fa", null ],
