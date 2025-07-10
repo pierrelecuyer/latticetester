@@ -623,6 +623,10 @@ void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
          for (int64_t k = i; k < j; k++)
             NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
          NTL::div(B[i][j], B[i][j], A[j][j]);
+         // The following is for testing.
+         if (abs (B[i][j]) > m) {
+            std::cout << "\n***** mDualLowerTriangular: absolute entry is larger than m." << std::endl;
+         }
       }
    }
 }
@@ -647,7 +651,10 @@ void mDualUpperTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
          for (int64_t k = j + 1; k <= i; k++)
             NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
          NTL::div(B[i][j], B[i][j], A[j][j]);
-      }
+         // The following is for testing.
+         if (abs (B[i][j]) > m) {
+            std::cout << "\n***** mDualLowerTriangular: absolute entry is larger than m." << std::endl;
+         }      }
    }
 }
 

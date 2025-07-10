@@ -9,12 +9,12 @@
  * These pages provide an online API documentation of
  * [**Lattice Tester**](https://github.com/pierrelecuyer/latticetester),
  * a C++ library for measuring the uniformity of integral lattices in the real space. 
- * This new version is currently being polished. The previous stable version can be found 
+ * They still require some polishing. The previous stable version of Lattice Tester can be found 
  * [**HERE**](https://github.com/umontreal-simul/latticetester).
  * A detailed description of the purpose of *Lattice Tester*, the mathematics behind, the algorithms,
  * its organization, and examples of programs that use it, can be found in the 
  * [**Lattice Tester Guide**](https://www-labs.iro.umontreal.ca/~lecuyer/guides/lattester-guide.pdf).
- * This .pdf document is really the core documentation.
+ * That .pdf document is really the core documentation.
  * 
  * *Lattice Tester* was built primarily as a base library for
  * [LatNet Builder](https://github.com/umontreal-simul/latbuilder),
