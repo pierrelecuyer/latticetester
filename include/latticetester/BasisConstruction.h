@@ -112,7 +112,6 @@ using namespace NTL;
  * illustrate how to use these functions and make speed comparisons.
  */
 
-
 namespace LatticeTester {
 
 /**
@@ -140,7 +139,7 @@ namespace LatticeTester {
  */
 template<typename Int, typename Real>
 static long LLLConstruction0(IntMat &gen, const double delta = 0.9, long r = 0, long c = 0,
-      RealVec *sqlen = 0);
+RealVec *sqlen = 0);
 
 /**
  * Similar to `LLLConstruction0`, except that this function adds implicitly the vectors
@@ -183,7 +182,8 @@ static void upperTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long 
  * The old version from \cite rCOU96a and \cite iLEC00l.
  */
 template<typename Int>
-static void upperTriangularBasisOld96(IntMat &basis, IntMat &gen, const Int &m, long r = 0, long c = 0);
+static void upperTriangularBasisOld96(IntMat &basis, IntMat &gen, const Int &m, long r = 0, long c =
+      0);
 
 /**
  * Takes a lower-triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
@@ -210,7 +210,8 @@ static void mDualUpperTriangular(IntMat &basisDual, const IntMat &basis, const I
  * algorithm is slightly different. It uses the method described in \cite rCOU96a.
  */
 template<typename Int>
-static void mDualUpperTriangularOld96(IntMat &basisDual, const IntMat &basis, const Int &m, long dim = 0);
+static void mDualUpperTriangularOld96(IntMat &basisDual, const IntMat &basis, const Int &m,
+      long dim = 0);
 
 /**
  * This function assumes that `basis` contains a basis of the primal lattice
@@ -275,7 +276,7 @@ static void projectionConstructionLLL(IntMat &projBasis, const IntMat &inBasis,
  */
 template<typename Int>
 static void projectionConstructionUpperTri(IntMat &projBasis, const IntMat &inBasis,
-      IntMat &genTemp, const Coordinates &proj, const Int &m, long r = 0);
+IntMat &genTemp, const Coordinates &proj, const Int &m, long r = 0);
 
 template<typename Int>
 static void projectionConstructionUpperTri(IntMat &projBasis, const IntMat &inBasis,
@@ -290,7 +291,6 @@ static void projectionConstruction(IntMat &projBasis, const IntMat &inBasis,
       const Coordinates &proj, const Int &m, const ProjConstructType projType = LLLPROJ,
       const double delta = 0.9);
 
-
 //============================================================================
 // Implementation
 
@@ -303,7 +303,7 @@ static long LLLConstruction0(IntMat &gen, const double delta, long r, long c, Re
 
 // The int64_t implementation.
 // This one works only for `precision == DOUBLE` and Real == double.
-template<>   // <long, double>
+template<>// <long, double>
 long LLLConstruction0(NTL::Mat<long> &gen, const double delta, long r, long c,
       NTL::Vec<double> *sqlen) {
    return NTL::LLL_FP64(gen, delta, r, c, sqlen);
@@ -311,7 +311,7 @@ long LLLConstruction0(NTL::Mat<long> &gen, const double delta, long r, long c,
 }
 
 // The ZZ + double implementation.
-template<>   // <NTL::ZZ, double>
+template<>// <NTL::ZZ, double>
 long LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c,
       NTL::Vec<double> *sqlen) {
    return NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
@@ -380,7 +380,7 @@ void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
    coeff_xj.SetLength(dim1);   // The coefficients a_{1,j},...,a_{s,j} that define xj.
    xj.SetLength(dim2);         // The new basis vector x_j computed at step j.
 
-   for (j = dim2-1; j >= 0; j--) {  // column j.
+   for (j = dim2 - 1; j >= 0; j--) {  // column j.
       // Here we compute the submatrix whose upper left corner is (j,j) in the upper triangular basis.
       // Find c_j and the coefficients `a_{i,j}` by applying the Euclidean algorithm multiple times.
       for (i = 0; i < dim1; i++) {
@@ -388,14 +388,14 @@ void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
          coeff_gcd[i] = 0;
       }
       gcd = m;
-      for (i = dim1-1; i >= 0; i--) {
+      for (i = dim1 - 1; i >= 0; i--) {
          // NTL::rem(gen[i][j], gen[i][j], m);
          if (gen[i][j] != 0) {
             // XGCD (g, c, d, const a, const b) does g = gcd(a, b) = a*c + b*d.
             gcdCopy = gcd;  // We need a copy for the `const a` parameter.
             NTL::XGCD(gcd, c, d, gcdCopy, gen[i][j]);
             coeff_gcd[i] = d;
-            for (l = i+1; l < dim1; l++) {
+            for (l = i + 1; l < dim1; l++) {
                NTL::mul(coeff_gcd[l], coeff_gcd[l], c);
                // NTL::rem(coeff_gcd[l], coeff_gcd[l], m);
             }
@@ -416,7 +416,7 @@ void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
                for (k = 0; k <= j; k++) {
                   NTL::MulAddTo(xj[k], gen[i][k], coeff_gcd[i]);
                   // std::cout << "  Before: xj[k] = " << xj[k] << "\n";
-                  ModuloTowardZero (xj[k], m, xj[k]);
+                  ModuloTowardZero(xj[k], m, xj[k]);
                   // NTL::rem(xj[k], xj[k], m);     // In case we want always a positive remainder (modulo).
                   // std::cout << "  After: xj[k] = " << xj[k] << "\n";
                   // if (xj[k] < 0) NTL::add(xj[k], xj[k], m);    // No!
@@ -438,7 +438,7 @@ void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
          // Update the components of index <= j of the old vectors v_i.
          for (i = 0; i < dim1; i++) {
             if (coeff_xj[i] != 0) {
-               for (k = j; k >= 0 ; k--) {
+               for (k = j; k >= 0; k--) {
                   NTL::MulSubFrom(gen[i][k], coeff_xj[i], xj[k]);
                   // if (abs(gen[i][k]) > m * m)  std::cout << "  vector gen[i][k] = " << gen[i][k] << "\n";
                   NTL::rem(gen[i][k], gen[i][k], m);
@@ -451,7 +451,6 @@ void lowerTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
       }
    }
 }
-
 
 //===================================================================
 
@@ -507,7 +506,7 @@ void upperTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
                for (k = j; k < dim2; k++) {
                   NTL::MulAddTo(xj[k], gen[i][k], coeff_gcd[i]);
                   //NTL::rem(xj[k], xj[k], m);
-                  ModuloTowardZero (xj[k], m, xj[k]);
+                  ModuloTowardZero(xj[k], m, xj[k]);
                }
             }
          }
@@ -538,7 +537,7 @@ void upperTriangularBasis(IntMat &basis, IntMat &gen, const Int &m, long dim1, l
 
 //  This is the old triangularization method that we had in Modula-2 in 1996.
 template<typename Matr, typename Int>
-void upperTriangularBasisOld96 (Matr &V, Matr &W, const Int &m, int64_t lin, int64_t col) {
+void upperTriangularBasisOld96(Matr &V, Matr &W, const Int &m, int64_t lin, int64_t col) {
    Int T1, T2, T3, T4, T5, T6, T7, T8;
    for (int64_t j = 0; j < col; j++) {
       for (int64_t i = 0; i < lin; i++) {
@@ -580,10 +579,8 @@ void upperTriangularBasisOld96 (Matr &V, Matr &W, const Int &m, int64_t lin, int
       }
       if (NTL::IsZero(W[lin - 1][j])) {
          for (int64_t j1 = 0; j1 < col; j1++) {
-            if (j1 != j)
-               NTL::clear(V[j][j1]);
-            else
-               V[j][j1] = m;
+            if (j1 != j) NTL::clear(V[j][j1]);
+            else V[j][j1] = m;
          }
       } else {
          Euclide(W[lin - 1][j], m, T1, T2, T3, T4, V[j][j]);
@@ -624,9 +621,11 @@ void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
             NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
          NTL::div(B[i][j], B[i][j], A[j][j]);
          // The following is for testing.
-         if (abs (B[i][j]) > m) {
-            std::cout << "\n***** mDualLowerTriangular: absolute entry is larger than m." << std::endl;
+         if (abs(B[i][j]) > m) {
+            std::cout << "\n***** mDualLowerTriangular: absolute entry is larger than m."
+                  << std::endl;
          }
+         ModuloTowardZero(B[i][j], m, B[i][j]);
       }
    }
 }
@@ -652,9 +651,12 @@ void mDualUpperTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
             NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
          NTL::div(B[i][j], B[i][j], A[j][j]);
          // The following is for testing.
-         if (abs (B[i][j]) > m) {
-            std::cout << "\n***** mDualLowerTriangular: absolute entry is larger than m." << std::endl;
-         }      }
+         if (abs(B[i][j]) > m) {
+            std::cout << "\n***** mDualLowerTriangular: absolute entry is larger than m."
+                  << std::endl;
+         }
+         ModuloTowardZero(B[i][j], m, B[i][j]);
+      }
    }
 }
 
@@ -735,8 +737,7 @@ void mDualBasis(NTL::Mat<Int> &basisDual, const NTL::Mat<Int> &basis, const Int 
 
 // The specialization for the case where `Int = ZZ`.
 template<>
-void mDualBasis(NTL::Mat<NTL::ZZ> &basisDual, const NTL::Mat<NTL::ZZ> &basis,
-      const NTL::ZZ &m) {
+void mDualBasis(NTL::Mat<NTL::ZZ> &basisDual, const NTL::Mat<NTL::ZZ> &basis, const NTL::ZZ &m) {
    NTL::ZZ det, fac;
    long dim = basis.NumRows();
    if (dim != basis.NumCols()) {
@@ -744,7 +745,7 @@ void mDualBasis(NTL::Mat<NTL::ZZ> &basisDual, const NTL::Mat<NTL::ZZ> &basis,
       exit(1);
    }
    inv(det, basisDual, basis);
-   NTL::Mat<NTL::ZZ> C = basisDual;
+   NTL::Mat < NTL::ZZ > C = basisDual;
    div(fac, det, m);
    for (int64_t i = 0; i < dim; i++) {
       for (int64_t j = 0; j < dim; j++) {
@@ -758,7 +759,7 @@ template<typename Int>
 void projectMatrix(IntMat &out, const IntMat &in, const Coordinates &proj, long r) {
    if (in == out) {
       std::cout << "\n***** Error: in and out must be different IntMat objects " << std::endl;
-      exit (1);
+      exit(1);
    }
    if (!r) r = in.NumRows();   // In case r=0.
    // We assume without testing that `out` is large enough for proj.size().

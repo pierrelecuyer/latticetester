@@ -79,7 +79,7 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
          bestFoms[posComp] = merit;
          // If earlyDiscard, set the new lower bound to the current smallest FoM value in the list.
          // This value represents the FOM for the worst candidate still in the list.
-         if (earlyDiscard) fom->setLowBound(bestFoms[numBest-1]);
+         if (earlyDiscard) fom->setLowBound(bestFoms[numBest - 1]);
       }
    }
    tmp = clock() - tmp;
@@ -108,16 +108,16 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
  * vector t, with a restricted number of projections, to try speed up the screening.
  */
 template<typename Int, typename Real>
-static void compareSearchMethods(NormType norm, FigureOfMeritM<Int, Real> *fom, const Int m, const Int a0,
-      const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
+static void compareSearchMethods(NormType norm, FigureOfMeritM<Int, Real> *fom, const Int m,
+      const Int a0, const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
       int64_t numMultShort, int64_t numBest0, int64_t numBest) {
    int64_t maxdim = max(t[0], t[1]);  // Maximum dimension of the lattice
-   Rank1Lattice<Int, Real> lat(m, maxdim, norm);  // The current lattice for which the FoM is calculated.
+   Rank1Lattice<Int, Real> lat(m, maxdim, norm); // The current lattice for which the FoM is calculated.
    IntLattice<Int, Real> proj(m, t.length(), norm); // Lattice used for projections.
    Int emptyList[0];
    Int inList[numBest0];
    Int outList[numBest0];
-   fom->setTVector (t, true);
+   fom->setTVector(t, true);
    //fom->setLLL(0.0);      // Default values.
    //fom->setBKZ(0.99999);
    //fom->setBB(true);
@@ -158,9 +158,9 @@ static void compareSearchMethods(NormType norm, FigureOfMeritM<Int, Real> *fom, 
 }
 
 template<typename Int, typename Real>
-static void testPrimalDual (NormType norm, const Int m, const Int a0,
-      const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
-      int64_t numMultShort, int64_t numBest0, int64_t numBest) {
+static void testPrimalDual(NormType norm, const Int m, const Int a0, const NTL::Vec<int64_t> t,
+      const NTL::Vec<int64_t> t0, int64_t numMultLong, int64_t numMultShort, int64_t numBest0,
+      int64_t numBest) {
    WeightsUniform weights(1.0);
    int64_t maxdim = max(t[0], t[1]);  // Maximum dimension of the lattice
    NormaBestLat normaPrimal(log(m), 1, maxdim, norm);  // Factors computed for primal. 
@@ -173,18 +173,18 @@ static void testPrimalDual (NormType norm, const Int m, const Int a0,
    std::cout << "\n=========================================================\n";
    std::cout << "Norm type: L" << norm << "\n";
    std::cout << "Total number of projections with t:  " << fomPrimal.countProjections() << "\n";
-   fomPrimal.setTVector (t0, true);
+   fomPrimal.setTVector(t0, true);
    std::cout << "Total number of projections with t0: " << fomPrimal.countProjections() << "\n";
-   fomPrimal.setTVector (t, true);
+   fomPrimal.setTVector(t, true);
 
    std::cout << "FOM experiments in primal lattices \n";
-   compareSearchMethods<Int, Real>(norm, &fomPrimal, m, a0, t, t0, numMultLong, numMultShort, numBest0,
-         numBest);
+   compareSearchMethods<Int, Real>(norm, &fomPrimal, m, a0, t, t0, numMultLong, numMultShort,
+         numBest0, numBest);
 
    std::cout << "\n==================================\n";
    std::cout << "FOM experiments in dual lattices \n";
-   compareSearchMethods<Int, Real>(norm, &fomDual, m, a0, t, t0, numMultLong, numMultShort, numBest0,
-         numBest);
+   compareSearchMethods<Int, Real>(norm, &fomDual, m, a0, t, t0, numMultLong, numMultShort,
+         numBest0, numBest);
    std::cout << "\n***     DONE     ***\n";
 }
 
@@ -199,14 +199,14 @@ int main() {
    Int a0(91);     // This a0 is a primitive element mod m=1048573.
 
    // We first do the Euclidean norm.
-   NTL::Vec<int64_t> t; // The t-vector for the FOM, with 446 projections
+   NTL::Vec < int64_t > t; // The t-vector for the FOM, with 446 projections
    t.SetLength(5);
    t[0] = 24;    // We look at successive coordinates in up to t[0] dimensions.
    t[1] = 32;    // For pairs, triples, etc.
    t[2] = 16;
    t[3] = 12;
    t[4] = 10;
-   NTL::Vec<int64_t> t0; // A reduced t-vector for the FOM, with 305 projections
+   NTL::Vec < int64_t > t0; // A reduced t-vector for the FOM, with 305 projections
    t0.SetLength(4);
    t0[0] = 8;
    t0[1] = 32;
