@@ -1,4 +1,4 @@
-// File `testBasisTriSmall`
+// File `TestBasisTriSmall.cc`
 
 #include <NTL/vector.h>
 #include <NTL/matrix.h>

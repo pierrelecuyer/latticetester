@@ -78,9 +78,12 @@ using namespace NTL;
  * The function `lowerTriangularBasis` constructs a lower-triangular basis, while
  * `upperTriangularBasis` constructs an upper-triangular basis.
  *
- * To compute the  \f$m\f$-dual of a given basis, we have a general (but slow) function
+ * To compute the \f$m\f$-dual of a given basis, we have a general (but slow) function
  * implemented in `mDualBasis`, and much faster functions in `mDualLowerTriangular`
  * and `mDualUpperTriangular` that works only when the basis is triangular.
+ * The functions `mDualLowerTriangularMod0` and `mDualUpperTriangularMod0`
+ * compute these \f$m\f$-dual bases, and also reduce their non-diagonal entries
+ * mod \f$m\f$ towards 0, giving bases with shorter vectors for the \f$m\f$-dual lattice.
  *
  * We also have functions to compute the basis of a projection of a given lattice over
  * a specified set of coordinates.  The function `projectionConstructionLLL` does this
@@ -198,11 +201,25 @@ static void mDualLowerTriangular(IntMat &basisDual, const IntMat &basis, const I
       long dim = 0);
 
 /**
+ * Same as `mDualLowerTriangular` and then reduces all the non-diagonal `mod m` towards 0.
+ */
+template<typename Int>
+static void mDualLowerTriangularMod0(IntMat &basisDual, const IntMat &basis, const Int &m,
+      long dim = 0);
+
+/**
  * Takes a upper triangular basis matrix `basis` and computes the m-dual basis `basisDual`.
  * This function is the equivalent of mDualLowerTriangular for upper-triangular matrices.
  */
 template<typename Int>
 static void mDualUpperTriangular(IntMat &basisDual, const IntMat &basis, const Int &m,
+      long dim = 0);
+
+/**
+ * Same as `mDualUpperTriangular` and then reduces all the non-diagonal `mod m` towards 0.
+ */
+template<typename Int>
+static void mDualUpperTriangularMod0(IntMat &basisDual, const IntMat &basis, const Int &m,
       long dim = 0);
 
 /**
@@ -620,12 +637,6 @@ void mDualLowerTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
          for (int64_t k = i; k < j; k++)
             NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
          NTL::div(B[i][j], B[i][j], A[j][j]);
-         // The following is for testing.
-         if (abs(B[i][j]) > m) {
-            std::cout << "\n***** mDualLowerTriangular: absolute entry is larger than m."
-                  << std::endl;
-         }
-         ModuloTowardZero(B[i][j], m, B[i][j]);
       }
    }
 }
@@ -650,14 +661,28 @@ void mDualUpperTriangular(IntMat &B, const IntMat &A, const Int &m, long dim) {
          for (int64_t k = j + 1; k <= i; k++)
             NTL::MulSubFrom(B[i][j], A[j][k], B[i][k]);
          NTL::div(B[i][j], B[i][j], A[j][j]);
-         // The following is for testing.
-         if (abs(B[i][j]) > m) {
-            std::cout << "\n***** mDualLowerTriangular: absolute entry is larger than m."
-                  << std::endl;
-         }
-         ModuloTowardZero(B[i][j], m, B[i][j]);
       }
    }
+}
+
+//===================================================
+
+template<typename Int>
+void mDualLowerTriangularMod0(IntMat &B, const IntMat &A, const Int &m, long dim) {
+   mDualLowerTriangular<Int>(B, A, m, dim);
+   for (int64_t i = 0; i < dim; i++)
+      for (int64_t j = i + 1; j < dim; j++)
+         ModuloTowardZero(B[i][j], m, B[i][j]);
+}
+
+//===================================================
+
+template<typename Int>
+void mDualUpperTriangularMod0(IntMat &B, const IntMat &A, const Int &m, long dim) {
+   mDualUpperTriangular<Int>(B, A, m, dim);
+   for (int64_t i = 0; i < dim; i++)
+      for (int64_t j = i - 1; j >= 0; j--)
+         ModuloTowardZero(B[i][j], m, B[i][j]);
 }
 
 //======================================================

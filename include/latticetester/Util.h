@@ -53,7 +53,6 @@
  * implementing interactions with NTL.
  */
 
-
 namespace LatticeTester {
 
 #define SEPAR "===============================================================\n"
@@ -80,9 +79,9 @@ extern const std::int64_t TWO_EXP[];
  */
 template<typename T>
 inline void swap9(T &x, T &y) {
-	T t = x;
-	x = y;
-	y = t;
+   T t = x;
+   x = y;
+   y = t;
 } // WARNING: can we rename this?
 
 /**
@@ -138,9 +137,8 @@ void SetSeed(std::uint64_t seed);
  * Returns \f$\sqrt{x}\f$ for \f$x\ge0\f$, and \f$-1\f$ for \f$x < 0\f$.
  */
 inline double mysqrt(double x) {
-	if (x < 0.0)
-		return -1.0;
-	return sqrt(x);
+   if (x < 0.0) return -1.0;
+   return sqrt(x);
 }
 
 /**
@@ -148,14 +146,14 @@ inline double mysqrt(double x) {
  */
 template<typename T>
 inline double Lg(const T &x) {
-	return log(x) / 0.6931471805599453094;
+   return log(x) / 0.6931471805599453094;
 }
 
 /**
  * Returns the logarithm of \f$x\f$ in base 2.
  */
 inline double Lg(std::int64_t x) {
-	return log((double) x) / 0.6931471805599453094;
+   return log((double) x) / 0.6931471805599453094;
 }
 
 /**
@@ -163,10 +161,8 @@ inline double Lg(std::int64_t x) {
  */
 template<typename Scal>
 inline Scal abs(Scal x) {
-	if (x < 0)
-		return -x;
-	else
-		return x;
+   if (x < 0) return -x;
+   else return x;
 }
 
 /**
@@ -175,12 +171,9 @@ inline Scal abs(Scal x) {
  */
 template<typename T>
 inline std::int64_t sign(const T &x) {
-	if (x > 0)
-		return 1;
-	else if (x < 0)
-		return -1;
-	else
-		return 0;
+   if (x > 0) return 1;
+   else if (x < 0) return -1;
+   else return 0;
 }
 
 /**
@@ -189,7 +182,7 @@ inline std::int64_t sign(const T &x) {
  */
 template<typename Real>
 inline Real Round(Real x) {
-	return floor(x + 0.5);
+   return floor(x + 0.5);
 }
 
 /**
@@ -268,7 +261,7 @@ std::int64_t Factorial(int64_t t);
  */
 template<typename Int>
 inline void Quotient(const Int &a, const Int &b, Int &q) {
-	q = a / b;
+   q = a / b;
 }
 
 /**
@@ -276,10 +269,9 @@ inline void Quotient(const Int &a, const Int &b, Int &q) {
  * This is the NTL overload of the Quotient function.
  */
 inline void Quotient(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &q) {
-	NTL::ZZ r;
-	DivRem(q, r, a, b);
-	if (q < 0 && r != 0)
-		++q;
+   NTL::ZZ r;
+   DivRem(q, r, a, b);
+   if (q < 0 && r != 0) ++q;
 }
 /// \endcond
 
@@ -289,43 +281,36 @@ inline void Quotient(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &q) {
  * */
 template<typename Real>
 inline void Modulo(const Real &a, const Real &b, Real &r) {
-	//std::cout << "Modulo Real non testé" << std::endl;
-	//exit(1);
-	r = fmod(a, b);
-	if (r < 0) {
-		if (b <= 0)
-			r -= b;
-		else
-			r += b;
-	}
+   //std::cout << "Modulo Real non testé" << std::endl;
+   //exit(1);
+   r = fmod(a, b);
+   if (r < 0) {
+      if (b <= 0) r -= b;
+      else r += b;
+   }
 }
 
 /**
  * \cond
  * This is the overload of the Modulo function to work with std::int64_t ints.
  */
-inline void Modulo(const std::int64_t &a, const std::int64_t &b,
-		std::int64_t &r) {
-	r = a % b;
-	if (r < 0) {
-		if (b < 0)
-			r -= b;
-		else
-			r += b;
-	}
+inline void Modulo(const std::int64_t &a, const std::int64_t &b, std::int64_t &r) {
+   r = a % b;
+   if (r < 0) {
+      if (b < 0) r -= b;
+      else r += b;
+   }
 }
 
 /**
  * This is the overload of the Modulo function to work with NTL:ZZ.
  */
 inline void Modulo(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &r) {
-	r = a % b;
-    // if r < 0, we know that b < 0 because of the way NTL works
-	 // Here we assume that b > 0.
-    if (r < 0)
-		r += b;
+   r = a % b;
+   // if r < 0, we know that b < 0 because of the way NTL works
+   // Here we assume that b > 0.
+   if (r < 0) r += b;
 }
-
 
 // This one assumes a priori that the modulo is positive; it saves a test.
 // inline void ModuloPos(const Int &a, const Int &b, Int &r) {
@@ -333,15 +318,13 @@ inline void Modulo(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &r) {
 // }
 
 // This one assumes a priori that the modulo is positive.
-inline void ModuloPos(const std::int64_t &a, const std::int64_t &b,
-		std::int64_t &r) {
-	r = a % b;
+inline void ModuloPos(const std::int64_t &a, const std::int64_t &b, std::int64_t &r) {
+   r = a % b;
 }
 
 inline void ModuloPos(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &r) {
-	r = a % b;
+   r = a % b;
 }
-
 
 /*void ModuloVec ( NTL::vector<NTL::ZZ>  &a,  NTL::ZZ & b)
  // void ModuloVec ( NTL::vector<NTL::ZZ>  &a, const NTL::ZZ & b, NTL::ZZ & r)
@@ -353,8 +336,8 @@ inline void ModuloPos(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &r) {
 
 template<typename Int>
 void ModuloVec(IntVec &a, Int &m) {
-	for (int64_t i = 0; i < a.length(); i++)
-		Modulo(a[i], m, a[i]);
+   for (int64_t i = 0; i < a.length(); i++)
+      Modulo(a[i], m, a[i]);
 }
 
 /// \endcond
@@ -366,15 +349,14 @@ void ModuloVec(IntVec &a, Int &m) {
 template<typename Int>
 inline void ModuloTowardZero(const Int &a, const Int &b, Int &r) {
    r = a % b;
-   if (r > b/2) r -= b;
-   else if (r <= -b/2) r += b;
+   if (r > b / 2) r -= b;
+   else if (r <= -b / 2) r += b;
 }
 
-inline void ModuloTowardZero(const std::int64_t &a, const std::int64_t &b,
-      std::int64_t &r) {
+inline void ModuloTowardZero(const std::int64_t &a, const std::int64_t &b, std::int64_t &r) {
    r = a % b;
-   if (r > b/2) r -= b;
-   else if (r <= -b/2) r += b;
+   if (r > b / 2) r -= b;
+   else if (r <= -b / 2) r += b;
 }
 
 /**
@@ -418,31 +400,30 @@ inline void ModuloTowardZero(const std::int64_t &a, const std::int64_t &b,
  */
 template<typename Real>
 inline void Divide(Real &q, Real &r, const Real &a, const Real &b) {
-	q = a / b;
-	NTL::conv(q, trunc(q));
-	r = a - q * b;
+   q = a / b;
+   NTL::conv(q, trunc(q));
+   r = a - q * b;
 }
 
 /**
  * \cond
  * This is the overload of the Divide function for std::int64_t.
  */
-inline void Divide(std::int64_t &q, std::int64_t &r, const std::int64_t &a,
-		const std::int64_t &b) {
-	ldiv_t z = ldiv(a, b);
-	q = z.quot;      // q = a / b;
-	r = z.rem;       // r = a % b;
+inline void Divide(std::int64_t &q, std::int64_t &r, const std::int64_t &a, const std::int64_t &b) {
+   ldiv_t z = ldiv(a, b);
+   q = z.quot;      // q = a / b;
+   r = z.rem;       // r = a % b;
 }
 
 /**
  * This is the overload of the Divide function for NTL::ZZ.
  */
 inline void Divide(NTL::ZZ &q, NTL::ZZ &r, const NTL::ZZ &a, const NTL::ZZ &b) {
-	DivRem(q, r, a, b);
-	if (q < 0 && r != 0) {
-		++q;
-		r -= b;
-	}
+   DivRem(q, r, a, b);
+   if (q < 0 && r != 0) {
+      ++q;
+      r -= b;
+   }
 }
 /// \endcond
 
@@ -452,50 +433,42 @@ inline void Divide(NTL::ZZ &q, NTL::ZZ &r, const NTL::ZZ &a, const NTL::ZZ &b) {
  */
 template<typename Real>
 inline void DivideRound(const Real &a, const Real &b, Real &q) {
-	q = a / b;
-	q = floor(q + 0.5);
+   q = a / b;
+   q = floor(q + 0.5);
 }
 
 /**
  * \cond
  * This is the overload of the DivideRound function for std::int64_t.
  */
-inline void DivideRound(const std::int64_t &a, const std::int64_t &b,
-		std::int64_t &q) {
-	bool neg;
-	if ((a > 0 && b < 0) || (a < 0 && b > 0))
-		neg = true;
-	else
-		neg = false;
-	std::int64_t x = abs(a);
-	std::int64_t y = abs(b);
-	ldiv_t z = ldiv(x, y);
-	q = z.quot;
-	std::int64_t r = z.rem;
-	r <<= 1;
-	if (r > y)
-		++q;
-	if (neg)
-		q = -q;
+inline void DivideRound(const std::int64_t &a, const std::int64_t &b, std::int64_t &q) {
+   bool neg;
+   if ((a > 0 && b < 0) || (a < 0 && b > 0)) neg = true;
+   else neg = false;
+   std::int64_t x = abs(a);
+   std::int64_t y = abs(b);
+   ldiv_t z = ldiv(x, y);
+   q = z.quot;
+   std::int64_t r = z.rem;
+   r <<= 1;
+   if (r > y) ++q;
+   if (neg) q = -q;
 }
 
 /**
  * This is the overload of the DivideRound function for NTL::ZZ.
  */
 inline void DivideRound(const NTL::ZZ &a, const NTL::ZZ &b, NTL::ZZ &q) {
-	bool s = false;
-	if ((a > 0 && b < 0) || (a < 0 && b > 0))
-		s = true;
-	NTL::ZZ r, x, y;
-	x = abs(a);
-	y = abs(b);
-	//****** ATTENTION: bug de NTL: DivRem change le signe de a quand a < 0.
-	DivRem(q, r, x, y);
-	LeftShift(r, r, 1);
-	if (r > y)
-		++q;
-	if (s)
-		q = -q;
+   bool s = false;
+   if ((a > 0 && b < 0) || (a < 0 && b > 0)) s = true;
+   NTL::ZZ r, x, y;
+   x = abs(a);
+   y = abs(b);
+   //****** ATTENTION: bug de NTL: DivRem change le signe de a quand a < 0.
+   DivRem(q, r, x, y);
+   LeftShift(r, r, 1);
+   if (r > y) ++q;
+   if (s) q = -q;
 }
 /// \endcond
 
@@ -519,80 +492,75 @@ std::int64_t gcd(std::int64_t a, std::int64_t b);
  * \f}
  */
 template<typename Int>
-void Euclide(const Int &A, const Int &B, Int &C, Int &D, Int &E, Int &F,
-		Int &G) {
+void Euclide(const Int &A, const Int &B, Int &C, Int &D, Int &E, Int &F, Int &G) {
 
-	//Int oldA = A;
-	//Int oldB = B;
+   //Int oldA = A;
+   //Int oldB = B;
+   Int X, Y, Z;
+   G = A;
+   Z = B;
+   NTL::set(C);
+   NTL::clear(D);
+   NTL::clear(E);
+   NTL::set(F);
 
-	Int X, Y, Z;
-	G = A;
-	Z = B;
-	NTL::set(C);
-	NTL::clear(D);
-	NTL::clear(E);
-	NTL::set(F);
-
-	//cout << "   Euclide :" << endl;
-	//cout << "      inputs: A = " << oldA << ", B = " << oldB << endl;
-	//cout << "      values used: A=" << A << ", B=" << B << ", C=" << C << ", D=" << D << ", E=" << E << ", F=" << F << ", G=" << G << ", (X=" << X << ", Y=" << Y << ", Z=" << Z << ")" << endl;
-
-	if (NTL::IsZero(A)) {
-		swap9<Int>(G, Z);
-		swap9<Int>(C, E);
-		swap9<Int>(D, F);
-		return;
-	}
-
-	while (!NTL::IsZero(Z)) {
-		swap9<Int>(G, Z);
-		swap9<Int>(C, E);
-		swap9<Int>(D, F);
-		Quotient(Z, G, X);
-		X = -X;
-		Y = X * G;
-		Z += Y;
-		Y = X * C;
-		E += Y;
-		Y = X * D;
-		F += Y;
-	}
-
+   //cout << "   Euclide :" << endl;
+   //cout << "      inputs: A = " << oldA << ", B = " << oldB << endl;
+   //cout << "      values used: A=" << A << ", B=" << B << ", C=" << C << ", D=" << D << ", E=" << E << ", F=" << F << ", G=" << G << ", (X=" << X << ", Y=" << Y << ", Z=" << Z << ")" << endl;
+   if (NTL::IsZero(A)) {
+      swap9<Int>(G, Z);
+      swap9<Int>(C, E);
+      swap9<Int>(D, F);
+      return;
+   }
+   while (!NTL::IsZero(Z)) {
+      swap9<Int>(G, Z);
+      swap9<Int>(C, E);
+      swap9<Int>(D, F);
+      Quotient(Z, G, X);
+      X = -X;
+      Y = X * G;
+      Z += Y;
+      Y = X * C;
+      E += Y;
+      Y = X * D;
+      F += Y;
+   }
 }
 
 template<typename Int>
 void Euclide(const Int &A, const Int &B, Int &C, Int &D, Int &G) {
-	//Int oldA = A;
-	//Int oldB = B;
+   //Int oldA = A;
+   //Int oldB = B;
 
-	Int X, Y, Z, E, F;
-	G = A;
-	Z = B;
-	NTL::set(C);
-	NTL::clear(D);
-	NTL::clear(E);
-	NTL::set(F);
+   Int X, Y, Z, E, F;
+   G = A;
+   Z = B;
+   NTL::set(C);
+   NTL::clear(D);
+   NTL::clear(E);
+   NTL::set(F);
 
-	if (NTL::IsZero(A)) {
-		swap9<Int>(G, Z);
-		swap9<Int>(C, E);
-		swap9<Int>(D, F);
-		return;
-	}
+   if (NTL::IsZero(A)) {
+      swap9<Int>(G, Z);
+      swap9<Int>(C, E);
+      swap9<Int>(D, F);
+      return;
+   }
 
-	while (!NTL::IsZero(Z)) {
-		swap9<Int>(G, Z);
-		swap9<Int>(C, E);
-		swap9<Int>(D, F);
-		Quotient(Z, G, X);
-		X = -X;
-		Y = X * G;
-		Z += Y;
-		Y = X * C;
-		E += Y;
-		Y = X * D;
-		F += Y;
-	}
+   while (!NTL::IsZero(Z)) {
+      swap9<Int>(G, Z);
+      swap9<Int>(C, E);
+      swap9<Int>(D, F);
+      Quotient(Z, G, X);
+      X = -X;
+      Y = X * G;
+      Z += Y;
+      Y = X * C;
+      E += Y;
+      Y = X * D;
+      F += Y;
+   }
 
 }
 
@@ -707,12 +675,12 @@ void Euclide(const Int &A, const Int &B, Int &C, Int &D, Int &G) {
  */
 template<typename Int>
 void TransposeMatrix(IntMat &mat, IntMat &mat2) {
-	int64_t dim1 = mat.NumRows();
-	int64_t dim2 = mat.NumCols();
-	for (int64_t i = 0; i < dim1; i++) {
-		for (int64_t j = 0; j < dim2; j++)
-			mat2[i][j] = mat[j][i];
-	}
+   int64_t dim1 = mat.NumRows();
+   int64_t dim2 = mat.NumCols();
+   for (int64_t i = 0; i < dim1; i++) {
+      for (int64_t j = 0; j < dim2; j++)
+         mat2[i][j] = mat[j][i];
+   }
 }
 
 /*
@@ -763,7 +731,6 @@ void TransposeMatrix(IntMat &mat, IntMat &mat2) {
  }
  */
 
-
 /**
  * @}
  */
@@ -783,9 +750,9 @@ void TransposeMatrix(IntMat &mat, IntMat &mat2) {
  */
 template<typename Real>
 inline void CreateVect(Real *&A, int64_t d) {
-	A = new Real[d];
-	for (int64_t i = 0; i < d; i++)
-		A[i] = 0;
+   A = new Real[d];
+   for (int64_t i = 0; i < d; i++)
+      A[i] = 0;
 }
 
 /**
@@ -794,9 +761,9 @@ inline void CreateVect(Real *&A, int64_t d) {
  */
 template<typename Vect>
 inline void CreateVect(Vect &A, int64_t d) {
-	A.SetLength(d + 1);
-	for (int64_t i = 0; i < (d + 1); i++)
-		A[i] = 0;
+   A.SetLength(d + 1);
+   for (int64_t i = 0; i < (d + 1); i++)
+      A[i] = 0;
 }
 
 /**
@@ -805,8 +772,8 @@ inline void CreateVect(Vect &A, int64_t d) {
  */
 template<typename Real>
 inline void DeleteVect(Real *&A) {
-	delete[] A;
-	// A = 0;
+   delete[] A;
+   // A = 0;
 }
 
 /**
@@ -816,7 +783,7 @@ inline void DeleteVect(Real *&A) {
  */
 template<typename Vect>
 inline void DeleteVect(Vect &A) {
-	A.kill();
+   A.kill();
 }
 
 /**
@@ -824,8 +791,8 @@ inline void DeleteVect(Vect &A) {
  */
 template<typename Real>
 inline void SetZero(Real *A, int64_t d) {
-	for (int64_t i = 0; i < d; i++)
-		A[i] = 0;
+   for (int64_t i = 0; i < d; i++)
+      A[i] = 0;
 }
 
 /**
@@ -833,8 +800,8 @@ inline void SetZero(Real *A, int64_t d) {
  */
 template<typename Vect>
 inline void SetZero(Vect &A, int64_t d) {
-	for (int64_t i = 0; i < d; i++)
-		A[i] = 0;
+   for (int64_t i = 0; i < d; i++)
+      A[i] = 0;
 }
 
 /**
@@ -864,8 +831,8 @@ inline void SetZero(Vect &A, int64_t d) {
  */
 template<typename Real>
 inline void SetValue(Real *A, int64_t d, const Real &x) {
-	for (int64_t i = 0; i < d; i++)
-		A[i] = x;
+   for (int64_t i = 0; i < d; i++)
+      A[i] = x;
 }
 
 /**
@@ -875,12 +842,12 @@ inline void SetValue(Real *A, int64_t d, const Real &x) {
  */
 template<typename Vect>
 std::string toString(const Vect &A, int64_t c, int64_t d, const char *sep = " ") {
-	std::ostringstream out;
-	out << "[";
-	for (int64_t i = c; i < d - 1; i++)
-		out << A[i] << sep;
-	out << A[d - 1] << "]";
-	return out.str();
+   std::ostringstream out;
+   out << "[";
+   for (int64_t i = c; i < d - 1; i++)
+      out << A[i] << sep;
+   out << A[d - 1] << "]";
+   return out.str();
 }
 
 /**
@@ -889,17 +856,17 @@ std::string toString(const Vect &A, int64_t c, int64_t d, const char *sep = " ")
  */
 template<typename Vect>
 std::string toString(const Vect &A, int64_t d) {
-	return toString<Vect>(A, 0, d);
-	/*
-	 *  std::ostringstream ostr;
-	 *  ostr << "[";
-	 *  for (int64_t i = 0; i < d; i++) {
-	 *    ostr << std::setprecision(2) << std::setw(3) << A[i] <<
-	 *      std::setw(2) << "  ";
-	 *  }
-	 *  ostr << "]";
-	 *  return ostr.str();
-	 * */
+   return toString<Vect>(A, 0, d);
+   /*
+    *  std::ostringstream ostr;
+    *  ostr << "[";
+    *  for (int64_t i = 0; i < d; i++) {
+    *    ostr << std::setprecision(2) << std::setw(3) << A[i] <<
+    *      std::setw(2) << "  ";
+    *  }
+    *  ostr << "]";
+    *  return ostr.str();
+    * */
 }
 
 /**
@@ -915,16 +882,16 @@ std::string toString(const Vect &A, int64_t d) {
  * Take care when using this function.
  */
 /*
-template<typename Int, typename Vect1, typename Vect2, typename Scal>
-inline void ProdScal(const Vect1 &A, const Vect2 &B, int64_t n, Scal &D) {
-	// Le produit A[i] * B[i] peut déborder, d'où conv.
-	Int C;
-	C = 0;
-	for (int64_t i = 0; i < n; i++)
-		C += A[i] * B[i];
-	NTL::conv(D, C);
-}
-*/
+ template<typename Int, typename Vect1, typename Vect2, typename Scal>
+ inline void ProdScal(const Vect1 &A, const Vect2 &B, int64_t n, Scal &D) {
+ // Le produit A[i] * B[i] peut déborder, d'où conv.
+ Int C;
+ C = 0;
+ for (int64_t i = 0; i < n; i++)
+ C += A[i] * B[i];
+ NTL::conv(D, C);
+ }
+ */
 template<typename Int, typename Real>
 inline void ProdScal(const IntVec &A, const IntVec &B, int64_t n, Real &D) {
    Int C;
@@ -941,10 +908,10 @@ inline void ProdScal(const IntVec &A, const IntVec &B, int64_t n, Real &D) {
  */
 template<typename Int>
 inline void Invert(const IntVec &A, IntVec &B, int64_t n) {
-	NTL::conv(B[n], 1);
-	for (int64_t i = 0; i < n; i++) {
-		B[i] = -A[n - i - 1];
-	}
+   NTL::conv(B[n], 1);
+   for (int64_t i = 0; i < n; i++) {
+      B[i] = -A[n - i - 1];
+   }
 }
 
 /**
@@ -954,52 +921,49 @@ inline void Invert(const IntVec &A, IntVec &B, int64_t n) {
  */
 template<typename Int, typename Real>
 inline void CalcNorm(const IntVec &V, int64_t n, Real &S, NormType norm) {
-	Real y;
-	S = 0;
-	switch (norm) {
-	case L1NORM:
-		for (int64_t i = 0; i < n; i++) {
-			NTL::conv(y, V[i]);
-			S += abs(y);
-		}
-		break;
+   Real y;
+   S = 0;
+   switch (norm) {
+   case L1NORM:
+      for (int64_t i = 0; i < n; i++) {
+         NTL::conv(y, V[i]);
+         S += abs(y);
+      }
+      break;
 
-	case L2NORM:
-		for (int64_t i = 0; i < n; i++) {
-			NTL::conv(y, V[i]);
-			S += y * y;
-		}
-		break;
+   case L2NORM:
+      for (int64_t i = 0; i < n; i++) {
+         NTL::conv(y, V[i]);
+         S += y * y;
+      }
+      break;
 
-	case SUPNORM:
-		for (int64_t i = 0; i < n; i++) {
-			NTL::conv(y, abs(V[i]));
-			if (y > S)
-				S = y;
-		}
-		break;
+   case SUPNORM:
+      for (int64_t i = 0; i < n; i++) {
+         NTL::conv(y, abs(V[i]));
+         if (y > S) S = y;
+      }
+      break;
 
-	case ZAREMBANORM:
-		S = 1.0;
-		for (int64_t i = 0; i < n; i++) {
-			NTL::conv(y, abs(V[i]));
-			if (y > 1.0)
-				S *= y;
-		}
-		break;
-	default:
-		;
-	}
+   case ZAREMBANORM:
+      S = 1.0;
+      for (int64_t i = 0; i < n; i++) {
+         NTL::conv(y, abs(V[i]));
+         if (y > 1.0) S *= y;
+      }
+      break;
+   default:
+      ;
+   }
 }
-
 
 /**
  * Copies the first `c` components of vector `fromVec` into vector `toVec`.
  */
 template<typename Vect>
 inline void CopyPartVec(Vect &toVec, const Vect &fromVec, int64_t c) {
-    for (int64_t k = 0; k < c; k++)
-        toVec[k] = fromVec[k];
+   for (int64_t k = 0; k < c; k++)
+      toVec[k] = fromVec[k];
 }
 
 /**
@@ -1007,19 +971,18 @@ inline void CopyPartVec(Vect &toVec, const Vect &fromVec, int64_t c) {
  */
 template<typename Matr>
 inline void CopyPartMat(Matr &toMat, const Matr &fromMat, int64_t r, int64_t c) {
-    for (int64_t i = 0; i < r; i++)
-        for (int64_t j = 0; j < c; j++)
-           toMat[i][j] = fromMat[i][j];
+   for (int64_t i = 0; i < r; i++)
+      for (int64_t j = 0; j < c; j++)
+         toMat[i][j] = fromMat[i][j];
 }
-
 
 /**
  * Copies the first `n` components of vector `B` into vector `A`.
  */
 template<typename Vect>
 inline void CopyVect(Vect &A, const Vect &B, int64_t n) {
-	for (int64_t k = 0; k < n; k++)
-		A[k] = B[k];
+   for (int64_t k = 0; k < n; k++)
+      A[k] = B[k];
 }
 
 /**
@@ -1029,10 +992,10 @@ inline void CopyVect(Vect &A, const Vect &B, int64_t n) {
  */
 template<typename Vect, typename Scal>
 inline void ModifVect(Vect &A, const Vect &B, Scal x, int64_t n) {
-	typename Vect::value_type a;
-	NTL::conv(a, x);
-	for (int64_t i = 0; i < n; i++)
-		A[i] = A[i] + B[i] * a;
+   typename Vect::value_type a;
+   NTL::conv(a, x);
+   for (int64_t i = 0; i < n; i++)
+      A[i] = A[i] + B[i] * a;
 }
 
 /**
@@ -1055,29 +1018,29 @@ inline void ModifVectModulo(Vect &A, const Vect &B, Scal x, Int m, int64_t n) {
  */
 template<typename Vect>
 inline void ChangeSign(Vect &A, int64_t n) {
-	for (int64_t i = 0; i < n; i++)
-		A[i] = -A[i];
+   for (int64_t i = 0; i < n; i++)
+      A[i] = -A[i];
 }
 
 /**
  * Computes the greatest common divisor of `V[k],...,V[n-1]`.
  */
 inline std::int64_t GCD2vect(std::vector<std::int64_t> V, int64_t k, int64_t n) {
-	int64_t i = k + 1;
-	std::int64_t r, d, c;
-	d = abs(V[k]);
-	while (d != 1 && i < n) {
-		c = abs(V[i]);
-		// This does Euclid's algorithm with the current value of the gcd and the
-		// next vector component
-		while (c) {
-			r = d % c;
-			d = c;
-			c = r;
-		}
-		++i;
-	}
-	return d;
+   int64_t i = k + 1;
+   std::int64_t r, d, c;
+   d = abs(V[k]);
+   while (d != 1 && i < n) {
+      c = abs(V[i]);
+      // This does Euclid's algorithm with the current value of the gcd and the
+      // next vector component
+      while (c) {
+         r = d % c;
+         d = c;
+         c = r;
+      }
+      ++i;
+   }
+   return d;
 }
 
 /**
@@ -1096,12 +1059,12 @@ inline std::int64_t GCD2vect(std::vector<std::int64_t> V, int64_t k, int64_t n) 
  */
 template<typename Real>
 inline void CreateMatr(Real **&A, int64_t d) {
-	A = new Real*[d];
-	for (int64_t i = 0; i < d; i++) {
-		A[i] = new Real[d];
-		for (int64_t j = 0; j < d; j++)
-			A[i][j] = 0;
-	}
+   A = new Real*[d];
+   for (int64_t i = 0; i < d; i++) {
+      A[i] = new Real[d];
+      for (int64_t j = 0; j < d; j++)
+         A[i][j] = 0;
+   }
 }
 
 /**
@@ -1110,12 +1073,12 @@ inline void CreateMatr(Real **&A, int64_t d) {
  */
 template<typename Real>
 inline void CreateMatr(Real **&A, int64_t line, int64_t col) {
-	A = new Real*[line];
-	for (int64_t i = 0; i < line; i++) {
-		A[i] = new Real[col];
-		for (int64_t j = 0; j < col; j++)
-			A[i][j] = 0;
-	}
+   A = new Real*[line];
+   for (int64_t i = 0; i < line; i++) {
+      A[i] = new Real[col];
+      for (int64_t j = 0; j < col; j++)
+         A[i][j] = 0;
+   }
 }
 
 /**
@@ -1124,12 +1087,12 @@ inline void CreateMatr(Real **&A, int64_t line, int64_t col) {
  */
 template<typename Int>
 inline void CreateMatr(IntMat &A, int64_t d) {
-	A.SetDims(d, d);
-	for (int64_t i = 0; i < d; i++) {
-		for (int64_t j = 0; j < d; j++)
-			A[i][j] = 0;
-	}
-	//clear (A);
+   A.SetDims(d, d);
+   for (int64_t i = 0; i < d; i++) {
+      for (int64_t j = 0; j < d; j++)
+         A[i][j] = 0;
+   }
+   //clear (A);
 }
 
 /**
@@ -1138,12 +1101,12 @@ inline void CreateMatr(IntMat &A, int64_t d) {
  */
 template<typename Int>
 inline void CreateMatr(IntMat &A, int64_t line, int64_t col) {
-	A.SetDims(line, col);
-	for (int64_t i = 0; i < line; i++) {
-		for (int64_t j = 0; j < col; j++)
-			A[i][j] = 0;
-	}
-	//clear (A);
+   A.SetDims(line, col);
+   for (int64_t i = 0; i < line; i++) {
+      for (int64_t j = 0; j < col; j++)
+         A[i][j] = 0;
+   }
+   //clear (A);
 }
 
 /**
@@ -1153,10 +1116,10 @@ inline void CreateMatr(IntMat &A, int64_t line, int64_t col) {
  */
 template<typename Real>
 inline void DeleteMatr(Real **&A, int64_t d) {
-	for (int64_t i = d; i >= 0; --i)
-		delete[] A[i];
-	delete[] A;
-	//   A = 0;
+   for (int64_t i = d; i >= 0; --i)
+      delete[] A[i];
+   delete[] A;
+   //   A = 0;
 }
 
 /**
@@ -1166,10 +1129,10 @@ inline void DeleteMatr(Real **&A, int64_t d) {
  */
 template<typename Real>
 inline void DeleteMatr(Real **&A, int64_t line, int64_t col) {
-	for (int64_t i = line; i >= 0; --i)
-		delete[] A[i];
-	delete[] A;
-	//    A = 0;
+   for (int64_t i = line; i >= 0; --i)
+      delete[] A[i];
+   delete[] A;
+   //    A = 0;
 }
 
 /**
@@ -1178,7 +1141,7 @@ inline void DeleteMatr(Real **&A, int64_t line, int64_t col) {
  */
 template<typename Int>
 inline void DeleteMatr(IntMat &A) {
-	A.clear();
+   A.clear();
 }
 
 /**
@@ -1188,9 +1151,9 @@ inline void DeleteMatr(IntMat &A) {
  */
 template<typename Matr>
 inline void CopyMatr(Matr &A, const Matr &B, int64_t n) {
-	for (int64_t i = 0; i < n; i++)
-		for (int64_t j = 0; j < n; j++)
-			A[i][j] = B[i][j];
+   for (int64_t i = 0; i < n; i++)
+      for (int64_t j = 0; j < n; j++)
+         A[i][j] = B[i][j];
 }
 
 /**
@@ -1200,9 +1163,9 @@ inline void CopyMatr(Matr &A, const Matr &B, int64_t n) {
  */
 template<typename Matr>
 inline void CopyMatr(Matr &A, const Matr &B, int64_t line, int64_t col) {
-	for (int64_t i = 0; i < line; i++)
-		for (int64_t j = 0; j < col; j++)
-			A[i][j] = B[i][j];
+   for (int64_t i = 0; i < line; i++)
+      for (int64_t j = 0; j < col; j++)
+         A[i][j] = B[i][j];
 }
 
 /**
@@ -1210,17 +1173,16 @@ inline void CopyMatr(Matr &A, const Matr &B, int64_t line, int64_t col) {
  *  the \f$d1 \times d2\f$ submatrix of the first lines and columns of `mat`.
  */
 template<typename MatT>
-std::string toStr(const MatT &mat, int64_t d1, int64_t d2, int64_t prec=2) {
-	std::ostringstream ostr;
-	for (int64_t i = 0; i < d1; i++) {
-		ostr << "[";
-		for (int64_t j = 0; j < d2; j++) {
-			ostr << std::setprecision(prec) << std::setw(6) << mat[i][j]
-					<< std::setw(2) << " ";
-		}
-		ostr << "]\n";
-	}
-	return ostr.str();
+std::string toStr(const MatT &mat, int64_t d1, int64_t d2, int64_t prec = 2) {
+   std::ostringstream ostr;
+   for (int64_t i = 0; i < d1; i++) {
+      ostr << "[";
+      for (int64_t j = 0; j < d2; j++) {
+         ostr << std::setprecision(prec) << std::setw(6) << mat[i][j] << std::setw(2) << " ";
+      }
+      ostr << "]\n";
+   }
+   return ostr.str();
 }
 
 /**
@@ -1229,10 +1191,10 @@ std::string toStr(const MatT &mat, int64_t d1, int64_t d2, int64_t prec=2) {
  */
 template<typename Int>
 void ProductDiagonal(const NTL::Mat<Int> &A, long dim, Int &prod) {
-	prod = 1;
-	for (int64_t i = 1; i < dim; i++) {
-		prod *= A[i][i];
-	}
+   prod = 1;
+   for (int64_t i = 1; i < dim; i++) {
+      prod *= A[i][i];
+   }
 }
 
 /**
@@ -1243,20 +1205,20 @@ void ProductDiagonal(const NTL::Mat<Int> &A, long dim, Int &prod) {
  */
 template<typename Int>
 bool CheckTriangular(const NTL::Mat<Int> &A, long dim, const Int m) {
-	for (int64_t i = 1; i < dim; i++) {
-		for (int64_t j = 0; j < i; j++) {
-			if (m != 0) {
-				if (A[i][j] % m != 0) {
-					return false;
-				}
-			} else {
-				if (A[i][j] != 0) {
-					return false;
-				}
-			}
-		}
-	}
-	return true;
+   for (int64_t i = 1; i < dim; i++) {
+      for (int64_t j = 0; j < i; j++) {
+         if (m != 0) {
+            if (A[i][j] % m != 0) {
+               return false;
+            }
+         } else {
+            if (A[i][j] != 0) {
+               return false;
+            }
+         }
+      }
+   }
+   return true;
 }
 
 /*=========================================================================*/
@@ -1267,32 +1229,28 @@ bool CheckTriangular(const NTL::Mat<Int> &A, long dim, const Int m) {
  * Returns `true` if `AB = mI`, false otherwise.
  */
 template<typename Int>
-bool checkInverseModm (const NTL::Mat<Int> &A, const NTL::Mat<Int> &B,
-		 const Int m) {
-	int64_t dim = A.NumRows();
-	if ((dim != A.NumCols) | (dim != B.NumRows) | (dim != B.NumCols)) {
-		std::cout << "checkInverseModm: A and B must be square with same dimensions."
-			<< std::endl;
-		return false;
-	}
-    Int sProd;  // Scalar product of two rows.
-	for (int64_t i = 0; i < dim; i++) {
-		for (int64_t j = 0; j < dim; j++) {
-			ProdScal<Int>(A[i], B[j], dim, sProd);
-			if (j != i) {
-				if (sProd != 0) {
-					std::cout << "checkInverseModm failed for i, j = " << i
-						<< " , " << j << std::endl;
-					return false;
-				}
-			} else if (sProd != m) {
-				std::cout << "checkInverseModm failed for i, j = " << i
-						<< " , " << j << std::endl;
-				return false;
-			}
-		}
-	}
-	return true;
+bool checkInverseModm(const NTL::Mat<Int> &A, const NTL::Mat<Int> &B, const Int m) {
+   int64_t dim = A.NumRows();
+   if ((dim != A.NumCols()) | (dim != B.NumRows()) | (dim != B.NumCols())) {
+      std::cout << "checkInverseModm: A and B must be square with same dimensions." << std::endl;
+      return false;
+   }
+   Int sProd;  // Scalar product of two rows.
+   for (int64_t i = 0; i < dim; i++) {
+      for (int64_t j = 0; j < dim; j++) {
+         ProdScal<Int>(A[i], B[j], dim, sProd);
+         if (j != i) {
+            if (sProd != 0) {
+               std::cout << "checkInverseModm failed for i, j = " << i << " , " << j << std::endl;
+               return false;
+            }
+         } else if (sProd != m) {
+            std::cout << "checkInverseModm failed for i, j = " << i << " , " << j << std::endl;
+            return false;
+         }
+      }
+   }
+   return true;
 }
 
 /**
@@ -1310,19 +1268,18 @@ bool checkInverseModm (const NTL::Mat<Int> &A, const NTL::Mat<Int> &B,
 
 template<typename Matr, typename Int>
 void calcDual(const Matr &A, Matr &B, int64_t d, const Int &m) {
-	for (int64_t i = 0; i < d; i++) {
-		for (int64_t j = i + 1; j < d; j++)
-			NTL::clear(B[i][j]);
-		DivideRound(m, A[i][i], B[i][i]);
-		for (int64_t j = i - 1; j >= 0; j--) {
-			NTL::clear(B[i][j]);
-			for (int64_t k = j + 1; k <= i; k++)
-				B[i][j] += A[j][k] * B[i][k];
-			if (B[i][j] != 0)
-				B[i][j] = -B[i][j];
-			DivideRound(B[i][j], A[j][j], B[i][j]);
-		}
-	}
+   for (int64_t i = 0; i < d; i++) {
+      for (int64_t j = i + 1; j < d; j++)
+         NTL::clear(B[i][j]);
+      DivideRound(m, A[i][i], B[i][i]);
+      for (int64_t j = i - 1; j >= 0; j--) {
+         NTL::clear(B[i][j]);
+         for (int64_t k = j + 1; k <= i; k++)
+            B[i][j] += A[j][k] * B[i][k];
+         if (B[i][j] != 0) B[i][j] = -B[i][j];
+         DivideRound(B[i][j], A[j][j], B[i][j]);
+      }
+   }
 }
 
 /**
@@ -1339,9 +1296,9 @@ void calcDual(const Matr &A, Matr &B, int64_t d, const Int &m) {
  * Simple error exit function, prints `msg` on exit.
  */
 inline void myExit(std::string msg) {
-    std::cout << "\n***** Error: " << msg << std::endl;
-    exit (1);
-  }
+   std::cout << "\n***** Error: " << msg << std::endl;
+   exit(1);
+}
 
 /**
  * @}
@@ -1358,15 +1315,15 @@ inline void myExit(std::string msg) {
  */
 template<class K, class T, class C, class A>
 std::ostream& operator<<(std::ostream &out, const std::map<K, T, C, A> &x) {
-	out << "{";
-	typename std::map<K, T, C, A>::const_iterator it = x.begin();
-	if (it != x.end()) {
-		out << it->first << "=>" << it->second;
-		while (++it != x.end())
-			out << ", " << it->first << "=>" << it->second;
-	}
-	out << "}";
-	return out;
+   out << "{";
+   typename std::map<K, T, C, A>::const_iterator it = x.begin();
+   if (it != x.end()) {
+      out << it->first << "=>" << it->second;
+      while (++it != x.end())
+         out << ", " << it->first << "=>" << it->second;
+   }
+   out << "}";
+   return out;
 }
 
 /**
@@ -1375,8 +1332,8 @@ std::ostream& operator<<(std::ostream &out, const std::map<K, T, C, A> &x) {
  */
 template<class T1, class T2>
 std::ostream& operator<<(std::ostream &out, const std::pair<T1, T2> &x) {
-	out << "(" << x.first << "," << x.second << ")";
-	return out;
+   out << "(" << x.first << "," << x.second << ")";
+   return out;
 }
 
 /**
@@ -1385,15 +1342,15 @@ std::ostream& operator<<(std::ostream &out, const std::pair<T1, T2> &x) {
  */
 template<class T, class A>
 std::ostream& operator<<(std::ostream &out, const std::vector<T, A> &x) {
-	out << "[";
-	typename std::vector<T, A>::const_iterator it = x.begin();
-	if (it != x.end()) {
-		out << *it;
-		while (++it != x.end())
-			out << ", " << *it;
-	}
-	out << "]";
-	return out;
+   out << "[";
+   typename std::vector<T, A>::const_iterator it = x.begin();
+   if (it != x.end()) {
+      out << *it;
+      while (++it != x.end())
+         out << ", " << *it;
+   }
+   out << "]";
+   return out;
 }
 
 /**
@@ -1402,15 +1359,15 @@ std::ostream& operator<<(std::ostream &out, const std::vector<T, A> &x) {
  */
 template<class K, class C, class A>
 std::ostream& operator<<(std::ostream &out, const std::set<K, C, A> &x) {
-	out << "{";
-	typename std::set<K, C, A>::const_iterator it = x.begin();
-	if (it != x.end()) {
-		out << *it;
-		while (++it != x.end())
-			out << ", " << *it;
-	}
-	out << "}";
-	return out;
+   out << "{";
+   typename std::set<K, C, A>::const_iterator it = x.begin();
+   if (it != x.end()) {
+      out << *it;
+      while (++it != x.end())
+         out << ", " << *it;
+   }
+   out << "}";
+   return out;
 }
 
 /**
@@ -1432,72 +1389,72 @@ std::ostream& operator<<(std::ostream &out, const std::set<K, C, A> &x) {
 
 template<typename Matr1, typename Matr2>
 void copyMatrixToMat(Matr1 &A, Matr2 &B) {
-	int64_t l = A.NumRows();
-	int64_t c = A.NumCols();
-	for (int64_t i = 0; i < l; i++) {
-		for (int64_t j = 0; j < c; j++)
-			B[i][j] = NTL::conv<NTL::ZZ>(A[i][j]);
-	}
+   int64_t l = A.NumRows();
+   int64_t c = A.NumCols();
+   for (int64_t i = 0; i < l; i++) {
+      for (int64_t j = 0; j < c; j++)
+         B[i][j] = NTL::conv < NTL::ZZ > (A[i][j]);
+   }
 
 }
 
 template<typename Int>
 void printBase(IntMat bas_mat) {
-	int64_t l = bas_mat.NumRows();
-	int64_t c = bas_mat.NumCols();
-	for (int64_t i = 0; i < l; i++) {
-		for (int64_t j = 0; j < c; j++) {
-			std::cout << bas_mat[i][j] << "   ";
-		}
-		std::cout << "" << std::endl;
-	}
+   int64_t l = bas_mat.NumRows();
+   int64_t c = bas_mat.NumCols();
+   for (int64_t i = 0; i < l; i++) {
+      for (int64_t j = 0; j < c; j++) {
+         std::cout << bas_mat[i][j] << "   ";
+      }
+      std::cout << "" << std::endl;
+   }
 }
 
 template<typename Int>
 void printBase2(IntMat bas_mat) {
-	//int64_t l = bas_mat.size1();
-	// int64_t c = bas_mat.size2();
-	int64_t l = bas_mat.NumRows();
-	int64_t c = bas_mat.NumCols();
-	for (int64_t i = 1; i <= l; i++) {
-		for (int64_t j = 1; j <= c; j++) {
-			std::cout << bas_mat[i][j] << "   ";
-		}
-		std::cout << "" << std::endl;
-	}
+   //int64_t l = bas_mat.size1();
+   // int64_t c = bas_mat.size2();
+   int64_t l = bas_mat.NumRows();
+   int64_t c = bas_mat.NumCols();
+   for (int64_t i = 1; i <= l; i++) {
+      for (int64_t j = 1; j <= c; j++) {
+         std::cout << bas_mat[i][j] << "   ";
+      }
+      std::cout << "" << std::endl;
+   }
 }
 
 // Copies b1 into b2. The two matrices must already have the same dimensions!
 template<typename Int>
 void copy(IntMat &b1, IntMat &b2) {
-	for (int64_t i = 0; i < b1.NumRows(); i++) {
-		for (int64_t j = 0; j < b1.NumCols(); j++) {
-			b2[i][j] = b1[i][j];
-		}
-	}
+   for (int64_t i = 0; i < b1.NumRows(); i++) {
+      for (int64_t j = 0; j < b1.NumCols(); j++) {
+         b2[i][j] = b1[i][j];
+      }
+   }
 }
 
 // Copies the first r rows and c columns of b1 into b2, which is assumed to be large enough.
 // The two matrices must already have the same dimensions!
 template<typename Int>
 void copy(IntMat &b1, IntMat &b2, int64_t r, int64_t c) {
-    for (int64_t i = 0; i < r; i++) {
-        for (int64_t j = 0; j < c; j++) {
-            b2[i][j] = b1[i][j];
-        }
-    }
+   for (int64_t i = 0; i < r; i++) {
+      for (int64_t j = 0; j < c; j++) {
+         b2[i][j] = b1[i][j];
+      }
+   }
 }
 
-inline int64_t getWidth(clock_t time[], int64_t dim, std::string message,
-		clock_t totals[], int64_t ind) {
-	clock_t tmp = 0;
-	for (int64_t i = 0; i < dim; i++) {
-		tmp += time[i];
-	}
-	int64_t width = log10(tmp) + 2;
-	// std::cout << std::setw(width) << message;
-	totals[ind] = tmp;
-	return width;
+inline int64_t getWidth(clock_t time[], int64_t dim, std::string message, clock_t totals[],
+      int64_t ind) {
+   clock_t tmp = 0;
+   for (int64_t i = 0; i < dim; i++) {
+      tmp += time[i];
+   }
+   int64_t width = log10(tmp) + 2;
+   // std::cout << std::setw(width) << message;
+   totals[ind] = tmp;
+   return width;
 }
 
 }  // namespace LatticeTester
