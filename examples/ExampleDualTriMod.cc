@@ -27,7 +27,7 @@ int64_t yy[dim+k-1] = {0, 0, 1, 0, 0, 0};
 int main() {
    int64_t i, j;
    std::cout << "*************************************************\n";
-   std::cout << "ExampleDualTriMod with:\n k = " << k << ", m = " << m << "\n";
+   std::cout << "ExampleDualTriMod with:  k = " << k << ", m = " << m << "\n";
    for (i = 0; i < k; i++) 
       std::cout << " a_" << i+1 << " = " << aa[i] << ",  ";
    std::cout << "\n";
@@ -40,7 +40,7 @@ int main() {
       std::cout << " y_" << i << " = " << yy[i] << ",  ";
       }
    std::cout << "\n\n";
-   for (i = 0; i < k; i++) {
+   for (i = 0; i < dim; i++) {
       for (j = 0; j < dim; j++) {
          if (i < k)
             basis0[i][j] = yy[k-1-i+j];
@@ -51,16 +51,16 @@ int main() {
    }
    std::cout << "Initial basis0:\n" << basis0 << "\n";
    upperTriangularBasis<Int>(basis1, basis0, m, dim, dim);
-   std::cout << "upper-triangular primal basis:\n" << basis1 << "\n";
+   std::cout << "upper-triangular primal basis V:\n" << basis1 << "\n";
 
    mDualUpperTriangular(basisdual, basis1, m, dim);
-   std::cout << "lower-triangular basisdual:\n" << basisdual << "\n";
+   std::cout << "lower-triangular basisdual W:\n" << basisdual << "\n";
    // Here we verify that basisdual is indeed the m-dual of basis1. 
    bool inverse = checkInverseModm<Int> (basisdual, basis1, m);
    std::cout << "Is basisdual the m-dual of basis1? " << inverse << "\n";
    
    mDualUpperTriangularMod0(basisdual, basis1, m, dim);
-   std::cout << "lower-triangular basisdual after mod_0:\n" << basisdual << "\n";
+   std::cout << "lower-triangular basisdual W' after mod_0:\n" << basisdual << "\n";
    // Here basisdual is NOT the m-dual of basis1, but it is another basis of the m-dual lattice. 
    inverse = checkInverseModm<Int> (basisdual, basis1, m);
    std::cout << "Is basisdual the m-dual of basis1? " << inverse << "\n";
