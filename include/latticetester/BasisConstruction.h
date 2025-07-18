@@ -58,7 +58,7 @@ using namespace NTL;
  * to construct the basis for a projection over a given subset of coordinates,
  * and to obtain the \f$m\f$-dual of a given basis.
  *
- * The algorithms are described in the Lattice Tester guide \cite iLEC26ltg.
+ * The algorithms are described in the Lattice Tester guide \cite iLEC25ltg.
  * The implementation relies on %NTL and uses %NTL matrices.
  * When the basis turns out to have fewer rows than columns, most of the functions here
  * add implicitly the rescaled unit vectors to the set of generating vectors.
