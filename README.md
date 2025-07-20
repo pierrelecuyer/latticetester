@@ -222,7 +222,7 @@ Compiling *Lattice Tester* requires the following software to be installed:
 
 You also need a recent compiler compliant with (at least) the C++14 standard.
 
-### Configuring the Build
+### Configuring the Build with waf
 
 *Lattice Tester* relies on the
 [waf meta build system](https://code.google.com/p/waf/) for configuring and
@@ -284,7 +284,9 @@ and you must first configure with
 
    ./waf configure --build-docs
 
-The waf script in `doc/wscript` manages the documentation build. The source of the main page is in `doc/dox/main.dox`.
+The waf script in `doc/wscript` manages the documentation build. 
+The source of the main page is in `doc/dox/main.dox`.
+The `.bib` files for the bibliography are in doc/bib/*.bib, which contains the submodule `bibtex-database`. 
 The Doxygen options are selected in the file `doc/Doxyfile.in`. For example, one may select if members from the `.cc` files are included or not
 by changing the `FILE_PATTERNS` option, select if the `#include` statements at the head of a file
 are shown or not with the `SHOW_INCLUDE_FILES` option, etc. 
