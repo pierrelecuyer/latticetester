@@ -34,6 +34,7 @@ def configure(ctx):
     ctx.check(features='c', cflags='-std=c99')
     ctx.env.append_unique('CFLAGS', ['-std=c99', '-Wall'])
     ctx.env.INCLUDES_TEST      = ['examples'] #/usr/include
+    ctx.env.INCLUDES_TEST      = ['inputTestFiles'] #/usr/include
 
 
 
@@ -119,6 +120,7 @@ def build(ctx):
 
     ctx.set_group('group2')
     ctx.recurse('examples')
+    ctx.recurse('inputTestFiles')
 
     ctx.add_group('group6')
     ctx.set_group('group6')
