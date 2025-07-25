@@ -19,6 +19,7 @@ def options(ctx):
     ctx.load('compiler_c compiler_cxx gnu_dirs waf_unit_test')
     ctx.add_option('--link-static', action='store_true', help='statically link with dependencies')
     ctx.add_option('--build-docs', action='store_true', default=False, help='build documentation')
+    ctx.add_option('--unit-tests', action='store_true', default=False, help='apply unit tests')
     ctx.add_option('--ntl', action='store', help='prefix under which NTL is installed')
     ctx.add_option('--gmp', action='store', help='prefix under which GMP is installed')
 
@@ -75,6 +76,10 @@ def configure(ctx):
         if not ctx.find_program('doxygen', var='DOXYGEN', mandatory=False):
             ctx.fatal('Doxygen is required for building documentation.\n' +
                       'Get it from http://www.stack.nl/~dimitri/doxygen/')
+    
+    # Unit Test
+    if ctx.options.unit_tests:
+        ctx.env.UNIT_TESTS = True
 
     # The version number is set by reading git tags; see the file `waftools/version.py`.
     ctx.version_file('latticetester')
@@ -120,7 +125,6 @@ def build(ctx):
 
     ctx.set_group('group2')
     ctx.recurse('examples')
-    ctx.recurse('inputTestFiles')
 
     ctx.add_group('group6')
     ctx.set_group('group6')
@@ -128,6 +132,8 @@ def build(ctx):
         #ctx.recurse('progs')
         if ctx.env.BUILD_DOCS:
             ctx.recurse('doc') 
+        if ctx.env.UNIT_TESTS:
+            ctx.recurse('test')
 
     ctx.recurse('data')    
 
