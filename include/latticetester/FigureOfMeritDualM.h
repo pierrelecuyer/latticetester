@@ -45,6 +45,7 @@
 #include "latticetester/NormaBestUpBound.h"
 #include "latticetester/WeightsUniform.h"
 #include "latticetester/CoordinateSets.h"
+#include "latticetester/FigureOfMeritM.h"
 
 namespace LatticeTester {
 
