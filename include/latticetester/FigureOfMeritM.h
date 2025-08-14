@@ -457,7 +457,7 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
    if (m_verbose > 1) {
       if (dim < 8) std::cout << coord << std::setw(15 - 2 * dim) << " ";
       else std::cout << std::left << std::setw(2) << "{1,...," << dim << "}       ";
-      std::cout << merit << std::setw(8) << "  " << m_sqlen[0] << "  " << m_minMerit << "\n";
+      std::cout << m_sqlen[0] << "  " << merit << std::setw(8) << "  " << m_minMerit << "\n";
    }
    return merit;
 }
@@ -466,7 +466,7 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit) {
    m_minMerit = minmerit;
-   if (m_verbose > 1) std::cout << "coordinates      merit        sqlen   minmerit \n";
+   if (m_verbose > 1) std::cout << "coordinates      sqlen       merit           minmerit \n";
    Coordinates coord;
    int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
    for (int64_t j = 1; j <= lower_dim; j++)
