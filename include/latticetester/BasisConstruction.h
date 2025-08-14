@@ -42,7 +42,7 @@
 //#include "latticetester/NTLWrap.h"
 #include "latticetester/Util.h"
 #include "latticetester/EnumTypes.h"
-#include "latticetester/IntLattice.h"
+//#include "latticetester/IntLattice.h"
 #include "latticetester/Coordinates.h"
 #include "latticetester/LLL_FP64.h"
 #include "latticetester/LLL_lt.h"
