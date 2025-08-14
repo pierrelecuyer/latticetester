@@ -15,10 +15,10 @@
 namespace LatticeTester {
 
 /**
- * Takes a modulus 'm' and a multiplier 'a' and builds and checks if the
+ * Takes a modulus 'm' and a multiplier 'a' and checks if the
  * basis and the dual basis from dimensions 'dim' to 'maxdim' are built
  * correctly. Also checks if the projection to all existing odd dimensions
- * works fine.
+ * works fine for the basis and its dual.
  */
 template<typename Int, typename Real>
 void BaseTest(Int m, Int a, int64_t maxdim, int dim) {
@@ -81,7 +81,6 @@ TEST_CASE("Test basis and dual basis") {
      NTL::ZZ a; a = 822;
      BaseTest<NTL::ZZ, double> (m, a, maxdim, dim);
      BaseTest<NTL::ZZ, NTL::RR> (m, a, maxdim, dim);
-
 }
 
 };
