@@ -66,10 +66,6 @@ namespace LatticeTester {
 template<typename Int, typename Real>
 class FigureOfMeritDualM: public FigureOfMeritM<Int, Real> {
 
-private:
-	// typedef NTL::Vec<Int> IntVec;
-	// typedef NTL::Mat<Int> IntMat;
-	// typedef NTL::Vec<Real> RealVec;
 public:
 
 	/**
@@ -97,7 +93,14 @@ public:
 	 */
 	double computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit = DBL_MAX) override;
 
-	/**
+   /**
+    * Same as `computeMeritSucc`, except that it rebuilds the basis anew each time
+    * the dimension is increased, instead of using `incDimBasis`.
+    * This approach is inefficient and this function is for experimentation only.
+    */
+   double computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat, double minmerit = DBL_MAX);
+
+   /**
 	 * Same as `computeMeritNonSucc` in parent class, but for the m-dual lattice.
 	 */
 	double computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
@@ -116,10 +119,42 @@ FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::Vec<int64_t> &t,
 //=========================================================================
 template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
-		IntLatticeExt<Int, Real> &lat, double minmerit) {
+      IntLatticeExt<Int, Real> &lat, double minmerit) {
+   Coordinates coord;
    this->m_minMerit = minmerit;
-	Coordinates coord;
-   if (this->m_verbose > 1) std::cout << "coordinates      sqlen       merit           minmerit \n";
+   this->m_clock = clock();
+   if (this->m_verbose > 2)
+      std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1; // We start in d+1 dimensions.
+   for (int64_t j = 1; j <= lower_dim; j++)
+      coord.insert(j);
+   lat.buildDualBasis(lower_dim);
+   lat.dualize();
+   this->computeMeritOneProj(lat, coord, this->m_minMerit);
+   lat.dualize();
+   if (this->m_minMerit < this->m_lowbound) return 0;
+   for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+      coord.insert(j);
+      // std::cout << "inDimDualBasis with j = " << j << ", dim = " << lat.getDim() << ", maxdim = " << lat.getMaxDim() << "\n";
+      lat.incDimDualBasis();
+      lat.dualize();
+      this->computeMeritOneProj(lat, coord, this->m_minMerit);
+      lat.dualize();
+      if (this->m_minMerit <= this->m_lowbound)  return 0;
+   }
+   return this->m_minMerit;
+}
+
+//=========================================================================
+template<typename Int, typename Real>
+double FigureOfMeritDualM<Int, Real>::computeMeritSuccRebuild(
+		IntLatticeExt<Int, Real> &lat, double minmerit) {
+   Coordinates coord;
+   this->m_minMerit = minmerit;
+   this->m_clock = clock();
+   if (this->m_verbose > 2) {
+      std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
+   }
 	int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1; // We start in d+1 dimensions.
    for (int64_t j = 1; j <= lower_dim; j++)
       coord.insert(j);
@@ -130,8 +165,7 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
    if (this->m_minMerit < this->m_lowbound) return 0;
    for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
 		coord.insert(j);
-		// std::cout << "inDimDualBasis with j = " << j << ", dim = " << lat.getDim() << ", maxdim = " << lat.getMaxDim() << "\n";
-		lat.incDimDualBasis();
+		lat.buildDualBasis(j);
 		lat.dualize();
       this->computeMeritOneProj(lat, coord, this->m_minMerit);
 		lat.dualize();
@@ -146,7 +180,10 @@ double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
 		IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj, double minmerit) {
    this->m_minMerit = minmerit;
 	Coordinates coord;
-   if (this->m_verbose > 1) std::cout << "coordinates      sqlen       merit           minmerit \n";
+   if (this->m_verbose > 2) {
+      std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
+      this->m_clock = clock();
+   }
 	for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end();
 			it++) {
 		coord = *it;
