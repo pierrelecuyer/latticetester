@@ -351,6 +351,7 @@ std::string Chrono::toString () {
      sortie << heure << ":" << minute << ":" << seconde << "." << frac;
      return sortie.str ();
 }
+}
 
 #endif
-};
+
