@@ -17,6 +17,7 @@ var classLatticeTester_1_1FigureOfMeritM =
     [ "getMinMeritProj", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab9c26757cf7f5a4d7349aeff260538c1", null ],
     [ "computeMeritOneProj", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aa41da07dcfa1f67854d9c822e33395d0", null ],
     [ "computeMeritSucc", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a3e671c26e8b0f6298b463f604228446f", null ],
+    [ "computeMeritSuccRebuild", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a59e832a650f4abd691c7b2ea57d6707a", null ],
     [ "computeMeritNonSucc", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a6431bd6399a50fb8bb0bc2be21e9b1f5", null ],
     [ "computeMerit", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad5a8a53868f425073a1b744a19dd685f", null ],
     [ "m_t", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a0bf030b11e84de0c0640b71b1a13c47e", null ],
@@ -36,6 +37,7 @@ var classLatticeTester_1_1FigureOfMeritM =
     [ "m_minMeritSqlen", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a1ec40bb67c811a37585c99b361eec3f7", null ],
     [ "m_minMeritProj", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8c08bc75f104e59b53410a80447e8c06", null ],
     [ "m_worstproj", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8738522e3073474a26a9dfe6b713b700", null ],
+    [ "m_clock", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a24263593cec6d934d895a6ef2f65d9d9", null ],
     [ "m_verbose", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#af0bcc67905743be0ccbe3ee5297689eb", null ],
     [ "m_collectLevel", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#af60f154ea09571848cb55afe1f5db41b", null ]
 ];
