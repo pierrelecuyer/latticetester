@@ -21,7 +21,6 @@
 #include "latticetester/Util.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Coordinates.h"
-// #include "latticetester/Lacunary.h"
 #include "latticetester/BasisConstruction.h"
 #include <cassert>
 
@@ -30,20 +29,17 @@ namespace LatticeTester {
 /**
  * \class IntLatticeExt
  *
- * This abstract class extends `IntLattice` and is a skeleton for the
- * specialized subclasses that define specific types of lattices.
- * It is not intended to be used directly, but only via subclasses.
- * An `IntLatticeExt` object is an `IntLattice` with additional (virtual) methods
- * that must be implemented in subclasses.
- * There are virtual methods to construct a basis and/or an m-dual basis of the full lattice
+ * This abstract class extends `IntLattice` with additional (virtual) methods
+ * that must be implemented in subclasses that define specific types of lattices.
+ *
+ * These virtual methods permit one to construct a basis and/or an m-dual basis of the lattice
  * and to extend the current basis and/or its m-dual by one coordinate.
- * These methods must be implemented in the subclasses.
  * The `IntLattice` base class already implements methods to construct a basis and/or
  * an m-dual basis for the projection of the full lattice on a subset
  * of coordinates indices specified by a `Coordinates` object.  These general default
- * implementation can often be overridden by faster specialized implementations in the subclasses.
+ * implementations are often overridden in subclasses by faster specialized implementations.
  *
- * Recall that the lattices in `IntLattice` (and here) have `dim < maxDim` dimensions and
+ * Recall that the lattices in `IntLattice` (and here) have `dim <= maxDim` dimensions and
  * the bases are stored in `IntMat` objects of dimensions `maxDim x maxDim`.
  */
 
@@ -134,6 +130,10 @@ protected:
 
 };
 // Class IntLatticeExt
+
+
+//============================================================================
+// IMPLEMENTTION
 
 //===========================================================================
 

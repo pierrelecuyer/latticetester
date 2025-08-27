@@ -120,12 +120,13 @@ FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::Vec<int64_t> &t,
 template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
       IntLatticeExt<Int, Real> &lat, double minmerit) {
-   Coordinates coord;
    this->m_minMerit = minmerit;
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
+   if (lower_dim > this->m_t[0]) return this->m_minMerit;  // No succ projection to look at, t[0] too small.
+   Coordinates coord;
    this->m_clock = clock();
    if (this->m_verbose > 2)
       std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
-   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1; // We start in d+1 dimensions.
    for (int64_t j = 1; j <= lower_dim; j++)
       coord.insert(j);
    lat.buildDualBasis(lower_dim);
@@ -149,13 +150,14 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
 template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritSuccRebuild(
 		IntLatticeExt<Int, Real> &lat, double minmerit) {
-   Coordinates coord;
    this->m_minMerit = minmerit;
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
+   if (lower_dim > this->m_t[0]) return this->m_minMerit;  // No succ projection to look at, t[0] too small.
+   Coordinates coord;
    this->m_clock = clock();
    if (this->m_verbose > 2) {
       std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
    }
-	int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1; // We start in d+1 dimensions.
    for (int64_t j = 1; j <= lower_dim; j++)
       coord.insert(j);
    lat.buildDualBasis(lower_dim);
@@ -178,6 +180,7 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSuccRebuild(
 template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
 		IntLatticeExt<Int, Real> &lat, IntLattice<Int, Real> &proj, double minmerit) {
+   // std::cout << "Start of computeMeritNonSucc in mdual \n";
    this->m_minMerit = minmerit;
 	Coordinates coord;
    if (this->m_verbose > 2) {
@@ -187,10 +190,9 @@ double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
 	for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end();
 			it++) {
 		coord = *it;
-		// The following builds a triangular basis for proj, takes its dual, and dualize.
+		// The following builds a dual basis for proj and dualize.
       lat.buildProjectionDual(proj, coord);
-      assert(proj.getDim() == proj.getDimDual());
-      assert(proj.getDim() == (unsigned) coord.size());
+      assert(proj.getDimDual() == (unsigned) coord.size());
       proj.dualize();
       this->computeMeritOneProj(proj, coord, this->m_minMerit);
       proj.dualize();

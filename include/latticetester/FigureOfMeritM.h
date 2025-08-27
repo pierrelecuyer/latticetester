@@ -480,17 +480,18 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit) {
    m_minMerit = minmerit;
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
+   if (lower_dim > this->m_t[0]) return m_minMerit;  // No succ projection to look at, t[0] too small.
    m_clock = clock();
    if (m_verbose > 2) {
       std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
    }
    Coordinates coord;
-   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
    for (int64_t j = 1; j <= lower_dim; j++)
       coord.insert(j);
    lat.buildBasis(lower_dim);
    // The dimension of `lat` here is equal to the size of coord.
-   computeMeritOneProj(lat, coord, m_minMerit);
+   computeMeritOneProj(lat, coord, m_minMerit);   // This is the merit in d+1 dimensions.
    if (m_minMerit < this->m_lowbound) return 0;
    for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
       coord.insert(j);
@@ -505,12 +506,13 @@ double FigureOfMeritM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat, double minmerit) {
    m_minMerit = minmerit;
+   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
+   if (lower_dim > this->m_t[0]) return m_minMerit;  // No succ projection to look at, t[0] too small.
    m_clock = clock();
    if (m_verbose > 2) {
       std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
    }
    Coordinates coord;
-   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
    for (int64_t j = 1; j <= lower_dim; j++)
       coord.insert(j);
    lat.buildBasis(lower_dim);
@@ -530,6 +532,7 @@ double FigureOfMeritM<Int, Real>::computeMeritSuccRebuild(IntLatticeExt<Int, Rea
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMeritNonSucc(IntLatticeExt<Int, Real> &lat,
       IntLattice<Int, Real> &proj, double minmerit) {
+   // std::cout << "Start of computeMeritNonSucc in primal \n";
    m_minMerit = minmerit;
    m_clock = clock();
    if (m_verbose > 2) {
@@ -557,9 +560,10 @@ double FigureOfMeritM<Int, Real>::computeMeritNonSucc(IntLatticeExt<Int, Real> &
 template<typename Int, typename Real>
 double FigureOfMeritM<Int, Real>::computeMerit(IntLatticeExt<Int, Real> &lat,
       IntLattice<Int, Real> &proj, double minmerit) {
+   // std::cout << "Start of computeMerit  \n";
    this->computeMeritNonSucc(lat, proj, minmerit);
    if (m_minMerit == 0) return 0;
-   this->computeMeritSucc(lat, m_minMerit);
+     this->computeMeritSucc(lat, m_minMerit);
    // if (m_minMerit > this->m_highbound) return 0; // Removed. We want to see the large values!
    return m_minMerit;
 }

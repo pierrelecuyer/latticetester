@@ -58,7 +58,7 @@ namespace LatticeTester {
  * We use only the upper-left `dim x dim` corner of each array to store the actual basis.
  * These arrays can then be allocated only once and never have to be resized, which improves speed.
  * There are internal variables for the dimensions of the primal and m-dual basis.
- * For the basis that is not maintained, that variable should be set to 0.
+ * When a basis is not maintained, the corresponding variable should be 0.
  *
  * Methods are offered to compute and store the norms of the basis and/or
  * the m-dual basis vectors, to permute these vectors, sort them by length, etc.
@@ -73,7 +73,9 @@ namespace LatticeTester {
  * projection of the full lattice on a subset \f$I\f$  of coordinates indices
  * defined by a `Coordinates` object.  When computing figures of merit, one may want to
  * recompute a basis for a large number of different projections, which can be specified
- * by a `CoordinateSets` object.
+ * by a `CoordinateSets` object.  The method  `buildProjection` takes as input another `IntLattice` object
+ * that will hold the projection. In some cases, it is possible to pass the same  `IntLattice` object
+ * as the current one, so the current lattice will become the projection.
  *
  * The class `IntLatticeExt` extends this class and contains additional virtual methods that
  * depend on the specific lattice type that is considered.  These methods must be defined in subclasses.
@@ -158,10 +160,11 @@ public:
    virtual void buildProjection(IntLattice<Int, Real> &projLattice, const Coordinates &proj);
 
    /**
-    * Similar to `buildProjection`, except that it builds an upper-triangular basis
-    * for the primal and a lower-triangular basis for the $m$-dual of the projection,
-    * both in `projLattice`. The dimensions in the latter are updated.
-    * We should use this function when we need a basis for the $m$-dual of the projection.
+    * Similar to `buildProjection`, except that it builds a basis for the $m$-dual of the projection.
+    * This default implementation first builds an upper-triangular basis for the primal.
+    * then computes a lower-triangular basis for the $m$-dual of the projection,
+    * both in `projLattice`. The dimensions are updated.
+    * In subclasses, the m-dual basis can sometimes be computed directly without the primal.
     */
    virtual void buildProjectionDual(IntLattice<Int, Real> &projLattice, const Coordinates &proj);
 
@@ -422,7 +425,8 @@ public:
    void permuteDual(int64_t i, int64_t j);
 
    /**
-    * Exchanges the primal and m-dual bases, their dimensions, and vector norms.
+    * Exchanges the references to the primal and m-dual bases, the references to their vectors of norms,
+    * and their dimensions.
     */
    void dualize();
 
@@ -511,6 +515,8 @@ protected:
     * A vector that stores the norm of each basis vector.
     * In case of the L_2 norm, it contains the square norm instead.
     * A value of -1 means that the norm is not up to date.
+    * In Lattice Tester, these vectors are not used or updated in the LLL and BKZ functions;
+    * they are used only in `ReducerBB.h`.
     */
    RealVec m_vecNorm;
 
@@ -537,6 +543,7 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType no
    m_dualbasis.SetDims(maxDim, maxDim);
    m_dualvecNorm.SetLength(maxDim);
    setNegativeNorm();
+   setDualNegativeNorm();
 }
 
 //===========================================================================
@@ -652,6 +659,7 @@ void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
 //===========================================================================
 
 // This one builds both the primal and the m-dual bases of the projection.
+// Its specialization in a subclass may build only the m-dual basis.
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLattice,
       const Coordinates &proj) {
@@ -831,13 +839,14 @@ void IntLattice<Int, Real>::permuteDual(int64_t i, int64_t j) {
    swap9(this->m_dualvecNorm[i], this->m_dualvecNorm[j]);
 }
 
-//===========================================================================
+//===========================================================================*/
 
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::dualize() {
-   std::swap(this->m_basis, this->m_dualbasis);
+   // NTL::swap only exchanges pointers, while std::swap exchanges all matrix entries!
+   NTL::swap(this->m_basis, this->m_dualbasis);
    std::swap(this->m_dim, this->m_dimdual);
-   std::swap(this->m_vecNorm, this->m_dualvecNorm);
+   NTL::swap(this->m_vecNorm, this->m_dualvecNorm);
 }
 
 /*=========================================================================*/

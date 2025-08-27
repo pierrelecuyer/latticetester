@@ -29,7 +29,7 @@ namespace LatticeTester {
  *
  * This class implements upper bounds on the length of the shortest nonzero
  * vector in a lattice, in which the Hermite constants \f$\gamma_s\f$
- * are approximated by their Rogers's bounds.
+ * are approximated by their Rogers's bounds for all \f$s \ge 2\f$.
  * These bounds are calculated as explained in \cite mCON99a,
  * Eq. (47) on page 20, and in Table 1.2 on page 15.
  * `NormaBestUpBound` provide tighter bounds in lower dimensions, up to 36, but Rogers

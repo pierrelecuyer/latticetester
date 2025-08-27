@@ -10,7 +10,7 @@
 # The format is:
 # TAG = value [value, ...]
 # For lists, items can also be appended using:
-# TAG += value [value, ...]
+# TAG += value [value, ...]JAX
 # Values that contain spaces should be placed between quotes (\" \").
 #
 # Note:
