@@ -160,12 +160,11 @@ public:
    void incDimDualBasis();
 
    /**
-    * This method overrides its namesake in `IntLattice`. The projection of this
-    * `Rank1Lattice` over the coordinates in `proj` is returned in `projLattice`.
-    * The implementation used here exploits the rank-1 lattice structure and it
-    * is simpler and faster than the general one. See Section 5.4 of the guide.
+    * Builds a basis for the projection of this `Rank1Lattice` onto the coordinates
+    * in `proj` and puts it as the `m_basis` in `projLattice`.
     * The construction is direct, just by selecting the rows and columns
-    * whose indices are in `proj`, and using the vector `aa`.
+    * whose indices are in `proj`, and using the vector `aa`. See Section 5.4 of the guide.
+    * The implementation is simpler and faster than the general one.
     * The dimension `proj.size()` must not exceed the `maxDim` of `projLattice`.
     * Note that `projLattice` is allowed to be the same as the current `IntLattice` object,
     * in which case the projection basis will be built into the current `m_basis`.
@@ -187,7 +186,7 @@ protected:
 
    /**
     * Vector of multipliers (generating vector) of the rank 1 lattice rule.
-    * They are stored for up to `dimaa` dimensions.
+    * They are stored for up to `m_dimaa` dimensions.
     * The first coordinate has index 0.
     */
    IntVec m_aa;
@@ -340,7 +339,7 @@ void Rank1Lattice<Int, Real>::buildBasis(int64_t d) {
    for (i = 1; i < d; i++)
       for (j = 0; j < d; j++)
          this->m_basis[i][j] = this->m_modulo * (i == j);
-   this->setNegativeNorm();
+   // this->setNegativeNorm();
 }
 
 //============================================================================
@@ -359,7 +358,7 @@ void Rank1Lattice<Int, Real>::buildDualBasis(int64_t d) {
       for (j = 1; j < d; j++)
          this->m_dualbasis[i][j] = (i == j);
    }
-   this->setDualNegativeNorm();
+   // this->setDualNegativeNorm();
 }
 
 //============================================================================

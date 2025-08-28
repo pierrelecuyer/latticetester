@@ -3,8 +3,10 @@ Types: Int = NTL::ZZ, Real = double
 =========================================================
 Program TestFOMSearch with m = 1099511627791
 Norm type: L2
-Total number of projections with t:  446
-Total number of projections with t0: 305
+Vector t = [24 64 16 12 10]
+Total number of projections with t:  478
+Vector t0 = [6 64 16 12]
+Total number of projections with t0: 335
 
 ==================================
 FOM experiments in primal lattices 
@@ -13,112 +15,112 @@ FOM experiments in primal lattices
 1. BKZ + BB  Discard: false,  from List: false
 Number of multipliers a examined: 1000
 Number retained: 3
-Running Time in seconds: 8.30528
+Running Time in seconds: 8.39733
 
 Best 3 multipliers `a` found, and their FOMs:
-  315661629133, 0.241259
   971774789182, 0.233459
-  413866867400, 0.215464
+  196316975508, 0.21016
+  896091630760, 0.190414
 
 --------------------------------------
 2. BKZ + BB.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 7.4937
+Running Time in seconds: 6.6111
 
 Best 3 multipliers `a` found, and their FOMs:
-  918927574849, 0.264833
-  1089166524987, 0.259433
-  242005322085, 0.255688
+  205016098870, 0.244236
+  610039476260, 0.24007
+  971774789182, 0.233459
 
 --------------------------------------
-2 bis. BKZ + BB, with proj = lat.  Discard: true,  from List: false
+2'. BKZ + BB, with proj = lat.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 7.45615
+Running Time in seconds: 6.70235
 
 Best 3 multipliers `a` found, and their FOMs:
-  918927574849, 0.264833
-  1089166524987, 0.259433
-  242005322085, 0.255688
+  205016098870, 0.244236
+  610039476260, 0.24007
+  971774789182, 0.233459
 
 --------------------------------------
 3. LLL only.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 5.44752
+Running Time in seconds: 4.86856
 
 Best 3 multipliers `a` found, and their FOMs:
-  918927574849, 0.264833
-  1089166524987, 0.259433
-  242005322085, 0.255688
+  205016098870, 0.244236
+  610039476260, 0.24007
+  971774789182, 0.233459
 
 --------------------------------------
 4a. LLL only, stage 1, with vector t.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 50
-Running Time in seconds: 9.31555
+Running Time in seconds: 7.992
 
 --------------------------------------
 4b. LLL + BB, stage 2.  Discard: true,  from List: true
 Number of multipliers a examined: 50
 Number retained: 3
-Running Time in seconds: 0.038833
+Running Time in seconds: 0.042963
 
 Best 3 multipliers `a` found, and their FOMs:
-  918927574849, 0.264833
-  1089166524987, 0.259433
-  242005322085, 0.255688
+  205016098870, 0.244236
+  610039476260, 0.24007
+  971774789182, 0.233459
 
 --------------------------------------
 5a. LLL only, stage 1 with vector t0.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 50
-Running Time in seconds: 6.5132
+Running Time in seconds: 5.73719
 
 --------------------------------------
 5b. LLL + BB, stage 2.  Discard: true,  from List: true
 Number of multipliers a examined: 50
 Number retained: 3
-Running Time in seconds: 0.048484
+Running Time in seconds: 0.067785
 
 Best 3 multipliers `a` found, and their FOMs:
-  918927574849, 0.264833
-  1089166524987, 0.259433
-  242005322085, 0.255688
+  205016098870, 0.244236
+  610039476260, 0.24007
+  971774789182, 0.233459
 
 --------------------------------------
 6. BKZ + BB, only non succ.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 4.356
+Running Time in seconds: 3.54856
 
 Best 3 multipliers `a` found, and their FOMs:
-  918927574849, 0.264833
-  1089166524987, 0.259433
-  242005322085, 0.255688
+  205016098870, 0.244236
+  610039476260, 0.24007
+  971774789182, 0.233459
 
 --------------------------------------
 7. LLL only, only non succ.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 3.17375
+Running Time in seconds: 2.61829
 
 Best 3 multipliers `a` found, and their FOMs:
-  918927574849, 0.264833
-  1089166524987, 0.259433
-  242005322085, 0.255688
+  205016098870, 0.244236
+  610039476260, 0.24007
+  971774789182, 0.233459
 
 --------------------------------------
-8. LLL only, only non succ, with proj = lat.  Discard: true,  from List: false
+7'. LLL only, only non succ, with proj = lat.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 3.17727
+Running Time in seconds: 2.61734
 
 Best 3 multipliers `a` found, and their FOMs:
-  918927574849, 0.264833
-  1089166524987, 0.259433
-  242005322085, 0.255688
+  205016098870, 0.244236
+  610039476260, 0.24007
+  971774789182, 0.233459
 
 ==================================
 FOM experiments in dual lattices 
@@ -127,120 +129,122 @@ FOM experiments in dual lattices
 1. BKZ + BB  Discard: false,  from List: false
 Number of multipliers a examined: 1000
 Number retained: 3
-Running Time in seconds: 6.22166
+Running Time in seconds: 6.27511
 
 Best 3 multipliers `a` found, and their FOMs:
-  772303778413, 0.223998
-  1005828199026, 0.211894
-  220160789285, 0.208582
+  847599096686, 0.196615
+  211064359948, 0.196244
+  470575592282, 0.195213
 
 --------------------------------------
 2. BKZ + BB.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 6.16408
+Running Time in seconds: 5.60592
 
 Best 3 multipliers `a` found, and their FOMs:
-  452005645564, 0.269388
-  107648311535, 0.267524
-  353522122454, 0.25459
+  728999740898, 0.244919
+  327380726433, 0.237775
+  365585266176, 0.230093
 
 --------------------------------------
-2 bis. BKZ + BB, with proj = lat.  Discard: true,  from List: false
+2'. BKZ + BB, with proj = lat.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 6.22542
+Running Time in seconds: 5.67751
 
 Best 3 multipliers `a` found, and their FOMs:
-  452005645564, 0.269388
-  107648311535, 0.267524
-  353522122454, 0.25459
+  728999740898, 0.244919
+  327380726433, 0.237775
+  365585266176, 0.230093
 
 --------------------------------------
 3. LLL only.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 4.36964
+Running Time in seconds: 4.02501
 
 Best 3 multipliers `a` found, and their FOMs:
-  452005645564, 0.269388
-  107648311535, 0.267524
-  353522122454, 0.25459
+  728999740898, 0.244919
+  327380726433, 0.237775
+  365585266176, 0.230093
 
 --------------------------------------
 4a. LLL only, stage 1, with vector t.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 50
-Running Time in seconds: 7.13311
+Running Time in seconds: 6.27509
 
 --------------------------------------
 4b. LLL + BB, stage 2.  Discard: true,  from List: true
 Number of multipliers a examined: 50
 Number retained: 3
-Running Time in seconds: 0.030392
+Running Time in seconds: 0.040279
 
 Best 3 multipliers `a` found, and their FOMs:
-  452005645564, 0.269388
-  107648311535, 0.267524
-  353522122454, 0.25459
+  728999740898, 0.244919
+  327380726433, 0.237775
+  365585266176, 0.230093
 
 --------------------------------------
 5a. LLL only, stage 1 with vector t0.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 50
-Running Time in seconds: 5.51915
+Running Time in seconds: 4.84765
 
 --------------------------------------
 5b. LLL + BB, stage 2.  Discard: true,  from List: true
 Number of multipliers a examined: 50
 Number retained: 3
-Running Time in seconds: 0.040224
+Running Time in seconds: 0.047297
 
 Best 3 multipliers `a` found, and their FOMs:
-  452005645564, 0.269388
-  107648311535, 0.267524
-  353522122454, 0.25459
+  728999740898, 0.244919
+  327380726433, 0.237775
+  365585266176, 0.230093
 
 --------------------------------------
 6. BKZ + BB, only non succ.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 4.07891
+Running Time in seconds: 3.5028
 
 Best 3 multipliers `a` found, and their FOMs:
-  452005645564, 0.269388
-  107648311535, 0.267524
-  353522122454, 0.25459
+  728999740898, 0.244919
+  327380726433, 0.237775
+  365585266176, 0.230093
 
 --------------------------------------
 7. LLL only, only non succ.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 2.95787
+Running Time in seconds: 2.56962
 
 Best 3 multipliers `a` found, and their FOMs:
-  452005645564, 0.269388
-  107648311535, 0.267524
-  353522122454, 0.25459
+  728999740898, 0.244919
+  327380726433, 0.237775
+  365585266176, 0.230093
 
 --------------------------------------
-8. LLL only, only non succ, with proj = lat.  Discard: true,  from List: false
+7'. LLL only, only non succ, with proj = lat.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 2.95782
+Running Time in seconds: 2.57058
 
 Best 3 multipliers `a` found, and their FOMs:
-  452005645564, 0.269388
-  107648311535, 0.267524
-  353522122454, 0.25459
+  728999740898, 0.244919
+  327380726433, 0.237775
+  365585266176, 0.230093
 
 ***     DONE     ***
 
 =========================================================
 Program TestFOMSearch with m = 1099511627791
 Norm type: L1
-Total number of projections with t:  54
-Total number of projections with t0: 50
+Vector t = [12 64 8 6 5]
+Total number of projections with t:  102
+Vector t0 = [6 64 8 6]
+Total number of projections with t0: 96
 
 ==================================
 FOM experiments in primal lattices 
@@ -249,112 +253,112 @@ FOM experiments in primal lattices
 1. BKZ + BB  Discard: false,  from List: false
 Number of multipliers a examined: 1000
 Number retained: 3
-Running Time in seconds: 561.281
+Running Time in seconds: 568.274
 
 Best 3 multipliers `a` found, and their FOMs:
-  399450937967, 0.354632
-  182815190781, 0.323092
-  113816658047, 0.306782
+  1078308853597, 0.242476
+  1013555717205, 0.224149
+  80085906043, 0.217217
 
 --------------------------------------
 2. BKZ + BB.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 28.576
+Running Time in seconds: 33.4676
 
 Best 3 multipliers `a` found, and their FOMs:
-  893774817428, 0.37854
-  473774920134, 0.371557
-  98649027740, 0.366513
+  149613909046, 0.312387
+  739601306150, 0.30702
+  404526173392, 0.306972
 
 --------------------------------------
-2 bis. BKZ + BB, with proj = lat.  Discard: true,  from List: false
+2'. BKZ + BB, with proj = lat.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 28.5285
+Running Time in seconds: 33.4804
 
 Best 3 multipliers `a` found, and their FOMs:
-  893774817428, 0.37854
-  473774920134, 0.371557
-  98649027740, 0.366513
+  149613909046, 0.312387
+  739601306150, 0.30702
+  404526173392, 0.306972
 
 --------------------------------------
 3. LLL only.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 3.0753
+Running Time in seconds: 3.56035
 
 Best 3 multipliers `a` found, and their FOMs:
-  893774817428, 0.37854
-  473774920134, 0.371557
-  98649027740, 0.366513
+  149613909046, 0.312387
+  739601306150, 0.30702
+  404526173392, 0.306972
 
 --------------------------------------
 4a. LLL only, stage 1, with vector t.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 20
-Running Time in seconds: 3.29596
+Running Time in seconds: 3.86501
 
 --------------------------------------
 4b. LLL + BB, stage 2.  Discard: true,  from List: true
 Number of multipliers a examined: 20
 Number retained: 3
-Running Time in seconds: 1.80666
+Running Time in seconds: 1.27607
 
 Best 3 multipliers `a` found, and their FOMs:
-  893774817428, 0.37854
-  473774920134, 0.371557
-  98649027740, 0.366513
+  149613909046, 0.312387
+  739601306150, 0.30702
+  404526173392, 0.306972
 
 --------------------------------------
 5a. LLL only, stage 1 with vector t0.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 20
-Running Time in seconds: 2.45869
+Running Time in seconds: 3.05233
 
 --------------------------------------
 5b. LLL + BB, stage 2.  Discard: true,  from List: true
 Number of multipliers a examined: 20
 Number retained: 3
-Running Time in seconds: 2.3311
+Running Time in seconds: 1.2732
 
 Best 3 multipliers `a` found, and their FOMs:
-  893774817428, 0.37854
-  473774920134, 0.371557
-  98649027740, 0.366513
+  149613909046, 0.312387
+  739601306150, 0.30702
+  404526173392, 0.306972
 
 --------------------------------------
 6. BKZ + BB, only non succ.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 1.17898
+Running Time in seconds: 2.023
 
 Best 3 multipliers `a` found, and their FOMs:
-  473774920134, 0.388023
-  459735993627, 0.380207
-  893774817428, 0.37854
+  149613909046, 0.312387
+  739601306150, 0.30702
+  404526173392, 0.306972
 
 --------------------------------------
 7. LLL only, only non succ.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 0.788018
+Running Time in seconds: 1.38377
 
 Best 3 multipliers `a` found, and their FOMs:
-  473774920134, 0.392551
-  459735993627, 0.380207
-  893774817428, 0.37854
+  149613909046, 0.312387
+  739601306150, 0.30702
+  404526173392, 0.306972
 
 --------------------------------------
-8. LLL only, only non succ, with proj = lat.  Discard: true,  from List: false
+7'. LLL only, only non succ, with proj = lat.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 0.790523
+Running Time in seconds: 1.39896
 
 Best 3 multipliers `a` found, and their FOMs:
-  473774920134, 0.392551
-  459735993627, 0.380207
-  893774817428, 0.37854
+  149613909046, 0.312387
+  739601306150, 0.30702
+  404526173392, 0.306972
 
 ==================================
 FOM experiments in dual lattices 
@@ -363,111 +367,111 @@ FOM experiments in dual lattices
 1. BKZ + BB  Discard: false,  from List: false
 Number of multipliers a examined: 1000
 Number retained: 3
-Running Time in seconds: 545.729
+Running Time in seconds: 542.612
 
 Best 3 multipliers `a` found, and their FOMs:
-  451314873491, 0.348062
-  182815190781, 0.346219
-  178647025976, 0.330939
+  857901435329, 0.234897
+  135541956334, 0.230048
+  1044039895847, 0.223538
 
 --------------------------------------
 2. BKZ + BB.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 25.118
+Running Time in seconds: 28.4009
 
 Best 3 multipliers `a` found, and their FOMs:
-  878116461874, 0.377746
-  577626986586, 0.375141
-  657702149524, 0.371948
+  574505091240, 0.303645
+  827087580236, 0.285447
+  458614882408, 0.284415
 
 --------------------------------------
-2 bis. BKZ + BB, with proj = lat.  Discard: true,  from List: false
+2'. BKZ + BB, with proj = lat.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 25.1051
+Running Time in seconds: 28.7714
 
 Best 3 multipliers `a` found, and their FOMs:
-  878116461874, 0.377746
-  577626986586, 0.375141
-  657702149524, 0.371948
+  574505091240, 0.303645
+  827087580236, 0.285447
+  458614882408, 0.284415
 
 --------------------------------------
 3. LLL only.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 2.25826
+Running Time in seconds: 2.8574
 
 Best 3 multipliers `a` found, and their FOMs:
-  878116461874, 0.377746
-  577626986586, 0.375141
-  657702149524, 0.371948
+  574505091240, 0.303645
+  464380231974, 0.292343
+  827087580236, 0.285447
 
 --------------------------------------
 4a. LLL only, stage 1, with vector t.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 20
-Running Time in seconds: 2.41778
+Running Time in seconds: 3.14929
 
 --------------------------------------
 4b. LLL + BB, stage 2.  Discard: true,  from List: true
 Number of multipliers a examined: 20
 Number retained: 3
-Running Time in seconds: 0.579561
+Running Time in seconds: 1.42027
 
 Best 3 multipliers `a` found, and their FOMs:
-  878116461874, 0.377746
-  577626986586, 0.375141
-  657702149524, 0.371948
+  574505091240, 0.303645
+  827087580236, 0.285447
+  458614882408, 0.284415
 
 --------------------------------------
 5a. LLL only, stage 1 with vector t0.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 20
-Running Time in seconds: 1.93518
+Running Time in seconds: 2.70801
 
 --------------------------------------
 5b. LLL + BB, stage 2.  Discard: true,  from List: true
 Number of multipliers a examined: 20
 Number retained: 3
-Running Time in seconds: 0.579675
+Running Time in seconds: 1.44248
 
 Best 3 multipliers `a` found, and their FOMs:
-  878116461874, 0.377746
-  577626986586, 0.375141
-  657702149524, 0.371948
+  574505091240, 0.303645
+  827087580236, 0.285447
+  458614882408, 0.284415
 
 --------------------------------------
 6. BKZ + BB, only non succ.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 1.15366
+Running Time in seconds: 2.07103
 
 Best 3 multipliers `a` found, and their FOMs:
-  878116461874, 0.377746
-  577626986586, 0.375141
-  657702149524, 0.374809
+  574505091240, 0.303645
+  827087580236, 0.285447
+  458614882408, 0.284415
 
 --------------------------------------
 7. LLL only, only non succ.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 0.763446
+Running Time in seconds: 1.39113
 
 Best 3 multipliers `a` found, and their FOMs:
-  878116461874, 0.377746
-  577626986586, 0.375141
-  657702149524, 0.374809
+  574505091240, 0.303645
+  464380231974, 0.292343
+  827087580236, 0.285447
 
 --------------------------------------
-8. LLL only, only non succ, with proj = lat.  Discard: true,  from List: false
+7'. LLL only, only non succ, with proj = lat.  Discard: true,  from List: false
 Number of multipliers a examined: 100000
 Number retained: 3
-Running Time in seconds: 0.764039
+Running Time in seconds: 1.39721
 
 Best 3 multipliers `a` found, and their FOMs:
-  878116461874, 0.377746
-  577626986586, 0.375141
-  657702149524, 0.374809
+  574505091240, 0.303645
+  464380231974, 0.292343
+  827087580236, 0.285447
 
 ***     DONE     ***

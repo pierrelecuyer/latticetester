@@ -45,12 +45,13 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
       Int inList[], int64_t numMult, Int outList[], int64_t numBest, bool verbose = false,
       std::string strMethod = " ") {
    std::cout << "\n--------------------------------------\n";
-   std::cout << strMethod << std::boolalpha << "  Discard: " << earlyDiscard
-             << ",  from List: " << fromList << "\n";
+   std::cout << "Function findBestFOMs with m = " << m << "\n";
+   std::cout << std::boolalpha << "Discard: " << earlyDiscard << ",  from List: " << fromList;
+   std::cout << ",  method: " << strMethod << "\n";
    std::cout << "Number of multipliers a examined: " << numMult << "\n";
    std::cout << "Number retained: " << numBest << "\n";
-   Int a = a0;
-   double merit = 1.0;
+   Int a = Int(1);  // changed
+   double merit;
    fom->setLowBound(0.0);
    double bestFoms[numBest];  // Array to store the best FoM values, in decreasing order.
    for (int64_t i = 0; i < numBest; i++) {
@@ -65,8 +66,14 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
       if (fromList) a = inList[j];
       else a = a * a0 % m;
       lat.seta(a);
-      // Here we compute the FOM for this `a`.  ***
-      merit = fom->computeMerit(lat, proj);
+      merit = fom->computeMerit(lat, proj);  // Here we compute the FOM for this `a`.
+      if (a == 315393) {
+         cout << "Num projections: " << fom->countProjections() << "\n";
+         cout << "findBestFOMs, a = " << a << ", merit = " << merit << "\n";
+         lat.seta(a);
+         merit = fom->computeMerit(lat, proj);  // Here we compute the FOM for this `a`.
+         cout << "findBestFOMs, a = " << a << ", merit = " << merit << "\n";
+      }
       // std::cout << "findBestFOMs, a = " << a << ", merit = " << merit << "\n";
       posComp = numBest - 1;  // The last index in the list.
       if (merit > bestFoms[posComp]) {
@@ -79,7 +86,7 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
          bestFoms[posComp] = merit;
          // If earlyDiscard, set the new lower bound to the current smallest FoM value in the list.
          // This value represents the FOM for the worst candidate still in the list.
-         if (earlyDiscard) fom->setLowBound(bestFoms[numBest - 1]);
+         if (earlyDiscard) fom->setLowBound(bestFoms[numBest-1]);  // ***  ERROR was here !!!!
       }
    }
    tmp = clock() - tmp;
@@ -108,114 +115,111 @@ static void findBestFOMs(const Int m, const Int a0, Rank1Lattice<Int, Real> &lat
  * vector t, with a restricted number of projections, to try speed up the screening.
  */
 template<typename Int, typename Real>
-static void compareSearchMethods(NormType norm, FigureOfMeritM<Int, Real> *fom, const Int m,
-      const Int a0, const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
+static void compareSearchMethods(NormType norm, FigureOfMeritM<Int, Real> *fom, const Int m, const Int a0,
+      const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
       int64_t numMultShort, int64_t numBest0, int64_t numBest) {
-   int64_t maxdim = max(t[0], t.length());  // Maximum dimension of the lattice basis.
-   int64_t maxdimaa = max(t[0], t[1]);      // Maximum dimension of the generating vector.
-   Rank1Lattice<Int, Real> lat(m, maxdim, maxdimaa, norm); // The current lattice for which the FoM is calculated.
+   int64_t maxdim = max(t[0], t[1]);  // Maximum dimension of the lattice
+   Rank1Lattice<Int, Real> lat(m, maxdim, norm);  // The current lattice for which the FoM is calculated.
    IntLattice<Int, Real> proj(m, t.length(), norm); // Lattice used for projections.
-
    Int emptyList[0];
    Int inList[numBest0];
    Int outList[numBest0];
-   fom->setTVector(t, true);
-   //fom->setLLL(0.0);      // Default values.
-   //fom->setBKZ(0.99999);
-   //fom->setBB(true);
+   fom->setTVector (t, true);
+   fom->setLLL(0.0);
+   fom->setBKZ(0.99999);
+   fom->setBB(true);
 
    // 1. Full computation (no discard), with default BKZ + BB.
-   //findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
-   //      true, "1. BKZ + BB");
+//   findBestFOMs(m, a0, lat, proj, fom, false, false, emptyList, numMultShort, outList, numBest,
+//         true, "1. BKZ + BB");
 
    // 2. Early discard, with BKZ + BB.
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
-         "2. BKZ + BB.");
+         "2. BKZ + BB");
 
-   // 2'. Early discard, with BKZ + BB and proj = lat.
-   findBestFOMs(m, a0, lat, lat, fom, true, false, emptyList, numMultLong, outList, numBest, true,
-         "2'. BKZ + BB, with proj = lat.");
+   Int a = Int(315393);
+   lat.seta(a);   // Test the bizarre value.
+   double merit = fom->computeMerit(lat, proj);
+   cout << "compareSearch, a = 315393, merit = " << merit << "\n";
 
    // 3. Early discard, approximation with LLL only.
    fom->setLLL(0.99999);
    fom->setBKZ(0.0);
    fom->setBB(false);
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
-         "3. LLL only.");
+         "3. LLL only");
+
+   lat.seta(a);   // Test the bizarre value.
+   merit = fom->computeMerit(lat, proj);
+   cout << "compareSearch, a = 315393, merit with LLL only = " << merit << "\n";
 
    // 4. Early discard, two stages, retain numBest0 in inList, with LLL only in first stage.
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, inList, numBest0, false,
-         "4a. LLL only, stage 1, with vector t.");
+         "4. LLL only, stage 1, with vector t");
+
    // We use LLL + BB on second stage, only for the numBest0 retained.
+   fom->setTVector (t, true);
+   fom->setLLL(0.99999);
+   fom->setBKZ(0.0);
    fom->setBB(true);
    findBestFOMs(m, a0, lat, proj, fom, true, true, inList, numBest0, outList, numBest, true,
-         "4b. LLL + BB, stage 2.");
+         "4. LLL + BB, stage 2");
 
+   lat.seta(a);   // Test the bizarre value.
+   merit = fom->computeMerit(lat, proj);
+   cout << "compareSearch, a = 315393, merit = " << merit << "\n";
+
+   fom->setTVector (t, true);
+   fom->setLLL(0.0);
+   fom->setBKZ(0.99999);
+   fom->setBB(true);
+
+   lat.seta(a);   // Test the bizarre value.
+   merit = fom->computeMerit(lat, proj);
+   cout << "compareSearch, a = 315393, merit = " << merit << "\n";
+
+
+   /*
    // 5. Early discard, two stages, retain numBest0 in inList, with LLL only and vector `t0` in first stage.
    fom->setTVector(t0, true);
    fom->setBB(false);
    findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, inList, numBest0, false,
-         "5a. LLL only, stage 1 with vector t0.");
+         "5. LLL only, stage 1 with vector t0");
    // We use LLL + BB on second stage, only for the numBest0 retained.
-   fom->setTVector(t, true);
-   fom->setBB(true);
+   fom->setTVector(t, true);   fom->setBB(true);
    findBestFOMs(m, a0, lat, proj, fom, true, true, inList, numBest0, outList, numBest, true,
-         "5b. LLL + BB, stage 2.");
-
-   // 6. Early discard, with BKZ + BB, only projections over non-succ. coordinates.
-   NTL::Vec<int64_t> t00 = t;  t00[0] = 0;  // Skip computeMeritSucc.
-   fom->setTVector(t00, true);
-   fom->setLLL(0.0);      // Default values.
-   fom->setBKZ(0.99999);
-   fom->setBB(true);
-   findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
-         "6. BKZ + BB, only non succ.");
-
-   // 7. Early discard, only LLL, only non-succ.
-   fom->setLLL(0.99999);
-   fom->setBKZ(0.0);
-   fom->setBB(false);
-   findBestFOMs(m, a0, lat, proj, fom, true, false, emptyList, numMultLong, outList, numBest, true,
-         "7. LLL only, only non succ.");
-
-   // 7'. Early discard, only LLL, only non-succ, with proj = lat.
-   findBestFOMs(m, a0, lat, lat, fom, true, false, emptyList, numMultLong, outList, numBest, true,
-         "7'. LLL only, only non succ, with proj = lat.");
+         "5. LLL + BB, stage 2");
+*/
 }
 
 template<typename Int, typename Real>
-static void testPrimalDual(NormType norm, const Int m, const Int a0, const NTL::Vec<int64_t> t,
-      const NTL::Vec<int64_t> t0, int64_t numMultLong, int64_t numMultShort, int64_t numBest0,
-      int64_t numBest) {
-   int64_t maxdim = max(t[0], t.length());  // Maximum dimension of a lattice basis.
+static void testPrimalDual (NormType norm, const Int m, const Int a0,
+      const NTL::Vec<int64_t> t, const NTL::Vec<int64_t> t0, int64_t numMultLong,
+      int64_t numMultShort, int64_t numBest0, int64_t numBest) {
    WeightsUniform weights(1.0);
+   int64_t maxdim = max(t[0], t[1]);  // Maximum dimension of the lattice
    NormaBestLat normaPrimal(log(m), 1, maxdim, norm);  // Factors computed for primal. 
    NormaBestLat normaDual(-log(m), 1, maxdim, norm);  // Factors computed for dual. 
    ReducerBB<Int, Real> red(maxdim);   // Single ReducerBB with internal lattice `lat`.
    FigureOfMeritM<Int, Real> fomPrimal(t, weights, normaPrimal, &red, true); // includeFirst = true.
    FigureOfMeritDualM<Int, Real> fomDual(t, weights, normaDual, &red, true); // FoM for dual lattice.
-   // fomDual.setVerbosity(3);
 
    // We do first the primal, then the dual.
    std::cout << "\n=========================================================\n";
-   std::cout << "Program TestFOMSearch with m = " << m << "\n";
    std::cout << "Norm type: L" << norm << "\n";
-   std::cout << "Vector t = " << t << "\n";
    std::cout << "Total number of projections with t:  " << fomPrimal.countProjections() << "\n";
-   fomPrimal.setTVector(t0, true);
-   std::cout << "Vector t0 = " << t0 << "\n";
+   fomPrimal.setTVector (t0, true);
    std::cout << "Total number of projections with t0: " << fomPrimal.countProjections() << "\n";
-   fomPrimal.setTVector(t, true);
+   fomPrimal.setTVector (t, true);
 
-   std::cout << "\n==================================\n";
    std::cout << "FOM experiments in primal lattices \n";
-   compareSearchMethods<Int, Real>(norm, &fomPrimal, m, a0, t, t0, numMultLong, numMultShort,
-         numBest0, numBest);
+   compareSearchMethods<Int, Real>(norm, &fomPrimal, m, a0, t, t0, numMultLong, numMultShort, numBest0,
+         numBest);
 
    std::cout << "\n==================================\n";
    std::cout << "FOM experiments in dual lattices \n";
-   compareSearchMethods<Int, Real>(norm, &fomDual, m, a0, t, t0, numMultLong, numMultShort,
-         numBest0, numBest);
+//   compareSearchMethods<Int, Real>(norm, &fomDual, m, a0, t, t0, numMultLong, numMultShort, numBest0,
+//         numBest);
    std::cout << "\n***     DONE     ***\n";
 }
 
@@ -225,41 +229,40 @@ int main() {
    std::cout << "Types: Int = NTL::ZZ, Real = double \n";
 
    // For a different m, change the `m` below and recompile.
-   Int m(1048573); // Prime modulus near 2^{20}
-   // Int m(1099511627791);  // Prime modulus near 2^{40}
-   Int a0(91);     // This a0 is a primitive element mod m=1048573.
+   NTL::ZZ m(1048573); // Prime modulus near 2^{20}
+   // NTL::ZZ m(1099511627791);  // Prime modulus near 2^{40}
+   // NTL::ZZ a0(91);     // This a0 is a primitive element mod m=1048573.
+   Int a0(315393);
 
    // We first do the Euclidean norm.
-   NTL::Vec < int64_t > t; // The t-vector for the FOM, with 446 projections
+   NTL::Vec<int64_t> t; // The t-vector for the FOM, with 446 projections
    t.SetLength(5);
-   t[0] = 32;    // This is for the testFOMSearch20-32-L2.res file.
-   // t[0] = 24;    // We look at successive coordinates in up to t[0] dimensions.
-   t[1] = 64;    // For pairs.
-   t[2] = 16;    // For triples.
+   t[0] = 24;    // We look at successive coordinates in up to t[0] dimensions.
+   t[1] = 32;    // For pairs, triples, etc.
+   t[2] = 16;
    t[3] = 12;
    t[4] = 10;
-   NTL::Vec < int64_t > t0; // A reduced t-vector for the FOM, with 305 projections
+   NTL::Vec<int64_t> t0; // A reduced t-vector for the FOM, with 305 projections
    t0.SetLength(4);
-   t0[0] = 6;
-   t0[1] = 64;
+   t0[0] = 8;
+   t0[1] = 32;
    t0[2] = 16;
    t0[3] = 12;
-   //testPrimalDual<Int, Real>(L2NORM, m, a0, t, t0, 100000, 1000, 50, 3);
-   // testPrimalDual<Int, Real>(L2NORM, m, a0, t, t0, numMultLong, numMultShort, numBest0, numBest);
+   testPrimalDual<Int, Real>(L2NORM, m, a0, t, t0, 100000, 10, 3, 3);
+   // testPrimalDualInt, Real>(L2NORM, m, a0, t, t0, numMultLong, numMultShort, numBest0, numBest);
 
-   // Then we try the L1 norm.  // 102 projections
-   t[0] = 16;  // This is for the testFOMSearch20-16-L1.res file.
-   // t[0] = 12;  // We look at successive coordinates in up to t[0] dimensions.  // 7
-   t[1] = 64;  // For pairs, 63
-   t[2] = 8;   // For triples, 21
+   // Then we try the L1 norm.  // 54 projections
+   t[0] = 12;  // We look at successive coordinates in up to t[0] dimensions.  // 7
+   t[1] = 16;  // For pairs, triples, etc.   // 15
+   t[2] = 8;   // 21
    t[3] = 6;   // 10
    t[4] = 5;   // 1
-   // The reduced vector has 96 projections, we remove the 6 having largest dimension.
-   t0[0] = 6;  // 2
-   t0[1] = 64; // 63
+   // The reduced vector has 50 projections, we remove the 4 having largest dimension.
+   t0[0] = 8;  // 4
+   t0[1] = 16; // 15
    t0[2] = 8;  // 21
    t0[3] = 6;  // 10
    // For the large m, comment-out the following line. *****
-   testPrimalDual<Int, Real>(L1NORM, m, a0, t, t0, 100000, 1000, 20, 3);
+//   testPrimalDual<Int, Real>(L1NORM, m, a0, t, t0, 100000, 1000, 20, 3);
    return 0;
 }
