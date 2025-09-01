@@ -439,7 +439,6 @@ void Rank1Lattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLat
    // It *does not* assume that a primal basis for `this` has been computed before.
    long i, j;
    long d = proj.size();     // Number of coordinates in the projection.
-   // projLattice.setDim(d);
    projLattice.setDimDual(d);
    IntMat &dualBasis = projLattice.getDualBasis();
    dualBasis[0][0] = this->m_modulo;

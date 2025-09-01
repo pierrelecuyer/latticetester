@@ -91,6 +91,7 @@ public:
 	/**
 	 * Same as `computeMeritSucc` in parent class, but for the m-dual lattice.
 	 */
+   double computeMeritSucc(IntLatticeExt<Int, Real> &lat, int64_t lowDim, int64_t highDim, double minmerit = DBL_MAX);
 	double computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit = DBL_MAX) override;
 
    /**
@@ -98,6 +99,7 @@ public:
     * the dimension is increased, instead of using `incDimBasis`.
     * This approach is inefficient and this function is for experimentation only.
     */
+   double computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat, int64_t lowDim, int64_t highDim, double minmerit = DBL_MAX);
    double computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat, double minmerit = DBL_MAX);
 
    /**
@@ -118,23 +120,23 @@ FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::Vec<int64_t> &t,
 
 //=========================================================================
 template<typename Int, typename Real>
-double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
-      IntLatticeExt<Int, Real> &lat, double minmerit) {
+double FigureOfMeritDualM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
+       int64_t lowDim, int64_t highDim, double minmerit) {
    this->m_minMerit = minmerit;
-   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
-   if (lower_dim > this->m_t[0]) return this->m_minMerit;  // No succ projection to look at, t[0] too small.
-   Coordinates coord;
+   if (lowDim < highDim) return minmerit;  // No succ projection to look at.
    this->m_clock = clock();
-   if (this->m_verbose > 2)
+   if (this->m_verbose > 2) {
       std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
-   for (int64_t j = 1; j <= lower_dim; j++)
+   }
+   Coordinates coord;
+   for (int64_t j = 1; j <= lowDim; j++)
       coord.insert(j);
-   lat.buildDualBasis(lower_dim);
+   lat.buildDualBasis(lowDim);
    lat.dualize();
    this->computeMeritOneProj(lat, coord, this->m_minMerit);
    lat.dualize();
    if (this->m_minMerit < this->m_lowbound) return 0;
-   for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+   for (int64_t j = lowDim + 1; j <= highDim; j++) {
       coord.insert(j);
       // std::cout << "inDimDualBasis with j = " << j << ", dim = " << lat.getDim() << ", maxdim = " << lat.getMaxDim() << "\n";
       lat.incDimDualBasis();
@@ -148,8 +150,16 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(
 
 //=========================================================================
 template<typename Int, typename Real>
+double FigureOfMeritDualM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit) {
+   int64_t lowDim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
+   return this->computeMeritSucc(lat, lowDim, this->m_t[0], minmerit);
+}
+
+
+//=========================================================================
+template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritSuccRebuild(
-		IntLatticeExt<Int, Real> &lat, double minmerit) {
+		IntLatticeExt<Int, Real> &lat, int64_t lowDim, int64_t highDim, double minmerit) {
    this->m_minMerit = minmerit;
    int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
    if (lower_dim > this->m_t[0]) return this->m_minMerit;  // No succ projection to look at, t[0] too small.
@@ -174,6 +184,14 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSuccRebuild(
 		if (this->m_minMerit <= this->m_lowbound)  return 0;
 	}
 	return this->m_minMerit;
+}
+
+
+//=========================================================================
+template<typename Int, typename Real>
+double FigureOfMeritDualM<Int, Real>::computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat, double minmerit) {
+   int64_t lowDim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
+   return computeMeritSuccRebuild(lat, lowDim, this->m_t[0], minmerit);
 }
 
 //=========================================================================

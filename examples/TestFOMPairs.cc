@@ -24,10 +24,10 @@
 #include "latticetester/Rank1Lattice.h"
 #include "latticetester/ReducerStatic.h"
 #include "latticetester/ReducerBB.h"
-#include "latticetester/FigureOfMeritM.h"
-#include "latticetester/FigureOfMeritDualM.h"
 #include "latticetester/CoordinateSets.h"
 #include "latticetester/WeightsUniform.h"
+#include "latticetester/FigureOfMeritM.h"
+#include "latticetester/FigureOfMeritDualM.h"
 
 using namespace LatticeTester;
 

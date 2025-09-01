@@ -248,7 +248,7 @@ int main() {
    t0[1] = 32;
    t0[2] = 16;
    t0[3] = 12;
-   testPrimalDual<Int, Real>(L2NORM, m, a0, t, t0, 100000, 10, 3, 3);
+//   testPrimalDual<Int, Real>(L2NORM, m, a0, t, t0, 100000, 10, 3, 3);
    // testPrimalDualInt, Real>(L2NORM, m, a0, t, t0, numMultLong, numMultShort, numBest0, numBest);
 
    // Then we try the L1 norm.  // 54 projections

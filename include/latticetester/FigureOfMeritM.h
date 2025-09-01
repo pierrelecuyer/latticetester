@@ -232,12 +232,17 @@ public:
          double minmerit = DBL_MAX);
 
    /**
-    * This function computes and returns the FOM only for the projections
-    * over sets of successive coordinates of the form
-    * {1, 2, ..., m_t.length()} to {1, 2, ..., m_t[0]}, and returns the minimum.
+    * This function computes and returns the FOM or the projections
+    * over sets of successive coordinates of the form `{lowDim, lowDim+1, ..., j}`
+    * for `j <= highDim`, and returns the minimum.
     * It uses `incDimBasis` to increase the dimension by 1 at each step.
     * It returns 0 if the computation was not completed for some reason.
     */
+   virtual double computeMeritSucc(IntLatticeExt<Int, Real> &lat, int64_t lowDim, int64_t highDim, double minmerit = DBL_MAX);
+
+   /**
+   * This version takes `lowDim = m_t.length()` and `highDim = m_t[0]}.
+   */
    virtual double computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit = DBL_MAX);
 
    /**
@@ -245,6 +250,7 @@ public:
     * the dimension is increased, instead of using `incDimBasis`.
     * This approach is inefficient and this function is for experimentation only.
     */
+   virtual double computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat, int64_t lowDim, int64_t highDim, double minmerit = DBL_MAX);
    virtual double computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat, double minmerit = DBL_MAX);
 
    /**
@@ -478,22 +484,21 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
 
 //=========================================================================
 template<typename Int, typename Real>
-double FigureOfMeritM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit) {
+double FigureOfMeritM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat, int64_t lowDim, int64_t highDim, double minmerit) {
    m_minMerit = minmerit;
-   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
-   if (lower_dim > this->m_t[0]) return m_minMerit;  // No succ projection to look at, t[0] too small.
+   if (lowDim < highDim) return m_minMerit;  // No succ projection to look at.
    m_clock = clock();
    if (m_verbose > 2) {
       std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
    }
    Coordinates coord;
-   for (int64_t j = 1; j <= lower_dim; j++)
+   for (int64_t j = 1; j <= lowDim; j++)
       coord.insert(j);
-   lat.buildBasis(lower_dim);
+   lat.buildBasis(lowDim);
    // The dimension of `lat` here is equal to the size of coord.
-   computeMeritOneProj(lat, coord, m_minMerit);   // This is the merit in d+1 dimensions.
+   computeMeritOneProj(lat, coord, m_minMerit);   // This is the merit in lowDim dimensions.
    if (m_minMerit < this->m_lowbound) return 0;
-   for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+   for (int64_t j = lowDim+ 1; j <= highDim; j++) {
       coord.insert(j);
       lat.incDimBasis();
       computeMeritOneProj(lat, coord, m_minMerit);
@@ -504,28 +509,42 @@ double FigureOfMeritM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat
 
 //=========================================================================
 template<typename Int, typename Real>
-double FigureOfMeritM<Int, Real>::computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat, double minmerit) {
+double FigureOfMeritM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat, double minmerit) {
+   int64_t lowDim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
+   return computeMeritSucc(lat, lowDim, this->m_t[0], minmerit);
+}
+
+//=========================================================================
+template<typename Int, typename Real>
+double FigureOfMeritM<Int, Real>::computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat,
+       int64_t lowDim, int64_t highDim, double minmerit) {
    m_minMerit = minmerit;
-   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
-   if (lower_dim > this->m_t[0]) return m_minMerit;  // No succ projection to look at, t[0] too small.
+   if (lowDim > highDim) return m_minMerit;  // No succ projection to look at.
    m_clock = clock();
    if (m_verbose > 2) {
       std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
    }
    Coordinates coord;
-   for (int64_t j = 1; j <= lower_dim; j++)
+   for (int64_t j = 1; j <= lowDim; j++)
       coord.insert(j);
-   lat.buildBasis(lower_dim);
+   lat.buildBasis(lowDim);
    // The dimension of `lat` here is equal to the size of coord.
    computeMeritOneProj(lat, coord, m_minMerit);
    if (m_minMerit < this->m_lowbound) return 0;
-   for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+   for (int64_t j = lowDim + 1; j <= highDim; j++) {
       coord.insert(j);
       lat.buildBasis(j);
       computeMeritOneProj(lat, coord, m_minMerit);
       if (m_minMerit < this->m_lowbound) return 0;
    }
    return m_minMerit;
+}
+
+//=========================================================================
+template<typename Int, typename Real>
+double FigureOfMeritM<Int, Real>::computeMeritSuccRebuild(IntLatticeExt<Int, Real> &lat, double minmerit) {
+   int64_t lowDim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
+   return computeMeritSuccRebuild(lat, lowDim, this->m_t[0], minmerit);
 }
 
 //=========================================================================

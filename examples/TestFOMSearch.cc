@@ -16,16 +16,16 @@
 #include <NTL/ZZ.h>
 #include <NTL/RR.h>
 
+#include "latticetester/BasisConstruction.h"
 #include "latticetester/IntLattice.h"
 #include "latticetester/Rank1Lattice.h"
-#include "latticetester/FigureOfMeritM.h"
-#include "latticetester/FigureOfMeritDualM.h"
 #include "latticetester/ReducerStatic.h"
 #include "latticetester/Weights.h"
 #include "latticetester/NormaBestLat.h"
 #include "latticetester/CoordinateSets.h"
 #include "latticetester/WeightsUniform.h"
-#include "latticetester/BasisConstruction.h"
+#include "latticetester/FigureOfMeritM.h"
+#include "latticetester/FigureOfMeritDualM.h"
 
 using namespace LatticeTester;
 
