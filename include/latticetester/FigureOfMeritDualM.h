@@ -123,7 +123,7 @@ template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> &lat,
        int64_t lowDim, int64_t highDim, double minmerit) {
    this->m_minMerit = minmerit;
-   if (lowDim < highDim) return minmerit;  // No succ projection to look at.
+   if (lowDim > highDim) return minmerit;  // No succ projection to look at.
    this->m_clock = clock();
    if (this->m_verbose > 2) {
       std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
@@ -161,21 +161,20 @@ template<typename Int, typename Real>
 double FigureOfMeritDualM<Int, Real>::computeMeritSuccRebuild(
 		IntLatticeExt<Int, Real> &lat, int64_t lowDim, int64_t highDim, double minmerit) {
    this->m_minMerit = minmerit;
-   int64_t lower_dim = static_cast<int64_t>(this->m_t.length()) + 1;  // We start in d+1 dimensions.
-   if (lower_dim > this->m_t[0]) return this->m_minMerit;  // No succ projection to look at, t[0] too small.
+   if (lowDim > highDim) return this->m_minMerit;  // No succ projection to look at, t[0] too small.
    Coordinates coord;
    this->m_clock = clock();
    if (this->m_verbose > 2) {
       std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
    }
-   for (int64_t j = 1; j <= lower_dim; j++)
+   for (int64_t j = 1; j <= lowDim; j++)
       coord.insert(j);
-   lat.buildDualBasis(lower_dim);
+   lat.buildDualBasis(lowDim);
    lat.dualize();
    this->computeMeritOneProj(lat, coord, this->m_minMerit);
    lat.dualize();
    if (this->m_minMerit < this->m_lowbound) return 0;
-   for (int64_t j = lower_dim + 1; j < this->m_t[0] + 1; j++) {
+   for (int64_t j = lowDim + 1; j <= highDim; j++) {
 		coord.insert(j);
 		lat.buildDualBasis(j);
 		lat.dualize();
