@@ -126,7 +126,7 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> 
    if (lowDim > highDim) return minmerit;  // No succ projection to look at.
    this->m_clock = clock();
    if (this->m_verbose > 2) {
-      std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
+      std::cout << "coordinates      sqlen          1/len        merit       minmerit    cumul sec \n";
    }
    Coordinates coord;
    for (int64_t j = 1; j <= lowDim; j++)
@@ -165,7 +165,7 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSuccRebuild(
    Coordinates coord;
    this->m_clock = clock();
    if (this->m_verbose > 2) {
-      std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
+      std::cout << "coordinates      sqlen          1/len        merit       minmerit    cumul sec \n";
    }
    for (int64_t j = 1; j <= lowDim; j++)
       coord.insert(j);
@@ -201,7 +201,7 @@ double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
    this->m_minMerit = minmerit;
 	Coordinates coord;
    if (this->m_verbose > 2) {
-      std::cout << "coordinates      sqlen         merit       minmerit    cumul sec \n";
+      std::cout << "coordinates      sqlen          1/len        merit       minmerit    cumul sec \n";
       this->m_clock = clock();
    }
 	for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end();
