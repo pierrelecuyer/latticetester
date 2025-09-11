@@ -161,20 +161,20 @@ public:
 
    /**
     * Builds a basis for the projection of this `Rank1Lattice` onto the coordinates
-    * in `proj` and puts it as the `m_basis` in `projLattice`.
+    * in `coordSet` and puts it as the `m_basis` in `projLattice`.
     * The construction is direct, just by selecting the rows and columns
-    * whose indices are in `proj`, and using the vector `aa`. See Section 5.4 of the guide.
+    * whose indices are in `coordSet`, and using the vector `aa`. See Section 5.4 of the guide.
     * The implementation is simpler and faster than the general one.
-    * The dimension `proj.size()` must not exceed the `maxDim` of `projLattice`.
+    * The dimension `coordSet.size()` must not exceed the `maxDim` of `projLattice`.
     * Note that `projLattice` is allowed to be the same as the current `IntLattice` object,
     * in which case the projection basis will be built into the current `m_basis`.
     */
-   void buildProjection(IntLattice<Int, Real> &projLattice, const Coordinates &proj) override;
+   void buildProjection(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet) override;
 
    /**
     * Similar to `buildProjection`, but builds a basis for the m-dual of the projection.
     */
-   void buildProjectionDual(IntLattice<Int, Real> &projLattice, const Coordinates &proj) override;
+   void buildProjectionDual(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet) override;
 
    /**
     * Returns the first `dim` components of the generating vector \f$\mathbf{a}\f$ as a string,
@@ -396,31 +396,31 @@ void Rank1Lattice<Int, Real>::incDimDualBasis() {
 
 //============================================================================
 template<typename Int, typename Real>
-void Rank1Lattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice, const Coordinates &proj) {
+void Rank1Lattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet) {
    // Builds only the primal basis for the projection.
    // We use the method described in the Lattice Tester guide, section 5.5.
    // It *does not* assume that a basis for `this` has been computed before.
    long i, j;
-   long d = proj.size();     // Number of coordinates in the projection.
+   long d = coordSet.size();     // Number of coordinates in the projection.
    projLattice.setDim(d);
    IntMat &basis = projLattice.getBasis();  // Reference to the projection basis.
 
    // We first compute the first row of the basis matrix.
-   bool case1 = m_aa[*proj.begin() - 1] == 1; // We have a_{i_1} = 1.
+   bool case1 = m_aa[*coordSet.begin() - 1] == 1; // We have a_{i_1} = 1.
    if (case1) {  // The easy (usual) case.
       j = 0;
-      for (auto it = proj.begin(); it != proj.end(); it++, j++)
+      for (auto it = coordSet.begin(); it != coordSet.end(); it++, j++)
          basis[0][j] = m_aa[*it - 1];
    } else {
       Int c1, b1, b2;   // c1 will be gcd(a_{i_1}, m). We should always have c1=1.
       // Recall:  XGCD (c1, b1, b2, a, m) does c1 = gcd(a, m) = a*b1 + m*b2.
-      NTL::XGCD(c1, b1, b2, m_aa[*proj.begin() - 1], this->m_modulo);
+      NTL::XGCD(c1, b1, b2, m_aa[*coordSet.begin() - 1], this->m_modulo);
       if (c1 > 1) myExit("Rank1Lattice::buildProjection: c1 > 1.");
       // We multiply the first row by b1 to recover case 1.
       basis[0][0] = 1;
-      auto it = proj.begin();
+      auto it = coordSet.begin();
       j = 1;
-      for (it++; it != proj.end(); it++, j++)
+      for (it++; it != coordSet.end(); it++, j++)
          basis[0][j] = (m_aa[*it - 1] * b1) % this->m_modulo;
    }
 
@@ -433,29 +433,29 @@ void Rank1Lattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice
 //============================================================================
 template<typename Int, typename Real>
 void Rank1Lattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLattice,
-      const Coordinates &proj) {
+      const Coordinates &coordSet) {
    // The dual basis is also computed directly, without using the primal.
    // We use the method described in the Lattice Tester guide.
    // It *does not* assume that a primal basis for `this` has been computed before.
    long i, j;
-   long d = proj.size();     // Number of coordinates in the projection.
+   long d = coordSet.size();     // Number of coordinates in the projection.
    projLattice.setDimDual(d);
    IntMat &dualBasis = projLattice.getDualBasis();
    dualBasis[0][0] = this->m_modulo;
    i = 1;
-   auto it = proj.begin();
+   auto it = coordSet.begin();
    // We first compute the first column of the m-dual basis.
-   bool case1 = m_aa[*proj.begin() - 1] == 1; // We have a_{i_1} = 1.
+   bool case1 = m_aa[*coordSet.begin() - 1] == 1; // We have a_{i_1} = 1.
    if (case1) {
-      for (it++; it != proj.end(); ++it, ++i)
+      for (it++; it != coordSet.end(); ++it, ++i)
          dualBasis[i][0] = m_aa[*it - 1]; // First column.
    } else {
       std::cout << "buildProjDual: What are we doing in Case 2? \n";
       Int c1, b1, b2; // c1 will be gcd(a_{i_1}, m). We should always have c1=1.
-      NTL::XGCD(c1, b1, b2, m_aa[*proj.begin() - 1], this->m_modulo);
+      NTL::XGCD(c1, b1, b2, m_aa[*coordSet.begin() - 1], this->m_modulo);
       if (c1 > 1) myExit("Rank1Lattice::buildProjection: c1 > 1.");
       // We multiply the first column by b1 to recover case 1.
-      for (it++; it != proj.end(); it++, i++)
+      for (it++; it != coordSet.end(); it++, i++)
          dualBasis[i][0] = -(m_aa[*it - 1] * b1 % this->m_modulo);
    }
    // We put the columns of the identity matrix in the other columns.

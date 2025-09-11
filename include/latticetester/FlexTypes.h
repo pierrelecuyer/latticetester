@@ -25,11 +25,18 @@
 #include <NTL/RR.h>
 #include <NTL/xdouble.h>
 #include <NTL/quad_float.h>
+#include "NTL/ZZ_p.h"
+#include "NTL/ZZ_pE.h"
+#include "NTL/ZZ_pX.h"
+#include "NTL/lzz_p.h"
+#include "NTL/lzz_pE.h"
+#include "NTL/lzz_pX.h"
 
 /**
  * \file FlexTypes.h
  *
- * Tools to select and print the choices of flexible types `Int` and `Real`.
+ * Tools to select and print the choices of flexible types `Int` and `Real`,
+ * and the corresponding integer types for arithmetic modulo `p`.
  *
  * There are five admissible combinations of types for `(Int, Real)`.
  * They are represented by the five codes given below.
@@ -38,9 +45,10 @@
  * at the very beginning of the file, *before* the present `FlexTypes.h` file is read.
  * See `BasisConstructionSmall.cc` for an example.
  *
- * Another (more flexible) way of specifying the flexible types
- * `(Int, Real)` is to pass the types we want to use in the class and
- * function templates. See the guide and the examples to see how to do that.
+ * Another way of specifying the flexible types `(Int, Real, ...)` is to pass the
+ * types we want in the class and function templates. This permits one to use
+ * different choices of types in the same program execution.
+ * See the guide and the examples to see how to do that.
 */
 
 
@@ -83,27 +91,41 @@ void strTypes(std::string &str) {
 
 // std::string strFlexTypes0;
 
-// For the following to be useful, TYPES_CODE must be defined before this file is read!
-// In this case, the types `Int` and `Real` are defined here, and also string `strFlexTypes`
+// For the following to work, TYPES_CODE must be defined *before* this file is read!
+// Then the types `Int`, `Real`, etc., are defined here, and also string `strFlexTypes`
 // used to print in outputs which flexible types we are using.
 #if    TYPES_CODE == LD
 	  typedef int64_t  Int;
      typedef double  Real;
+     typedef NTL::zz_p IntP;
+     typedef NTL::zz_pE PolE;
+     typedef NTL::zz_pX PolX;
+     typedef NTL::vec_zz_p IntVecP;
+     typedef NTL::mat_zz_p IntMatP;
+     static NTL::zz_p to_Int_p(int64_t a) {return NTL::to_zz_p(a);};
+     static void mod_init(int64_t m) {NTL::zz_p::init(m);}
      std::string strFlexTypes = "Int = int64_t, Real = double";
-#elif  TYPES_CODE == ZD
-	  typedef NTL::ZZ Int;
+#else
+     typedef NTL::ZZ Int;
+     typedef NTL::ZZ_p IntP;
+     typedef NTL::ZZ_pE PolE;
+     typedef NTL::ZZ_pX PolX;
+     typedef NTL::vec_ZZ_p IntVecP;
+     typedef NTL::mat_ZZ_p IntMatP;
+     static NTL::ZZ_p to_Int_p(Int a) {return NTL::to_ZZ_p(a);};
+     static void mod_init(Int m) {NTL::ZZ_p::init(m);}
+#endif
+
+#if  TYPES_CODE == ZD
      typedef double Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = double";
 #elif  TYPES_CODE ==  ZX
-     typedef NTL::ZZ Int;
      typedef NTL::xdouble Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = xdouble";
 #elif  TYPES_CODE ==  ZQ
-     typedef NTL::ZZ Int;
      typedef NTL::quad_float Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = quad_float";
 #elif  TYPES_CODE ==  ZR
-     typedef NTL::ZZ Int;
      typedef NTL::RR Real;
      std::string strFlexTypes = "Int = NTL::ZZ, Real = NTL::RR";
 #endif
