@@ -134,21 +134,24 @@ const double NormaBestLat::m_gamma[] = {
 /*=========================================================================*/
 
 NormaBestLat::NormaBestLat(double logDensity, int64_t maxDim, NormType norm) :
-        Normalizer(maxDim, norm) {
-    if (maxDim > this->MAX_DIM)
-        throw std::invalid_argument("NormaBestLat:   dimension > MAXDIM");
-    m_name = "NormaBestLat";
+        NormaBestLat(maxDim, norm) {
     Normalizer::computeBounds(logDensity);
 }
 
 /*=========================================================================*/
 
 NormaBestLat::NormaBestLat(double logm, int64_t k, int64_t maxDim, NormType norm) :
+        NormaBestLat(maxDim, norm) {
+    Normalizer::computeBounds(logm, k);
+}
+
+/*=========================================================================*/
+
+NormaBestLat::NormaBestLat(int64_t maxDim, NormType norm) :
         Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaBestLat:   dimension > MAXDIM");
     m_name = "NormaBestLat";
-    Normalizer::computeBounds(logm, k);
 }
 
 /*=========================================================================*/
