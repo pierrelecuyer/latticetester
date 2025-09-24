@@ -46,8 +46,10 @@ namespace LatticeTester {
  * To build only an \f$m\f$-dual basis, use `buildDualBasis`.
  *
  * The dimension \f$t\f$ of the generating vector \f$\mathbf{a}\f$ may differ from the maximal dimension `maxDim`
- * of a lattice basis. It is specified separately either via the parameter `dimaa` or as the length
- * of the given vector ``aa`.
+ * of a lattice basis. For this reason, it is specified separately either via the parameter `dimaa` or as the length
+ * of the given vector ``aa`.  For example, if we want to examine only pairs and triples of coordinates taken
+ * from coordinates 1 to 32, the generating vector must have 32 dimensions, but the maximum dimension
+ * of a basis can be only 3.
  */
 
 template<typename Int, typename Real>
@@ -84,7 +86,7 @@ public:
    /**
     * This version assumes that `dimaa = maxDim`.
     */
-   Rank1Lattice(const Int &m, const Int &a, int64_t maxDim, NormType norm = L2NORM);
+   // Rank1Lattice(const Int &m, const Int &a, int64_t maxDim, NormType norm = L2NORM);
 
    /**
     * This constructor does not specify the generating vector but reserves space for it.
@@ -206,7 +208,6 @@ protected:
 template<typename Int, typename Real>
 Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, const IntVec &aa, int64_t maxDim, NormType norm) :
       IntLatticeExt<Int, Real>(m, maxDim, norm) {
-   this->m_dimaa = aa.length();
    this->setaa(aa);
 }
 
@@ -221,7 +222,7 @@ Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, const IntVec &aa, NormType n
 //============================================================================
 
 template<typename Int, typename Real>
-Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, const Int &a, int64_t maxDim,  int64_t dimaa, NormType norm) :
+Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, const Int &a, int64_t maxDim, int64_t dimaa, NormType norm) :
       IntLatticeExt<Int, Real>(m, maxDim, norm) {
    this->m_dimaa = dimaa;
    this->m_aa.SetLength(dimaa);
@@ -229,7 +230,7 @@ Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, const Int &a, int64_t maxDim
 }
 
 //============================================================================
-
+/*  Conflict between this one and the following.
 template<typename Int, typename Real>
 Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, const Int &a, int64_t maxDim, NormType norm) :
       IntLatticeExt<Int, Real>(m, maxDim, norm) {
@@ -237,7 +238,7 @@ Rank1Lattice<Int, Real>::Rank1Lattice(const Int &m, const Int &a, int64_t maxDim
    this->m_aa.SetLength(maxDim);
    this->seta(a);
 }
-
+*/
 //============================================================================
 
 template<typename Int, typename Real>

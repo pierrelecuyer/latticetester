@@ -145,22 +145,24 @@ const double NormaLaminated::m_gamma[] = {
 /*=========================================================================*/
 
 NormaLaminated::NormaLaminated(double logDensity, int64_t maxDim, NormType norm) :
-        Normalizer(maxDim, norm) {
-    if (maxDim > this->MAX_DIM)
-        throw std::invalid_argument(
-                "NormaLaminated:   dimension > this->MAX_DIM");
-    m_name = "NormaLaminated";
+        NormaLaminated(maxDim, norm) {
     Normalizer::computeBounds(logDensity);
 }
 
 /*=========================================================================*/
 
 NormaLaminated::NormaLaminated(double logm, int64_t k, int64_t maxDim, NormType norm) :
+        NormaLaminated(maxDim, norm) {
+    Normalizer::computeBounds(logm, k);
+}
+
+/*=========================================================================*/
+
+NormaLaminated::NormaLaminated(int64_t maxDim, NormType norm) :
         Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaLaminated:   dimension > MAXDIM");
     m_name = "NormaLaminated";
-    Normalizer::computeBounds(logm, k);
 }
 
 /*=========================================================================*/

@@ -43,14 +43,19 @@ public:
      * and order \f$k\f$, so its density is \f$m^{k-t}\f$ for \f$t\geq k\f$, and cannot
      * exceed 1 for projections in \f$s < k\f$ dimensions.
      */
-    NormaBestUpBound(double logm, int k, int maxDim, NormType norm = L2NORM);
+    NormaBestUpBound(double logm, int64_t k, int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Constructs a `NormaBestUpBound` for up to `maxDim` dimensions, by assuming that the
      * log density is `logDensity` in all dimensions and the lattice was not rescaled.
      * Restriction: `maxDim`\f$ \le 48\f$.
      */
-    NormaBestUpBound(double logDensity, int maxDim, NormType norm = L2NORM);
+    NormaBestUpBound(double logDensity, int64_t maxDim, NormType norm = L2NORM);
+
+    /**
+     * Creates the Normalizer object without computing any bounds.
+     */
+    NormaBestUpBound(int64_t maxDim, NormType norm = L2NORM);
 
     /**
      * Destructor.
@@ -61,7 +66,7 @@ public:
      * Returns the value of the bound on the Hermite's constant \f$\gamma_j\f$
      * in dimension \f$j\f$.
      */
-    double getGamma(int j) const;
+    double getGamma(int64_t j) const;
 
 private:
 
@@ -144,20 +149,25 @@ const double NormaBestUpBound::m_gamma[] = {
 
 /*=======================================================================*/
 
-NormaBestUpBound::NormaBestUpBound(double logDensity, int maxDim, NormType norm) :
-        Normalizer(maxDim, norm) {
-   m_name = "NormaBestUpBound";
+NormaBestUpBound::NormaBestUpBound(double logDensity, int64_t maxDim, NormType norm) :
+        NormaBestUpBound(maxDim, norm) {
    Normalizer::computeBounds(logDensity);
 }
 
 /*=========================================================================*/
 
-NormaBestUpBound::NormaBestUpBound(double logm, int k, int maxDim, NormType norm) :
+NormaBestUpBound::NormaBestUpBound(double logm, int64_t k, int64_t maxDim, NormType norm) :
+        NormaBestUpBound(maxDim, norm) {
+    Normalizer::computeBounds(logm, k);
+}
+
+/*=========================================================================*/
+
+NormaBestUpBound::NormaBestUpBound(int64_t maxDim, NormType norm) :
         Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaBestLat:   dimension > MAXDIM");
     m_name = "NormaBestUpBound";
-    Normalizer::computeBounds(logm, k);
 }
 
 /*=========================================================================*/
@@ -167,7 +177,7 @@ NormaBestUpBound::~NormaBestUpBound() {
 
 /*=========================================================================*/
 
-inline double NormaBestUpBound::getGamma(int j) const {
+inline double NormaBestUpBound::getGamma(int64_t j) const {
     if (j < 1 || j > this->m_maxDim)
         throw std::out_of_range("NormaBestUpBound::getGamma");
     if (m_norm == L2NORM)

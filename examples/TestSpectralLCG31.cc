@@ -41,7 +41,7 @@ int main() {
    Int a(16807);
    std::cout << "\n=============================================\n";
    std::cout << "LCG-16897, with BKZ+BB with default parameters, succ. coordinates \n";
-   Rank1Lattice<Int, Real> lcg = Rank1Lattice<Int, Real>(m, a, maxdim);
+   Rank1Lattice<Int, Real> lcg = Rank1Lattice<Int, Real>(m, a, maxdim, maxdim);
    std::cout << "\nPrimal lattice:\n";
    fom.computeMeritSucc(lcg, 2, maxdim);
    std::cout << "\nDual lattice:\n";
@@ -56,7 +56,7 @@ int main() {
    std::cout << "\n=============================================\n";
    std::cout << "LCG-742938285, with BKZ+BB with default parameters, succ. coordinates \n";
    a = 742938285;
-   lcg = Rank1Lattice<Int, Real>(m, a, maxdim);
+   lcg.seta(a);
    std::cout << "\nPrimal lattice:\n";
    fom.computeMeritSucc(lcg, 2, maxdim);
    std::cout << "\nDual lattice:\n";

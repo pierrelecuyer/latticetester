@@ -62,7 +62,7 @@ int main() {
     sqlen.SetLength(1); // We only want to recover the length of the first basis vector.
 
     // We construct a Korobov lattice `korlat` in dim dimensions.
-    Rank1Lattice<Int, Real> korlat(m, a, dim);
+    Rank1Lattice<Int, Real> korlat(m, a, dim, dim);
     korlat.buildBasis(dim);   // Builds an initial triangular basis.
     basis1 = korlat.getBasis();
     std::cout << "Initial Korobov lattice basis (triangular) = \n" << basis1 << "\n";
@@ -116,7 +116,7 @@ int main() {
 
     // This one tests the `buildProjection` method from `IntLattice`.
     // We create a new `projLattice2` object and put the projection of `korlat` in it.
-    Rank1Lattice<Int, Real> projLattice2(m, a, dimProj);
+    Rank1Lattice<Int, Real> projLattice2(m, a, dimProj, dimProj);
     korlat.buildProjection(projLattice2, proj);
     std::cout << "Triangular basis for this projection, with `buildProjection`: \n"
               << projLattice2.getBasis() << "\n";

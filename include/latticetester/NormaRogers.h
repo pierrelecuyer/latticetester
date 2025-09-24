@@ -54,6 +54,11 @@ public:
     NormaRogers(double logDensity, int64_t maxDim, NormType norm = L2NORM);
 
     /**
+     * Creates the Normalizer object without computing any bounds.
+     */
+    NormaRogers(int64_t maxDim, NormType norm = L2NORM);
+
+    /**
      * Destructor.
      */
     ~NormaRogers();
@@ -163,22 +168,20 @@ double NormaRogers::calcGamma(int64_t dim) {
 /*=========================================================================*/
 
 NormaRogers::NormaRogers(double logDensity, int64_t maxDim, NormType norm) :
-        Normalizer(maxDim, norm) {
-    m_gamma = new double[maxDim + 1];
-    int64_t t0 = maxDim;
-    if (t0 > this->MAX_DIM)
-        t0 = this->MAX_DIM;
-    for (int64_t i = 0; i <= t0; i++)
-        m_gamma[i] = m_gamma0[i];
-    for (int64_t i = t0 + 1; i <= maxDim; i++)
-        m_gamma[i] = calcGamma(i);
+        NormaRogers(maxDim, norm) {
     Normalizer::computeBounds(logDensity);
-    m_name = "NormaRogers";
 }
 
 /*=========================================================================*/
 
 NormaRogers::NormaRogers(double logm, int64_t k, int64_t maxDim, NormType norm) :
+        NormaRogers(maxDim, norm) {
+    Normalizer::computeBounds(logm, k);
+}
+
+/*=========================================================================*/
+
+NormaRogers::NormaRogers(int64_t maxDim, NormType norm) :
         Normalizer(maxDim, norm) {
     m_gamma = new double[maxDim + 1];
     int64_t t0 = maxDim;
@@ -188,7 +191,6 @@ NormaRogers::NormaRogers(double logm, int64_t k, int64_t maxDim, NormType norm) 
         m_gamma[i] = m_gamma0[i];
     for (int64_t i = t0 + 1; i <= maxDim; i++)
         m_gamma[i] = calcGamma(i);
-    Normalizer::computeBounds(logm, k);
     m_name = "NormaRogers";
 }
 

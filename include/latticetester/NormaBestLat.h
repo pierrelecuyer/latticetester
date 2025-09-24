@@ -60,6 +60,11 @@ public:
     NormaBestLat(double logDensity, int64_t maxDim, NormType norm = L2NORM);
 
     /**
+     * Creates the Normalizer object without computing any bounds.
+     */
+    NormaBestLat(int64_t maxDim, NormType norm = L2NORM);
+
+    /**
      * Returns the value of the bound on the Hermite's constant \f$\gamma_j\f$
      * in dimension \f$j\f$.
      */

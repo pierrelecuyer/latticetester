@@ -49,6 +49,12 @@ public:
      */
     NormaMinkHlaw(double logDensity, int64_t maxDim, NormType norm = L2NORM);
 
+
+    /**
+     * Creates the Normalizer object without computing any bounds.
+     */
+    NormaMinkHlaw(int64_t maxDim, NormType norm = L2NORM);
+
     /**
      * Returns the value of the lattice constant \f$\gamma_j\f$ in
      * dimension \f$j\f$.
@@ -124,21 +130,24 @@ const double NormaMinkHlaw::m_gamma[] = {
 /*=========================================================================*/
 
 NormaMinkHlaw::NormaMinkHlaw(double logDensity, int64_t maxDim, NormType norm) :
-        Normalizer(maxDim, norm) {
-    if (maxDim > this->MAX_DIM)
-        throw std::invalid_argument("NormaMinkHlaw:   dimension > MAX_DIM");
-    m_name = "NormaMinkHlaw";
+        NormaMinkHlaw(maxDim, norm) {
     Normalizer::computeBounds(logDensity);
 }
 
 /*=========================================================================*/
 
 NormaMinkHlaw::NormaMinkHlaw(double logm, int64_t k, int64_t maxDim, NormType norm) :
+        NormaMinkHlaw(maxDim, norm) {
+    Normalizer::computeBounds(logm, k);
+}
+
+/*=========================================================================*/
+
+NormaMinkHlaw::NormaMinkHlaw(int64_t maxDim, NormType norm) :
         Normalizer(maxDim, norm) {
     if (maxDim > this->MAX_DIM)
         throw std::invalid_argument("NormaMinkHlaw:   dimension > MAXDIM");
     m_name = "NormaMinkHlaw";
-    Normalizer::computeBounds(logm, k);
 }
 
 /*=========================================================================*/

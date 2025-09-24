@@ -158,22 +158,20 @@ double NormaMinkL1::calcGamma(int64_t dim) {
 /*=========================================================================*/
 
 NormaMinkL1::NormaMinkL1(double logDensity, int64_t maxDim) :
-        Normalizer(maxDim, L1NORM) {
-    m_gamma = new double[maxDim + 1];
-    int64_t t0 = maxDim;
-    if (t0 > this->MAX_DIM)
-        t0 = this->MAX_DIM;
-    for (int64_t i = 0; i <= t0; i++)
-        m_gamma[i] = m_gamma0[i];
-    for (int64_t i = t0 + 1; i <= maxDim; i++)
-        m_gamma[i] = calcGamma(i);
+        NormaMinkL1(maxDim) {
     Normalizer::computeBounds(logDensity);
-    m_name = "NormaMink1";
 }
 
 /*=========================================================================*/
 
 NormaMinkL1::NormaMinkL1(double logm, int64_t k, int64_t maxDim) :
+        NormaMinkL1(maxDim) {
+    Normalizer::computeBounds(logm, k);
+}
+
+/*=========================================================================*/
+
+NormaMinkL1::NormaMinkL1(int64_t maxDim) :
         Normalizer(maxDim, L1NORM) {
     m_gamma = new double[maxDim + 1];
     int64_t t0 = maxDim;
@@ -183,7 +181,6 @@ NormaMinkL1::NormaMinkL1(double logm, int64_t k, int64_t maxDim) :
         m_gamma[i] = m_gamma0[i];
     for (int64_t i = t0 + 1; i <= maxDim; i++)
         m_gamma[i] = calcGamma(i);
-    Normalizer::computeBounds(logm, k);
     m_name = "NormaMink1";
 }
 
