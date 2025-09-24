@@ -263,26 +263,6 @@ Rank1Lattice<Int, Real>::~Rank1Lattice() {
    this->m_aa.kill();
 }
 
-/*
-//============================================================================
-template<typename Int, typename Real>
-Rank1Lattice<Int, Real>& Rank1Lattice<Int, Real>::operator=(const Rank1Lattice<Int, Real> &lat) {
-   if (this == &lat) return *this;
-   this->copy(lat);
-   this->m_a = lat.m_a;
-   return *this;
-}
-
-//============================================================================
-
-template<typename Int, typename Real>
-Rank1Lattice<Int, Real>::Rank1Lattice(const Rank1Lattice<Int, Real> &lat) :
-      IntLatticeExt<Int, Real>(lat.m_modulo, lat.m_maxDim, lat.getNormType()) {
-   this->m_a = lat.m_a;
-   // Should also copy the basis and all other variables?
-}
-*/
-
 //============================================================================
 
 /*

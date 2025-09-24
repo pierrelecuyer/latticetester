@@ -51,13 +51,13 @@ namespace LatticeTester {
    * `GEN`: a list of retained generators will be sent to a file with extension `.gen`,
    *        in a specific format so this list can be read again for further analysis.
    */
-  enum OutputType { TERM, RES, TEX, GEN };
+  // enum OutputType { TERM, RES, TEX, GEN };
 
   /**
    * Types of problems that LatticeTester can handle.
    * Not sure if we still need this.    *******
    */
-  enum ProblemType { BASIS, DUAL, REDUCTION, SHORTEST, MERIT };
+  // enum ProblemType { BASIS, DUAL, REDUCTION, SHORTEST, MERIT };
 
   /**
    * This can be supersed by the Real type.
@@ -74,13 +74,13 @@ namespace LatticeTester {
    * See `https://github.com/u-u-h/NTL/blob/master/doc/LLL.txt`.
    */
  // enum PrecisionType { DOUBLE, QUADRUPLE, EXPONENT, ARBITRARY, EXACT };
-  enum PrecisionType { DOUBLE, QUADRUPLE, XDOUBLE, RR };
+ // enum PrecisionType { DOUBLE, QUADRUPLE, XDOUBLE, RR };
 
   /**
    * Indicates whether an integer is prime, probably prime, composite or its
    * status is unknown (or we do not care).
    */
-  enum PrimeType { PRIME, PROB_PRIME, COMPOSITE, UNKNOWN };
+  // enum PrimeType { PRIME, PROB_PRIME, COMPOSITE, UNKNOWN };
 
   /**
    * Merit criteria to measure the quality of generators or lattices.
@@ -93,7 +93,7 @@ namespace LatticeTester {
    * <tt>BOUND_JS</tt>: figure of merit based on
    *     the Joe-Sinescu bound \cite rSIN08a.<br>   ???
    */
-  enum CriterionType { LENGTH, SPECTRAL, BEYER, PALPHA, BOUND_JS };
+  // enum CriterionType { LENGTH, SPECTRAL, BEYER, PALPHA, BOUND_JS };
 
   /**
    * Different types of normalizations that can be used for shortest-vector lengths.
@@ -194,7 +194,7 @@ namespace LatticeTester {
         return "***** NormType: UNDEFINED CASE ";
      }
   }
-  
+  /*
   static std::string toStringOutput (OutputType out) {
     switch (out) {
       case TERM:
@@ -241,7 +241,7 @@ namespace LatticeTester {
         return "***** PrecisionType: UNDEFINED CASE ";
     }
   }
-  
+
   static std::string toStringPrime (PrimeType prim) {
 	switch (prim) {
 	  case PRIME:
@@ -254,7 +254,7 @@ namespace LatticeTester {
 	    return "UNKNOWN";
 	}
   }
-  
+
   static std::string toStringCriterion (CriterionType criter) {
     switch (criter) {
       case LENGTH:
@@ -269,7 +269,7 @@ namespace LatticeTester {
         return "***** CriterionType: UNDEFINED CASE ";
     }
   }
-  
+*/
   static std::string toStringNorma (NormaType norma) {
     switch (norma) {
       case BESTLAT:
@@ -290,7 +290,7 @@ namespace LatticeTester {
         return "***** NormaType: UNDEFINED CASE ";
     }
   }
-  
+  /*
   static std::string toStringCalc (CalcType calc) {
     switch (calc) {
       case PAL:
@@ -305,7 +305,7 @@ namespace LatticeTester {
         return "***** CalcType: UNDEFINED CASE ";
     }
   }
-
+*/
   static std::string toStringReduction (ReductionType reduct) {
     switch (reduct) {
       case PAIR:

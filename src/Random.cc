@@ -37,6 +37,7 @@ namespace {
       std::uint64_t b;
 
 #ifdef ULONG_64_OUI
+      // This should always hold nowadays.
       // Générateur LFSR258 de L'Ecuyer
       b = ((etat1 << 1) ^ etat1) >> 53;
       etat1 = ((etat1 & 18446744073709551614UL) << 10) ^ b;

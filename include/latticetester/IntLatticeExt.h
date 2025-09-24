@@ -50,37 +50,19 @@ public:
 
    /**
     * A constructor that reserves the space for the primal and m-dual bases and vector lengths,
-    * but does not initialize them.
-    * The scaling factor for the integer coordinates is set to `m`,
-    * the maximal dimension of the lattice is set to `maxDim`,
+    * but does not initialize them. The maximal dimension of the lattice is set to `maxDim`,
     * and the norm type is set to `norm`.
+    * In the second version, the scaling factor for the integer coordinates is set to `m`.
     */
+   IntLatticeExt(int64_t maxDim, NormType norm = L2NORM);
+
    IntLatticeExt(Int m, int64_t maxDim, NormType norm = L2NORM);
-
-   /*
-    * Copy constructor that makes a copy of `lat`. The maximal dimension
-    * of the created basis is set equal to the current maximal dimension in `lat`.
-    * Maybe remove his ????  ********
-    */
-   // IntLatticeExt(const IntLatticeExt<Int, Real> &lat);
-
-   /*
-    * Makes a copy of `lattice` into this object. It copies the
-    * internal vectors and matrices using the NTL assign operator =
-    * (see https://libntl.org/doc/matrix.cpp.html).
-    */
-   // void copy(const IntLatticeExt<Int, Real> &lat);
 
    /**
     * Destructor. Depends on the specific subclass.
     */
    virtual ~IntLatticeExt();
 
-   /*
-    * This returns the rank (order) `k` of the lattice.   Needed?
-    */
-
-   // int64_t getOrder() const { return m_order; }
    /**
     * This virtual method builds a basis for the lattice in `dim` dimensions,
     * and store it in the upper-left part of the internal `m_basis` variable,
@@ -115,12 +97,6 @@ public:
    }
    ;
 
-   /*
-    * Returns a string describing this lattice.
-    */
-   // virtual std::string toString() const {
-   //   return ""; };
-
 protected:
 
    /**
@@ -131,15 +107,14 @@ protected:
 };
 // Class IntLatticeExt
 
-
 //============================================================================
 // IMPLEMENTTION
 
 //===========================================================================
 
 template<typename Int, typename Real>
-IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, NormType norm) :
-      IntLattice<Int, Real>(m, maxDim, norm) {
+IntLatticeExt<Int, Real>::IntLatticeExt(int64_t maxDim, NormType norm) :
+      IntLattice<Int, Real>(maxDim, norm) {
    this->m_basis.SetDims(this->m_maxDim, this->m_maxDim);
    this->m_vecNorm.SetLength(this->m_maxDim);
    this->setNegativeNorm();
@@ -147,13 +122,12 @@ IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, NormType norm) :
    this->m_dualvecNorm.SetLength(this->m_maxDim);
    this->setDualNegativeNorm();
 }
-//===========================================================================
-/*
+
 template<typename Int, typename Real>
-IntLatticeExt<Int, Real>::IntLatticeExt(const IntLatticeExt<Int, Real> &lat) :
-      IntLattice<Int, Real>(lat) {
+IntLatticeExt<Int, Real>::IntLatticeExt(Int m, int64_t maxDim, NormType norm) :
+      IntLatticeExt<Int, Real>(maxDim, norm) {
+   this->m_modulo = m;
 }
-*/
 
 //===========================================================================
 
@@ -170,18 +144,6 @@ IntLatticeExt<Int, Real>::~IntLatticeExt() {
    //this->m_dualbasisProj.kill();
    // IntLatticeExt<Int, Real>::~IntLatticeExt();
 }
-
-//===========================================================================
-
-/*
-template<typename Int, typename Real>
-void IntLatticeExt<Int, Real>::copy(const IntLatticeExt<Int, Real> &lat) {
-   // Uses the NTL assignment operator = to make a copy of the bases.
-   this->m_modulo = lat.m_modulo;
-   this->m_basis = lat.m_basis;
-   this->m_dualbasis = lat.m_dualbasis;
-}
-*/
 
 //===========================================================================
 

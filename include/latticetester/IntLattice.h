@@ -43,7 +43,7 @@ namespace LatticeTester {
  *
  * An `IntLattice` object is an integral lattice, with its basis or its `m`-dual basis, or both.
  * There are tools to perform simple manipulations on those lattice bases, to compute and store the
- * vector lengths, etc.  It is assumed that the value of `m` is chosen so that all coordinates
+ * vector lengths, etc.  It is assumed that the value of `m` is chosen in a way that all coordinates
  * of the basis and of its `m`-dual are integers.
  * These coordinates are then represented exactly on the computer.
  * This property is typically achieved by rescaling the primal lattice by the appropriate factor `m`,
@@ -85,6 +85,13 @@ template<typename Int, typename Real>
 class IntLattice {
 
 public:
+
+   /**
+    * Constructs an `IntLattice` object that can hold a basis in up to `maxDim` dimensions,
+    * with the specified norm type.  The scaling factor `m` and the basis are not initialized.
+    * This permits one to use this same object for several values of `m`.
+    */
+   IntLattice(const int64_t maxDim, NormType norm = L2NORM);
 
    /**
     * Constructs a lattice whose basis is uninitialized, in `maxDim` dimensions,
@@ -134,45 +141,10 @@ public:
    // void overwriteLattice(const IntLattice<Int, Real> &lat, long dim, long dimdual);
 
    /**
-    * Constructs a set of generating vectors for the projection of the present lattice,
-    * over the set of coordinates determined by `coordSet`, and builds a basis for that
-    * projection using an LLL procedure from `BasisConstruction`.
-    * It is assumed that a basis for the present lattice is already available and contains
-    * all the coordinates in `coordSet`.
-    * The `maxDim` of the `projLattice` object must be large enough so it can holds the projection.
-    * The modulus `m` is assumed to be the same for `projLattice` and for the current object.
-    * This function can be called several times with the same `projLattice` object
-    * to examine several different projections.
-    * Note that representing each projection as an `IntLattice` object is required when
-    * we want to call `Reducer::shortestVector` for several projections.
-    * This function can be overridden by more efficient ones in subclasses.
+    * Sets the scaling factor `m`.
     */
-   virtual void buildProjectionLLL(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet,
-         double delta = 0.5);
-
-   /**
-    * Builds a basis for the projection of the present lattice over the set of coordinates
-    * determined by `coordSet`. This becomes the basis in `projLattice`.
-    * By default, it uses an upper-triangular construction, but it can be overridden in subclasses.
-    * It is assumed that a basis for the present lattice is already available and contains
-    * all the coordinates in `coordSet`.
-    */
-   virtual void buildProjection(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet);
-
-   /**
-    * Similar to `buildProjection`, except that it builds a basis for the $m$-dual of the projection.
-    * This default implementation first builds an upper-triangular basis for the primal.
-    * then computes a lower-triangular basis for the $m$-dual of the projection,
-    * both in `projLattice`. The dimensions are updated.
-    * In subclasses, the m-dual basis can sometimes be computed directly without the primal.
-    */
-   virtual void buildProjectionDual(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet);
-
-   /**
-    * Returns the `IntMat` object that contains the basis of this lattice.
-    */
-   IntMat& getBasis() {
-      return m_basis;
+   void setModulus(const Int m) {
+      m_modulo = m;
    }
 
    /**
@@ -193,86 +165,22 @@ public:
     * Does not change `m` and `maxDim`.
     */
    void setBasis(const IntMat basis, const int64_t dim) {
-      assert(this->m_maxDim == basis.NumRows());
+      assert(this->m_maxDim >= basis.NumRows());
       m_dim = dim;
       m_basis = basis;
-      setNegativeNorm();
    }
 
    /**
-    * Returns the m-dual basis represented in a matrix.
+    * Changes only the dual basis to `dualbasis` and its current dimension to 'dimdual'.
+    * Does not change `m` and `maxDim`.
     */
-   IntMat& getDualBasis() {
-      return m_dualbasis;
+   void setDualBasis(const IntMat dualbasis, const int64_t dimdual) {
+      assert(this->m_maxDim >= dualbasis.NumRows());
+      m_dimdual = dimdual;
+      m_dualbasis = dualbasis;
    }
 
-   /**
-    * Returns the maximal dimension for this lattice.
-    */
-   int64_t getMaxDim() const {
-      return m_maxDim;
-   }
-
-   /**
-    * Returns the current dimension of the primal lattice, which should be the dimension of the basis vectors
-    * and also the number of independent vectors in the basis.
-    */
-   int64_t getDim() const {
-      return m_dim;
-   }
-
-   /**
-    * Returns the current dimension of the m-dual lattice.
-    */
-   int64_t getDimDual() const {
-      return m_dimdual;
-   }
-
-   /**
-    * Returns the `NormType` used by this lattice.
-    */
-   NormType getNormType() const {
-      return m_norm;
-   }
-
-   /**
-    * Returns the norm (squared in case of the L^2 norm) of the i-th vector of the basis,
-    * with the index i starting at 0.
-    */
-   Real getVecNorm(const int64_t &i) {
-      return m_vecNorm[i];
-   }
-
-   /**
-    * Returns the norm (squared in case of the L^2 norm) of each basis vector, in a vector.
-    */
-   RealVec getVecNorm() const {
-      return m_vecNorm;
-   }
-
-   /**
-    * Returns the norm (squared in case of the L^2 norm) of the i-th vector of the m-dual basis.
-    * The index i starts at 0.
-    */
-   Real getDualVecNorm(const int64_t &i) {
-      return m_dualvecNorm[i];
-   }
-
-   /**
-    * Returns the norm (squared in case of the L^2 norm) of each vector of the m-dual basis, in a vector.
-    */
-   RealVec getDualVecNorm() const {
-      return m_dualvecNorm;
-   }
-
-   /**
-    * Returns the scaling factor `m`.
-    */
-   Int getModulus() const {
-      return m_modulo;
-   }
-
-   /**
+     /**
     * Sets the dimension of the primal basis to `dim`. This does not change `maxDim` nor any of the
     * basis vectors, but only the dimension variable.
     */
@@ -342,6 +250,86 @@ public:
     */
    void setDualNegativeNorm(const int64_t &i) {
       m_dualvecNorm[i] = -1;
+   }
+
+   /**
+    * Returns the scaling factor `m`.
+    */
+   Int getModulus() const {
+      return m_modulo;
+   }
+
+   /**
+    * Returns the maximal dimension for this lattice.
+    */
+   int64_t getMaxDim() const {
+      return m_maxDim;
+   }
+
+   /**
+    * Returns the `IntMat` object that contains the basis of this lattice.
+    */
+   IntMat& getBasis() {
+      return m_basis;
+   }
+
+   /**
+    * Returns the m-dual basis represented in a matrix.
+    */
+   IntMat& getDualBasis() {
+      return m_dualbasis;
+   }
+
+   /**
+    * Returns the current dimension of the primal lattice, which should be the dimension of the basis vectors
+    * and also the number of independent vectors in the basis.
+    */
+   int64_t getDim() const {
+      return m_dim;
+   }
+
+   /**
+    * Returns the current dimension of the m-dual lattice.
+    */
+   int64_t getDimDual() const {
+      return m_dimdual;
+   }
+
+   /**
+    * Returns the `NormType` used by this lattice.
+    */
+   NormType getNormType() const {
+      return m_norm;
+   }
+
+   /**
+    * Returns the norm (squared in case of the L^2 norm) of the i-th vector of the basis,
+    * with the index i starting at 0.
+    */
+   Real getVecNorm(const int64_t &i) {
+      return m_vecNorm[i];
+   }
+
+   /**
+    * Returns the norm (squared in case of the L^2 norm) of each basis vector, in a vector.
+    */
+   RealVec getVecNorm() const {
+      return m_vecNorm;
+   }
+
+   /**
+    * Returns the norm (squared in case of the L^2 norm) of the i-th vector of the m-dual basis.
+    * The index i starts at 0.
+    */
+   Real getDualVecNorm(const int64_t &i) {
+      return m_dualvecNorm[i];
+   }
+
+   /**
+    * Returns the norm (squared in case of the L^2 norm) of each vector of the m-dual basis, in a vector.
+    */
+   RealVec getDualVecNorm() const {
+      return m_dualvecNorm;
    }
 
    /**
@@ -450,6 +438,41 @@ public:
    void sortDualBasis(int64_t d);
 
    /**
+    * Constructs a set of generating vectors for the projection of the present lattice,
+    * over the set of coordinates determined by `coordSet`, and builds a basis for that
+    * projection using an LLL procedure from `BasisConstruction`.
+    * It is assumed that a basis for the present lattice is already available and contains
+    * all the coordinates in `coordSet`.
+    * The `maxDim` of the `projLattice` object must be large enough so it can holds the projection.
+    * The modulus `m` is assumed to be the same for `projLattice` and for the current object.
+    * This function can be called several times with the same `projLattice` object
+    * to examine several different projections.
+    * Note that representing each projection as an `IntLattice` object is required when
+    * we want to call `Reducer::shortestVector` for several projections.
+    * This function can be overridden by more efficient ones in subclasses.
+    */
+   virtual void buildProjectionLLL(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet,
+         double delta = 0.5);
+
+   /**
+    * Builds a basis for the projection of the present lattice over the set of coordinates
+    * determined by `coordSet`. This becomes the basis in `projLattice`.
+    * By default, it uses an upper-triangular construction, but it can be overridden in subclasses.
+    * It is assumed that a basis for the present lattice is already available and contains
+    * all the coordinates in `coordSet`.
+    */
+   virtual void buildProjection(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet);
+
+   /**
+    * Similar to `buildProjection`, except that it builds a basis for the $m$-dual of the projection.
+    * This default implementation first builds an upper-triangular basis for the primal.
+    * then computes a lower-triangular basis for the $m$-dual of the projection,
+    * both in `projLattice`. The dimensions are updated.
+    * In subclasses, the m-dual basis can sometimes be computed directly without the primal.
+    */
+   virtual void buildProjectionDual(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet);
+
+   /**
     * Returns a string that contains the primal basis vectors and their norms.
     */
    std::string toStringBasis() const;
@@ -526,13 +549,14 @@ protected:
 
 };
 
-// class IntLattice
+
+//============================================================================
+// IMPLEMENTTION
 
 //===========================================================================
 
 template<typename Int, typename Real>
-IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType norm) {
-   m_modulo = m;
+IntLattice<Int, Real>::IntLattice(const int64_t maxDim, NormType norm) {
    m_maxDim = maxDim;
    m_dim = 0;
    m_dimdual = 0;
@@ -545,49 +569,23 @@ IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType no
    setDualNegativeNorm();
 }
 
-//===========================================================================
-
-/*  // Maybe we remove this.   The IntMat basis does not tell the dimension!
- template<typename Int, typename Real>
- IntLattice<Int, Real>::IntLattice(const IntMat basis, const Int m,
- const int64_t maxDim, NormType norm) {
- //		: m_basis(basis), m_modulo(m), m_dim(dim), m_norm(norm) {
- m_modulo = m;
- m_maxDim = maxDim;
- m_dim = ?????
- // m_dimdual = 0;
- m_norm = norm;
- assert(basis.NumRows() == maxDim);
- m_basis = basis;
- m_vecNorm.SetLength(maxDim);
- // m_dualbasis.SetDims(maxDim, maxDim);
- m_dualvecNorm.SetLength(maxDim);
- setNegativeNorm();
- }
- */
-/*=========================================================================*/
-
-/*
- template<typename Int, typename Real>
- IntLattice<Int, Real>::IntLattice(const IntMat primalbasis,
- const IntMat dualbasis, const Int m, const int64_t maxDim,
- NormType norm) :
- IntLattice<Int, Real>(primalbasis, m, maxDim, norm) {
- assert(dualbasis.NumRows() == maxDim);
- m_dualbasis = dualbasis;
- m_dimdual = ??????
- m_dualvecNorm.SetLength(maxDim);
- setDualNegativeNorm();
- }
- */
-
-/*=========================================================================
+template<typename Int, typename Real>
+IntLattice<Int, Real>::IntLattice(const Int m, const int64_t maxDim, NormType norm) :
+     IntLattice<Int, Real>::IntLattice(maxDim, norm) {
+   m_modulo = m;
+}
 
 template<typename Int, typename Real>
-IntLattice<Int, Real>::IntLattice(const IntLattice<Int, Real> &lat) {
-   copyLattice(lat);
+IntLattice<Int, Real>::IntLattice(const IntMat basis, const Int m, const int64_t maxDim, NormType norm) :
+     IntLattice<Int, Real>::IntLattice(m, maxDim, norm) {
+   setBasis(basis, basis.NumRows());
 }
-*/
+
+template<typename Int, typename Real>
+IntLattice<Int, Real>::IntLattice(const IntMat primalbasis, const IntMat dualbasis, const Int m, const int64_t maxDim, NormType norm) :
+     IntLattice<Int, Real>::IntLattice(primalbasis, m, maxDim, norm) {
+   setDualBasis(dualbasis, dualbasis.NumRows());
+}
 
 /*=========================================================================*/
 
@@ -598,77 +596,6 @@ IntLattice<Int, Real>::~IntLattice() {
    this->m_dualbasis.IntMat::kill();
    this->m_vecNorm.kill();
    this->m_dualvecNorm.kill();
-}
-
-/*=========================================================================
- *
-template<typename Int, typename Real>
-void IntLattice<Int, Real>::copyLattice(const IntLattice<Int, Real> &lat) {
-   this->m_modulo = lat.m_modulo;
-   this->m_maxDim = lat.m_maxDim;
-   this->m_dim = lat.m_dim;
-   this->m_dimdual = lat.m_dimdual;
-   this->m_basis = IntMat(lat.m_basis);
-   this->m_norm = lat.m_norm;
-   this->m_vecNorm = RealVec(lat.m_vecNorm);
-   this->m_dualbasis = IntMat(lat.m_dualbasis);
-   this->m_dualvecNorm = RealVec(lat.m_dualvecNorm);
-}
-*/
-/*=========================================================================
-
-template<typename Int, typename Real>
-void IntLattice<Int, Real>::overwriteLattice(const IntLattice<Int, Real> &lat, long dim,
-      long dimdual) {
-   if (dim <= this->m_maxDim) {
-      CopyMatr(this->m_basis, lat.m_basis, dim);
-      CopyVect(this->m_vecNorm, lat.m_vecNorm, dim);
-      CopyMatr(this->m_dualbasis, lat.m_dualbasis, dimdual);
-      CopyVect(this->m_dualvecNorm, lat.m_dualvecNorm, dimdual);
-      this->m_modulo = lat.m_modulo;
-      this->m_dim = lat.m_dim;
-      this->m_dimdual = lat.m_dimdual;
-   } else std::cout << "IntLattice::overwriteLattice: dim > m_maxDim" << std::endl;
-}
-*/
-
-//===========================================================================
-
-template<typename Int, typename Real>
-void IntLattice<Int, Real>::buildProjectionLLL(IntLattice<Int, Real> &projLattice,
-      const Coordinates &coordSet, double delta) {
-   // We assume here that this and lattice have the same scaling factor m.
-   projLattice.setDim(coordSet.size());  // Number of coordinates in the projection.
-   projectionConstructionLLL<Int, Real>(projLattice.m_basis, this->m_basis,
-         coordSet, this->m_modulo, delta, coordSet.size());
-}
-
-//===========================================================================
-
-// We use the first m_dim rows of the current basis as generating vectors.
-template<typename Int, typename Real>
-void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
-      const Coordinates &coordSet) {
-   // We assume here that this and lattice have the same m.
-   projLattice.setDim(coordSet.size());  // Number of coordinates in the projection.
-   projectionConstructionUpperTri<Int>(projLattice.m_basis, this->m_basis, coordSet, this->m_modulo,
-         this->m_dim);
-}
-
-//===========================================================================
-
-// This one builds both the primal and the m-dual bases of the projection.
-// Its specialization in a subclass may build only the m-dual basis.
-template<typename Int, typename Real>
-void IntLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLattice,
-      const Coordinates &coordSet) {
-   // We assume here that this and lattice have the same m.
-   projLattice.setDim(coordSet.size());  // Number of coordinates in the projection.
-   projLattice.setDimDual(coordSet.size());
-   projectionConstructionUpperTri<Int>(projLattice.m_basis, this->m_basis, coordSet, this->m_modulo,
-         this->m_dim);
-   mDualUpperTriangular(projLattice.m_dualbasis, projLattice.m_basis, this->m_modulo,
-         projLattice.m_dim);
 }
 
 /*=========================================================================*/
@@ -900,6 +827,45 @@ void IntLattice<Int, Real>::sortBasis(int64_t d) {
       }
       if (i != k) permute(i, k);
    }
+}
+
+//===========================================================================
+
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::buildProjectionLLL(IntLattice<Int, Real> &projLattice,
+      const Coordinates &coordSet, double delta) {
+   // We assume here that this and lattice have the same scaling factor m.
+   projLattice.setDim(coordSet.size());  // Number of coordinates in the projection.
+   projectionConstructionLLL<Int, Real>(projLattice.m_basis, this->m_basis,
+         coordSet, this->m_modulo, delta, coordSet.size());
+}
+
+//===========================================================================
+
+// We use the first m_dim rows of the current basis as generating vectors.
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
+      const Coordinates &coordSet) {
+   // We assume here that this and lattice have the same m.
+   projLattice.setDim(coordSet.size());  // Number of coordinates in the projection.
+   projectionConstructionUpperTri<Int>(projLattice.m_basis, this->m_basis, coordSet, this->m_modulo,
+         this->m_dim);
+}
+
+//===========================================================================
+
+// This one builds both the primal and the m-dual bases of the projection.
+// Its specialization in a subclass may build only the m-dual basis.
+template<typename Int, typename Real>
+void IntLattice<Int, Real>::buildProjectionDual(IntLattice<Int, Real> &projLattice,
+      const Coordinates &coordSet) {
+   // We assume here that this and lattice have the same m.
+   projLattice.setDim(coordSet.size());  // Number of coordinates in the projection.
+   projLattice.setDimDual(coordSet.size());
+   projectionConstructionUpperTri<Int>(projLattice.m_basis, this->m_basis, coordSet, this->m_modulo,
+         this->m_dim);
+   mDualUpperTriangular(projLattice.m_dualbasis, projLattice.m_basis, this->m_modulo,
+         projLattice.m_dim);
 }
 
 /*=========================================================================*/
