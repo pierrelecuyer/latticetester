@@ -71,11 +71,14 @@ public:
 	/**
 	 * This constructor will call `setTVector` with the given vector `t`
 	 * and `includeFirst` variable, then set the `Weights`, `Normalizer` and `ReducerBB` to the given values.
+	 * The second constructor does not set `t` and is useful when we do not need `t`.
 	 */
 	FigureOfMeritDualM(const NTL::Vec<int64_t> &t, Weights &w, Normalizer &norma,
 	      ReducerBB<Int, Real> *red = 0, bool includeFirst = false);
 
-	/*
+   FigureOfMeritDualM(Weights &w, Normalizer &norma, ReducerBB<Int, Real> *red = 0);
+
+   /*
 	 * This function computes and returns the value of the FOM for the dual of the
 	 * given lattice 'lat'. The function returns 0 if the computation was not completed
 	 * for some reason (early exit, error, etc.).
@@ -116,6 +119,12 @@ template<typename Int, typename Real>
 FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(const NTL::Vec<int64_t> &t,
 		Weights &w, Normalizer &norma, ReducerBB<Int, Real> *red, bool includeFirst) :
 		FigureOfMeritM<Int, Real>(t, w, norma, red, includeFirst) {
+};
+
+template<typename Int, typename Real>
+FigureOfMeritDualM<Int, Real>::FigureOfMeritDualM(
+      Weights &w, Normalizer &norma, ReducerBB<Int, Real> *red) :
+      FigureOfMeritM<Int, Real>(w, norma, red) {
 };
 
 //=========================================================================

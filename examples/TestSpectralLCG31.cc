@@ -28,7 +28,7 @@ int main() {
    NTL::Vec <int64_t> t; // The t-vector for the FOM, used only for pairs.
    t.SetLength(2);
    t[0] = 0;
-   t[1] = maxdim;  // We look at pairs {1,s} for s up to maxdim.
+   t[1] = maxdim;  // We will look at pairs {1,s} for s up to maxdim.
    IntLattice<Int, Real> proj(m, t.length());
    FigureOfMeritM<Int, Real> fom(t, weights, norma, &red, true); // FoM for dual lattice.
    FigureOfMeritDualM<Int, Real> fomdual(t, weights, normaDual, &red, true); // FoM for dual lattice.

@@ -111,12 +111,17 @@ class FigureOfMeritM {
 public:
 
    /**
-    * This constructor will call `setTVector (t, includeFirst)`,
+    * The first constructor will call `setTVector (t, includeFirst)`,
     * then set the 'Weights', `Normalizer`, and `ReducerBB` to the given values.
     * See the text above for other default values.
+    * The second constructor does not set the vector `t`, which is not used
+    * for example when we only call `computeMeritSucc`.
     */
    FigureOfMeritM(const NTL::Vec<int64_t> &t, Weights &w, Normalizer &norma,
          ReducerBB<Int, Real> *red = 0, bool includeFirst = false);
+
+   FigureOfMeritM(Weights &w, Normalizer &norma, ReducerBB<Int, Real> *red = 0);
+
 
    //===========================================================================
 
@@ -393,6 +398,15 @@ FigureOfMeritM<Int, Real>::FigureOfMeritM(const NTL::Vec<int64_t> &t, Weights &w
    m_sqlen.SetLength(1); // We will retrieve only the square length of the shortest.
 }
 
+template<typename Int, typename Real>
+FigureOfMeritM<Int, Real>::FigureOfMeritM(Weights &w, Normalizer &norma,
+      ReducerBB<Int, Real> *red) {
+   m_weights = &w;
+   setNormalizer(norma);
+   m_red = red;
+   m_sqlen.SetLength(1); // We will retrieve only the square length of the shortest.
+}
+
 //===========================================================================
 
 template<typename Int, typename Real>
@@ -473,7 +487,9 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
       if (dim < 8) std::cout << coord << std::setw(16 - 2 * dim) << " ";
       else std::cout << std::left << std::setw(2) << "{1,...," << dim << "}       ";
       if (7 < dim && dim < 10) std::cout << " ";
-      std::cout << std::setw(12) << m_sqlen[0] << "  " << std::setw(12) << 1.0 / sqrt(m_sqlen[0])
+      std::cout << std::setw(12) << conv<double>(m_sqlen[0]) << "  "
+            << std::setw(12) << conv<double>(1.0 / sqrt(m_sqlen[0]))
+      // std::cout << std::setw(12) << m_sqlen[0] << "  " << std::setw(12) << 1.0 / sqrt(m_sqlen[0])
             << "  " << std::setw(10) << merit << "  " << m_minMerit << "    "
             << (double) (clock() - m_clock) / (CLOCKS_PER_SEC) << "\n";
    }
