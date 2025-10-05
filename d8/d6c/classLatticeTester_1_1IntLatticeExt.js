@@ -1,5 +1,6 @@
 var classLatticeTester_1_1IntLatticeExt =
 [
+    [ "IntLatticeExt", "d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0fb4460cfe8158a02390cf4f33eaca78", null ],
     [ "IntLatticeExt", "d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0178d9abf19cf6b873d422149f9f2754", null ],
     [ "~IntLatticeExt", "d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a3de7c80c3195182019cb58dc01d1827d", null ],
     [ "buildBasis", "d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a14d4e8a5b2f7ec824870b3eae0b730d6", null ],

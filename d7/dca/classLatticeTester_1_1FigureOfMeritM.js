@@ -1,6 +1,7 @@
 var classLatticeTester_1_1FigureOfMeritM =
 [
     [ "FigureOfMeritM", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8a2641e524a04c2f361c6915683f2ad3", null ],
+    [ "FigureOfMeritM", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aadf5be3e30269f0ea4f0b83e42aca80b", null ],
     [ "~FigureOfMeritM", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac2a33bf19d7f65d7f2a006ac71d0b6e3", null ],
     [ "setTVector", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab254796b0bf07839dc819ce0b18300b2", null ],
     [ "countProjections", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad6525fd3b4be99656c61c4d9e8177c37", null ],
@@ -16,7 +17,9 @@ var classLatticeTester_1_1FigureOfMeritM =
     [ "getMinMeritSqlen", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ade709441c4fbfa7bf62259ed10e1cf94", null ],
     [ "getMinMeritProj", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab9c26757cf7f5a4d7349aeff260538c1", null ],
     [ "computeMeritOneProj", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aa41da07dcfa1f67854d9c822e33395d0", null ],
+    [ "computeMeritSucc", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a9678223a870a7f746ad8b55a927e0640", null ],
     [ "computeMeritSucc", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a3e671c26e8b0f6298b463f604228446f", null ],
+    [ "computeMeritSuccRebuild", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a17fb222e7a4cd4d0b32367cad0199b72", null ],
     [ "computeMeritSuccRebuild", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a59e832a650f4abd691c7b2ea57d6707a", null ],
     [ "computeMeritNonSucc", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a6431bd6399a50fb8bb0bc2be21e9b1f5", null ],
     [ "computeMerit", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad5a8a53868f425073a1b744a19dd685f", null ],
@@ -30,7 +33,7 @@ var classLatticeTester_1_1FigureOfMeritM =
     [ "m_redBB", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a1dcb7f7ec5be4592612d2ba0acec4fd7", null ],
     [ "m_coordRange", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a85f5cf41c2cb9bcfececc08024c2260a", null ],
     [ "m_red", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a0771af1d54f2b974cfc4aaa1f1eac266", null ],
-    [ "m_sqlen", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a0db43cbaecb7189b76cfe905842f0b84", null ],
+    [ "m_minSqlen", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a595b201a131eee0b01967b2b680612c3", null ],
     [ "m_includeFirst", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a44ed9a8103fb9e6b5058f5a9550b3228", null ],
     [ "m_lowbound", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a7c70d99aac0cf29954ebf7911070fa29", null ],
     [ "m_minMerit", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aa981f88a3f43dd54cddadc2777a6e9b6", null ],

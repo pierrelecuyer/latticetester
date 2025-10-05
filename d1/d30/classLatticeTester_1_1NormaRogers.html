@@ -120,6 +120,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ae516774da77473d65d64e65708dbf87f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor assumes that the rescaled primal lattice has scaling factor \(m\) and order \(k\), so its density is \(m^{k-t}\) for \(t\geq k\), and cannot exceed 1 for projections in \(s &lt; k\) dimensions.  <br /></td></tr>
 <tr class="memitem:ad2c81ffb6aa506fd8c294db929860a9e" id="r_ad2c81ffb6aa506fd8c294db929860a9e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2c81ffb6aa506fd8c294db929860a9e">NormaRogers</a> (double logDensity, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
 <tr class="memdesc:ad2c81ffb6aa506fd8c294db929860a9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <span class="tt"><a class="el" href="../../d1/d30/classLatticeTester_1_1NormaRogers.html" title="This class implements upper bounds on the length of the shortest nonzero vector in a lattice,...">NormaRogers</a></span> for up to <span class="tt">maxDim</span> dimensions, by assuming that the log density is <span class="tt">logDensity</span> in all dimensions and the lattice was not rescaled.  <br /></td></tr>
+<tr class="memitem:a018c1b190987bf6cd40144968cc928d3" id="r_a018c1b190987bf6cd40144968cc928d3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a018c1b190987bf6cd40144968cc928d3">NormaRogers</a> (int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a018c1b190987bf6cd40144968cc928d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates the <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html" title="This is a base class for implementing normalization constants used in figures of merit,...">Normalizer</a> object without computing any bounds.  <br /></td></tr>
 <tr class="memitem:abaf1ccfe60a4f88cab28735a2cd70d3d" id="r_abaf1ccfe60a4f88cab28735a2cd70d3d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abaf1ccfe60a4f88cab28735a2cd70d3d">~NormaRogers</a> ()</td></tr>
 <tr class="memdesc:abaf1ccfe60a4f88cab28735a2cd70d3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="memitem:a760e0f62a26f7e373ef45a35d9a7531c" id="r_a760e0f62a26f7e373ef45a35d9a7531c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a760e0f62a26f7e373ef45a35d9a7531c">getGamma</a> (int64_t j) const</td></tr>
@@ -168,7 +170,7 @@ Additional Inherited Members</h2></td></tr>
 <p>These bounds are calculated as explained in <a class="el" href="../../d0/de3/citelist.html#CITEREF_mcon99a">[4]</a>, Eq. (47) on page 20, and in Table 1.2 on page 15. <span class="tt"><a class="el" href="../../d2/d61/classLatticeTester_1_1NormaBestUpBound.html" title="In this normalizer, the Hermite constants  are approximated using the best upper bounds that are avai...">NormaBestUpBound</a></span> provide tighter bounds in lower dimensions, up to 36, but Rogers bounds can be computed in higher dimensions. For the L1NORM, the bounds must be multiplied by <span class="tt">s</span> in <span class="tt">s</span> dimensions. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae516774da77473d65d64e65708dbf87f" name="ae516774da77473d65d64e65708dbf87f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae516774da77473d65d64e65708dbf87f">&#9670;&#160;</a></span>NormaRogers() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae516774da77473d65d64e65708dbf87f">&#9670;&#160;</a></span>NormaRogers() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -201,7 +203,7 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <a id="ad2c81ffb6aa506fd8c294db929860a9e" name="ad2c81ffb6aa506fd8c294db929860a9e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad2c81ffb6aa506fd8c294db929860a9e">&#9670;&#160;</a></span>NormaRogers() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2c81ffb6aa506fd8c294db929860a9e">&#9670;&#160;</a></span>NormaRogers() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -225,6 +227,29 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Constructs a <span class="tt"><a class="el" href="../../d1/d30/classLatticeTester_1_1NormaRogers.html" title="This class implements upper bounds on the length of the shortest nonzero vector in a lattice,...">NormaRogers</a></span> for up to <span class="tt">maxDim</span> dimensions, by assuming that the log density is <span class="tt">logDensity</span> in all dimensions and the lattice was not rescaled. </p>
+
+</div>
+</div>
+<a id="a018c1b190987bf6cd40144968cc928d3" name="a018c1b190987bf6cd40144968cc928d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a018c1b190987bf6cd40144968cc928d3">&#9670;&#160;</a></span>NormaRogers() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">LatticeTester::NormaRogers::NormaRogers </td>
+          <td>(</td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>maxDim</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a></td>          <td class="paramname"><span class="paramname"><em>norm</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates the <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html" title="This is a base class for implementing normalization constants used in figures of merit,...">Normalizer</a> object without computing any bounds. </p>
 
 </div>
 </div>

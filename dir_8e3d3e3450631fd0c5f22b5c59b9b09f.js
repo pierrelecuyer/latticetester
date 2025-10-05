@@ -12,7 +12,6 @@ var dir_8e3d3e3450631fd0c5f22b5c59b9b09f =
     [ "IntLatticeExt.h", "d3/d49/IntLatticeExt_8h.html", "d3/d49/IntLatticeExt_8h" ],
     [ "LLL_FP64.h", "d6/d28/LLL__FP64_8h.html", "d6/d28/LLL__FP64_8h" ],
     [ "LLL_lt.h", "d0/dd3/LLL__lt_8h.html", "d0/dd3/LLL__lt_8h" ],
-    [ "MRGLattice.h", "d1/db6/MRGLattice_8h.html", "d1/db6/MRGLattice_8h" ],
     [ "NormaBestLat.h", "d9/d03/NormaBestLat_8h.html", "d9/d03/NormaBestLat_8h" ],
     [ "NormaBestUpBound.h", "d2/d01/NormaBestUpBound_8h.html", "d2/d01/NormaBestUpBound_8h" ],
     [ "NormaLaminated.h", "d9/ded/NormaLaminated_8h.html", "d9/ded/NormaLaminated_8h" ],

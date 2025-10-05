@@ -6,38 +6,6 @@ var EnumTypes_8h =
       [ "LatticeTester::L2NORM", "d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b", null ],
       [ "LatticeTester::ZAREMBANORM", "d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a9dd28fa34c8fd3331bd55e85d9b8ff2b", null ]
     ] ],
-    [ "LatticeTester::OutputType", "d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058", [
-      [ "LatticeTester::TERM", "d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a7424f6330dcef06bb69cd6d1f4f9045a", null ],
-      [ "LatticeTester::RES", "d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a0c648307bf3301ea0606de04fcb79715", null ],
-      [ "LatticeTester::TEX", "d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a3143e7b5be2e3d8d6aad062460f51f97", null ],
-      [ "LatticeTester::GEN", "d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a0f15b71adaba58b2f5476a93823f1767", null ]
-    ] ],
-    [ "LatticeTester::ProblemType", "d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faff", [
-      [ "LatticeTester::BASIS", "d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffaa9cfecaf8d5048f10d4016c41ff814d2", null ],
-      [ "LatticeTester::DUAL", "d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffa6230d8b5b7473284e7ae5ce9c99a879a", null ],
-      [ "LatticeTester::REDUCTION", "d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffae72b9cc5c1b60f82db4dc146e05102bc", null ],
-      [ "LatticeTester::SHORTEST", "d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffabc152d94a75cc74adfdb22335c8980f9", null ],
-      [ "LatticeTester::MERIT", "d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffa861d3886c143a0cc3d686de47fb98920", null ]
-    ] ],
-    [ "LatticeTester::PrecisionType", "d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2", [
-      [ "LatticeTester::DOUBLE", "d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2a14b6ff7a5d157ffdfd9ab4d80d7f5ea6", null ],
-      [ "LatticeTester::QUADRUPLE", "d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2a3a2dae8e1fda53e4a5f9744979a818e0", null ],
-      [ "LatticeTester::XDOUBLE", "d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2acf1cb9ccf9b182660b0f40feabc2f007", null ],
-      [ "LatticeTester::RR", "d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2aa4d2c16f89d60274b8ed8859a2594ab7", null ]
-    ] ],
-    [ "LatticeTester::PrimeType", "d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65", [
-      [ "LatticeTester::PRIME", "d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65a1a116a76db19a0cf4ad43973fc2c2279", null ],
-      [ "LatticeTester::PROB_PRIME", "d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65a4ad8925491567caca357efe9f609bb27", null ],
-      [ "LatticeTester::COMPOSITE", "d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65aac48dba763e4f64c60ef238bf66f82f8", null ],
-      [ "LatticeTester::UNKNOWN", "d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65a5a0fef7085559362287f893caa97425e", null ]
-    ] ],
-    [ "LatticeTester::CriterionType", "d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0", [
-      [ "LatticeTester::LENGTH", "d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0ab6783128c1344cbef4cc8429cc63d0b5", null ],
-      [ "LatticeTester::SPECTRAL", "d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0a012ebaf6929fea5b0d330cf292d19e3c", null ],
-      [ "LatticeTester::BEYER", "d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0a91ce17e475c9002db6b12ed2e528d7e8", null ],
-      [ "LatticeTester::PALPHA", "d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0a782750d0af36a267ddfd84b32ae7d79c", null ],
-      [ "LatticeTester::BOUND_JS", "d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0aad5231f38003aaa7c1cc16c314d9605e", null ]
-    ] ],
     [ "LatticeTester::NormaType", "d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90", [
       [ "LatticeTester::BESTLAT", "d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90a6f65388b2929fedcf40d456d30df3551", null ],
       [ "LatticeTester::BESTUPBOUND", "d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90ab2dc4f1b4d3313f8df8baf113e937d6e", null ],
@@ -75,13 +43,7 @@ var EnumTypes_8h =
       [ "LatticeTester::MERITQ", "d8/d74/namespaceLatticeTester.html#a5e9e347d07097a1a3c82f1699ff93d58ad875e35fbaf2f2e8be530376935b6c6d", null ]
     ] ],
     [ "LatticeTester::toStringNorm", "d8/d74/namespaceLatticeTester.html#af65fc07f34906524398b038327a0bb14", null ],
-    [ "LatticeTester::toStringOutput", "d8/d74/namespaceLatticeTester.html#a059f8e56d24041008c87a70625e70ba9", null ],
-    [ "LatticeTester::toStringProblem", "d8/d74/namespaceLatticeTester.html#a07260b18b588fe14165b0ea411934bbd", null ],
-    [ "LatticeTester::toStringPrecision", "d8/d74/namespaceLatticeTester.html#a70e26765f6794f995a8130fecc030ca7", null ],
-    [ "LatticeTester::toStringPrime", "d8/d74/namespaceLatticeTester.html#ac6567b0759b046c6deeea98a1c9f4235", null ],
-    [ "LatticeTester::toStringCriterion", "d8/d74/namespaceLatticeTester.html#a9d14b2942fa515f0e72edfcb4243781c", null ],
     [ "LatticeTester::toStringNorma", "d8/d74/namespaceLatticeTester.html#ac24879d5aa087958f258e3a9e3770d37", null ],
-    [ "LatticeTester::toStringCalc", "d8/d74/namespaceLatticeTester.html#a5fb8cd4f08931a89c70f756d0014b2b2", null ],
     [ "LatticeTester::toStringReduction", "d8/d74/namespaceLatticeTester.html#a137cd194ce614d43c80f65557ee96109", null ],
     [ "LatticeTester::toStringDecomp", "d8/d74/namespaceLatticeTester.html#a21f1a550ff7e4344554a043faceb7c55", null ],
     [ "LatticeTester::toStringProjConstruct", "d8/d74/namespaceLatticeTester.html#a12e050957b719073c06de41c7486f1ce", null ],

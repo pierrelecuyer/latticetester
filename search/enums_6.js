@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['reductiontype_0',['ReductionType',['../d8/d74/namespaceLatticeTester.html#af2a213e64bd54d3e33a7aff0f80068cb',1,'LatticeTester']]]
+  ['timeformat_0',['TimeFormat',['../d9/d32/classLatticeTester_1_1Chrono.html#afd6d46c7ce75e32bdbb9dbfe49728dbf',1,'LatticeTester::Chrono']]]
 ];

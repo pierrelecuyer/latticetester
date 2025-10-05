@@ -120,6 +120,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a34935306d4c4723aef95609db583d9f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor assumes that the rescaled primal lattice has scaling factor \(m\) and order \(k\), so its density is \(m^{k-t}\) for \(t\geq k\), and cannot exceed 1 for projections in \(s &lt; k\) dimensions.  <br /></td></tr>
 <tr class="memitem:a6e9ced0ea67ea3c0fc2a3c3ec81189d2" id="r_a6e9ced0ea67ea3c0fc2a3c3ec81189d2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e9ced0ea67ea3c0fc2a3c3ec81189d2">NormaMinkHlaw</a> (double logDensity, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
 <tr class="memdesc:a6e9ced0ea67ea3c0fc2a3c3ec81189d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <span class="tt"><a class="el" href="../../df/d78/classLatticeTester_1_1NormaMinkHlaw.html" title="This class implements lower bounds on the Hermite constants based on the Minkowski-Hlawka theorem mhl...">NormaMinkHlaw</a></span> for up to <span class="tt">maxDim</span> dimensions, by assuming that the log density is <span class="tt">logDensity</span> in all dimensions and the lattice was not rescaled.  <br /></td></tr>
+<tr class="memitem:a73720bcdce3a22ca8056aadaf6a3d156" id="r_a73720bcdce3a22ca8056aadaf6a3d156"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73720bcdce3a22ca8056aadaf6a3d156">NormaMinkHlaw</a> (int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a73720bcdce3a22ca8056aadaf6a3d156"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates the <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html" title="This is a base class for implementing normalization constants used in figures of merit,...">Normalizer</a> object without computing any bounds.  <br /></td></tr>
 <tr class="memitem:a92846b35a8eb28cb3b40842061134039" id="r_a92846b35a8eb28cb3b40842061134039"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92846b35a8eb28cb3b40842061134039">getGamma</a> (int64_t j) const</td></tr>
 <tr class="memdesc:a92846b35a8eb28cb3b40842061134039"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the lattice constant \(\gamma_j\) in dimension \(j\).  <br /></td></tr>
 <tr class="inherit_header pub_methods_classLatticeTester_1_1Normalizer"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classLatticeTester_1_1Normalizer')"><span class="dynarrow"><span class="arrowhead closed"></span></span>Public Member Functions inherited from <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html">LatticeTester::Normalizer</a></td></tr>
@@ -166,7 +168,7 @@ Additional Inherited Members</h2></td></tr>
 <p>The Hermite constants are approximated by the \(\gamma_t^{(Z)}\) given in the guide. These lower bounds are all smaller than the lower bounds from <span class="tt"><a class="el" href="../../d1/d24/classLatticeTester_1_1NormaBestLat.html" title="This Normalizer class implements approximate upper bounds on the length of the shortest nonzero vecto...">NormaBestLat</a></span>. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a34935306d4c4723aef95609db583d9f2" name="a34935306d4c4723aef95609db583d9f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a34935306d4c4723aef95609db583d9f2">&#9670;&#160;</a></span>NormaMinkHlaw() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a34935306d4c4723aef95609db583d9f2">&#9670;&#160;</a></span>NormaMinkHlaw() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,7 +201,7 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <a id="a6e9ced0ea67ea3c0fc2a3c3ec81189d2" name="a6e9ced0ea67ea3c0fc2a3c3ec81189d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e9ced0ea67ea3c0fc2a3c3ec81189d2">&#9670;&#160;</a></span>NormaMinkHlaw() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e9ced0ea67ea3c0fc2a3c3ec81189d2">&#9670;&#160;</a></span>NormaMinkHlaw() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -224,6 +226,29 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Constructs a <span class="tt"><a class="el" href="../../df/d78/classLatticeTester_1_1NormaMinkHlaw.html" title="This class implements lower bounds on the Hermite constants based on the Minkowski-Hlawka theorem mhl...">NormaMinkHlaw</a></span> for up to <span class="tt">maxDim</span> dimensions, by assuming that the log density is <span class="tt">logDensity</span> in all dimensions and the lattice was not rescaled. </p>
 <p>Restriction: <span class="tt">maxDim</span> \( \le 48\). </p>
+
+</div>
+</div>
+<a id="a73720bcdce3a22ca8056aadaf6a3d156" name="a73720bcdce3a22ca8056aadaf6a3d156"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73720bcdce3a22ca8056aadaf6a3d156">&#9670;&#160;</a></span>NormaMinkHlaw() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">LatticeTester::NormaMinkHlaw::NormaMinkHlaw </td>
+          <td>(</td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>maxDim</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a></td>          <td class="paramname"><span class="paramname"><em>norm</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates the <a class="el" href="../../d0/dc8/classLatticeTester_1_1Normalizer.html" title="This is a base class for implementing normalization constants used in figures of merit,...">Normalizer</a> object without computing any bounds. </p>
 
 </div>
 </div>

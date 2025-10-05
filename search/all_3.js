@@ -10,7 +10,5 @@ var searchData=
   ['divideround_7',['DivideRound',['../d8/d74/namespaceLatticeTester.html#a76b74332cd4ded85d51dc6020b930772',1,'LatticeTester']]],
   ['documentation_8',['Lattice Tester Online Documentation',['../index.html',1,'']]],
   ['documentation_9',['Notes on this documentation',['../index.html#notes',1,'']]],
-  ['double_10',['DOUBLE',['../d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2a14b6ff7a5d157ffdfd9ab4d80d7f5ea6',1,'LatticeTester']]],
-  ['dual_11',['DUAL',['../d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffa6230d8b5b7473284e7ae5ce9c99a879a',1,'LatticeTester']]],
-  ['dualize_12',['dualize',['../d6/dc0/classLatticeTester_1_1IntLattice.html#a4b8a47950cce207b8995b9226ddf469d',1,'LatticeTester::IntLattice']]]
+  ['dualize_10',['dualize',['../d6/dc0/classLatticeTester_1_1IntLattice.html#a4b8a47950cce207b8995b9226ddf469d',1,'LatticeTester::IntLattice']]]
 ];

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['rank1lattice_0',['Rank1Lattice',['../de/dfe/classLatticeTester_1_1Rank1Lattice.html',1,'LatticeTester']]],
-  ['reducerbb_1',['ReducerBB',['../d0/dea/classLatticeTester_1_1ReducerBB.html',1,'LatticeTester']]]
+  ['subsets_0',['Subsets',['../d8/d6d/classLatticeTester_1_1CoordinateSets_1_1Subsets.html',1,'LatticeTester::CoordinateSets']]]
 ];

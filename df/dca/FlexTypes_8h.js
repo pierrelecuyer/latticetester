@@ -9,5 +9,13 @@ var FlexTypes_8h =
     [ "IntMat", "df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7", null ],
     [ "RealVec", "df/dca/FlexTypes_8h.html#ac31ec1900f910a5d820901146696b5cb", null ],
     [ "RealMat", "df/dca/FlexTypes_8h.html#a39a9fd2ebf00d7eddc8594b40648319b", null ],
-    [ "strTypes", "df/dca/FlexTypes_8h.html#a4746e1447c32012ddb470391df37a6c5", null ]
+    [ "Int", "df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0", null ],
+    [ "IntP", "df/dca/FlexTypes_8h.html#accd35271eedf3532aa33001ac33b179f", null ],
+    [ "PolE", "df/dca/FlexTypes_8h.html#a1f0ba3c1b006e2f74d6d28ac18f5b3be", null ],
+    [ "PolX", "df/dca/FlexTypes_8h.html#a19cd706061e0ad555ee3752c8a217d5d", null ],
+    [ "IntVecP", "df/dca/FlexTypes_8h.html#a7632498c174a316c5875529fb39e600a", null ],
+    [ "IntMatP", "df/dca/FlexTypes_8h.html#a46b0ee295d4fa8a3320a115a239b0bcd", null ],
+    [ "strTypes", "df/dca/FlexTypes_8h.html#a4746e1447c32012ddb470391df37a6c5", null ],
+    [ "to_Int_p", "df/dca/FlexTypes_8h.html#a023af646b76f9c83a8b18049fa440a8c", null ],
+    [ "mod_init", "df/dca/FlexTypes_8h.html#ae2ee3effe0e36da710f8ab74f29ce33e", null ]
 ];

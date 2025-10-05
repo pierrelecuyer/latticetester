@@ -101,7 +101,7 @@ $(function(){initNavTree('df/dca/FlexTypes_8h.html','../../',''); });
 </div><!--header-->
 <div class="contents">
 
-<p>Tools to select and print the choices of flexible types <span class="tt">Int</span> and <span class="tt">Real</span>.  
+<p>Tools to select and print the choices of flexible types <span class="tt"><a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a></span> and <span class="tt">Real</span>, and the corresponding integer types for arithmetic modulo <span class="tt">p</span>.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
@@ -111,21 +111,32 @@ Macros</h2></td></tr>
 <tr class="memitem:ad212f0166e1f7c27f8a593d3fcceff67" id="r_ad212f0166e1f7c27f8a593d3fcceff67"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad212f0166e1f7c27f8a593d3fcceff67">ZX</a>&#160;&#160;&#160;4</td></tr>
 <tr class="memitem:ab7de0de05d25c4db5db98891320a90aa" id="r_ab7de0de05d25c4db5db98891320a90aa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7de0de05d25c4db5db98891320a90aa">ZQ</a>&#160;&#160;&#160;6</td></tr>
 <tr class="memitem:a38acb6d1e61a0929d5eaa2f3a3b26495" id="r_a38acb6d1e61a0929d5eaa2f3a3b26495"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38acb6d1e61a0929d5eaa2f3a3b26495">ZR</a>&#160;&#160;&#160;8</td></tr>
-<tr class="memitem:a76f03239c9f9103a0d5c88ed1c28451a" id="r_a76f03239c9f9103a0d5c88ed1c28451a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a>&#160;&#160;&#160;NTL::Vec&lt;Int&gt;</td></tr>
-<tr class="memitem:ae61b2b49771cae3d1484b00260fdaff7" id="r_ae61b2b49771cae3d1484b00260fdaff7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a>&#160;&#160;&#160;NTL::Mat&lt;Int&gt;</td></tr>
+<tr class="memitem:a76f03239c9f9103a0d5c88ed1c28451a" id="r_a76f03239c9f9103a0d5c88ed1c28451a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a>&#160;&#160;&#160;NTL::Vec&lt;<a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>&gt;</td></tr>
+<tr class="memitem:ae61b2b49771cae3d1484b00260fdaff7" id="r_ae61b2b49771cae3d1484b00260fdaff7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a>&#160;&#160;&#160;NTL::Mat&lt;<a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>&gt;</td></tr>
 <tr class="memitem:ac31ec1900f910a5d820901146696b5cb" id="r_ac31ec1900f910a5d820901146696b5cb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac31ec1900f910a5d820901146696b5cb">RealVec</a>&#160;&#160;&#160;NTL::Vec&lt;Real&gt;</td></tr>
 <tr class="memitem:a39a9fd2ebf00d7eddc8594b40648319b" id="r_a39a9fd2ebf00d7eddc8594b40648319b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39a9fd2ebf00d7eddc8594b40648319b">RealMat</a>&#160;&#160;&#160;NTL::Mat&lt;Real&gt;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ac775e369c033ede683d47ebc2b5ae2a0" id="r_ac775e369c033ede683d47ebc2b5ae2a0"><td class="memItemLeft" align="right" valign="top">typedef NTL::ZZ&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a></td></tr>
+<tr class="memitem:accd35271eedf3532aa33001ac33b179f" id="r_accd35271eedf3532aa33001ac33b179f"><td class="memItemLeft" align="right" valign="top">typedef NTL::ZZ_p&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accd35271eedf3532aa33001ac33b179f">IntP</a></td></tr>
+<tr class="memitem:a1f0ba3c1b006e2f74d6d28ac18f5b3be" id="r_a1f0ba3c1b006e2f74d6d28ac18f5b3be"><td class="memItemLeft" align="right" valign="top">typedef NTL::ZZ_pE&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f0ba3c1b006e2f74d6d28ac18f5b3be">PolE</a></td></tr>
+<tr class="memitem:a19cd706061e0ad555ee3752c8a217d5d" id="r_a19cd706061e0ad555ee3752c8a217d5d"><td class="memItemLeft" align="right" valign="top">typedef NTL::ZZ_pX&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19cd706061e0ad555ee3752c8a217d5d">PolX</a></td></tr>
+<tr class="memitem:a7632498c174a316c5875529fb39e600a" id="r_a7632498c174a316c5875529fb39e600a"><td class="memItemLeft" align="right" valign="top">typedef NTL::vec_ZZ_p&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7632498c174a316c5875529fb39e600a">IntVecP</a></td></tr>
+<tr class="memitem:a46b0ee295d4fa8a3320a115a239b0bcd" id="r_a46b0ee295d4fa8a3320a115a239b0bcd"><td class="memItemLeft" align="right" valign="top">typedef NTL::mat_ZZ_p&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46b0ee295d4fa8a3320a115a239b0bcd">IntMatP</a></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4746e1447c32012ddb470391df37a6c5" id="r_a4746e1447c32012ddb470391df37a6c5"><td class="memTemplParams" colspan="2">template&lt;typename Int, typename Real&gt; </td></tr>
+<tr class="memitem:a4746e1447c32012ddb470391df37a6c5" id="r_a4746e1447c32012ddb470391df37a6c5"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </td></tr>
 <tr class="memitem:a4746e1447c32012ddb470391df37a6c5 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4746e1447c32012ddb470391df37a6c5">strTypes</a> (std::string &amp;str)</td></tr>
-<tr class="memdesc:a4746e1447c32012ddb470391df37a6c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">This template function returns a character string that gives the values of <span class="tt">Int</span> and <span class="tt">Real</span>, usually for printing purposes.  <br /></td></tr>
+<tr class="memdesc:a4746e1447c32012ddb470391df37a6c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">This template function returns a character string that gives the values of <span class="tt"><a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a></span> and <span class="tt">Real</span>, usually for printing purposes.  <br /></td></tr>
+<tr class="memitem:a023af646b76f9c83a8b18049fa440a8c" id="r_a023af646b76f9c83a8b18049fa440a8c"><td class="memItemLeft" align="right" valign="top">static NTL::ZZ_p&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a023af646b76f9c83a8b18049fa440a8c">to_Int_p</a> (<a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> a)</td></tr>
+<tr class="memitem:ae2ee3effe0e36da710f8ab74f29ce33e" id="r_ae2ee3effe0e36da710f8ab74f29ce33e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae2ee3effe0e36da710f8ab74f29ce33e">mod_init</a> (<a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> m)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Tools to select and print the choices of flexible types <span class="tt">Int</span> and <span class="tt">Real</span>. </p>
-<p>There are five admissible combinations of types for <span class="tt">(Int, Real)</span>. They are represented by the five codes given below. For example, to use Int = NTL::ZZ, Real = double in a program, it suffices to put: #define TYPES_CODE ZD at the very beginning of the file, <em>before</em> the present <span class="tt"><a class="el" href="../../df/dca/FlexTypes_8h.html" title="Tools to select and print the choices of flexible types Int and Real.">FlexTypes.h</a></span> file is read. See <span class="tt">BasisConstructionSmall.cc</span> for an example.</p>
-<p>Another (more flexible) way of specifying the flexible types <span class="tt">(Int, Real)</span> is to pass the types we want to use in the class and function templates. See the guide and the examples to see how to do that. </p>
+<div class="textblock"><p>Tools to select and print the choices of flexible types <span class="tt"><a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a></span> and <span class="tt">Real</span>, and the corresponding integer types for arithmetic modulo <span class="tt">p</span>. </p>
+<p>There are five admissible combinations of types for <span class="tt">(<a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real)</span>. They are represented by the five codes given below. For example, to use <a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> = NTL::ZZ, Real = double in a program, it suffices to put: #define TYPES_CODE ZD at the very beginning of the file, <em>before</em> the present <span class="tt"><a class="el" href="../../df/dca/FlexTypes_8h.html" title="Tools to select and print the choices of flexible types Int and Real, and the corresponding integer t...">FlexTypes.h</a></span> file is read. See <span class="tt">BasisConstructionSmall.cc</span> for an example.</p>
+<p>Another way of specifying the flexible types <span class="tt">(<a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real, ...)</span> is to pass the types we want in the class and function templates. This permits one to use different choices of types in the same program execution. See the guide and the examples to see how to do that. </p>
 </div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
 <a id="a9b06fda83ca7a20a56bd6565d6841893" name="a9b06fda83ca7a20a56bd6565d6841893"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9b06fda83ca7a20a56bd6565d6841893">&#9670;&#160;</a></span>LD</h2>
@@ -204,7 +215,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define IntVec&#160;&#160;&#160;NTL::Vec&lt;Int&gt;</td>
+          <td class="memname">#define IntVec&#160;&#160;&#160;NTL::Vec&lt;<a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -218,7 +229,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define IntMat&#160;&#160;&#160;NTL::Mat&lt;Int&gt;</td>
+          <td class="memname">#define IntMat&#160;&#160;&#160;NTL::Mat&lt;<a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -253,6 +264,91 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
+<a id="ac775e369c033ede683d47ebc2b5ae2a0" name="ac775e369c033ede683d47ebc2b5ae2a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac775e369c033ede683d47ebc2b5ae2a0">&#9670;&#160;</a></span>Int</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef NTL::ZZ <a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="accd35271eedf3532aa33001ac33b179f" name="accd35271eedf3532aa33001ac33b179f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accd35271eedf3532aa33001ac33b179f">&#9670;&#160;</a></span>IntP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef NTL::ZZ_p <a class="el" href="#accd35271eedf3532aa33001ac33b179f">IntP</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1f0ba3c1b006e2f74d6d28ac18f5b3be" name="a1f0ba3c1b006e2f74d6d28ac18f5b3be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f0ba3c1b006e2f74d6d28ac18f5b3be">&#9670;&#160;</a></span>PolE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef NTL::ZZ_pE <a class="el" href="#a1f0ba3c1b006e2f74d6d28ac18f5b3be">PolE</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a19cd706061e0ad555ee3752c8a217d5d" name="a19cd706061e0ad555ee3752c8a217d5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19cd706061e0ad555ee3752c8a217d5d">&#9670;&#160;</a></span>PolX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef NTL::ZZ_pX <a class="el" href="#a19cd706061e0ad555ee3752c8a217d5d">PolX</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7632498c174a316c5875529fb39e600a" name="a7632498c174a316c5875529fb39e600a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7632498c174a316c5875529fb39e600a">&#9670;&#160;</a></span>IntVecP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef NTL::vec_ZZ_p <a class="el" href="#a7632498c174a316c5875529fb39e600a">IntVecP</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a46b0ee295d4fa8a3320a115a239b0bcd" name="a46b0ee295d4fa8a3320a115a239b0bcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46b0ee295d4fa8a3320a115a239b0bcd">&#9670;&#160;</a></span>IntMatP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef NTL::mat_ZZ_p <a class="el" href="#a46b0ee295d4fa8a3320a115a239b0bcd">IntMatP</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
 <a id="a4746e1447c32012ddb470391df37a6c5" name="a4746e1447c32012ddb470391df37a6c5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4746e1447c32012ddb470391df37a6c5">&#9670;&#160;</a></span>strTypes()</h2>
@@ -260,7 +356,7 @@ Functions</h2></td></tr>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void strTypes </td>
@@ -271,8 +367,58 @@ template&lt;typename Int, typename Real&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>This template function returns a character string that gives the values of <span class="tt">Int</span> and <span class="tt">Real</span>, usually for printing purposes. </p>
-<p>For example, <span class="tt">strTypes&lt;NTL::ZZ,double&gt;(str)</span> will return the string <span class="tt">Int = NTL::ZZ, Real = double</span> in <span class="tt">str</span>. </p>
+<p>This template function returns a character string that gives the values of <span class="tt"><a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a></span> and <span class="tt">Real</span>, usually for printing purposes. </p>
+<p>For example, <span class="tt">strTypes&lt;NTL::ZZ,double&gt;(str)</span> will return the string <span class="tt"><a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> = NTL::ZZ, Real = double</span> in <span class="tt">str</span>. </p>
+
+</div>
+</div>
+<a id="a023af646b76f9c83a8b18049fa440a8c" name="a023af646b76f9c83a8b18049fa440a8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a023af646b76f9c83a8b18049fa440a8c">&#9670;&#160;</a></span>to_Int_p()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NTL::ZZ_p to_Int_p </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a></td>          <td class="paramname"><span class="paramname"><em>a</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae2ee3effe0e36da710f8ab74f29ce33e" name="ae2ee3effe0e36da710f8ab74f29ce33e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2ee3effe0e36da710f8ab74f29ce33e">&#9670;&#160;</a></span>mod_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mod_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ac775e369c033ede683d47ebc2b5ae2a0">Int</a></td>          <td class="paramname"><span class="paramname"><em>m</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

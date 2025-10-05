@@ -12,7 +12,6 @@ var annotated_dup =
       [ "FigureOfMeritM", "d7/dca/classLatticeTester_1_1FigureOfMeritM.html", "d7/dca/classLatticeTester_1_1FigureOfMeritM" ],
       [ "IntLattice", "d6/dc0/classLatticeTester_1_1IntLattice.html", "d6/dc0/classLatticeTester_1_1IntLattice" ],
       [ "IntLatticeExt", "d8/d6c/classLatticeTester_1_1IntLatticeExt.html", "d8/d6c/classLatticeTester_1_1IntLatticeExt" ],
-      [ "MRGLattice", "d9/d4e/classLatticeTester_1_1MRGLattice.html", "d9/d4e/classLatticeTester_1_1MRGLattice" ],
       [ "NormaBestLat", "d1/d24/classLatticeTester_1_1NormaBestLat.html", "d1/d24/classLatticeTester_1_1NormaBestLat" ],
       [ "NormaBestUpBound", "d2/d61/classLatticeTester_1_1NormaBestUpBound.html", "d2/d61/classLatticeTester_1_1NormaBestUpBound" ],
       [ "NormaLaminated", "dd/d0f/classLatticeTester_1_1NormaLaminated.html", "dd/d0f/classLatticeTester_1_1NormaLaminated" ],

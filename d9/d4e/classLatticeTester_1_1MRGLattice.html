@@ -101,7 +101,7 @@ $(function(){initNavTree('d9/d4e/classLatticeTester_1_1MRGLattice.html','../../'
 </div><!--header-->
 <div class="contents">
 
-<p>This subclass of <span class="tt"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice and is a skeleton for the specialized subclasses that define s...">IntLatticeExt</a></span> defines an MRG lattice.  
+<p>This subclass of <span class="tt"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice with additional (virtual) methods that must be implemented in ...">IntLatticeExt</a></span> defines an MRG lattice.  
  <a href="#details">More...</a></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;"><span class="dynarrow"><span class="arrowhead closed"></span></span>Inheritance diagram for LatticeTester::MRGLattice&lt; Int, Real &gt;:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -110,7 +110,7 @@ $(function(){initNavTree('d9/d4e/classLatticeTester_1_1MRGLattice.html','../../'
  <div class="center">
   <img src="../../d9/d4e/classLatticeTester_1_1MRGLattice.png" usemap="#LatticeTester_3A_3AMRGLattice_3C_20Int_2C_20Real_20_3E_map" alt=""/>
   <map id="LatticeTester_3A_3AMRGLattice_3C_20Int_2C_20Real_20_3E_map" name="LatticeTester_3A_3AMRGLattice_3C_20Int_2C_20Real_20_3E_map">
-<area href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice and is a skeleton for the specialized subclasses that define s..." alt="LatticeTester::IntLatticeExt&lt; Int, Real &gt;" shape="rect" coords="0,56,228,80"/>
+<area href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice with additional (virtual) methods that must be implemented in ..." alt="LatticeTester::IntLatticeExt&lt; Int, Real &gt;" shape="rect" coords="0,56,228,80"/>
 <area href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both." alt="LatticeTester::IntLattice&lt; Int, Real &gt;" shape="rect" coords="0,0,228,24"/>
   </map>
 </div></div>
@@ -285,8 +285,8 @@ Protected Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Int, typename Real&gt;<br />
-class LatticeTester::MRGLattice&lt; Int, Real &gt;</div><p>This subclass of <span class="tt"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice and is a skeleton for the specialized subclasses that define s...">IntLatticeExt</a></span> defines an MRG lattice. </p>
-<p>It is similar to <span class="tt"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html" title="This subclass of IntLatticeExt defines a general rank 1 lattice rule in  dimensions,...">Rank1Lattice</a></span>, but constructs lattices associated with multiple recursive generators (MRGs) with modulus \(m\), order \(k\), and vector of multipliers \(\mathbf{a} = (a_1, . . . , a_k)\). The functions <span class="tt">buildBasis</span> and <span class="tt">incDimBasis</span> always build and update the primal basis. To build the m-dual, use <span class="tt">buildDualBasis</span>. </p>
+class LatticeTester::MRGLattice&lt; Int, Real &gt;</div><p>This subclass of <span class="tt"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice with additional (virtual) methods that must be implemented in ...">IntLatticeExt</a></span> defines an MRG lattice. </p>
+<p>It is similar to <span class="tt"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html" title="This subclass of IntLatticeExt defines a general rank-1 lattice rule in  dimensions,...">Rank1Lattice</a></span>, but constructs lattices associated with multiple recursive generators (MRGs) with modulus \(m\), order \(k\), and vector of multipliers \(\mathbf{a} = (a_1, . . . , a_k)\). The functions <span class="tt">buildBasis</span> and <span class="tt">incDimBasis</span> always build and update the primal basis. To build the m-dual, use <span class="tt">buildDualBasis</span>. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8210853724e4a18eac3a6bc835352776" name="a8210853724e4a18eac3a6bc835352776"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8210853724e4a18eac3a6bc835352776">&#9670;&#160;</a></span>MRGLattice()</h2>

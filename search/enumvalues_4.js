@@ -1,5 +1,9 @@
 var searchData=
 [
-  ['hms_0',['HMS',['../d9/d32/classLatticeTester_1_1Chrono.html#afd6d46c7ce75e32bdbb9dbfe49728dbfa10867f0c1d20ba575f2ce9c2bc0d858d',1,'LatticeTester::Chrono']]],
-  ['hours_1',['HOURS',['../d9/d32/classLatticeTester_1_1Chrono.html#afd6d46c7ce75e32bdbb9dbfe49728dbfaa70590884c5efd12fc5f016c32a6785b',1,'LatticeTester::Chrono']]]
+  ['l1norm_0',['L1NORM',['../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a6031a75d242058c5b26d05f510267b41',1,'LatticeTester']]],
+  ['l2norm_1',['L2NORM',['../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b',1,'LatticeTester']]],
+  ['laminated_2',['LAMINATED',['../d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90ae8842bb9870dacacc65ef1ad46f8fa4b',1,'LatticeTester']]],
+  ['lll_3',['LLL',['../d8/d74/namespaceLatticeTester.html#af2a213e64bd54d3e33a7aff0f80068cba8d04551154f945a747c129cdabff4af5',1,'LatticeTester']]],
+  ['lllbb_4',['LLLBB',['../d8/d74/namespaceLatticeTester.html#af2a213e64bd54d3e33a7aff0f80068cba841193f6d276a17aff255f4f59a712d9',1,'LatticeTester']]],
+  ['lllproj_5',['LLLPROJ',['../d8/d74/namespaceLatticeTester.html#a1ff6c9ee29ca0bac6c63d2622508aa46a59c23f7e8d888fc3e79108dea9475dbb',1,'LatticeTester']]]
 ];

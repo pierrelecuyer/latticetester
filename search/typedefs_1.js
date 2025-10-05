@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['vec_5f64_0',['Vec_64',['../d2/d5a/namespaceNTL.html#aab2c03c6ebdc24ad122abcc86be689c1',1,'NTL']]],
-  ['vector64_1',['vector64',['../d2/d5a/namespaceNTL.html#ad1332666799d99b61c6a0f4c6d657fce',1,'NTL']]]
+  ['pole_0',['PolE',['../df/dca/FlexTypes_8h.html#a1f0ba3c1b006e2f74d6d28ac18f5b3be',1,'FlexTypes.h']]],
+  ['polx_1',['PolX',['../df/dca/FlexTypes_8h.html#a19cd706061e0ad555ee3752c8a217d5d',1,'FlexTypes.h']]]
 ];

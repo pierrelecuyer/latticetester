@@ -101,7 +101,7 @@ $(function(){initNavTree('de/dfe/classLatticeTester_1_1Rank1Lattice.html','../..
 </div><!--header-->
 <div class="contents">
 
-<p>This subclass of <span class="tt"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice and is a skeleton for the specialized subclasses that define s...">IntLatticeExt</a></span> defines a general rank 1 lattice rule in \(t\) dimensions, whose points \(\mathbb{u}_i\) are defined by \( \mathbf{u}_i = (i \mathbf{a} \bmod m)/m \) where \(\mathbf{a} = (a_1,a_2,\dots,a_t) \in \mathbb{Z}_m^t\) is the generating vector; see Section 5.4 of the guide.  
+<p>This subclass of <span class="tt"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice with additional (virtual) methods that must be implemented in ...">IntLatticeExt</a></span> defines a general rank-1 lattice rule in \(t\) dimensions, whose \(m\) points are \( \mathbf{u}_i = (i \mathbf{a} \bmod m)/m \) for \(i = 0,\dots,m-1\), where \(\mathbf{a} = (a_1,a_2,\dots,a_t) \in \mathbb{Z}_m^t\) is the generating vector, \(a_1 = 1\), and \(\gcd(a_j, m) = 1\) for \(j =2, \dots,t\).  
  <a href="#details">More...</a></p>
 <div id="dynsection-0" onclick="return dynsection.toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;"><span class="dynarrow"><span class="arrowhead closed"></span></span>Inheritance diagram for LatticeTester::Rank1Lattice&lt; Int, Real &gt;:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -110,83 +110,72 @@ $(function(){initNavTree('de/dfe/classLatticeTester_1_1Rank1Lattice.html','../..
  <div class="center">
   <img src="../../de/dfe/classLatticeTester_1_1Rank1Lattice.png" usemap="#LatticeTester_3A_3ARank1Lattice_3C_20Int_2C_20Real_20_3E_map" alt=""/>
   <map id="LatticeTester_3A_3ARank1Lattice_3C_20Int_2C_20Real_20_3E_map" name="LatticeTester_3A_3ARank1Lattice_3C_20Int_2C_20Real_20_3E_map">
-<area href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice and is a skeleton for the specialized subclasses that define s..." alt="LatticeTester::IntLatticeExt&lt; Int, Real &gt;" shape="rect" coords="0,56,233,80"/>
+<area href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice with additional (virtual) methods that must be implemented in ..." alt="LatticeTester::IntLatticeExt&lt; Int, Real &gt;" shape="rect" coords="0,56,233,80"/>
 <area href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both." alt="LatticeTester::IntLattice&lt; Int, Real &gt;" shape="rect" coords="0,0,233,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9427d4658ca88ea4d4b5a57dd289d1f3" id="r_a9427d4658ca88ea4d4b5a57dd289d1f3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9427d4658ca88ea4d4b5a57dd289d1f3">Rank1Lattice</a> (const Int &amp;m, const <a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> &amp;aa, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:a9427d4658ca88ea4d4b5a57dd289d1f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor takes as input the modulus <span class="tt">m</span>, the generating vector \(\mathbf{a} = \)<span class="tt">aa</span>, and the norm used to measure the vector lengths.  <br /></td></tr>
-<tr class="memitem:a468c38de60081bff23267d264883c321" id="r_a468c38de60081bff23267d264883c321"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a468c38de60081bff23267d264883c321">Rank1Lattice</a> (const Int &amp;m, const Int &amp;a, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:a468c38de60081bff23267d264883c321"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the special case of a Korobov lattice.  <br /></td></tr>
-<tr class="memitem:acca8e51fea3e2757baeb56eebc952583" id="r_acca8e51fea3e2757baeb56eebc952583"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acca8e51fea3e2757baeb56eebc952583">Rank1Lattice</a> (const Int &amp;m, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:acca8e51fea3e2757baeb56eebc952583"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor does not specify the generating vector.  <br /></td></tr>
+<tr class="memitem:ac184b6b006b59acad136cc43ce3dec79" id="r_ac184b6b006b59acad136cc43ce3dec79"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac184b6b006b59acad136cc43ce3dec79">Rank1Lattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;m, const <a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> &amp;aa, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:ac184b6b006b59acad136cc43ce3dec79"><td class="mdescLeft">&#160;</td><td class="mdescRight">This constructor takes as input the modulus <span class="tt">m</span>, the generating vector \(\mathbf{a} = \)<span class="tt">aa</span>, and the norm used to measure the vector lengths.  <br /></td></tr>
+<tr class="memitem:a9427d4658ca88ea4d4b5a57dd289d1f3" id="r_a9427d4658ca88ea4d4b5a57dd289d1f3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9427d4658ca88ea4d4b5a57dd289d1f3">Rank1Lattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;m, const <a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> &amp;aa, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a9427d4658ca88ea4d4b5a57dd289d1f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">In this version, the maximal dimension <span class="tt">maxDim</span> is set to the length of the vector <span class="tt">aa</span>.  <br /></td></tr>
+<tr class="memitem:ad03fbe1555b390c02f67324e587e8fb2" id="r_ad03fbe1555b390c02f67324e587e8fb2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad03fbe1555b390c02f67324e587e8fb2">Rank1Lattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;m, const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;a, int64_t maxDim, int64_t dimaa, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:ad03fbe1555b390c02f67324e587e8fb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the special case of a Korobov lattice.  <br /></td></tr>
+<tr class="memitem:a7bd26e6ac0ac85712f8c7329efcbe30a" id="r_a7bd26e6ac0ac85712f8c7329efcbe30a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7bd26e6ac0ac85712f8c7329efcbe30a">Rank1Lattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;m, int64_t maxDim, int64_t dimaa, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a7bd26e6ac0ac85712f8c7329efcbe30a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This version assumes that <span class="tt">dimaa = maxDim</span>.  <br /></td></tr>
+<tr class="memitem:acca8e51fea3e2757baeb56eebc952583" id="r_acca8e51fea3e2757baeb56eebc952583"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acca8e51fea3e2757baeb56eebc952583">Rank1Lattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;m, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:acca8e51fea3e2757baeb56eebc952583"><td class="mdescLeft">&#160;</td><td class="mdescRight">This version assumes that <span class="tt">dimaa = maxDim</span>.  <br /></td></tr>
 <tr class="memitem:ae3c146f3fadf0d949903f22b0b22cf58" id="r_ae3c146f3fadf0d949903f22b0b22cf58"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3c146f3fadf0d949903f22b0b22cf58">~Rank1Lattice</a> ()</td></tr>
 <tr class="memdesc:ae3c146f3fadf0d949903f22b0b22cf58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="memitem:a153802e8b2d089853fe5b6fd1df771b4" id="r_a153802e8b2d089853fe5b6fd1df771b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a153802e8b2d089853fe5b6fd1df771b4">setaa</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> &amp;aa)</td></tr>
 <tr class="memdesc:a153802e8b2d089853fe5b6fd1df771b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the generating vector to <span class="tt">aa</span>.  <br /></td></tr>
-<tr class="memitem:ab5b720563d156fd8b3436726077fa9c0" id="r_ab5b720563d156fd8b3436726077fa9c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5b720563d156fd8b3436726077fa9c0">seta</a> (const Int &amp;a)</td></tr>
+<tr class="memitem:ab6e71c008c9a995db61e8459e14ac4e8" id="r_ab6e71c008c9a995db61e8459e14ac4e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6e71c008c9a995db61e8459e14ac4e8">seta</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;a, int64_t dimaa)</td></tr>
+<tr class="memdesc:ab6e71c008c9a995db61e8459e14ac4e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets this lattice to a Korobov lattice with multiplier <span class="tt">a</span> and sets the length of the generating vector to <span class="tt">dimaa</span>.  <br /></td></tr>
+<tr class="memitem:ab5b720563d156fd8b3436726077fa9c0" id="r_ab5b720563d156fd8b3436726077fa9c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5b720563d156fd8b3436726077fa9c0">seta</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;a)</td></tr>
 <tr class="memdesc:ab5b720563d156fd8b3436726077fa9c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets this lattice to a Korobov lattice with multiplier <span class="tt">a</span>.  <br /></td></tr>
 <tr class="memitem:af89ac5c912828a3bf8cd44d785b97b09" id="r_af89ac5c912828a3bf8cd44d785b97b09"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af89ac5c912828a3bf8cd44d785b97b09">getaa</a> ()</td></tr>
 <tr class="memdesc:af89ac5c912828a3bf8cd44d785b97b09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the generating vector <span class="tt">aa</span>.  <br /></td></tr>
 <tr class="memitem:a683c39eb9323900af71aa869d3ffd87d" id="r_a683c39eb9323900af71aa869d3ffd87d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a683c39eb9323900af71aa869d3ffd87d">buildBasis</a> (int64_t dim)</td></tr>
-<tr class="memdesc:a683c39eb9323900af71aa869d3ffd87d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a basis in <span class="tt">dim</span> dimensions.  <br /></td></tr>
+<tr class="memdesc:a683c39eb9323900af71aa869d3ffd87d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds an upper-triangular primal basis in <span class="tt">dim</span> dimensions.  <br /></td></tr>
 <tr class="memitem:a26f23a64f04c8faf3e531e7ef6bb9b9c" id="r_a26f23a64f04c8faf3e531e7ef6bb9b9c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26f23a64f04c8faf3e531e7ef6bb9b9c">buildDualBasis</a> (int64_t dim)</td></tr>
-<tr class="memdesc:a26f23a64f04c8faf3e531e7ef6bb9b9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds only an m-dual lower triangular basis (and not the primal) directly in <span class="tt">dim</span> dimensions.  <br /></td></tr>
+<tr class="memdesc:a26f23a64f04c8faf3e531e7ef6bb9b9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a lower-triangular m-dual basis (and not the primal) directly in <span class="tt">dim</span> dimensions.  <br /></td></tr>
 <tr class="memitem:a1b9efd97e3de9e0681ea7ce0f985a49d" id="r_a1b9efd97e3de9e0681ea7ce0f985a49d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b9efd97e3de9e0681ea7ce0f985a49d">incDimBasis</a> ()</td></tr>
 <tr class="memdesc:a1b9efd97e3de9e0681ea7ce0f985a49d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increases the current dimension of the primal basis by 1 and updates the basis.  <br /></td></tr>
 <tr class="memitem:ab85b7a447fdb1a15a6a18ba1bf4d7db8" id="r_ab85b7a447fdb1a15a6a18ba1bf4d7db8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab85b7a447fdb1a15a6a18ba1bf4d7db8">incDimDualBasis</a> ()</td></tr>
 <tr class="memdesc:ab85b7a447fdb1a15a6a18ba1bf4d7db8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increases the current dimension of only the m-dual basis by 1.  <br /></td></tr>
-<tr class="memitem:a58adc76c9b72528b48c5d07805904ee4" id="r_a58adc76c9b72528b48c5d07805904ee4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58adc76c9b72528b48c5d07805904ee4">buildProjection</a> (<a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; Int, Real &gt; &amp;projLattice, const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;proj) override</td></tr>
-<tr class="memdesc:a58adc76c9b72528b48c5d07805904ee4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method overrides its namesake in <span class="tt"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></span>.  <br /></td></tr>
-<tr class="memitem:ab0fe409fefda9119a6dbc0a586c79b48" id="r_ab0fe409fefda9119a6dbc0a586c79b48"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0fe409fefda9119a6dbc0a586c79b48">buildProjectionDual</a> (<a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; Int, Real &gt; &amp;projLattice, const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;proj) override</td></tr>
-<tr class="memdesc:ab0fe409fefda9119a6dbc0a586c79b48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Similar to <span class="tt">buildProjection</span>, but builds a basis for the m-dual of the projection.  <br /></td></tr>
+<tr class="memitem:a59aad8893c7b53dc05c739f9a580ea57" id="r_a59aad8893c7b53dc05c739f9a580ea57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59aad8893c7b53dc05c739f9a580ea57">buildProjection</a> (<a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt; &amp;projLattice, const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;coordSet) override</td></tr>
+<tr class="memdesc:a59aad8893c7b53dc05c739f9a580ea57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a basis for the projection of this <span class="tt"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html" title="This subclass of IntLatticeExt defines a general rank-1 lattice rule in  dimensions,...">Rank1Lattice</a></span> onto the coordinates in <span class="tt">coordSet</span> and puts it as the <span class="tt">m_basis</span> in <span class="tt">projLattice</span>.  <br /></td></tr>
+<tr class="memitem:a0fd9b551f545577b5e9e83d7ef9db239" id="r_a0fd9b551f545577b5e9e83d7ef9db239"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0fd9b551f545577b5e9e83d7ef9db239">buildProjectionDual</a> (<a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt; &amp;projLattice, const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;coordSet) override</td></tr>
+<tr class="memdesc:a0fd9b551f545577b5e9e83d7ef9db239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Similar to <span class="tt">buildProjection</span>, but builds a basis for the m-dual of the projection.  <br /></td></tr>
 <tr class="memitem:ac61ecbccfe48180c53ce8aa7f5fe0839" id="r_ac61ecbccfe48180c53ce8aa7f5fe0839"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac61ecbccfe48180c53ce8aa7f5fe0839">toStringCoef</a> () const</td></tr>
-<tr class="memdesc:ac61ecbccfe48180c53ce8aa7f5fe0839"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first <span class="tt">dim</span> components of the generating vector \(\mathbf{a}\) as a string, where <span class="tt">dim</span> is the current lattice dimension.  <br /></td></tr>
+<tr class="memdesc:ac61ecbccfe48180c53ce8aa7f5fe0839"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first <span class="tt">dim</span> components of the generating vector \(\mathbf{a}\) as a string, where <span class="tt">dim</span> is the current lattice basis dimension.  <br /></td></tr>
 <tr class="inherit_header pub_methods_classLatticeTester_1_1IntLatticeExt"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classLatticeTester_1_1IntLatticeExt')"><span class="dynarrow"><span class="arrowhead closed"></span></span>Public Member Functions inherited from <a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html">LatticeTester::IntLatticeExt&lt; Int, Real &gt;</a></td></tr>
-<tr class="memitem:a0178d9abf19cf6b873d422149f9f2754 inherit pub_methods_classLatticeTester_1_1IntLatticeExt" id="r_a0178d9abf19cf6b873d422149f9f2754"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0178d9abf19cf6b873d422149f9f2754">IntLatticeExt</a> (Int m, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
-<tr class="memdesc:a0178d9abf19cf6b873d422149f9f2754 inherit pub_methods_classLatticeTester_1_1IntLatticeExt"><td class="mdescLeft">&#160;</td><td class="mdescRight">A constructor that reserves the space for the primal and m-dual bases and vector lengths, but does not initialize them.  <br /></td></tr>
+<tr class="memitem:a0fb4460cfe8158a02390cf4f33eaca78 inherit pub_methods_classLatticeTester_1_1IntLatticeExt" id="r_a0fb4460cfe8158a02390cf4f33eaca78"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0fb4460cfe8158a02390cf4f33eaca78">IntLatticeExt</a> (int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:a0fb4460cfe8158a02390cf4f33eaca78 inherit pub_methods_classLatticeTester_1_1IntLatticeExt"><td class="mdescLeft">&#160;</td><td class="mdescRight">A constructor that reserves the space for the primal and m-dual bases and vector lengths, but does not initialize them.  <br /></td></tr>
+<tr class="memitem:a0178d9abf19cf6b873d422149f9f2754 inherit pub_methods_classLatticeTester_1_1IntLatticeExt" id="r_a0178d9abf19cf6b873d422149f9f2754"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0178d9abf19cf6b873d422149f9f2754">IntLatticeExt</a> (<a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> m, int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
 <tr class="memitem:a3de7c80c3195182019cb58dc01d1827d inherit pub_methods_classLatticeTester_1_1IntLatticeExt" id="r_a3de7c80c3195182019cb58dc01d1827d"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a3de7c80c3195182019cb58dc01d1827d">~IntLatticeExt</a> ()</td></tr>
 <tr class="memdesc:a3de7c80c3195182019cb58dc01d1827d inherit pub_methods_classLatticeTester_1_1IntLatticeExt"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="inherit_header pub_methods_classLatticeTester_1_1IntLattice"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classLatticeTester_1_1IntLattice')"><span class="dynarrow"><span class="arrowhead closed"></span></span>Public Member Functions inherited from <a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">LatticeTester::IntLattice&lt; Int, Real &gt;</a></td></tr>
-<tr class="memitem:a5ba206c6c8a0028a9c276d97a5f09307 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a5ba206c6c8a0028a9c276d97a5f09307"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a5ba206c6c8a0028a9c276d97a5f09307">IntLattice</a> (const Int m, const int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memitem:ad6e8952f6c246813d62813140fd91c97 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_ad6e8952f6c246813d62813140fd91c97"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#ad6e8952f6c246813d62813140fd91c97">IntLattice</a> (const int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memdesc:ad6e8952f6c246813d62813140fd91c97 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <span class="tt"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></span> object that can hold a basis in up to <span class="tt">maxDim</span> dimensions, with the specified norm type.  <br /></td></tr>
+<tr class="memitem:a5ba206c6c8a0028a9c276d97a5f09307 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a5ba206c6c8a0028a9c276d97a5f09307"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a5ba206c6c8a0028a9c276d97a5f09307">IntLattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> m, const int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
 <tr class="memdesc:a5ba206c6c8a0028a9c276d97a5f09307 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a lattice whose basis is uninitialized, in <span class="tt">maxDim</span> dimensions, with the scaling factor <span class="tt">m</span> and specified norm type.  <br /></td></tr>
-<tr class="memitem:ae12976acf0957661072564aaad2dff95 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_ae12976acf0957661072564aaad2dff95"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#ae12976acf0957661072564aaad2dff95">IntLattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> basis, const Int m, const int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memitem:ae12976acf0957661072564aaad2dff95 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_ae12976acf0957661072564aaad2dff95"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#ae12976acf0957661072564aaad2dff95">IntLattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> basis, const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> m, const int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
 <tr class="memdesc:ae12976acf0957661072564aaad2dff95 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Similar to the previous constructor, except that the primal basis is given in <span class="tt">basis</span>, which must be an <span class="tt">IntMat</span> object of size <span class="tt">maxDim</span> by <span class="tt">maxDim</span>.  <br /></td></tr>
-<tr class="memitem:a6047763eebdb4414bfafc57a3432ff0e inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a6047763eebdb4414bfafc57a3432ff0e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a6047763eebdb4414bfafc57a3432ff0e">IntLattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> primalbasis, const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> dualbasis, const Int m, const int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memitem:a6047763eebdb4414bfafc57a3432ff0e inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a6047763eebdb4414bfafc57a3432ff0e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a6047763eebdb4414bfafc57a3432ff0e">IntLattice</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> primalbasis, const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> dualbasis, const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> m, const int64_t maxDim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
 <tr class="memdesc:a6047763eebdb4414bfafc57a3432ff0e inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a lattice with the given basis and given m-dual basis for the given <span class="tt">m</span>, in <span class="tt">maxDim</span> dimensions, and with the specified norm type.  <br /></td></tr>
 <tr class="memitem:a71d6341df4365f5633fbfb13f3ee69be inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a71d6341df4365f5633fbfb13f3ee69be"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a71d6341df4365f5633fbfb13f3ee69be">~IntLattice</a> ()</td></tr>
 <tr class="memdesc:a71d6341df4365f5633fbfb13f3ee69be inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
-<tr class="memitem:a9ab7f8e7c3adb417c8400714de5a2acb inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a9ab7f8e7c3adb417c8400714de5a2acb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a9ab7f8e7c3adb417c8400714de5a2acb">buildProjectionLLL</a> (<a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; Int, Real &gt; &amp;projLattice, const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;proj, double delta=0.5)</td></tr>
-<tr class="memdesc:a9ab7f8e7c3adb417c8400714de5a2acb inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a set of generating vectors for the projection of the present lattice, over the set of coordinates determined by <span class="tt">proj</span>, and builds a basis for that projection using an LLL procedure from <span class="tt">BasisConstruction</span>.  <br /></td></tr>
-<tr class="memitem:a8a644de64a5025d95a9fa91127ce9b4c inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a8a644de64a5025d95a9fa91127ce9b4c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a8a644de64a5025d95a9fa91127ce9b4c">getBasis</a> ()</td></tr>
-<tr class="memdesc:a8a644de64a5025d95a9fa91127ce9b4c inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <span class="tt">IntMat</span> object that contains the basis of this lattice.  <br /></td></tr>
-<tr class="memitem:aabd81b14527036ea91b5dec825230ea5 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_aabd81b14527036ea91b5dec825230ea5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#aabd81b14527036ea91b5dec825230ea5">setBasis</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> basis, const Int m, const int64_t dim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
+<tr class="memitem:a307a251ce0d42e9bc4fa574dacb5ab10 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a307a251ce0d42e9bc4fa574dacb5ab10"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a307a251ce0d42e9bc4fa574dacb5ab10">setModulus</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> m)</td></tr>
+<tr class="memdesc:a307a251ce0d42e9bc4fa574dacb5ab10 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the scaling factor <span class="tt">m</span>.  <br /></td></tr>
+<tr class="memitem:aabd81b14527036ea91b5dec825230ea5 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_aabd81b14527036ea91b5dec825230ea5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#aabd81b14527036ea91b5dec825230ea5">setBasis</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> basis, const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> m, const int64_t dim, <a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a> norm=<a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a>)</td></tr>
 <tr class="memdesc:aabd81b14527036ea91b5dec825230ea5 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the basis to 'basis', the modulus to 'm', and the current dimension to 'dim'.  <br /></td></tr>
 <tr class="memitem:a0385e551bb89501e42b32c93cd7c9342 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a0385e551bb89501e42b32c93cd7c9342"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a0385e551bb89501e42b32c93cd7c9342">setBasis</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> basis, const int64_t dim)</td></tr>
 <tr class="memdesc:a0385e551bb89501e42b32c93cd7c9342 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes only the 'basis' and the current dimension to 'dim'.  <br /></td></tr>
-<tr class="memitem:a4fa8d9ecdff139860ff11a02b7453e7f inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a4fa8d9ecdff139860ff11a02b7453e7f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a4fa8d9ecdff139860ff11a02b7453e7f">getDualBasis</a> ()</td></tr>
-<tr class="memdesc:a4fa8d9ecdff139860ff11a02b7453e7f inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the m-dual basis represented in a matrix.  <br /></td></tr>
-<tr class="memitem:a3c558319fade78f6e5d01609a8f07e22 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a3c558319fade78f6e5d01609a8f07e22"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a3c558319fade78f6e5d01609a8f07e22">getMaxDim</a> () const</td></tr>
-<tr class="memdesc:a3c558319fade78f6e5d01609a8f07e22 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximal dimension for this lattice.  <br /></td></tr>
-<tr class="memitem:a0967bbcbffa56adc3438035861db6a01 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a0967bbcbffa56adc3438035861db6a01"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a0967bbcbffa56adc3438035861db6a01">getDim</a> () const</td></tr>
-<tr class="memdesc:a0967bbcbffa56adc3438035861db6a01 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current dimension of the primal lattice, which should be the dimension of the basis vectors and also the number of independent vectors in the basis.  <br /></td></tr>
-<tr class="memitem:a14f1b2d4d2ecf50ee060b43603236ff3 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a14f1b2d4d2ecf50ee060b43603236ff3"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a14f1b2d4d2ecf50ee060b43603236ff3">getDimDual</a> () const</td></tr>
-<tr class="memdesc:a14f1b2d4d2ecf50ee060b43603236ff3 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current dimension of the m-dual lattice.  <br /></td></tr>
-<tr class="memitem:a82ad6433365917e6001cfadf00d31e5a inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a82ad6433365917e6001cfadf00d31e5a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a82ad6433365917e6001cfadf00d31e5a">getNormType</a> () const</td></tr>
-<tr class="memdesc:a82ad6433365917e6001cfadf00d31e5a inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <span class="tt"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4" title="The available norm types to measure the length of vectors.">NormType</a></span> used by this lattice.  <br /></td></tr>
-<tr class="memitem:a084e2dc1fc4e122a20d7fa65ac38d31c inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a084e2dc1fc4e122a20d7fa65ac38d31c"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a084e2dc1fc4e122a20d7fa65ac38d31c">getVecNorm</a> (const int64_t &amp;i)</td></tr>
-<tr class="memdesc:a084e2dc1fc4e122a20d7fa65ac38d31c inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the norm (squared in case of the L^2 norm) of the i-th vector of the basis, with the index i starting at 0.  <br /></td></tr>
-<tr class="memitem:afb81b04d3da51a13c870aa4993423f1b inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_afb81b04d3da51a13c870aa4993423f1b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ac31ec1900f910a5d820901146696b5cb">RealVec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#afb81b04d3da51a13c870aa4993423f1b">getVecNorm</a> () const</td></tr>
-<tr class="memdesc:afb81b04d3da51a13c870aa4993423f1b inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the norm (squared in case of the L^2 norm) of each basis vector, in a vector.  <br /></td></tr>
-<tr class="memitem:aaf2b749cb4fad51ac15878049068115a inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_aaf2b749cb4fad51ac15878049068115a"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#aaf2b749cb4fad51ac15878049068115a">getDualVecNorm</a> (const int64_t &amp;i)</td></tr>
-<tr class="memdesc:aaf2b749cb4fad51ac15878049068115a inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the norm (squared in case of the L^2 norm) of the i-th vector of the m-dual basis.  <br /></td></tr>
-<tr class="memitem:a13fe46018502ee269b7cc5e672fe3b1c inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a13fe46018502ee269b7cc5e672fe3b1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ac31ec1900f910a5d820901146696b5cb">RealVec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a13fe46018502ee269b7cc5e672fe3b1c">getDualVecNorm</a> () const</td></tr>
-<tr class="memdesc:a13fe46018502ee269b7cc5e672fe3b1c inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the norm (squared in case of the L^2 norm) of each vector of the m-dual basis, in a vector.  <br /></td></tr>
-<tr class="memitem:aa0e64bcdea67e629916b7762bd678d56 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_aa0e64bcdea67e629916b7762bd678d56"><td class="memItemLeft" align="right" valign="top">Int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#aa0e64bcdea67e629916b7762bd678d56">getModulus</a> () const</td></tr>
-<tr class="memdesc:aa0e64bcdea67e629916b7762bd678d56 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the scaling factor <span class="tt">m</span>.  <br /></td></tr>
+<tr class="memitem:a91147f7ea7633b0819ece41dce3ff636 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a91147f7ea7633b0819ece41dce3ff636"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a91147f7ea7633b0819ece41dce3ff636">setDualBasis</a> (const <a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> dualbasis, const int64_t dimdual)</td></tr>
+<tr class="memdesc:a91147f7ea7633b0819ece41dce3ff636 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes only the dual basis to <span class="tt">dualbasis</span> and its current dimension to 'dimdual'.  <br /></td></tr>
 <tr class="memitem:a13385af5be0b2356dc45b401b19421ae inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a13385af5be0b2356dc45b401b19421ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a13385af5be0b2356dc45b401b19421ae">setDim</a> (const int64_t dim)</td></tr>
 <tr class="memdesc:a13385af5be0b2356dc45b401b19421ae inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the dimension of the primal basis to <span class="tt">dim</span>.  <br /></td></tr>
 <tr class="memitem:a84fbae02334aa52ca3ba997e5ecaca12 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a84fbae02334aa52ca3ba997e5ecaca12"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a84fbae02334aa52ca3ba997e5ecaca12">setDimDual</a> (const int64_t dim)</td></tr>
@@ -205,6 +194,28 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a825a1976f89ea5f995d254b9bd34caae inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets all the values in the array containing the norms of the dual basis vectors to -1, to indicate that these norms are no longer up to date.  <br /></td></tr>
 <tr class="memitem:a5a78e772f71a1e0d5cb3054c500e1f36 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a5a78e772f71a1e0d5cb3054c500e1f36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a5a78e772f71a1e0d5cb3054c500e1f36">setDualNegativeNorm</a> (const int64_t &amp;i)</td></tr>
 <tr class="memdesc:a5a78e772f71a1e0d5cb3054c500e1f36 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value of the <span class="tt">i</span>-th component in the array containing the norms of the m-dual basis vectors to -1.  <br /></td></tr>
+<tr class="memitem:aa0e64bcdea67e629916b7762bd678d56 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_aa0e64bcdea67e629916b7762bd678d56"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#aa0e64bcdea67e629916b7762bd678d56">getModulus</a> () const</td></tr>
+<tr class="memdesc:aa0e64bcdea67e629916b7762bd678d56 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the scaling factor <span class="tt">m</span>.  <br /></td></tr>
+<tr class="memitem:a3c558319fade78f6e5d01609a8f07e22 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a3c558319fade78f6e5d01609a8f07e22"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a3c558319fade78f6e5d01609a8f07e22">getMaxDim</a> () const</td></tr>
+<tr class="memdesc:a3c558319fade78f6e5d01609a8f07e22 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximal dimension for this lattice.  <br /></td></tr>
+<tr class="memitem:a8a644de64a5025d95a9fa91127ce9b4c inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a8a644de64a5025d95a9fa91127ce9b4c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a8a644de64a5025d95a9fa91127ce9b4c">getBasis</a> ()</td></tr>
+<tr class="memdesc:a8a644de64a5025d95a9fa91127ce9b4c inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <span class="tt">IntMat</span> object that contains the basis of this lattice.  <br /></td></tr>
+<tr class="memitem:a4fa8d9ecdff139860ff11a02b7453e7f inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a4fa8d9ecdff139860ff11a02b7453e7f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7">IntMat</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a4fa8d9ecdff139860ff11a02b7453e7f">getDualBasis</a> ()</td></tr>
+<tr class="memdesc:a4fa8d9ecdff139860ff11a02b7453e7f inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the m-dual basis represented in a matrix.  <br /></td></tr>
+<tr class="memitem:a0967bbcbffa56adc3438035861db6a01 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a0967bbcbffa56adc3438035861db6a01"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a0967bbcbffa56adc3438035861db6a01">getDim</a> () const</td></tr>
+<tr class="memdesc:a0967bbcbffa56adc3438035861db6a01 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current dimension of the primal lattice, which should be the dimension of the basis vectors and also the number of independent vectors in the basis.  <br /></td></tr>
+<tr class="memitem:a14f1b2d4d2ecf50ee060b43603236ff3 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a14f1b2d4d2ecf50ee060b43603236ff3"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a14f1b2d4d2ecf50ee060b43603236ff3">getDimDual</a> () const</td></tr>
+<tr class="memdesc:a14f1b2d4d2ecf50ee060b43603236ff3 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current dimension of the m-dual lattice.  <br /></td></tr>
+<tr class="memitem:a82ad6433365917e6001cfadf00d31e5a inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a82ad6433365917e6001cfadf00d31e5a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a82ad6433365917e6001cfadf00d31e5a">getNormType</a> () const</td></tr>
+<tr class="memdesc:a82ad6433365917e6001cfadf00d31e5a inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <span class="tt"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4" title="The available norm types to measure the length of vectors.">NormType</a></span> used by this lattice.  <br /></td></tr>
+<tr class="memitem:a084e2dc1fc4e122a20d7fa65ac38d31c inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a084e2dc1fc4e122a20d7fa65ac38d31c"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a084e2dc1fc4e122a20d7fa65ac38d31c">getVecNorm</a> (const int64_t &amp;i)</td></tr>
+<tr class="memdesc:a084e2dc1fc4e122a20d7fa65ac38d31c inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the norm (squared in case of the L^2 norm) of the i-th vector of the basis, with the index i starting at 0.  <br /></td></tr>
+<tr class="memitem:afb81b04d3da51a13c870aa4993423f1b inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_afb81b04d3da51a13c870aa4993423f1b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ac31ec1900f910a5d820901146696b5cb">RealVec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#afb81b04d3da51a13c870aa4993423f1b">getVecNorm</a> () const</td></tr>
+<tr class="memdesc:afb81b04d3da51a13c870aa4993423f1b inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the norm (squared in case of the L^2 norm) of each basis vector, in a vector.  <br /></td></tr>
+<tr class="memitem:aaf2b749cb4fad51ac15878049068115a inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_aaf2b749cb4fad51ac15878049068115a"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#aaf2b749cb4fad51ac15878049068115a">getDualVecNorm</a> (const int64_t &amp;i)</td></tr>
+<tr class="memdesc:aaf2b749cb4fad51ac15878049068115a inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the norm (squared in case of the L^2 norm) of the i-th vector of the m-dual basis.  <br /></td></tr>
+<tr class="memitem:a13fe46018502ee269b7cc5e672fe3b1c inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a13fe46018502ee269b7cc5e672fe3b1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ac31ec1900f910a5d820901146696b5cb">RealVec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a13fe46018502ee269b7cc5e672fe3b1c">getDualVecNorm</a> () const</td></tr>
+<tr class="memdesc:a13fe46018502ee269b7cc5e672fe3b1c inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the norm (squared in case of the L^2 norm) of each vector of the m-dual basis, in a vector.  <br /></td></tr>
 <tr class="memitem:ab016fa422ca61a9d649de69398c8347e inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_ab016fa422ca61a9d649de69398c8347e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#ab016fa422ca61a9d649de69398c8347e">updateVecNorm</a> ()</td></tr>
 <tr class="memdesc:ab016fa422ca61a9d649de69398c8347e inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the array containing the norms of the basis vectors by recomputing them.  <br /></td></tr>
 <tr class="memitem:affdbc003b45d7155dafc3db7499d4b6e inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_affdbc003b45d7155dafc3db7499d4b6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#affdbc003b45d7155dafc3db7499d4b6e">updateVecNorm</a> (const int64_t &amp;d)</td></tr>
@@ -232,13 +243,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a82d8ec2cbb813106f29d9e4bd4a8b647 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a82d8ec2cbb813106f29d9e4bd4a8b647"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a82d8ec2cbb813106f29d9e4bd4a8b647">permuteDual</a> (int64_t i, int64_t j)</td></tr>
 <tr class="memdesc:a82d8ec2cbb813106f29d9e4bd4a8b647 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exchanges vectors <span class="tt">i</span> and <span class="tt">j</span> in the <span class="tt">m</span>-dual basis without changing the primal.  <br /></td></tr>
 <tr class="memitem:a4b8a47950cce207b8995b9226ddf469d inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a4b8a47950cce207b8995b9226ddf469d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a4b8a47950cce207b8995b9226ddf469d">dualize</a> ()</td></tr>
-<tr class="memdesc:a4b8a47950cce207b8995b9226ddf469d inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exchanges the primal and m-dual bases, their dimensions, and vector norms.  <br /></td></tr>
+<tr class="memdesc:a4b8a47950cce207b8995b9226ddf469d inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exchanges the references to the primal and m-dual bases, the references to their vectors of norms, and their dimensions.  <br /></td></tr>
 <tr class="memitem:a7cf43dd173a6dc96e12ce9ec875a26b1 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a7cf43dd173a6dc96e12ce9ec875a26b1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a7cf43dd173a6dc96e12ce9ec875a26b1">checkDuality</a> ()</td></tr>
 <tr class="memdesc:a7cf43dd173a6dc96e12ce9ec875a26b1 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <span class="tt">true</span> iff the m-dual basis contained in the object really is the m-dual of the current primal basis.  <br /></td></tr>
 <tr class="memitem:a9c813f60da941f17cd64ffdd8f54e1cd inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a9c813f60da941f17cd64ffdd8f54e1cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a9c813f60da941f17cd64ffdd8f54e1cd">sortBasis</a> (int64_t d)</td></tr>
 <tr class="memdesc:a9c813f60da941f17cd64ffdd8f54e1cd inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sorts the primal basis vectors with indices greater of equal to <span class="tt">d</span> by increasing length.  <br /></td></tr>
 <tr class="memitem:a6db7557c21bea080c0cff6fd16ae304b inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a6db7557c21bea080c0cff6fd16ae304b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a6db7557c21bea080c0cff6fd16ae304b">sortDualBasis</a> (int64_t d)</td></tr>
 <tr class="memdesc:a6db7557c21bea080c0cff6fd16ae304b inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sorts the <span class="tt">m</span>-dual basis vectors with indices greater of equal to <span class="tt">d</span> by increasing length.  <br /></td></tr>
+<tr class="memitem:a7a87281185345928414fbc25a9f18c05 inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a7a87281185345928414fbc25a9f18c05"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a7a87281185345928414fbc25a9f18c05">buildProjectionLLL</a> (<a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt; &amp;projLattice, const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;coordSet, double delta=0.5)</td></tr>
+<tr class="memdesc:a7a87281185345928414fbc25a9f18c05 inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a set of generating vectors for the projection of the present lattice, over the set of coordinates determined by <span class="tt">coordSet</span>, and builds a basis for that projection using an LLL procedure from <span class="tt">BasisConstruction</span>.  <br /></td></tr>
 <tr class="memitem:a328257cce98ddcab0487968a96c360be inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a328257cce98ddcab0487968a96c360be"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a328257cce98ddcab0487968a96c360be">toStringBasis</a> () const</td></tr>
 <tr class="memdesc:a328257cce98ddcab0487968a96c360be inherit pub_methods_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a string that contains the primal basis vectors and their norms.  <br /></td></tr>
 <tr class="memitem:a5e6f5a68b1af72c699e8df0ebb4005be inherit pub_methods_classLatticeTester_1_1IntLattice" id="r_a5e6f5a68b1af72c699e8df0ebb4005be"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a5e6f5a68b1af72c699e8df0ebb4005be">toStringDualBasis</a> () const</td></tr>
@@ -250,8 +263,10 @@ Public Member Functions</h2></td></tr>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:aee9db5a1fb383d21da62362b6f7068b4" id="r_aee9db5a1fb383d21da62362b6f7068b4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee9db5a1fb383d21da62362b6f7068b4">m_aa</a></td></tr>
 <tr class="memdesc:aee9db5a1fb383d21da62362b6f7068b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector of multipliers (generating vector) of the rank 1 lattice rule.  <br /></td></tr>
+<tr class="memitem:a51e32642c2675bae3c0a213b81229e62" id="r_a51e32642c2675bae3c0a213b81229e62"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51e32642c2675bae3c0a213b81229e62">m_dimaa</a></td></tr>
+<tr class="memdesc:a51e32642c2675bae3c0a213b81229e62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximal (and current) dimension of the vector of coefficients <span class="tt">m_aa</span>.  <br /></td></tr>
 <tr class="inherit_header pro_attribs_classLatticeTester_1_1IntLattice"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classLatticeTester_1_1IntLattice')"><span class="dynarrow"><span class="arrowhead closed"></span></span>Protected Attributes inherited from <a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">LatticeTester::IntLattice&lt; Int, Real &gt;</a></td></tr>
-<tr class="memitem:a2a07f1be683999fa95d683cba3208c32 inherit pro_attribs_classLatticeTester_1_1IntLattice" id="r_a2a07f1be683999fa95d683cba3208c32"><td class="memItemLeft" align="right" valign="top">Int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a2a07f1be683999fa95d683cba3208c32">m_modulo</a></td></tr>
+<tr class="memitem:a2a07f1be683999fa95d683cba3208c32 inherit pro_attribs_classLatticeTester_1_1IntLattice" id="r_a2a07f1be683999fa95d683cba3208c32"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a2a07f1be683999fa95d683cba3208c32">m_modulo</a></td></tr>
 <tr class="memdesc:a2a07f1be683999fa95d683cba3208c32 inherit pro_attribs_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scaling factor <span class="tt">m</span> used for rescaling the lattice.  <br /></td></tr>
 <tr class="memitem:aa923d156d9716b829fd7e1e54d886d74 inherit pro_attribs_classLatticeTester_1_1IntLattice" id="r_aa923d156d9716b829fd7e1e54d886d74"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#aa923d156d9716b829fd7e1e54d886d74">m_maxDim</a></td></tr>
 <tr class="memdesc:aa923d156d9716b829fd7e1e54d886d74 inherit pro_attribs_classLatticeTester_1_1IntLattice"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximal dimension for this lattice.  <br /></td></tr>
@@ -276,23 +291,60 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:ab308e75498a5fdf1141ca48ca178edc7 inherit pro_methods_classLatticeTester_1_1IntLatticeExt" id="r_ab308e75498a5fdf1141ca48ca178edc7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html#ab308e75498a5fdf1141ca48ca178edc7">kill</a> ()</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename Int, typename Real&gt;<br />
-class LatticeTester::Rank1Lattice&lt; Int, Real &gt;</div><p>This subclass of <span class="tt"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice and is a skeleton for the specialized subclasses that define s...">IntLatticeExt</a></span> defines a general rank 1 lattice rule in \(t\) dimensions, whose points \(\mathbb{u}_i\) are defined by \( \mathbf{u}_i = (i \mathbf{a} \bmod m)/m \) where \(\mathbf{a} = (a_1,a_2,\dots,a_t) \in \mathbb{Z}_m^t\) is the generating vector; see Section 5.4 of the guide. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt;<br />
+class LatticeTester::Rank1Lattice&lt; Int, Real &gt;</div><p>This subclass of <span class="tt"><a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html" title="This abstract class extends IntLattice with additional (virtual) methods that must be implemented in ...">IntLatticeExt</a></span> defines a general rank-1 lattice rule in \(t\) dimensions, whose \(m\) points are \( \mathbf{u}_i = (i \mathbf{a} \bmod m)/m \) for \(i = 0,\dots,m-1\), where \(\mathbf{a} = (a_1,a_2,\dots,a_t) \in \mathbb{Z}_m^t\) is the generating vector, \(a_1 = 1\), and \(\gcd(a_j, m) = 1\) for \(j =2, \dots,t\). </p>
 <p>The lattice is rescaled simply by removing the division by \(m\). A simple upper-triangular basis for the rescaled lattice is given by  \(\mathbf{v}_1 = \mathbf{a},\ \mathbf{v}_2 = m \mathbf{e}_2, \dots,
-\mathbf{v}_t = m \mathbf{e}_t \), where \(\mathbf{e}_i\) is the \(i^\text{th}\) unit vector. A condition often required when building a rank 1 lattice is that \(\gcd(a_j, m) = 1\) for \(j =1, \dots,t\). When this condition holds, each lower-dimensional projection of \(L_t \cap [0,1)^t\) contains the same number of points as \(L_t\cap [0,1)^t\), namely \( m \) points, and similarly for the projections of \(\Lambda_t \cap [0,m)^t\). When searching for lattices that satisfy this condition, one may assume without loss of generality generality that \(a_1 = 1\). Under this condition, it is straightforward to construct a basis for any projection of \(\Lambda_t\) that contains the first coordinate, and also its m-dual basis. In this class, we assume that \(a_1 = 1\) and that \(\gcd(a_j, m) = 1\) for all \(j\). We exploit these conditions when building bases for the lattice, the projections, and their m-duals. The functions <span class="tt">buildBasis</span> and <span class="tt">incDimBasis</span> always build and update the rescaled primal basis. To build only the m-dual, use <span class="tt">buildDualBasis</span>. </p>
+\mathbf{v}_t = m \mathbf{e}_t \), where \(\mathbf{e}_j\) is the \(j^\text{th}\) unit vector. The above conditions ensure that each lower-dimensional projection of \(\Lambda_t \cap [0,m)^t\) contains exactly \(m\) distinct points. Under these conditions, it is also straightforward to construct a basis for any projection of \(\Lambda_t\) and for its \(m\)-dual, as explained in Section 5.4 of the guide. We exploit these properties. The functions <span class="tt">buildBasis</span> and <span class="tt">incDimBasis</span> always build and update only the rescaled primal basis. To build only an \(m\)-dual basis, use <span class="tt">buildDualBasis</span>.</p>
+<p>The dimension \(t\) of the generating vector \(\mathbf{a}\) may differ from the maximal dimension <span class="tt">maxDim</span> of a lattice basis. For this reason, it is specified separately either via the parameter <span class="tt">dimaa</span> or as the length of the given vector `<span class="tt">aa</span>. For example, if we want to examine only pairs and triples of coordinates taken from coordinates 1 to 32, the generating vector must have 32 dimensions, but the maximum dimension of a basis can be only 3. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9427d4658ca88ea4d4b5a57dd289d1f3" name="a9427d4658ca88ea4d4b5a57dd289d1f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9427d4658ca88ea4d4b5a57dd289d1f3">&#9670;&#160;</a></span>Rank1Lattice() <span class="overload">[1/3]</span></h2>
+<a id="ac184b6b006b59acad136cc43ce3dec79" name="ac184b6b006b59acad136cc43ce3dec79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac184b6b006b59acad136cc43ce3dec79">&#9670;&#160;</a></span>Rank1Lattice() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">::Rank1Lattice</a> </td>
+          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">::Rank1Lattice</a> </td>
           <td>(</td>
-          <td class="paramtype">const Int &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>aa</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>maxDim</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a></td>          <td class="paramname"><span class="paramname"><em>norm</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This constructor takes as input the modulus <span class="tt">m</span>, the generating vector \(\mathbf{a} = \)<span class="tt">aa</span>, and the norm used to measure the vector lengths. </p>
+<p>The parameter <span class="tt">maxDim</span> gives the maximal dimension of a basis. The constructor allocates space for that dimension, but it does not build the basis. The current basis dimension is initially 0. The maximal length of the generating vector will be the length <span class="tt">t</span> of the given vector <span class="tt">aa</span>. The coefficient \(a_j\) will be <span class="tt">aa[j-1]</span>. One must have <span class="tt">aa[0] = 1</span>. </p>
+
+</div>
+</div>
+<a id="a9427d4658ca88ea4d4b5a57dd289d1f3" name="a9427d4658ca88ea4d4b5a57dd289d1f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9427d4658ca88ea4d4b5a57dd289d1f3">&#9670;&#160;</a></span>Rank1Lattice() <span class="overload">[2/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">::Rank1Lattice</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -307,33 +359,37 @@ template&lt;typename Int, typename Real&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>This constructor takes as input the modulus <span class="tt">m</span>, the generating vector \(\mathbf{a} = \)<span class="tt">aa</span>, and the norm used to measure the vector lengths. </p>
-<p>The maximal dimension <span class="tt">maxDim</span> will be the length <span class="tt">t</span> of the vector <span class="tt">aa</span>. The coefficient \(a_j\) will be <span class="tt">aa[j-1]</span>. One must have <span class="tt">aa[0] = 1</span>. This constructor does not build the basis, to leave more flexibility in selecting the dimension when doing so. The current dimension is initially 0. </p>
+<p>In this version, the maximal dimension <span class="tt">maxDim</span> is set to the length of the vector <span class="tt">aa</span>. </p>
 
 </div>
 </div>
-<a id="a468c38de60081bff23267d264883c321" name="a468c38de60081bff23267d264883c321"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a468c38de60081bff23267d264883c321">&#9670;&#160;</a></span>Rank1Lattice() <span class="overload">[2/3]</span></h2>
+<a id="ad03fbe1555b390c02f67324e587e8fb2" name="ad03fbe1555b390c02f67324e587e8fb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad03fbe1555b390c02f67324e587e8fb2">&#9670;&#160;</a></span>Rank1Lattice() <span class="overload">[3/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">::Rank1Lattice</a> </td>
+          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">::Rank1Lattice</a> </td>
           <td>(</td>
-          <td class="paramtype">const Int &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Int &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>maxDim</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>dimaa</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -344,22 +400,58 @@ template&lt;typename Int, typename Real&gt; </div>
 </div><div class="memdoc">
 
 <p>Constructor for the special case of a Korobov lattice. </p>
-<p>Here the generating vector has the form \(\mathbf{a} = (1, a, a^2 \bmod m, a^3 \bmod m, ...)\) where \(a\) is an integer such that \(1 &lt; a &lt; m\). The current dimension is initially set to 0, not to <span class="tt">maxdim</span>. </p>
+<p>Here the generating vector has the form \(\mathbf{a} = (1, a, a^2 \bmod m, a^3 \bmod m, ...)\) where \(a\) is an integer such that \(1 &lt; a &lt; m\) and \(\gcd(a, m) = 1\). The maximal dimension of a basis will be <span class="tt">maxDim</span> and the maximal length of the generating vector will be <span class="tt">dimaa</span>. The basis is not initialized, so its current dimension is initially set to 0. </p>
 
 </div>
 </div>
-<a id="acca8e51fea3e2757baeb56eebc952583" name="acca8e51fea3e2757baeb56eebc952583"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acca8e51fea3e2757baeb56eebc952583">&#9670;&#160;</a></span>Rank1Lattice() <span class="overload">[3/3]</span></h2>
+<a id="a7bd26e6ac0ac85712f8c7329efcbe30a" name="a7bd26e6ac0ac85712f8c7329efcbe30a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bd26e6ac0ac85712f8c7329efcbe30a">&#9670;&#160;</a></span>Rank1Lattice() <span class="overload">[4/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">::Rank1Lattice</a> </td>
+          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">::Rank1Lattice</a> </td>
           <td>(</td>
-          <td class="paramtype">const Int &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>maxDim</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>dimaa</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4">NormType</a></td>          <td class="paramname"><span class="paramname"><em>norm</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="../../d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b">L2NORM</a></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This version assumes that <span class="tt">dimaa = maxDim</span>. </p>
+<p>This constructor does not specify the generating vector but reserves space for it. </p>
+
+</div>
+</div>
+<a id="acca8e51fea3e2757baeb56eebc952583" name="acca8e51fea3e2757baeb56eebc952583"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acca8e51fea3e2757baeb56eebc952583">&#9670;&#160;</a></span>Rank1Lattice() <span class="overload">[5/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">::Rank1Lattice</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>m</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -374,7 +466,7 @@ template&lt;typename Int, typename Real&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>This constructor does not specify the generating vector. </p>
+<p>This version assumes that <span class="tt">dimaa = maxDim</span>. </p>
 
 </div>
 </div>
@@ -384,10 +476,10 @@ template&lt;typename Int, typename Real&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::~<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">Rank1Lattice</a> </td>
+          <td class="memname"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::~<a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">Rank1Lattice</a> </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -406,10 +498,10 @@ template&lt;typename Int, typename Real&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::setaa </td>
+          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::setaa </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>aa</em></span></td><td>)</td>
           <td></td>
@@ -418,29 +510,54 @@ template&lt;typename Int, typename Real&gt; </div>
 </div><div class="memdoc">
 
 <p>Sets the generating vector to <span class="tt">aa</span>. </p>
-<p>The maximum dimension will be set to its dimension. </p>
+<p>Its maximum dimension (value of <span class="tt">t</span>) will be set to the length of <span class="tt">aa</span>. </p>
 
 </div>
 </div>
-<a id="ab5b720563d156fd8b3436726077fa9c0" name="ab5b720563d156fd8b3436726077fa9c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5b720563d156fd8b3436726077fa9c0">&#9670;&#160;</a></span>seta()</h2>
+<a id="ab6e71c008c9a995db61e8459e14ac4e8" name="ab6e71c008c9a995db61e8459e14ac4e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6e71c008c9a995db61e8459e14ac4e8">&#9670;&#160;</a></span>seta() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::seta </td>
+          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::seta </td>
           <td>(</td>
-          <td class="paramtype">const Int &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>dimaa</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets this lattice to a Korobov lattice with multiplier <span class="tt">a</span> and sets the length of the generating vector to <span class="tt">dimaa</span>. </p>
+
+</div>
+</div>
+<a id="ab5b720563d156fd8b3436726077fa9c0" name="ab5b720563d156fd8b3436726077fa9c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5b720563d156fd8b3436726077fa9c0">&#9670;&#160;</a></span>seta() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::seta </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Sets this lattice to a Korobov lattice with multiplier <span class="tt">a</span>. </p>
-<p>The maximum dimension is unchanged. </p>
+<p>The maximum dimension of the generating vector is unchanged. </p>
 
 </div>
 </div>
@@ -450,10 +567,10 @@ template&lt;typename Int, typename Real&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::getaa </td>
+          <td class="memname"><a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::getaa </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -471,13 +588,13 @@ template&lt;typename Int, typename Real&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::buildBasis </td>
+          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::buildBasis </td>
           <td>(</td>
           <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>dim</em></span></td><td>)</td>
           <td></td>
@@ -490,8 +607,8 @@ template&lt;typename Int, typename Real&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Builds a basis in <span class="tt">dim</span> dimensions. </p>
-<p>This <span class="tt">dim</span> must not exceed <span class="tt">this-&gt;maxDim()</span>. This initial primal basis will be upper triangular. </p>
+<p>Builds an upper-triangular primal basis in <span class="tt">dim</span> dimensions. </p>
+<p>This <span class="tt">dim</span> must not exceed <span class="tt">this-&gt;maxDim()</span>. </p>
 
 <p>Reimplemented from <a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a14d4e8a5b2f7ec824870b3eae0b730d6">LatticeTester::IntLatticeExt&lt; Int, Real &gt;</a>.</p>
 
@@ -503,13 +620,13 @@ template&lt;typename Int, typename Real&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::buildDualBasis </td>
+          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::buildDualBasis </td>
           <td>(</td>
           <td class="paramtype">int64_t</td>          <td class="paramname"><span class="paramname"><em>dim</em></span></td><td>)</td>
           <td></td>
@@ -522,8 +639,8 @@ template&lt;typename Int, typename Real&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Builds only an m-dual lower triangular basis (and not the primal) directly in <span class="tt">dim</span> dimensions. </p>
-<p>This <span class="tt">dim</span> must not exceed <span class="tt">maxDim</span>. </p>
+<p>Builds a lower-triangular m-dual basis (and not the primal) directly in <span class="tt">dim</span> dimensions. </p>
+<p>This <span class="tt">dim</span> must not exceed <span class="tt">this-&gt;maxDim()</span>. </p>
 
 <p>Reimplemented from <a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html#ae6d0b073b3c74558803c9cfc7f12c870">LatticeTester::IntLatticeExt&lt; Int, Real &gt;</a>.</p>
 
@@ -535,13 +652,13 @@ template&lt;typename Int, typename Real&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::incDimBasis </td>
+          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::incDimBasis </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -555,7 +672,7 @@ template&lt;typename Int, typename Real&gt; </div>
 </div><div class="memdoc">
 
 <p>Increases the current dimension of the primal basis by 1 and updates the basis. </p>
-<p>This function can be called only when <span class="tt">withPrimal</span> is set to true. If <span class="tt">withDual</span>, it also increases the m-dual basis and makes it the m-dual of the primal basis. The new increased dimension must not exceed <span class="tt">maxDim</span>. </p>
+<p>The new increased dimension must not exceed <span class="tt">maxDim()</span>. </p>
 
 <p>Reimplemented from <a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a23ef8bebe2f848c28a12fcb80b012659">LatticeTester::IntLatticeExt&lt; Int, Real &gt;</a>.</p>
 
@@ -567,13 +684,13 @@ template&lt;typename Int, typename Real&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::incDimDualBasis </td>
+          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::incDimDualBasis </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -587,32 +704,32 @@ template&lt;typename Int, typename Real&gt; </div>
 </div><div class="memdoc">
 
 <p>Increases the current dimension of only the m-dual basis by 1. </p>
-<p>The primal basis is left unchanged (not updated). The new increased dimension must not exceed <span class="tt">maxDim</span>. This method uses the simplified method given in the lattice tester guide: the new m-dual basis vector is simply \(\mathbf{w}_d = (-a_d, 0, ..., 0, 1)\). </p>
+<p>The primal basis is left unchanged (not updated). The new increased dimension must not exceed <span class="tt">maxDim()</span>. This method uses the simplified method given in the lattice tester guide: the new m-dual basis vector is simply \(\mathbf{w}_s = (-a_s, 0, ..., 0, 1)\). </p>
 
 <p>Reimplemented from <a class="el" href="../../d8/d6c/classLatticeTester_1_1IntLatticeExt.html#ab94c04c46218096c7102245af2036602">LatticeTester::IntLatticeExt&lt; Int, Real &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a58adc76c9b72528b48c5d07805904ee4" name="a58adc76c9b72528b48c5d07805904ee4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58adc76c9b72528b48c5d07805904ee4">&#9670;&#160;</a></span>buildProjection()</h2>
+<a id="a59aad8893c7b53dc05c739f9a580ea57" name="a59aad8893c7b53dc05c739f9a580ea57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59aad8893c7b53dc05c739f9a580ea57">&#9670;&#160;</a></span>buildProjection()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::buildProjection </td>
+          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::buildProjection </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; Int, Real &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>projLattice</em></span>, </td>
+          <td class="paramtype"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>projLattice</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>proj</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>coordSet</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -622,33 +739,33 @@ template&lt;typename Int, typename Real&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>This method overrides its namesake in <span class="tt"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></span>. </p>
-<p>The projection of this <span class="tt"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html" title="This subclass of IntLatticeExt defines a general rank 1 lattice rule in  dimensions,...">Rank1Lattice</a></span> over the coordinates in <span class="tt">proj</span> is returned in <span class="tt">projLattice</span>. The implementation used here exploits the rank-1 lattice structure and it is simpler and faster than the general one. See Section 5.4 of the guide. When the first coordinate is 1 and belongs to the projection, the construction is direct, just by selecting the rows and columns whose indices are in <span class="tt">proj</span>. Otherwise, those rows and columns plus the first row form a set of <span class="tt">proj.size()+1</span> generating vectors for the primal. This number must not exceed the <span class="tt">maxDim</span> of <span class="tt">projLattice</span>. </p>
+<p>Builds a basis for the projection of this <span class="tt"><a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html" title="This subclass of IntLatticeExt defines a general rank-1 lattice rule in  dimensions,...">Rank1Lattice</a></span> onto the coordinates in <span class="tt">coordSet</span> and puts it as the <span class="tt">m_basis</span> in <span class="tt">projLattice</span>. </p>
+<p>The construction is direct, just by selecting the rows and columns whose indices are in <span class="tt">coordSet</span>, and using the vector <span class="tt">aa</span>. See Section 5.4 of the guide. The implementation is simpler and faster than the general one. The dimension <span class="tt">coordSet.size()</span> must not exceed the <span class="tt">maxDim</span> of <span class="tt">projLattice</span>. Note that <span class="tt">projLattice</span> is allowed to be the same as the current <span class="tt"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html" title="An IntLattice object is an integral lattice, with its basis or its m-dual basis, or both.">IntLattice</a></span> object, in which case the projection basis will be built into the current <span class="tt">m_basis</span>. </p>
 
-<p>Reimplemented from <a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a7c8c732f3bd7191e6d3d59649c0cd70f">LatticeTester::IntLattice&lt; Int, Real &gt;</a>.</p>
+<p>Reimplemented from <a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a760083d0ea1751b1a58cb447fc9bcc3f">LatticeTester::IntLattice&lt; Int, Real &gt;</a>.</p>
 
 </div>
 </div>
-<a id="ab0fe409fefda9119a6dbc0a586c79b48" name="ab0fe409fefda9119a6dbc0a586c79b48"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0fe409fefda9119a6dbc0a586c79b48">&#9670;&#160;</a></span>buildProjectionDual()</h2>
+<a id="a0fd9b551f545577b5e9e83d7ef9db239" name="a0fd9b551f545577b5e9e83d7ef9db239"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fd9b551f545577b5e9e83d7ef9db239">&#9670;&#160;</a></span>buildProjectionDual()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::buildProjectionDual </td>
+          <td class="memname">void <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::buildProjectionDual </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; Int, Real &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>projLattice</em></span>, </td>
+          <td class="paramtype"><a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html">IntLattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>projLattice</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>proj</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="../../d9/dd3/classLatticeTester_1_1Coordinates.html">Coordinates</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>coordSet</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -660,7 +777,7 @@ template&lt;typename Int, typename Real&gt; </div>
 
 <p>Similar to <span class="tt">buildProjection</span>, but builds a basis for the m-dual of the projection. </p>
 
-<p>Reimplemented from <a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#a3fea90bfea52f743f26a902cf01b9387">LatticeTester::IntLattice&lt; Int, Real &gt;</a>.</p>
+<p>Reimplemented from <a class="el" href="../../d6/dc0/classLatticeTester_1_1IntLattice.html#ad36776b2a9d53fcaff9a776da5a1944b">LatticeTester::IntLattice&lt; Int, Real &gt;</a>.</p>
 
 </div>
 </div>
@@ -670,10 +787,10 @@ template&lt;typename Int, typename Real&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::string <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::toStringCoef </td>
+          <td class="memname">std::string <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::toStringCoef </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -681,7 +798,7 @@ template&lt;typename Int, typename Real&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the first <span class="tt">dim</span> components of the generating vector \(\mathbf{a}\) as a string, where <span class="tt">dim</span> is the current lattice dimension. </p>
+<p>Returns the first <span class="tt">dim</span> components of the generating vector \(\mathbf{a}\) as a string, where <span class="tt">dim</span> is the current lattice basis dimension. </p>
 
 </div>
 </div>
@@ -692,13 +809,13 @@ template&lt;typename Int, typename Real&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Int, typename Real&gt; </div>
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; Int, Real &gt;::m_aa</td>
+          <td class="memname"><a class="el" href="../../df/dca/FlexTypes_8h.html#a76f03239c9f9103a0d5c88ed1c28451a">IntVec</a> <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::m_aa</td>
         </tr>
       </table>
   </td>
@@ -709,7 +826,33 @@ template&lt;typename Int, typename Real&gt; </div>
 </div><div class="memdoc">
 
 <p>Vector of multipliers (generating vector) of the rank 1 lattice rule. </p>
-<p>They are stored for up to <span class="tt">maxDim()</span> dimensions. The first coordinate has index 0. </p>
+<p>They are stored for up to <span class="tt">m_dimaa</span> dimensions. The first coordinate has index 0. </p>
+
+</div>
+</div>
+<a id="a51e32642c2675bae3c0a213b81229e62" name="a51e32642c2675bae3c0a213b81229e62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51e32642c2675bae3c0a213b81229e62">&#9670;&#160;</a></span>m_dimaa</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, typename Real&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int64_t <a class="el" href="../../de/dfe/classLatticeTester_1_1Rank1Lattice.html">LatticeTester::Rank1Lattice</a>&lt; <a class="el" href="../../df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0">Int</a>, Real &gt;::m_dimaa</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Maximal (and current) dimension of the vector of coefficients <span class="tt">m_aa</span>. </p>
 
 </div>
 </div>

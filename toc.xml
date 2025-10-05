@@ -102,12 +102,16 @@
         </topic>
         <topic label="FigureOfMeritDualM" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html">
           <topic label="FigureOfMeritDualM" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a78fe941806ecfb650cbd6ea83ee20baa"/>
+          <topic label="FigureOfMeritDualM" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a36f6ec5e4b68492a470eda707a044121"/>
+          <topic label="computeMeritSucc" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a0264d1b335a14ddd0fbc86ed374cfd2c"/>
           <topic label="computeMeritSucc" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a2a0f1c21988b0404d15b2f060ca07237"/>
+          <topic label="computeMeritSuccRebuild" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a8be34a03f25c77f468f6cd5b2058fb3e"/>
           <topic label="computeMeritSuccRebuild" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a245ad4a0c9c68502da4ea69d17bcdc82"/>
           <topic label="computeMeritNonSucc" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#acb2ccc4cee85296a44c354b23aaa3504"/>
         </topic>
         <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html">
           <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8a2641e524a04c2f361c6915683f2ad3"/>
+          <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aadf5be3e30269f0ea4f0b83e42aca80b"/>
           <topic label="~FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac2a33bf19d7f65d7f2a006ac71d0b6e3"/>
           <topic label="setTVector" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab254796b0bf07839dc819ce0b18300b2"/>
           <topic label="countProjections" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad6525fd3b4be99656c61c4d9e8177c37"/>
@@ -123,7 +127,9 @@
           <topic label="getMinMeritSqlen" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ade709441c4fbfa7bf62259ed10e1cf94"/>
           <topic label="getMinMeritProj" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab9c26757cf7f5a4d7349aeff260538c1"/>
           <topic label="computeMeritOneProj" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aa41da07dcfa1f67854d9c822e33395d0"/>
+          <topic label="computeMeritSucc" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a9678223a870a7f746ad8b55a927e0640"/>
           <topic label="computeMeritSucc" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a3e671c26e8b0f6298b463f604228446f"/>
+          <topic label="computeMeritSuccRebuild" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a17fb222e7a4cd4d0b32367cad0199b72"/>
           <topic label="computeMeritSuccRebuild" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a59e832a650f4abd691c7b2ea57d6707a"/>
           <topic label="computeMeritNonSucc" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a6431bd6399a50fb8bb0bc2be21e9b1f5"/>
           <topic label="computeMerit" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad5a8a53868f425073a1b744a19dd685f"/>
@@ -137,7 +143,7 @@
           <topic label="m_redBB" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a1dcb7f7ec5be4592612d2ba0acec4fd7"/>
           <topic label="m_coordRange" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a85f5cf41c2cb9bcfececc08024c2260a"/>
           <topic label="m_red" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a0771af1d54f2b974cfc4aaa1f1eac266"/>
-          <topic label="m_sqlen" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a0db43cbaecb7189b76cfe905842f0b84"/>
+          <topic label="m_minSqlen" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a595b201a131eee0b01967b2b680612c3"/>
           <topic label="m_includeFirst" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a44ed9a8103fb9e6b5058f5a9550b3228"/>
           <topic label="m_lowbound" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a7c70d99aac0cf29954ebf7911070fa29"/>
           <topic label="m_minMerit" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aa981f88a3f43dd54cddadc2777a6e9b6"/>
@@ -149,26 +155,15 @@
           <topic label="m_collectLevel" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#af60f154ea09571848cb55afe1f5db41b"/>
         </topic>
         <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html">
+          <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ad6e8952f6c246813d62813140fd91c97"/>
           <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5ba206c6c8a0028a9c276d97a5f09307"/>
           <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ae12976acf0957661072564aaad2dff95"/>
           <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a6047763eebdb4414bfafc57a3432ff0e"/>
           <topic label="~IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a71d6341df4365f5633fbfb13f3ee69be"/>
-          <topic label="buildProjectionLLL" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a9ab7f8e7c3adb417c8400714de5a2acb"/>
-          <topic label="buildProjection" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a7c8c732f3bd7191e6d3d59649c0cd70f"/>
-          <topic label="buildProjectionDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a3fea90bfea52f743f26a902cf01b9387"/>
-          <topic label="getBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a8a644de64a5025d95a9fa91127ce9b4c"/>
+          <topic label="setModulus" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a307a251ce0d42e9bc4fa574dacb5ab10"/>
           <topic label="setBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aabd81b14527036ea91b5dec825230ea5"/>
           <topic label="setBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a0385e551bb89501e42b32c93cd7c9342"/>
-          <topic label="getDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a4fa8d9ecdff139860ff11a02b7453e7f"/>
-          <topic label="getMaxDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a3c558319fade78f6e5d01609a8f07e22"/>
-          <topic label="getDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a0967bbcbffa56adc3438035861db6a01"/>
-          <topic label="getDimDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a14f1b2d4d2ecf50ee060b43603236ff3"/>
-          <topic label="getNormType" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a82ad6433365917e6001cfadf00d31e5a"/>
-          <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a084e2dc1fc4e122a20d7fa65ac38d31c"/>
-          <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#afb81b04d3da51a13c870aa4993423f1b"/>
-          <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aaf2b749cb4fad51ac15878049068115a"/>
-          <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a13fe46018502ee269b7cc5e672fe3b1c"/>
-          <topic label="getModulus" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aa0e64bcdea67e629916b7762bd678d56"/>
+          <topic label="setDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a91147f7ea7633b0819ece41dce3ff636"/>
           <topic label="setDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a13385af5be0b2356dc45b401b19421ae"/>
           <topic label="setDimDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a84fbae02334aa52ca3ba997e5ecaca12"/>
           <topic label="setNormType" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ab987c7d0e0b09788046acf76007a9e98"/>
@@ -178,6 +173,17 @@
           <topic label="setNegativeNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a677fe959bade8e3f8b76af237818b98d"/>
           <topic label="setDualNegativeNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a825a1976f89ea5f995d254b9bd34caae"/>
           <topic label="setDualNegativeNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5a78e772f71a1e0d5cb3054c500e1f36"/>
+          <topic label="getModulus" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aa0e64bcdea67e629916b7762bd678d56"/>
+          <topic label="getMaxDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a3c558319fade78f6e5d01609a8f07e22"/>
+          <topic label="getBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a8a644de64a5025d95a9fa91127ce9b4c"/>
+          <topic label="getDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a4fa8d9ecdff139860ff11a02b7453e7f"/>
+          <topic label="getDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a0967bbcbffa56adc3438035861db6a01"/>
+          <topic label="getDimDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a14f1b2d4d2ecf50ee060b43603236ff3"/>
+          <topic label="getNormType" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a82ad6433365917e6001cfadf00d31e5a"/>
+          <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a084e2dc1fc4e122a20d7fa65ac38d31c"/>
+          <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#afb81b04d3da51a13c870aa4993423f1b"/>
+          <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aaf2b749cb4fad51ac15878049068115a"/>
+          <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a13fe46018502ee269b7cc5e672fe3b1c"/>
           <topic label="updateVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ab016fa422ca61a9d649de69398c8347e"/>
           <topic label="updateVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#affdbc003b45d7155dafc3db7499d4b6e"/>
           <topic label="updateSingleVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a352c084e9c29ebf84450d1171d624491"/>
@@ -195,6 +201,9 @@
           <topic label="checkDuality" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a7cf43dd173a6dc96e12ce9ec875a26b1"/>
           <topic label="sortBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a9c813f60da941f17cd64ffdd8f54e1cd"/>
           <topic label="sortDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a6db7557c21bea080c0cff6fd16ae304b"/>
+          <topic label="buildProjectionLLL" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a7a87281185345928414fbc25a9f18c05"/>
+          <topic label="buildProjection" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a760083d0ea1751b1a58cb447fc9bcc3f"/>
+          <topic label="buildProjectionDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ad36776b2a9d53fcaff9a776da5a1944b"/>
           <topic label="toStringBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a328257cce98ddcab0487968a96c360be"/>
           <topic label="toStringDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5e6f5a68b1af72c699e8df0ebb4005be"/>
           <topic label="toString" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5fef4c1178ef93cde7d646298d8d5f4b"/>
@@ -209,6 +218,7 @@
           <topic label="m_dualvecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#acdf14671d5f4d13d9f40901862701f0e"/>
         </topic>
         <topic label="IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html">
+          <topic label="IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0fb4460cfe8158a02390cf4f33eaca78"/>
           <topic label="IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0178d9abf19cf6b873d422149f9f2754"/>
           <topic label="~IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a3de7c80c3195182019cb58dc01d1827d"/>
           <topic label="buildBasis" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a14d4e8a5b2f7ec824870b3eae0b730d6"/>
@@ -217,37 +227,18 @@
           <topic label="incDimDualBasis" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#ab94c04c46218096c7102245af2036602"/>
           <topic label="kill" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#ab308e75498a5fdf1141ca48ca178edc7"/>
         </topic>
-        <topic label="MRGLattice" href="d9/d4e/classLatticeTester_1_1MRGLattice.html">
-          <topic label="MRGLattice" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a8210853724e4a18eac3a6bc835352776"/>
-          <topic label="~MRGLattice" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a69b9332dd44bd78b5f8ecb4629641108"/>
-          <topic label="setaa" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#abab7a4fcda3390e87d19e5ea74eddd5c"/>
-          <topic label="buildBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a8d21880d8a707e913bbd7d973f57d8ee"/>
-          <topic label="buildDualBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a21bf87659db688c1e4ad306a97fac123"/>
-          <topic label="incDimBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a063206a6683f7143147d13f1529926cd"/>
-          <topic label="incDimDualBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#afdb7a1e91e8e5c07f1d697e8ca3a83b3"/>
-          <topic label="buildProjection" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#aec61f6bd68462c2a599904138a76a250"/>
-          <topic label="buildProjectionDual" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#af850c43f69ffe995c2829254b953263e"/>
-          <topic label="toStringCoef" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a75e0a27ec0cf4bdfc129d1682d1e90b1"/>
-          <topic label="buildBasis0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#ace70501c3f6756e7a4d12bd5705618a9"/>
-          <topic label="incDimBasis0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#addb08c6e534289fc36204191d5c107b9"/>
-          <topic label="buildProjection0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a86355167a12d8fb0e218ccd71b8b5e2f"/>
-          <topic label="m_order" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a2ac8b609f5d83f70a60420b8c3c0f4c0"/>
-          <topic label="m_aCoeff" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a9bf915cdfedfd5529441a8dfd1178e5e"/>
-          <topic label="m_basis0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a688748d6e2414341482b69e3e04b3bc2"/>
-          <topic label="m_dim0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a3fa0b1e3848bc3fb3bd5a1a8f93fbdcb"/>
-          <topic label="m_y" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#af2ba4511ad5adfbd485acc1e6a69ae4a"/>
-          <topic label="m_genTemp" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a9c778e7155851358734d3d51a0b84b60"/>
-        </topic>
         <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html">
           <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a07fb77691fc43b3c28541bd905ed5d5c"/>
           <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a5756acdc04203b2855d7f31719b17251"/>
+          <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a415917415a7aebe27be4050a02d4e131"/>
           <topic label="getGamma" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a09ef21de5945e93faaf4da1b3ba47348"/>
         </topic>
         <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html">
-          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a884208d68d6d14cfb2ac7f051d1381bc"/>
-          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a5c1cbe92dc5ed063a7d8cc3552142276"/>
+          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#ae9f338d4004b9f39415013abddaa00fb"/>
+          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a17dca8120f71e06c5a0084cbe1239ec8"/>
+          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#aaeac5abccf7c16099c3a32c0aca893d6"/>
           <topic label="~NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#aed93e4895db8e4bd9176107a56e3cadd"/>
-          <topic label="getGamma" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a9a9b0cdc6ebf9bf19597db56293243e0"/>
+          <topic label="getGamma" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a627bc3a464d38e6a2192557b224f6658"/>
         </topic>
         <topic label="NormaLaminated" href="dd/d0f/classLatticeTester_1_1NormaLaminated.html">
           <topic label="NormaLaminated" href="dd/d0f/classLatticeTester_1_1NormaLaminated.html#ad7a019faa4ad93c61d7f30d3bcdfe379"/>
@@ -277,6 +268,7 @@
         <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html">
           <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a34935306d4c4723aef95609db583d9f2"/>
           <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a6e9ced0ea67ea3c0fc2a3c3ec81189d2"/>
+          <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a73720bcdce3a22ca8056aadaf6a3d156"/>
           <topic label="getGamma" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a92846b35a8eb28cb3b40842061134039"/>
         </topic>
         <topic label="NormaPalpha" href="d8/d6e/classLatticeTester_1_1NormaPalpha.html">
@@ -291,25 +283,30 @@
         <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html">
           <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#ae516774da77473d65d64e65708dbf87f"/>
           <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#ad2c81ffb6aa506fd8c294db929860a9e"/>
+          <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#a018c1b190987bf6cd40144968cc928d3"/>
           <topic label="~NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#abaf1ccfe60a4f88cab28735a2cd70d3d"/>
           <topic label="getGamma" href="d1/d30/classLatticeTester_1_1NormaRogers.html#a760e0f62a26f7e373ef45a35d9a7531c"/>
         </topic>
         <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html">
+          <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ac184b6b006b59acad136cc43ce3dec79"/>
           <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a9427d4658ca88ea4d4b5a57dd289d1f3"/>
-          <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a468c38de60081bff23267d264883c321"/>
+          <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ad03fbe1555b390c02f67324e587e8fb2"/>
+          <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a7bd26e6ac0ac85712f8c7329efcbe30a"/>
           <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#acca8e51fea3e2757baeb56eebc952583"/>
           <topic label="~Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ae3c146f3fadf0d949903f22b0b22cf58"/>
           <topic label="setaa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a153802e8b2d089853fe5b6fd1df771b4"/>
+          <topic label="seta" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab6e71c008c9a995db61e8459e14ac4e8"/>
           <topic label="seta" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab5b720563d156fd8b3436726077fa9c0"/>
           <topic label="getaa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#af89ac5c912828a3bf8cd44d785b97b09"/>
           <topic label="buildBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a683c39eb9323900af71aa869d3ffd87d"/>
           <topic label="buildDualBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a26f23a64f04c8faf3e531e7ef6bb9b9c"/>
           <topic label="incDimBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a1b9efd97e3de9e0681ea7ce0f985a49d"/>
           <topic label="incDimDualBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab85b7a447fdb1a15a6a18ba1bf4d7db8"/>
-          <topic label="buildProjection" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a58adc76c9b72528b48c5d07805904ee4"/>
-          <topic label="buildProjectionDual" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab0fe409fefda9119a6dbc0a586c79b48"/>
+          <topic label="buildProjection" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a59aad8893c7b53dc05c739f9a580ea57"/>
+          <topic label="buildProjectionDual" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a0fd9b551f545577b5e9e83d7ef9db239"/>
           <topic label="toStringCoef" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ac61ecbccfe48180c53ce8aa7f5fe0839"/>
           <topic label="m_aa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#aee9db5a1fb383d21da62362b6f7068b4"/>
+          <topic label="m_dimaa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a51e32642c2675bae3c0a213b81229e62"/>
         </topic>
         <topic label="ReducerBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html">
           <topic label="ReducerBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a2befeca9af11ab2664f3f49aa29f85dc"/>
@@ -412,38 +409,6 @@
           <topic label="L2NORM" href="d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b"/>
           <topic label="ZAREMBANORM" href="d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a9dd28fa34c8fd3331bd55e85d9b8ff2b"/>
         </topic>
-        <topic label="OutputType" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058">
-          <topic label="TERM" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a7424f6330dcef06bb69cd6d1f4f9045a"/>
-          <topic label="RES" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a0c648307bf3301ea0606de04fcb79715"/>
-          <topic label="TEX" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a3143e7b5be2e3d8d6aad062460f51f97"/>
-          <topic label="GEN" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a0f15b71adaba58b2f5476a93823f1767"/>
-        </topic>
-        <topic label="ProblemType" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faff">
-          <topic label="BASIS" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffaa9cfecaf8d5048f10d4016c41ff814d2"/>
-          <topic label="DUAL" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffa6230d8b5b7473284e7ae5ce9c99a879a"/>
-          <topic label="REDUCTION" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffae72b9cc5c1b60f82db4dc146e05102bc"/>
-          <topic label="SHORTEST" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffabc152d94a75cc74adfdb22335c8980f9"/>
-          <topic label="MERIT" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffa861d3886c143a0cc3d686de47fb98920"/>
-        </topic>
-        <topic label="PrecisionType" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2">
-          <topic label="DOUBLE" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2a14b6ff7a5d157ffdfd9ab4d80d7f5ea6"/>
-          <topic label="QUADRUPLE" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2a3a2dae8e1fda53e4a5f9744979a818e0"/>
-          <topic label="XDOUBLE" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2acf1cb9ccf9b182660b0f40feabc2f007"/>
-          <topic label="RR" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2aa4d2c16f89d60274b8ed8859a2594ab7"/>
-        </topic>
-        <topic label="PrimeType" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65">
-          <topic label="PRIME" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65a1a116a76db19a0cf4ad43973fc2c2279"/>
-          <topic label="PROB_PRIME" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65a4ad8925491567caca357efe9f609bb27"/>
-          <topic label="COMPOSITE" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65aac48dba763e4f64c60ef238bf66f82f8"/>
-          <topic label="UNKNOWN" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65a5a0fef7085559362287f893caa97425e"/>
-        </topic>
-        <topic label="CriterionType" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0">
-          <topic label="LENGTH" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0ab6783128c1344cbef4cc8429cc63d0b5"/>
-          <topic label="SPECTRAL" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0a012ebaf6929fea5b0d330cf292d19e3c"/>
-          <topic label="BEYER" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0a91ce17e475c9002db6b12ed2e528d7e8"/>
-          <topic label="PALPHA" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0a782750d0af36a267ddfd84b32ae7d79c"/>
-          <topic label="BOUND_JS" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0aad5231f38003aaa7c1cc16c314d9605e"/>
-        </topic>
         <topic label="NormaType" href="d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90">
           <topic label="BESTLAT" href="d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90a6f65388b2929fedcf40d456d30df3551"/>
           <topic label="BESTUPBOUND" href="d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90ab2dc4f1b4d3313f8df8baf113e937d6e"/>
@@ -480,8 +445,8 @@
           <topic label="MERITM" href="d8/d74/namespaceLatticeTester.html#a5e9e347d07097a1a3c82f1699ff93d58a094d81300c3a1bd13d96d01e8c53a3ad"/>
           <topic label="MERITQ" href="d8/d74/namespaceLatticeTester.html#a5e9e347d07097a1a3c82f1699ff93d58ad875e35fbaf2f2e8be530376935b6c6d"/>
         </topic>
-        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a5f920d49aa69c0997fcb3d9a57be59fd"/>
-        <topic label="LLLBasisConstruction" href="d8/d74/namespaceLatticeTester.html#a40dee9abea4adcf0350d72f97bf61614"/>
+        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#aa57d18b5ef393224b7f1829d5682d759"/>
+        <topic label="LLLBasisConstruction" href="d8/d74/namespaceLatticeTester.html#a307eeecf6b0886bf41fdf57cd02f67b3"/>
         <topic label="lowerTriangularBasis" href="d8/d74/namespaceLatticeTester.html#a14056d5418242137d62897e30468af3a"/>
         <topic label="upperTriangularBasis" href="d8/d74/namespaceLatticeTester.html#a6a4f630a4729e98fe79e334181e26ce9"/>
         <topic label="upperTriangularBasisOld96" href="d8/d74/namespaceLatticeTester.html#abf5110b05c562288e6c78894b67309d1"/>
@@ -496,12 +461,12 @@
         <topic label="projectionConstructionUpperTri" href="d8/d74/namespaceLatticeTester.html#a23727477171c0b882c6c8a0c41c1ba2b"/>
         <topic label="projectionConstructionUpperTri" href="d8/d74/namespaceLatticeTester.html#ac2aae5201a480e23fa21343f289b0f2a"/>
         <topic label="projectionConstruction" href="d8/d74/namespaceLatticeTester.html#a10b69f089b2845f22065ef00561511bd"/>
-        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#aa79e632b1a268bb144291dab079536ba"/>
-        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a3f33d3b0de1f713f1ef2c1c595e84dd1"/>
-        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#adcaf7b538955dfbb11fbb1847d33047a"/>
-        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a230dce0082ae9b33519142ff5ac095e1"/>
-        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a943fc1de3c831c53f7c46fe7547e55f6"/>
-        <topic label="LLLBasisConstruction" href="d8/d74/namespaceLatticeTester.html#a0375e124633660cc7ef0ba824d20401b"/>
+        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#aedff96000ec004065ececb54c4e25e70"/>
+        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a744f7989fb4fe55dcd495233b747e0d6"/>
+        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a25d09e2b931b88a311d38461458099a8"/>
+        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a72aa68b5a626ce9431145f7a3e753620"/>
+        <topic label="LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a77ea11a7ef3fcc8747d0e89212050e19"/>
+        <topic label="LLLBasisConstruction" href="d8/d74/namespaceLatticeTester.html#aee78965591d1b5717dee3bba5be835bf"/>
         <topic label="lowerTriangularBasis" href="d8/d74/namespaceLatticeTester.html#adf38db6c503b603580edb998ab3dfb3a"/>
         <topic label="upperTriangularBasis" href="d8/d74/namespaceLatticeTester.html#ac0699288204d864638ec9cc3461192bc"/>
         <topic label="upperTriangularBasisOld96" href="d8/d74/namespaceLatticeTester.html#a3d4b386e05b14e28a1a77e18af32acce"/>
@@ -519,13 +484,7 @@
         <topic label="projectionConstructionUpperTri" href="d8/d74/namespaceLatticeTester.html#ad55ee07787a3411bde9ae8ae7dd18801"/>
         <topic label="projectionConstruction" href="d8/d74/namespaceLatticeTester.html#aacaaa449af42b672227ce6606347a066"/>
         <topic label="toStringNorm" href="d8/d74/namespaceLatticeTester.html#af65fc07f34906524398b038327a0bb14"/>
-        <topic label="toStringOutput" href="d8/d74/namespaceLatticeTester.html#a059f8e56d24041008c87a70625e70ba9"/>
-        <topic label="toStringProblem" href="d8/d74/namespaceLatticeTester.html#a07260b18b588fe14165b0ea411934bbd"/>
-        <topic label="toStringPrecision" href="d8/d74/namespaceLatticeTester.html#a70e26765f6794f995a8130fecc030ca7"/>
-        <topic label="toStringPrime" href="d8/d74/namespaceLatticeTester.html#ac6567b0759b046c6deeea98a1c9f4235"/>
-        <topic label="toStringCriterion" href="d8/d74/namespaceLatticeTester.html#a9d14b2942fa515f0e72edfcb4243781c"/>
         <topic label="toStringNorma" href="d8/d74/namespaceLatticeTester.html#ac24879d5aa087958f258e3a9e3770d37"/>
-        <topic label="toStringCalc" href="d8/d74/namespaceLatticeTester.html#a5fb8cd4f08931a89c70f756d0014b2b2"/>
         <topic label="toStringReduction" href="d8/d74/namespaceLatticeTester.html#a137cd194ce614d43c80f65557ee96109"/>
         <topic label="toStringDecomp" href="d8/d74/namespaceLatticeTester.html#a21f1a550ff7e4344554a043faceb7c55"/>
         <topic label="toStringProjConstruct" href="d8/d74/namespaceLatticeTester.html#a12e050957b719073c06de41c7486f1ce"/>
@@ -537,23 +496,23 @@
         <topic label="Harmonic2" href="d8/d74/namespaceLatticeTester.html#a3aefa49a034495dcc46721c275f329b0"/>
         <topic label="FourierC1" href="d8/d74/namespaceLatticeTester.html#a0bb56e7569fb24800973df89d757f2fd"/>
         <topic label="FourierE1" href="d8/d74/namespaceLatticeTester.html#ab5f708fa0e8d6aa53427b3e8927f5504"/>
-        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a617ba189e7b633cbc81f08d3512bc3fb"/>
-        <topic label="redLLLExact" href="d8/d74/namespaceLatticeTester.html#a9b34105ff26302078324b66592bbff4c"/>
-        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#adde2fbdfda54db87c5b68656822db927"/>
-        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a63dafe7fe191c17bcb7c178149db6570"/>
-        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a7ba0cc62c4a1f60207e43f96b0b8b505"/>
-        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a17c311ceec469a24bb840ad475087f47"/>
-        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#ae67de711b50856965f26fac46cb92a37"/>
-        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a9970c52ca29fba32363dbc13d4731dd2"/>
-        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#ac06b7a4878550ec92b3138a5c121e4a5"/>
+        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a3ceea9a41a24df6ed2031758a1d6ec20"/>
+        <topic label="redLLLExact" href="d8/d74/namespaceLatticeTester.html#a786516595510c5c25068e8799f0033a4"/>
+        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#a4a61a2dbcaf8040bb3ae3ffe23a098c8"/>
+        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#af8952c275a4f3ad1437fdbddf99ea679"/>
+        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a45e9fb356874a9d69a083c447d35ee82"/>
+        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#abf582f8ec90dc5bbc0c52a8afab88903"/>
+        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a3e85e9cda4a548bb9066dc93c01ffbc3"/>
+        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a6eb909d481b710dd72c07eb65f0f65af"/>
+        <topic label="redLLL" href="d8/d74/namespaceLatticeTester.html#a7c2d52c1e432a0aa02eb8d11c2b9efc5"/>
         <topic label="redLLLExact" href="d8/d74/namespaceLatticeTester.html#a5830bb0fae462b5e85c8eeb1c126a647"/>
         <topic label="redLLLExact" href="d8/d74/namespaceLatticeTester.html#aebd6a9c79f1e8d406981e707235b99e6"/>
-        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#af5b3c8b73699d62e791da7d1bfb848db"/>
-        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#a3156e70f2ab3dad98a95ae19142ac9b0"/>
-        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#abdd397a850f675b73135e0267f2097dd"/>
-        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#afac0875e1a96e8d73119a2ab60522727"/>
-        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#a06a3ac4d76bc194019f487522ab52947"/>
-        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#ab25595dce14a5f583031ea455884105c"/>
+        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#acd4fd2f2c2477fc8ad2d483292d14baa"/>
+        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#a1d0913d24a5656d830a61018ce316716"/>
+        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#afa2d41ca2eff4fee580d48322b5fe8c0"/>
+        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#a2e11b9b3efca3e0ac3521dc42edb4f48"/>
+        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#a1f7c7c09bc3168a65b0a0750b9952f08"/>
+        <topic label="redBKZ" href="d8/d74/namespaceLatticeTester.html#ae73d9d4b0e49f3431f21fc4bc0604a61"/>
         <topic label="swap9" href="d8/d74/namespaceLatticeTester.html#ad4d16fed8fda92252dc423db28136932"/>
         <topic label="RandU01" href="d8/d74/namespaceLatticeTester.html#abba336d3a5abb22b8367ddfa37a713e4"/>
         <topic label="RandInt" href="d8/d74/namespaceLatticeTester.html#a3f7dd0225a074e885d6d54916757fcec"/>
@@ -628,16 +587,16 @@
         <topic label="TWO_EXP" href="d8/d74/namespaceLatticeTester.html#ae5f464bde0cd79b7bbc47ff090e49b31"/>
       </topic>
       <topic label="NTL" href="d2/d5a/namespaceNTL.html">
-        <topic label="LLL_FP64" href="d2/d5a/namespaceNTL.html#a79d54057e0dccdcf7a6440bbde8a8bf1"/>
-        <topic label="BKZ_FP64" href="d2/d5a/namespaceNTL.html#a5cf2311e9d609764d60cef2e697c5541"/>
-        <topic label="LLL_FP_lt" href="d2/d5a/namespaceNTL.html#a13885bb911ce8b1f3fcfda8c7d1e4ba8"/>
-        <topic label="BKZ_FP_lt" href="d2/d5a/namespaceNTL.html#af923ff2dec19a293095bc4f251cb99f4"/>
-        <topic label="LLL_XD_lt" href="d2/d5a/namespaceNTL.html#a564af4b395ff8dbedf4fe4d00500abff"/>
-        <topic label="BKZ_XD_lt" href="d2/d5a/namespaceNTL.html#ac03fa13da4a6c316ba45406901274fbb"/>
-        <topic label="LLL_QP_lt" href="d2/d5a/namespaceNTL.html#a8b2b1aba8557a7ad57378538c131196f"/>
-        <topic label="BKZ_QP_lt" href="d2/d5a/namespaceNTL.html#a69fd6c92680d437a0113dd5488aa7868"/>
-        <topic label="LLL_RR_lt" href="d2/d5a/namespaceNTL.html#a6c326818e6532d99d921a45d06212e44"/>
-        <topic label="BKZ_RR_lt" href="d2/d5a/namespaceNTL.html#ac056e9b87ae29faf72cf6516ffb2eb5d"/>
+        <topic label="LLL_FP64" href="d2/d5a/namespaceNTL.html#a9b6a708f3516697e28a1503bc78b7b83"/>
+        <topic label="BKZ_FP64" href="d2/d5a/namespaceNTL.html#aedf1218956585c92acc2c77038865f53"/>
+        <topic label="LLL_FP_lt" href="d2/d5a/namespaceNTL.html#aa681eace7960b748c70695faf595889f"/>
+        <topic label="BKZ_FP_lt" href="d2/d5a/namespaceNTL.html#a538f889ee4257ae43949945511b871b0"/>
+        <topic label="LLL_XD_lt" href="d2/d5a/namespaceNTL.html#ae20cf5448b528fdda8b1e7636de1859e"/>
+        <topic label="BKZ_XD_lt" href="d2/d5a/namespaceNTL.html#a2b0a85674e793dd3f10e3f17894351a0"/>
+        <topic label="LLL_QP_lt" href="d2/d5a/namespaceNTL.html#ae79acc44fe7df7b502e41e805d514bac"/>
+        <topic label="BKZ_QP_lt" href="d2/d5a/namespaceNTL.html#ad887429b89cc70ce40c03c0c9a021765"/>
+        <topic label="LLL_RR_lt" href="d2/d5a/namespaceNTL.html#acb91e36041da0de58245701e25116e4a"/>
+        <topic label="BKZ_RR_lt" href="d2/d5a/namespaceNTL.html#a1904cfb978724399eb4264cc8b244c2e"/>
         <topic label="conv" href="d2/d5a/namespaceNTL.html#a07b6d8586b6a40e65a3bee1608d3e389"/>
         <topic label="conv" href="d2/d5a/namespaceNTL.html#a7ccb62fcab3fca4d4cf9c2b55061e63f"/>
         <topic label="IsZero" href="d2/d5a/namespaceNTL.html#a1629b29c99a1aed8f591c523c9047519"/>
@@ -684,7 +643,6 @@
         <topic label="t" href="namespacemembers_t.html"/>
         <topic label="u" href="namespacemembers_u.html"/>
         <topic label="w" href="namespacemembers_w.html"/>
-        <topic label="x" href="namespacemembers_x.html"/>
         <topic label="z" href="namespacemembers_z.html"/>
       </topic>
       <topic label="Functions" href="namespacemembers_func.html"/>
@@ -787,12 +745,16 @@
         </topic>
         <topic label="FigureOfMeritDualM" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html">
           <topic label="FigureOfMeritDualM" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a78fe941806ecfb650cbd6ea83ee20baa"/>
+          <topic label="FigureOfMeritDualM" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a36f6ec5e4b68492a470eda707a044121"/>
+          <topic label="computeMeritSucc" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a0264d1b335a14ddd0fbc86ed374cfd2c"/>
           <topic label="computeMeritSucc" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a2a0f1c21988b0404d15b2f060ca07237"/>
+          <topic label="computeMeritSuccRebuild" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a8be34a03f25c77f468f6cd5b2058fb3e"/>
           <topic label="computeMeritSuccRebuild" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a245ad4a0c9c68502da4ea69d17bcdc82"/>
           <topic label="computeMeritNonSucc" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#acb2ccc4cee85296a44c354b23aaa3504"/>
         </topic>
         <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html">
           <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8a2641e524a04c2f361c6915683f2ad3"/>
+          <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aadf5be3e30269f0ea4f0b83e42aca80b"/>
           <topic label="~FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac2a33bf19d7f65d7f2a006ac71d0b6e3"/>
           <topic label="setTVector" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab254796b0bf07839dc819ce0b18300b2"/>
           <topic label="countProjections" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad6525fd3b4be99656c61c4d9e8177c37"/>
@@ -808,7 +770,9 @@
           <topic label="getMinMeritSqlen" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ade709441c4fbfa7bf62259ed10e1cf94"/>
           <topic label="getMinMeritProj" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab9c26757cf7f5a4d7349aeff260538c1"/>
           <topic label="computeMeritOneProj" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aa41da07dcfa1f67854d9c822e33395d0"/>
+          <topic label="computeMeritSucc" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a9678223a870a7f746ad8b55a927e0640"/>
           <topic label="computeMeritSucc" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a3e671c26e8b0f6298b463f604228446f"/>
+          <topic label="computeMeritSuccRebuild" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a17fb222e7a4cd4d0b32367cad0199b72"/>
           <topic label="computeMeritSuccRebuild" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a59e832a650f4abd691c7b2ea57d6707a"/>
           <topic label="computeMeritNonSucc" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a6431bd6399a50fb8bb0bc2be21e9b1f5"/>
           <topic label="computeMerit" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad5a8a53868f425073a1b744a19dd685f"/>
@@ -822,7 +786,7 @@
           <topic label="m_redBB" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a1dcb7f7ec5be4592612d2ba0acec4fd7"/>
           <topic label="m_coordRange" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a85f5cf41c2cb9bcfececc08024c2260a"/>
           <topic label="m_red" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a0771af1d54f2b974cfc4aaa1f1eac266"/>
-          <topic label="m_sqlen" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a0db43cbaecb7189b76cfe905842f0b84"/>
+          <topic label="m_minSqlen" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a595b201a131eee0b01967b2b680612c3"/>
           <topic label="m_includeFirst" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a44ed9a8103fb9e6b5058f5a9550b3228"/>
           <topic label="m_lowbound" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a7c70d99aac0cf29954ebf7911070fa29"/>
           <topic label="m_minMerit" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aa981f88a3f43dd54cddadc2777a6e9b6"/>
@@ -834,26 +798,15 @@
           <topic label="m_collectLevel" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#af60f154ea09571848cb55afe1f5db41b"/>
         </topic>
         <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html">
+          <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ad6e8952f6c246813d62813140fd91c97"/>
           <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5ba206c6c8a0028a9c276d97a5f09307"/>
           <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ae12976acf0957661072564aaad2dff95"/>
           <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a6047763eebdb4414bfafc57a3432ff0e"/>
           <topic label="~IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a71d6341df4365f5633fbfb13f3ee69be"/>
-          <topic label="buildProjectionLLL" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a9ab7f8e7c3adb417c8400714de5a2acb"/>
-          <topic label="buildProjection" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a7c8c732f3bd7191e6d3d59649c0cd70f"/>
-          <topic label="buildProjectionDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a3fea90bfea52f743f26a902cf01b9387"/>
-          <topic label="getBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a8a644de64a5025d95a9fa91127ce9b4c"/>
+          <topic label="setModulus" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a307a251ce0d42e9bc4fa574dacb5ab10"/>
           <topic label="setBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aabd81b14527036ea91b5dec825230ea5"/>
           <topic label="setBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a0385e551bb89501e42b32c93cd7c9342"/>
-          <topic label="getDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a4fa8d9ecdff139860ff11a02b7453e7f"/>
-          <topic label="getMaxDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a3c558319fade78f6e5d01609a8f07e22"/>
-          <topic label="getDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a0967bbcbffa56adc3438035861db6a01"/>
-          <topic label="getDimDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a14f1b2d4d2ecf50ee060b43603236ff3"/>
-          <topic label="getNormType" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a82ad6433365917e6001cfadf00d31e5a"/>
-          <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a084e2dc1fc4e122a20d7fa65ac38d31c"/>
-          <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#afb81b04d3da51a13c870aa4993423f1b"/>
-          <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aaf2b749cb4fad51ac15878049068115a"/>
-          <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a13fe46018502ee269b7cc5e672fe3b1c"/>
-          <topic label="getModulus" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aa0e64bcdea67e629916b7762bd678d56"/>
+          <topic label="setDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a91147f7ea7633b0819ece41dce3ff636"/>
           <topic label="setDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a13385af5be0b2356dc45b401b19421ae"/>
           <topic label="setDimDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a84fbae02334aa52ca3ba997e5ecaca12"/>
           <topic label="setNormType" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ab987c7d0e0b09788046acf76007a9e98"/>
@@ -863,6 +816,17 @@
           <topic label="setNegativeNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a677fe959bade8e3f8b76af237818b98d"/>
           <topic label="setDualNegativeNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a825a1976f89ea5f995d254b9bd34caae"/>
           <topic label="setDualNegativeNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5a78e772f71a1e0d5cb3054c500e1f36"/>
+          <topic label="getModulus" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aa0e64bcdea67e629916b7762bd678d56"/>
+          <topic label="getMaxDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a3c558319fade78f6e5d01609a8f07e22"/>
+          <topic label="getBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a8a644de64a5025d95a9fa91127ce9b4c"/>
+          <topic label="getDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a4fa8d9ecdff139860ff11a02b7453e7f"/>
+          <topic label="getDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a0967bbcbffa56adc3438035861db6a01"/>
+          <topic label="getDimDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a14f1b2d4d2ecf50ee060b43603236ff3"/>
+          <topic label="getNormType" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a82ad6433365917e6001cfadf00d31e5a"/>
+          <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a084e2dc1fc4e122a20d7fa65ac38d31c"/>
+          <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#afb81b04d3da51a13c870aa4993423f1b"/>
+          <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aaf2b749cb4fad51ac15878049068115a"/>
+          <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a13fe46018502ee269b7cc5e672fe3b1c"/>
           <topic label="updateVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ab016fa422ca61a9d649de69398c8347e"/>
           <topic label="updateVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#affdbc003b45d7155dafc3db7499d4b6e"/>
           <topic label="updateSingleVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a352c084e9c29ebf84450d1171d624491"/>
@@ -880,6 +844,9 @@
           <topic label="checkDuality" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a7cf43dd173a6dc96e12ce9ec875a26b1"/>
           <topic label="sortBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a9c813f60da941f17cd64ffdd8f54e1cd"/>
           <topic label="sortDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a6db7557c21bea080c0cff6fd16ae304b"/>
+          <topic label="buildProjectionLLL" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a7a87281185345928414fbc25a9f18c05"/>
+          <topic label="buildProjection" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a760083d0ea1751b1a58cb447fc9bcc3f"/>
+          <topic label="buildProjectionDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ad36776b2a9d53fcaff9a776da5a1944b"/>
           <topic label="toStringBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a328257cce98ddcab0487968a96c360be"/>
           <topic label="toStringDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5e6f5a68b1af72c699e8df0ebb4005be"/>
           <topic label="toString" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5fef4c1178ef93cde7d646298d8d5f4b"/>
@@ -894,6 +861,7 @@
           <topic label="m_dualvecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#acdf14671d5f4d13d9f40901862701f0e"/>
         </topic>
         <topic label="IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html">
+          <topic label="IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0fb4460cfe8158a02390cf4f33eaca78"/>
           <topic label="IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0178d9abf19cf6b873d422149f9f2754"/>
           <topic label="~IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a3de7c80c3195182019cb58dc01d1827d"/>
           <topic label="buildBasis" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a14d4e8a5b2f7ec824870b3eae0b730d6"/>
@@ -902,37 +870,18 @@
           <topic label="incDimDualBasis" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#ab94c04c46218096c7102245af2036602"/>
           <topic label="kill" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#ab308e75498a5fdf1141ca48ca178edc7"/>
         </topic>
-        <topic label="MRGLattice" href="d9/d4e/classLatticeTester_1_1MRGLattice.html">
-          <topic label="MRGLattice" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a8210853724e4a18eac3a6bc835352776"/>
-          <topic label="~MRGLattice" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a69b9332dd44bd78b5f8ecb4629641108"/>
-          <topic label="setaa" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#abab7a4fcda3390e87d19e5ea74eddd5c"/>
-          <topic label="buildBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a8d21880d8a707e913bbd7d973f57d8ee"/>
-          <topic label="buildDualBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a21bf87659db688c1e4ad306a97fac123"/>
-          <topic label="incDimBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a063206a6683f7143147d13f1529926cd"/>
-          <topic label="incDimDualBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#afdb7a1e91e8e5c07f1d697e8ca3a83b3"/>
-          <topic label="buildProjection" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#aec61f6bd68462c2a599904138a76a250"/>
-          <topic label="buildProjectionDual" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#af850c43f69ffe995c2829254b953263e"/>
-          <topic label="toStringCoef" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a75e0a27ec0cf4bdfc129d1682d1e90b1"/>
-          <topic label="buildBasis0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#ace70501c3f6756e7a4d12bd5705618a9"/>
-          <topic label="incDimBasis0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#addb08c6e534289fc36204191d5c107b9"/>
-          <topic label="buildProjection0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a86355167a12d8fb0e218ccd71b8b5e2f"/>
-          <topic label="m_order" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a2ac8b609f5d83f70a60420b8c3c0f4c0"/>
-          <topic label="m_aCoeff" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a9bf915cdfedfd5529441a8dfd1178e5e"/>
-          <topic label="m_basis0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a688748d6e2414341482b69e3e04b3bc2"/>
-          <topic label="m_dim0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a3fa0b1e3848bc3fb3bd5a1a8f93fbdcb"/>
-          <topic label="m_y" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#af2ba4511ad5adfbd485acc1e6a69ae4a"/>
-          <topic label="m_genTemp" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a9c778e7155851358734d3d51a0b84b60"/>
-        </topic>
         <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html">
           <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a07fb77691fc43b3c28541bd905ed5d5c"/>
           <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a5756acdc04203b2855d7f31719b17251"/>
+          <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a415917415a7aebe27be4050a02d4e131"/>
           <topic label="getGamma" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a09ef21de5945e93faaf4da1b3ba47348"/>
         </topic>
         <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html">
-          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a884208d68d6d14cfb2ac7f051d1381bc"/>
-          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a5c1cbe92dc5ed063a7d8cc3552142276"/>
+          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#ae9f338d4004b9f39415013abddaa00fb"/>
+          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a17dca8120f71e06c5a0084cbe1239ec8"/>
+          <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#aaeac5abccf7c16099c3a32c0aca893d6"/>
           <topic label="~NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#aed93e4895db8e4bd9176107a56e3cadd"/>
-          <topic label="getGamma" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a9a9b0cdc6ebf9bf19597db56293243e0"/>
+          <topic label="getGamma" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a627bc3a464d38e6a2192557b224f6658"/>
         </topic>
         <topic label="NormaLaminated" href="dd/d0f/classLatticeTester_1_1NormaLaminated.html">
           <topic label="NormaLaminated" href="dd/d0f/classLatticeTester_1_1NormaLaminated.html#ad7a019faa4ad93c61d7f30d3bcdfe379"/>
@@ -962,6 +911,7 @@
         <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html">
           <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a34935306d4c4723aef95609db583d9f2"/>
           <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a6e9ced0ea67ea3c0fc2a3c3ec81189d2"/>
+          <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a73720bcdce3a22ca8056aadaf6a3d156"/>
           <topic label="getGamma" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a92846b35a8eb28cb3b40842061134039"/>
         </topic>
         <topic label="NormaPalpha" href="d8/d6e/classLatticeTester_1_1NormaPalpha.html">
@@ -976,25 +926,30 @@
         <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html">
           <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#ae516774da77473d65d64e65708dbf87f"/>
           <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#ad2c81ffb6aa506fd8c294db929860a9e"/>
+          <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#a018c1b190987bf6cd40144968cc928d3"/>
           <topic label="~NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#abaf1ccfe60a4f88cab28735a2cd70d3d"/>
           <topic label="getGamma" href="d1/d30/classLatticeTester_1_1NormaRogers.html#a760e0f62a26f7e373ef45a35d9a7531c"/>
         </topic>
         <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html">
+          <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ac184b6b006b59acad136cc43ce3dec79"/>
           <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a9427d4658ca88ea4d4b5a57dd289d1f3"/>
-          <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a468c38de60081bff23267d264883c321"/>
+          <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ad03fbe1555b390c02f67324e587e8fb2"/>
+          <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a7bd26e6ac0ac85712f8c7329efcbe30a"/>
           <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#acca8e51fea3e2757baeb56eebc952583"/>
           <topic label="~Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ae3c146f3fadf0d949903f22b0b22cf58"/>
           <topic label="setaa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a153802e8b2d089853fe5b6fd1df771b4"/>
+          <topic label="seta" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab6e71c008c9a995db61e8459e14ac4e8"/>
           <topic label="seta" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab5b720563d156fd8b3436726077fa9c0"/>
           <topic label="getaa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#af89ac5c912828a3bf8cd44d785b97b09"/>
           <topic label="buildBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a683c39eb9323900af71aa869d3ffd87d"/>
           <topic label="buildDualBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a26f23a64f04c8faf3e531e7ef6bb9b9c"/>
           <topic label="incDimBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a1b9efd97e3de9e0681ea7ce0f985a49d"/>
           <topic label="incDimDualBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab85b7a447fdb1a15a6a18ba1bf4d7db8"/>
-          <topic label="buildProjection" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a58adc76c9b72528b48c5d07805904ee4"/>
-          <topic label="buildProjectionDual" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab0fe409fefda9119a6dbc0a586c79b48"/>
+          <topic label="buildProjection" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a59aad8893c7b53dc05c739f9a580ea57"/>
+          <topic label="buildProjectionDual" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a0fd9b551f545577b5e9e83d7ef9db239"/>
           <topic label="toStringCoef" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ac61ecbccfe48180c53ce8aa7f5fe0839"/>
           <topic label="m_aa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#aee9db5a1fb383d21da62362b6f7068b4"/>
+          <topic label="m_dimaa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a51e32642c2675bae3c0a213b81229e62"/>
         </topic>
         <topic label="ReducerBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html">
           <topic label="ReducerBB" href="d0/dea/classLatticeTester_1_1ReducerBB.html#a2befeca9af11ab2664f3f49aa29f85dc"/>
@@ -1106,7 +1061,6 @@
       </topic>
       <topic label="LatticeTester::IntLattice&lt; Int, Real &gt;" href="d6/dc0/classLatticeTester_1_1IntLattice.html">
         <topic label="LatticeTester::IntLatticeExt&lt; Int, Real &gt;" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html">
-          <topic label="LatticeTester::MRGLattice&lt; Int, Real &gt;" href="d9/d4e/classLatticeTester_1_1MRGLattice.html"/>
           <topic label="LatticeTester::Rank1Lattice&lt; Int, Real &gt;" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html"/>
         </topic>
       </topic>
@@ -1197,8 +1151,8 @@
       <topic label="include" href="dir_d44c64559bbebec7f509842c48db8b23.html">
         <topic label="latticetester" href="dir_8e3d3e3450631fd0c5f22b5c59b9b09f.html">
           <topic label="BasisConstruction.h" href="d6/ddf/BasisConstruction_8h.html">
-            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a5f920d49aa69c0997fcb3d9a57be59fd"/>
-            <topic label="LatticeTester::LLLBasisConstruction" href="d8/d74/namespaceLatticeTester.html#a40dee9abea4adcf0350d72f97bf61614"/>
+            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#aa57d18b5ef393224b7f1829d5682d759"/>
+            <topic label="LatticeTester::LLLBasisConstruction" href="d8/d74/namespaceLatticeTester.html#a307eeecf6b0886bf41fdf57cd02f67b3"/>
             <topic label="LatticeTester::lowerTriangularBasis" href="d8/d74/namespaceLatticeTester.html#a14056d5418242137d62897e30468af3a"/>
             <topic label="LatticeTester::upperTriangularBasis" href="d8/d74/namespaceLatticeTester.html#a6a4f630a4729e98fe79e334181e26ce9"/>
             <topic label="LatticeTester::upperTriangularBasisOld96" href="d8/d74/namespaceLatticeTester.html#abf5110b05c562288e6c78894b67309d1"/>
@@ -1213,12 +1167,12 @@
             <topic label="LatticeTester::projectionConstructionUpperTri" href="d8/d74/namespaceLatticeTester.html#a23727477171c0b882c6c8a0c41c1ba2b"/>
             <topic label="LatticeTester::projectionConstructionUpperTri" href="d8/d74/namespaceLatticeTester.html#ac2aae5201a480e23fa21343f289b0f2a"/>
             <topic label="LatticeTester::projectionConstruction" href="d8/d74/namespaceLatticeTester.html#a10b69f089b2845f22065ef00561511bd"/>
-            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#aa79e632b1a268bb144291dab079536ba"/>
-            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a3f33d3b0de1f713f1ef2c1c595e84dd1"/>
-            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#adcaf7b538955dfbb11fbb1847d33047a"/>
-            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a230dce0082ae9b33519142ff5ac095e1"/>
-            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a943fc1de3c831c53f7c46fe7547e55f6"/>
-            <topic label="LatticeTester::LLLBasisConstruction" href="d8/d74/namespaceLatticeTester.html#a0375e124633660cc7ef0ba824d20401b"/>
+            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#aedff96000ec004065ececb54c4e25e70"/>
+            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a744f7989fb4fe55dcd495233b747e0d6"/>
+            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a25d09e2b931b88a311d38461458099a8"/>
+            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a72aa68b5a626ce9431145f7a3e753620"/>
+            <topic label="LatticeTester::LLLConstruction0" href="d8/d74/namespaceLatticeTester.html#a77ea11a7ef3fcc8747d0e89212050e19"/>
+            <topic label="LatticeTester::LLLBasisConstruction" href="d8/d74/namespaceLatticeTester.html#aee78965591d1b5717dee3bba5be835bf"/>
             <topic label="LatticeTester::lowerTriangularBasis" href="d8/d74/namespaceLatticeTester.html#adf38db6c503b603580edb998ab3dfb3a"/>
             <topic label="LatticeTester::upperTriangularBasis" href="d8/d74/namespaceLatticeTester.html#ac0699288204d864638ec9cc3461192bc"/>
             <topic label="LatticeTester::upperTriangularBasisOld96" href="d8/d74/namespaceLatticeTester.html#a3d4b386e05b14e28a1a77e18af32acce"/>
@@ -1377,38 +1331,6 @@
               <topic label="LatticeTester::L2NORM" href="d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a2d8982335f008ef95768bd7ec450d86b"/>
               <topic label="LatticeTester::ZAREMBANORM" href="d8/d74/namespaceLatticeTester.html#a9770e4d57aa715e249cd7e700c6f37e4a9dd28fa34c8fd3331bd55e85d9b8ff2b"/>
             </topic>
-            <topic label="LatticeTester::OutputType" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058">
-              <topic label="LatticeTester::TERM" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a7424f6330dcef06bb69cd6d1f4f9045a"/>
-              <topic label="LatticeTester::RES" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a0c648307bf3301ea0606de04fcb79715"/>
-              <topic label="LatticeTester::TEX" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a3143e7b5be2e3d8d6aad062460f51f97"/>
-              <topic label="LatticeTester::GEN" href="d8/d74/namespaceLatticeTester.html#ad78f099c800f4c648134967a45b91058a0f15b71adaba58b2f5476a93823f1767"/>
-            </topic>
-            <topic label="LatticeTester::ProblemType" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faff">
-              <topic label="LatticeTester::BASIS" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffaa9cfecaf8d5048f10d4016c41ff814d2"/>
-              <topic label="LatticeTester::DUAL" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffa6230d8b5b7473284e7ae5ce9c99a879a"/>
-              <topic label="LatticeTester::REDUCTION" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffae72b9cc5c1b60f82db4dc146e05102bc"/>
-              <topic label="LatticeTester::SHORTEST" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffabc152d94a75cc74adfdb22335c8980f9"/>
-              <topic label="LatticeTester::MERIT" href="d8/d74/namespaceLatticeTester.html#aad7b917d5ef7e8167bc50aa56109faffa861d3886c143a0cc3d686de47fb98920"/>
-            </topic>
-            <topic label="LatticeTester::PrecisionType" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2">
-              <topic label="LatticeTester::DOUBLE" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2a14b6ff7a5d157ffdfd9ab4d80d7f5ea6"/>
-              <topic label="LatticeTester::QUADRUPLE" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2a3a2dae8e1fda53e4a5f9744979a818e0"/>
-              <topic label="LatticeTester::XDOUBLE" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2acf1cb9ccf9b182660b0f40feabc2f007"/>
-              <topic label="LatticeTester::RR" href="d8/d74/namespaceLatticeTester.html#a94f96ff406f8b56147a2b7fd96209cb2aa4d2c16f89d60274b8ed8859a2594ab7"/>
-            </topic>
-            <topic label="LatticeTester::PrimeType" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65">
-              <topic label="LatticeTester::PRIME" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65a1a116a76db19a0cf4ad43973fc2c2279"/>
-              <topic label="LatticeTester::PROB_PRIME" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65a4ad8925491567caca357efe9f609bb27"/>
-              <topic label="LatticeTester::COMPOSITE" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65aac48dba763e4f64c60ef238bf66f82f8"/>
-              <topic label="LatticeTester::UNKNOWN" href="d8/d74/namespaceLatticeTester.html#a9b64954fb374b16e1fe991e435501d65a5a0fef7085559362287f893caa97425e"/>
-            </topic>
-            <topic label="LatticeTester::CriterionType" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0">
-              <topic label="LatticeTester::LENGTH" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0ab6783128c1344cbef4cc8429cc63d0b5"/>
-              <topic label="LatticeTester::SPECTRAL" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0a012ebaf6929fea5b0d330cf292d19e3c"/>
-              <topic label="LatticeTester::BEYER" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0a91ce17e475c9002db6b12ed2e528d7e8"/>
-              <topic label="LatticeTester::PALPHA" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0a782750d0af36a267ddfd84b32ae7d79c"/>
-              <topic label="LatticeTester::BOUND_JS" href="d8/d74/namespaceLatticeTester.html#a2cf3c4f4181718b7adc6f5e4513695a0aad5231f38003aaa7c1cc16c314d9605e"/>
-            </topic>
             <topic label="LatticeTester::NormaType" href="d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90">
               <topic label="LatticeTester::BESTLAT" href="d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90a6f65388b2929fedcf40d456d30df3551"/>
               <topic label="LatticeTester::BESTUPBOUND" href="d8/d74/namespaceLatticeTester.html#ab747c1cbb0f5e47fef711b62327a8e90ab2dc4f1b4d3313f8df8baf113e937d6e"/>
@@ -1446,13 +1368,7 @@
               <topic label="LatticeTester::MERITQ" href="d8/d74/namespaceLatticeTester.html#a5e9e347d07097a1a3c82f1699ff93d58ad875e35fbaf2f2e8be530376935b6c6d"/>
             </topic>
             <topic label="LatticeTester::toStringNorm" href="d8/d74/namespaceLatticeTester.html#af65fc07f34906524398b038327a0bb14"/>
-            <topic label="LatticeTester::toStringOutput" href="d8/d74/namespaceLatticeTester.html#a059f8e56d24041008c87a70625e70ba9"/>
-            <topic label="LatticeTester::toStringProblem" href="d8/d74/namespaceLatticeTester.html#a07260b18b588fe14165b0ea411934bbd"/>
-            <topic label="LatticeTester::toStringPrecision" href="d8/d74/namespaceLatticeTester.html#a70e26765f6794f995a8130fecc030ca7"/>
-            <topic label="LatticeTester::toStringPrime" href="d8/d74/namespaceLatticeTester.html#ac6567b0759b046c6deeea98a1c9f4235"/>
-            <topic label="LatticeTester::toStringCriterion" href="d8/d74/namespaceLatticeTester.html#a9d14b2942fa515f0e72edfcb4243781c"/>
             <topic label="LatticeTester::toStringNorma" href="d8/d74/namespaceLatticeTester.html#ac24879d5aa087958f258e3a9e3770d37"/>
-            <topic label="LatticeTester::toStringCalc" href="d8/d74/namespaceLatticeTester.html#a5fb8cd4f08931a89c70f756d0014b2b2"/>
             <topic label="LatticeTester::toStringReduction" href="d8/d74/namespaceLatticeTester.html#a137cd194ce614d43c80f65557ee96109"/>
             <topic label="LatticeTester::toStringDecomp" href="d8/d74/namespaceLatticeTester.html#a21f1a550ff7e4344554a043faceb7c55"/>
             <topic label="LatticeTester::toStringProjConstruct" href="d8/d74/namespaceLatticeTester.html#a12e050957b719073c06de41c7486f1ce"/>
@@ -1461,7 +1377,10 @@
           <topic label="FigureOfMeritDualM.h" href="d1/d1e/FigureOfMeritDualM_8h.html">
             <topic label="LatticeTester::FigureOfMeritDualM&lt; Int, Real &gt;" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html">
               <topic label="FigureOfMeritDualM" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a78fe941806ecfb650cbd6ea83ee20baa"/>
+              <topic label="FigureOfMeritDualM" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a36f6ec5e4b68492a470eda707a044121"/>
+              <topic label="computeMeritSucc" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a0264d1b335a14ddd0fbc86ed374cfd2c"/>
               <topic label="computeMeritSucc" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a2a0f1c21988b0404d15b2f060ca07237"/>
+              <topic label="computeMeritSuccRebuild" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a8be34a03f25c77f468f6cd5b2058fb3e"/>
               <topic label="computeMeritSuccRebuild" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#a245ad4a0c9c68502da4ea69d17bcdc82"/>
               <topic label="computeMeritNonSucc" href="d4/ddf/classLatticeTester_1_1FigureOfMeritDualM.html#acb2ccc4cee85296a44c354b23aaa3504"/>
             </topic>
@@ -1469,6 +1388,7 @@
           <topic label="FigureOfMeritM.h" href="d8/dd4/FigureOfMeritM_8h.html">
             <topic label="LatticeTester::FigureOfMeritM&lt; Int, Real &gt;" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html">
               <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a8a2641e524a04c2f361c6915683f2ad3"/>
+              <topic label="FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aadf5be3e30269f0ea4f0b83e42aca80b"/>
               <topic label="~FigureOfMeritM" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ac2a33bf19d7f65d7f2a006ac71d0b6e3"/>
               <topic label="setTVector" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab254796b0bf07839dc819ce0b18300b2"/>
               <topic label="countProjections" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad6525fd3b4be99656c61c4d9e8177c37"/>
@@ -1484,7 +1404,9 @@
               <topic label="getMinMeritSqlen" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ade709441c4fbfa7bf62259ed10e1cf94"/>
               <topic label="getMinMeritProj" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ab9c26757cf7f5a4d7349aeff260538c1"/>
               <topic label="computeMeritOneProj" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aa41da07dcfa1f67854d9c822e33395d0"/>
+              <topic label="computeMeritSucc" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a9678223a870a7f746ad8b55a927e0640"/>
               <topic label="computeMeritSucc" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a3e671c26e8b0f6298b463f604228446f"/>
+              <topic label="computeMeritSuccRebuild" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a17fb222e7a4cd4d0b32367cad0199b72"/>
               <topic label="computeMeritSuccRebuild" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a59e832a650f4abd691c7b2ea57d6707a"/>
               <topic label="computeMeritNonSucc" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a6431bd6399a50fb8bb0bc2be21e9b1f5"/>
               <topic label="computeMerit" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#ad5a8a53868f425073a1b744a19dd685f"/>
@@ -1498,7 +1420,7 @@
               <topic label="m_redBB" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a1dcb7f7ec5be4592612d2ba0acec4fd7"/>
               <topic label="m_coordRange" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a85f5cf41c2cb9bcfececc08024c2260a"/>
               <topic label="m_red" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a0771af1d54f2b974cfc4aaa1f1eac266"/>
-              <topic label="m_sqlen" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a0db43cbaecb7189b76cfe905842f0b84"/>
+              <topic label="m_minSqlen" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a595b201a131eee0b01967b2b680612c3"/>
               <topic label="m_includeFirst" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a44ed9a8103fb9e6b5058f5a9550b3228"/>
               <topic label="m_lowbound" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#a7c70d99aac0cf29954ebf7911070fa29"/>
               <topic label="m_minMerit" href="d7/dca/classLatticeTester_1_1FigureOfMeritM.html#aa981f88a3f43dd54cddadc2777a6e9b6"/>
@@ -1520,30 +1442,27 @@
             <topic label="IntMat" href="df/dca/FlexTypes_8h.html#ae61b2b49771cae3d1484b00260fdaff7"/>
             <topic label="RealVec" href="df/dca/FlexTypes_8h.html#ac31ec1900f910a5d820901146696b5cb"/>
             <topic label="RealMat" href="df/dca/FlexTypes_8h.html#a39a9fd2ebf00d7eddc8594b40648319b"/>
+            <topic label="Int" href="df/dca/FlexTypes_8h.html#ac775e369c033ede683d47ebc2b5ae2a0"/>
+            <topic label="IntP" href="df/dca/FlexTypes_8h.html#accd35271eedf3532aa33001ac33b179f"/>
+            <topic label="PolE" href="df/dca/FlexTypes_8h.html#a1f0ba3c1b006e2f74d6d28ac18f5b3be"/>
+            <topic label="PolX" href="df/dca/FlexTypes_8h.html#a19cd706061e0ad555ee3752c8a217d5d"/>
+            <topic label="IntVecP" href="df/dca/FlexTypes_8h.html#a7632498c174a316c5875529fb39e600a"/>
+            <topic label="IntMatP" href="df/dca/FlexTypes_8h.html#a46b0ee295d4fa8a3320a115a239b0bcd"/>
             <topic label="strTypes" href="df/dca/FlexTypes_8h.html#a4746e1447c32012ddb470391df37a6c5"/>
+            <topic label="to_Int_p" href="df/dca/FlexTypes_8h.html#a023af646b76f9c83a8b18049fa440a8c"/>
+            <topic label="mod_init" href="df/dca/FlexTypes_8h.html#ae2ee3effe0e36da710f8ab74f29ce33e"/>
           </topic>
           <topic label="IntLattice.h" href="dc/df1/IntLattice_8h.html">
             <topic label="LatticeTester::IntLattice&lt; Int, Real &gt;" href="d6/dc0/classLatticeTester_1_1IntLattice.html">
+              <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ad6e8952f6c246813d62813140fd91c97"/>
               <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5ba206c6c8a0028a9c276d97a5f09307"/>
               <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ae12976acf0957661072564aaad2dff95"/>
               <topic label="IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a6047763eebdb4414bfafc57a3432ff0e"/>
               <topic label="~IntLattice" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a71d6341df4365f5633fbfb13f3ee69be"/>
-              <topic label="buildProjectionLLL" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a9ab7f8e7c3adb417c8400714de5a2acb"/>
-              <topic label="buildProjection" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a7c8c732f3bd7191e6d3d59649c0cd70f"/>
-              <topic label="buildProjectionDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a3fea90bfea52f743f26a902cf01b9387"/>
-              <topic label="getBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a8a644de64a5025d95a9fa91127ce9b4c"/>
+              <topic label="setModulus" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a307a251ce0d42e9bc4fa574dacb5ab10"/>
               <topic label="setBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aabd81b14527036ea91b5dec825230ea5"/>
               <topic label="setBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a0385e551bb89501e42b32c93cd7c9342"/>
-              <topic label="getDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a4fa8d9ecdff139860ff11a02b7453e7f"/>
-              <topic label="getMaxDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a3c558319fade78f6e5d01609a8f07e22"/>
-              <topic label="getDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a0967bbcbffa56adc3438035861db6a01"/>
-              <topic label="getDimDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a14f1b2d4d2ecf50ee060b43603236ff3"/>
-              <topic label="getNormType" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a82ad6433365917e6001cfadf00d31e5a"/>
-              <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a084e2dc1fc4e122a20d7fa65ac38d31c"/>
-              <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#afb81b04d3da51a13c870aa4993423f1b"/>
-              <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aaf2b749cb4fad51ac15878049068115a"/>
-              <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a13fe46018502ee269b7cc5e672fe3b1c"/>
-              <topic label="getModulus" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aa0e64bcdea67e629916b7762bd678d56"/>
+              <topic label="setDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a91147f7ea7633b0819ece41dce3ff636"/>
               <topic label="setDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a13385af5be0b2356dc45b401b19421ae"/>
               <topic label="setDimDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a84fbae02334aa52ca3ba997e5ecaca12"/>
               <topic label="setNormType" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ab987c7d0e0b09788046acf76007a9e98"/>
@@ -1553,6 +1472,17 @@
               <topic label="setNegativeNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a677fe959bade8e3f8b76af237818b98d"/>
               <topic label="setDualNegativeNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a825a1976f89ea5f995d254b9bd34caae"/>
               <topic label="setDualNegativeNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5a78e772f71a1e0d5cb3054c500e1f36"/>
+              <topic label="getModulus" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aa0e64bcdea67e629916b7762bd678d56"/>
+              <topic label="getMaxDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a3c558319fade78f6e5d01609a8f07e22"/>
+              <topic label="getBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a8a644de64a5025d95a9fa91127ce9b4c"/>
+              <topic label="getDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a4fa8d9ecdff139860ff11a02b7453e7f"/>
+              <topic label="getDim" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a0967bbcbffa56adc3438035861db6a01"/>
+              <topic label="getDimDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a14f1b2d4d2ecf50ee060b43603236ff3"/>
+              <topic label="getNormType" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a82ad6433365917e6001cfadf00d31e5a"/>
+              <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a084e2dc1fc4e122a20d7fa65ac38d31c"/>
+              <topic label="getVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#afb81b04d3da51a13c870aa4993423f1b"/>
+              <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#aaf2b749cb4fad51ac15878049068115a"/>
+              <topic label="getDualVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a13fe46018502ee269b7cc5e672fe3b1c"/>
               <topic label="updateVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ab016fa422ca61a9d649de69398c8347e"/>
               <topic label="updateVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#affdbc003b45d7155dafc3db7499d4b6e"/>
               <topic label="updateSingleVecNorm" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a352c084e9c29ebf84450d1171d624491"/>
@@ -1570,6 +1500,9 @@
               <topic label="checkDuality" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a7cf43dd173a6dc96e12ce9ec875a26b1"/>
               <topic label="sortBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a9c813f60da941f17cd64ffdd8f54e1cd"/>
               <topic label="sortDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a6db7557c21bea080c0cff6fd16ae304b"/>
+              <topic label="buildProjectionLLL" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a7a87281185345928414fbc25a9f18c05"/>
+              <topic label="buildProjection" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a760083d0ea1751b1a58cb447fc9bcc3f"/>
+              <topic label="buildProjectionDual" href="d6/dc0/classLatticeTester_1_1IntLattice.html#ad36776b2a9d53fcaff9a776da5a1944b"/>
               <topic label="toStringBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a328257cce98ddcab0487968a96c360be"/>
               <topic label="toStringDualBasis" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5e6f5a68b1af72c699e8df0ebb4005be"/>
               <topic label="toString" href="d6/dc0/classLatticeTester_1_1IntLattice.html#a5fef4c1178ef93cde7d646298d8d5f4b"/>
@@ -1586,6 +1519,7 @@
           </topic>
           <topic label="IntLatticeExt.h" href="d3/d49/IntLatticeExt_8h.html">
             <topic label="LatticeTester::IntLatticeExt&lt; Int, Real &gt;" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html">
+              <topic label="IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0fb4460cfe8158a02390cf4f33eaca78"/>
               <topic label="IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a0178d9abf19cf6b873d422149f9f2754"/>
               <topic label="~IntLatticeExt" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a3de7c80c3195182019cb58dc01d1827d"/>
               <topic label="buildBasis" href="d8/d6c/classLatticeTester_1_1IntLatticeExt.html#a14d4e8a5b2f7ec824870b3eae0b730d6"/>
@@ -1596,55 +1530,34 @@
             </topic>
           </topic>
           <topic label="LLL_FP64.h" href="d6/d28/LLL__FP64_8h.html">
-            <topic label="NTL::LLL_FP64" href="d2/d5a/namespaceNTL.html#a79d54057e0dccdcf7a6440bbde8a8bf1"/>
-            <topic label="NTL::BKZ_FP64" href="d2/d5a/namespaceNTL.html#a5cf2311e9d609764d60cef2e697c5541"/>
+            <topic label="NTL::LLL_FP64" href="d2/d5a/namespaceNTL.html#a9b6a708f3516697e28a1503bc78b7b83"/>
+            <topic label="NTL::BKZ_FP64" href="d2/d5a/namespaceNTL.html#aedf1218956585c92acc2c77038865f53"/>
           </topic>
           <topic label="LLL_lt.h" href="d0/dd3/LLL__lt_8h.html">
-            <topic label="NTL::LLL_FP_lt" href="d2/d5a/namespaceNTL.html#a13885bb911ce8b1f3fcfda8c7d1e4ba8"/>
-            <topic label="NTL::BKZ_FP_lt" href="d2/d5a/namespaceNTL.html#af923ff2dec19a293095bc4f251cb99f4"/>
-            <topic label="NTL::LLL_XD_lt" href="d2/d5a/namespaceNTL.html#a564af4b395ff8dbedf4fe4d00500abff"/>
-            <topic label="NTL::BKZ_XD_lt" href="d2/d5a/namespaceNTL.html#ac03fa13da4a6c316ba45406901274fbb"/>
-            <topic label="NTL::LLL_QP_lt" href="d2/d5a/namespaceNTL.html#a8b2b1aba8557a7ad57378538c131196f"/>
-            <topic label="NTL::BKZ_QP_lt" href="d2/d5a/namespaceNTL.html#a69fd6c92680d437a0113dd5488aa7868"/>
-            <topic label="NTL::LLL_RR_lt" href="d2/d5a/namespaceNTL.html#a6c326818e6532d99d921a45d06212e44"/>
-            <topic label="NTL::BKZ_RR_lt" href="d2/d5a/namespaceNTL.html#ac056e9b87ae29faf72cf6516ffb2eb5d"/>
-          </topic>
-          <topic label="MRGLattice.h" href="d1/db6/MRGLattice_8h.html">
-            <topic label="LatticeTester::MRGLattice&lt; Int, Real &gt;" href="d9/d4e/classLatticeTester_1_1MRGLattice.html">
-              <topic label="MRGLattice" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a8210853724e4a18eac3a6bc835352776"/>
-              <topic label="~MRGLattice" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a69b9332dd44bd78b5f8ecb4629641108"/>
-              <topic label="setaa" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#abab7a4fcda3390e87d19e5ea74eddd5c"/>
-              <topic label="buildBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a8d21880d8a707e913bbd7d973f57d8ee"/>
-              <topic label="buildDualBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a21bf87659db688c1e4ad306a97fac123"/>
-              <topic label="incDimBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a063206a6683f7143147d13f1529926cd"/>
-              <topic label="incDimDualBasis" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#afdb7a1e91e8e5c07f1d697e8ca3a83b3"/>
-              <topic label="buildProjection" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#aec61f6bd68462c2a599904138a76a250"/>
-              <topic label="buildProjectionDual" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#af850c43f69ffe995c2829254b953263e"/>
-              <topic label="toStringCoef" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a75e0a27ec0cf4bdfc129d1682d1e90b1"/>
-              <topic label="buildBasis0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#ace70501c3f6756e7a4d12bd5705618a9"/>
-              <topic label="incDimBasis0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#addb08c6e534289fc36204191d5c107b9"/>
-              <topic label="buildProjection0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a86355167a12d8fb0e218ccd71b8b5e2f"/>
-              <topic label="m_order" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a2ac8b609f5d83f70a60420b8c3c0f4c0"/>
-              <topic label="m_aCoeff" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a9bf915cdfedfd5529441a8dfd1178e5e"/>
-              <topic label="m_basis0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a688748d6e2414341482b69e3e04b3bc2"/>
-              <topic label="m_dim0" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a3fa0b1e3848bc3fb3bd5a1a8f93fbdcb"/>
-              <topic label="m_y" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#af2ba4511ad5adfbd485acc1e6a69ae4a"/>
-              <topic label="m_genTemp" href="d9/d4e/classLatticeTester_1_1MRGLattice.html#a9c778e7155851358734d3d51a0b84b60"/>
-            </topic>
+            <topic label="NTL::LLL_FP_lt" href="d2/d5a/namespaceNTL.html#aa681eace7960b748c70695faf595889f"/>
+            <topic label="NTL::BKZ_FP_lt" href="d2/d5a/namespaceNTL.html#a538f889ee4257ae43949945511b871b0"/>
+            <topic label="NTL::LLL_XD_lt" href="d2/d5a/namespaceNTL.html#ae20cf5448b528fdda8b1e7636de1859e"/>
+            <topic label="NTL::BKZ_XD_lt" href="d2/d5a/namespaceNTL.html#a2b0a85674e793dd3f10e3f17894351a0"/>
+            <topic label="NTL::LLL_QP_lt" href="d2/d5a/namespaceNTL.html#ae79acc44fe7df7b502e41e805d514bac"/>
+            <topic label="NTL::BKZ_QP_lt" href="d2/d5a/namespaceNTL.html#ad887429b89cc70ce40c03c0c9a021765"/>
+            <topic label="NTL::LLL_RR_lt" href="d2/d5a/namespaceNTL.html#acb91e36041da0de58245701e25116e4a"/>
+            <topic label="NTL::BKZ_RR_lt" href="d2/d5a/namespaceNTL.html#a1904cfb978724399eb4264cc8b244c2e"/>
           </topic>
           <topic label="NormaBestLat.h" href="d9/d03/NormaBestLat_8h.html">
             <topic label="LatticeTester::NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html">
               <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a07fb77691fc43b3c28541bd905ed5d5c"/>
               <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a5756acdc04203b2855d7f31719b17251"/>
+              <topic label="NormaBestLat" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a415917415a7aebe27be4050a02d4e131"/>
               <topic label="getGamma" href="d1/d24/classLatticeTester_1_1NormaBestLat.html#a09ef21de5945e93faaf4da1b3ba47348"/>
             </topic>
           </topic>
           <topic label="NormaBestUpBound.h" href="d2/d01/NormaBestUpBound_8h.html">
             <topic label="LatticeTester::NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html">
-              <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a884208d68d6d14cfb2ac7f051d1381bc"/>
-              <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a5c1cbe92dc5ed063a7d8cc3552142276"/>
+              <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#ae9f338d4004b9f39415013abddaa00fb"/>
+              <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a17dca8120f71e06c5a0084cbe1239ec8"/>
+              <topic label="NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#aaeac5abccf7c16099c3a32c0aca893d6"/>
               <topic label="~NormaBestUpBound" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#aed93e4895db8e4bd9176107a56e3cadd"/>
-              <topic label="getGamma" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a9a9b0cdc6ebf9bf19597db56293243e0"/>
+              <topic label="getGamma" href="d2/d61/classLatticeTester_1_1NormaBestUpBound.html#a627bc3a464d38e6a2192557b224f6658"/>
             </topic>
           </topic>
           <topic label="NormaLaminated.h" href="d9/ded/NormaLaminated_8h.html">
@@ -1680,6 +1593,7 @@
             <topic label="LatticeTester::NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html">
               <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a34935306d4c4723aef95609db583d9f2"/>
               <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a6e9ced0ea67ea3c0fc2a3c3ec81189d2"/>
+              <topic label="NormaMinkHlaw" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a73720bcdce3a22ca8056aadaf6a3d156"/>
               <topic label="getGamma" href="df/d78/classLatticeTester_1_1NormaMinkHlaw.html#a92846b35a8eb28cb3b40842061134039"/>
             </topic>
           </topic>
@@ -1699,6 +1613,7 @@
             <topic label="LatticeTester::NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html">
               <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#ae516774da77473d65d64e65708dbf87f"/>
               <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#ad2c81ffb6aa506fd8c294db929860a9e"/>
+              <topic label="NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#a018c1b190987bf6cd40144968cc928d3"/>
               <topic label="~NormaRogers" href="d1/d30/classLatticeTester_1_1NormaRogers.html#abaf1ccfe60a4f88cab28735a2cd70d3d"/>
               <topic label="getGamma" href="d1/d30/classLatticeTester_1_1NormaRogers.html#a760e0f62a26f7e373ef45a35d9a7531c"/>
             </topic>
@@ -1746,21 +1661,25 @@
           </topic>
           <topic label="Rank1Lattice.h" href="d9/df6/Rank1Lattice_8h.html">
             <topic label="LatticeTester::Rank1Lattice&lt; Int, Real &gt;" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html">
+              <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ac184b6b006b59acad136cc43ce3dec79"/>
               <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a9427d4658ca88ea4d4b5a57dd289d1f3"/>
-              <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a468c38de60081bff23267d264883c321"/>
+              <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ad03fbe1555b390c02f67324e587e8fb2"/>
+              <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a7bd26e6ac0ac85712f8c7329efcbe30a"/>
               <topic label="Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#acca8e51fea3e2757baeb56eebc952583"/>
               <topic label="~Rank1Lattice" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ae3c146f3fadf0d949903f22b0b22cf58"/>
               <topic label="setaa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a153802e8b2d089853fe5b6fd1df771b4"/>
+              <topic label="seta" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab6e71c008c9a995db61e8459e14ac4e8"/>
               <topic label="seta" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab5b720563d156fd8b3436726077fa9c0"/>
               <topic label="getaa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#af89ac5c912828a3bf8cd44d785b97b09"/>
               <topic label="buildBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a683c39eb9323900af71aa869d3ffd87d"/>
               <topic label="buildDualBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a26f23a64f04c8faf3e531e7ef6bb9b9c"/>
               <topic label="incDimBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a1b9efd97e3de9e0681ea7ce0f985a49d"/>
               <topic label="incDimDualBasis" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab85b7a447fdb1a15a6a18ba1bf4d7db8"/>
-              <topic label="buildProjection" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a58adc76c9b72528b48c5d07805904ee4"/>
-              <topic label="buildProjectionDual" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ab0fe409fefda9119a6dbc0a586c79b48"/>
+              <topic label="buildProjection" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a59aad8893c7b53dc05c739f9a580ea57"/>
+              <topic label="buildProjectionDual" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a0fd9b551f545577b5e9e83d7ef9db239"/>
               <topic label="toStringCoef" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#ac61ecbccfe48180c53ce8aa7f5fe0839"/>
               <topic label="m_aa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#aee9db5a1fb383d21da62362b6f7068b4"/>
+              <topic label="m_dimaa" href="de/dfe/classLatticeTester_1_1Rank1Lattice.html#a51e32642c2675bae3c0a213b81229e62"/>
             </topic>
           </topic>
           <topic label="ReducerBB.h" href="d5/d7d/ReducerBB_8h.html">
@@ -1789,23 +1708,23 @@
             </topic>
           </topic>
           <topic label="ReducerStatic.h" href="d6/d25/ReducerStatic_8h.html">
-            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a617ba189e7b633cbc81f08d3512bc3fb"/>
-            <topic label="LatticeTester::redLLLExact" href="d8/d74/namespaceLatticeTester.html#a9b34105ff26302078324b66592bbff4c"/>
-            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#adde2fbdfda54db87c5b68656822db927"/>
-            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a63dafe7fe191c17bcb7c178149db6570"/>
-            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a7ba0cc62c4a1f60207e43f96b0b8b505"/>
-            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a17c311ceec469a24bb840ad475087f47"/>
-            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#ae67de711b50856965f26fac46cb92a37"/>
-            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a9970c52ca29fba32363dbc13d4731dd2"/>
-            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#ac06b7a4878550ec92b3138a5c121e4a5"/>
+            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a3ceea9a41a24df6ed2031758a1d6ec20"/>
+            <topic label="LatticeTester::redLLLExact" href="d8/d74/namespaceLatticeTester.html#a786516595510c5c25068e8799f0033a4"/>
+            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#a4a61a2dbcaf8040bb3ae3ffe23a098c8"/>
+            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#af8952c275a4f3ad1437fdbddf99ea679"/>
+            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a45e9fb356874a9d69a083c447d35ee82"/>
+            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#abf582f8ec90dc5bbc0c52a8afab88903"/>
+            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a3e85e9cda4a548bb9066dc93c01ffbc3"/>
+            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a6eb909d481b710dd72c07eb65f0f65af"/>
+            <topic label="LatticeTester::redLLL" href="d8/d74/namespaceLatticeTester.html#a7c2d52c1e432a0aa02eb8d11c2b9efc5"/>
             <topic label="LatticeTester::redLLLExact" href="d8/d74/namespaceLatticeTester.html#a5830bb0fae462b5e85c8eeb1c126a647"/>
             <topic label="LatticeTester::redLLLExact" href="d8/d74/namespaceLatticeTester.html#aebd6a9c79f1e8d406981e707235b99e6"/>
-            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#af5b3c8b73699d62e791da7d1bfb848db"/>
-            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#a3156e70f2ab3dad98a95ae19142ac9b0"/>
-            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#abdd397a850f675b73135e0267f2097dd"/>
-            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#afac0875e1a96e8d73119a2ab60522727"/>
-            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#a06a3ac4d76bc194019f487522ab52947"/>
-            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#ab25595dce14a5f583031ea455884105c"/>
+            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#acd4fd2f2c2477fc8ad2d483292d14baa"/>
+            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#a1d0913d24a5656d830a61018ce316716"/>
+            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#afa2d41ca2eff4fee580d48322b5fe8c0"/>
+            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#a2e11b9b3efca3e0ac3521dc42edb4f48"/>
+            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#a1f7c7c09bc3168a65b0a0750b9952f08"/>
+            <topic label="LatticeTester::redBKZ" href="d8/d74/namespaceLatticeTester.html#ae73d9d4b0e49f3431f21fc4bc0604a61"/>
           </topic>
           <topic label="Util.h" href="d1/dc8/Util_8h.html">
             <topic label="SEPAR" href="d1/dc8/Util_8h.html#a39856f07a8419de903a4c1075e5497c4"/>
@@ -1968,6 +1887,7 @@
     <topic label="File Members" href="globals.html">
       <topic label="All" href="globals.html"/>
       <topic label="Functions" href="globals_func.html"/>
+      <topic label="Typedefs" href="globals_type.html"/>
       <topic label="Macros" href="globals_defs.html"/>
     </topic>
   </topic>

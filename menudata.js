@@ -49,7 +49,6 @@ var menudata={children:[
 {text:"t",url:"namespacemembers_t.html#index_t"},
 {text:"u",url:"namespacemembers_u.html#index_u"},
 {text:"w",url:"namespacemembers_w.html#index_w"},
-{text:"x",url:"namespacemembers_x.html#index_x"},
 {text:"z",url:"namespacemembers_z.html#index_z"}]},
 {text:"Functions",url:"namespacemembers_func.html",children:[
 {text:"a",url:"namespacemembers_func.html#index_a"},
@@ -74,22 +73,7 @@ var menudata={children:[
 {text:"Variables",url:"namespacemembers_vars.html"},
 {text:"Typedefs",url:"namespacemembers_type.html"},
 {text:"Enumerations",url:"namespacemembers_enum.html"},
-{text:"Enumerator",url:"namespacemembers_eval.html",children:[
-{text:"b",url:"namespacemembers_eval.html#index_b"},
-{text:"c",url:"namespacemembers_eval.html#index_c"},
-{text:"d",url:"namespacemembers_eval.html#index_d"},
-{text:"g",url:"namespacemembers_eval.html#index_g"},
-{text:"l",url:"namespacemembers_eval.html#index_l"},
-{text:"m",url:"namespacemembers_eval.html#index_m"},
-{text:"n",url:"namespacemembers_eval.html#index_n"},
-{text:"p",url:"namespacemembers_eval.html#index_p"},
-{text:"q",url:"namespacemembers_eval.html#index_q"},
-{text:"r",url:"namespacemembers_eval.html#index_r"},
-{text:"s",url:"namespacemembers_eval.html#index_s"},
-{text:"t",url:"namespacemembers_eval.html#index_t"},
-{text:"u",url:"namespacemembers_eval.html#index_u"},
-{text:"x",url:"namespacemembers_eval.html#index_x"},
-{text:"z",url:"namespacemembers_eval.html#index_z"}]}]}]},
+{text:"Enumerator",url:"namespacemembers_eval.html"}]}]},
 {text:"Classes",url:"annotated.html",children:[
 {text:"Class List",url:"annotated.html"},
 {text:"Class Index",url:"classes.html"},
@@ -149,4 +133,5 @@ var menudata={children:[
 {text:"File Members",url:"globals.html",children:[
 {text:"All",url:"globals.html"},
 {text:"Functions",url:"globals_func.html"},
+{text:"Typedefs",url:"globals_type.html"},
 {text:"Macros",url:"globals_defs.html"}]}]}]}

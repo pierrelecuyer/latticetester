@@ -58,6 +58,7 @@ var NAVTREE =
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
         [ "Functions", "globals_func.html", null ],
+        [ "Typedefs", "globals_type.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
@@ -67,10 +68,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"d6/dc0/classLatticeTester_1_1IntLattice.html#a13fe46018502ee269b7cc5e672fe3b1c",
-"d8/d34/classLatticeTester_1_1CoordinateSets_1_1FromRanges.html#a0ba528c77e2cb2c2e57e9481bd5713a7",
-"d8/d74/namespaceLatticeTester.html#af2a213e64bd54d3e33a7aff0f80068cb",
-"df/d75/classLatticeTester_1_1CoordinateSets_1_1AddCoordinate_1_1const__iterator.html#ab7146e0957551844ea857f2088db3874"
+"d6/dc0/classLatticeTester_1_1IntLattice.html#a084e2dc1fc4e122a20d7fa65ac38d31c",
+"d8/d0e/classLatticeTester_1_1WeightsPOD.html#a10e405967a0428bda4193b06de72e26f",
+"d8/d74/namespaceLatticeTester.html#af40f02397dea42344f2c4b6016f5e4f0",
+"functions_b.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

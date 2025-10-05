@@ -12,7 +12,6 @@ var hierarchy =
     ] ],
     [ "LatticeTester::IntLattice< Int, Real >", "d6/dc0/classLatticeTester_1_1IntLattice.html", [
       [ "LatticeTester::IntLatticeExt< Int, Real >", "d8/d6c/classLatticeTester_1_1IntLatticeExt.html", [
-        [ "LatticeTester::MRGLattice< Int, Real >", "d9/d4e/classLatticeTester_1_1MRGLattice.html", null ],
         [ "LatticeTester::Rank1Lattice< Int, Real >", "de/dfe/classLatticeTester_1_1Rank1Lattice.html", null ]
       ] ]
     ] ],
