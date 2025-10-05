@@ -54,14 +54,14 @@ namespace NTL {
  * The indices of `B` and `sqlen` start at 0.
  * The function returns the dimension of the computed basis (the number of independent rows).
  */
-long LLL_FP64(NTL::Mat<long> &B, const double delta = 0.99,
+double LLL_FP64(NTL::Mat<long> &B, const double delta = 0.99,
       long r = 0, long c = 0, NTL::Vec<double> *sqlen = 0);
 
 /**
  * This function is similar to `BKZ_FP` in %NTL, with the same modifications
  * as in LLL_FP64 above.
  */
-long BKZ_FP64(NTL::Mat<long> &BB, const double delta = 0.99, long blocksize = 10,
+double BKZ_FP64(NTL::Mat<long> &BB, const double delta = 0.99, long blocksize = 10,
       long prune = 0, long r = 0, long c = 0, NTL::Vec<double> *sqlen = 0);
 
 }

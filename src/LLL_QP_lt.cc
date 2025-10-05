@@ -690,7 +690,7 @@ long ll_LLL_QP(mat_ZZ& B, mat_ZZ* U, quad_float delta, long deep,
 
 // ------------------------------------------
 
-long LLL_QP_lt(mat_ZZ &BB, double delta,
+quad_float LLL_QP_lt(mat_ZZ &BB, double delta,
           long m, long n, vec_quad_float *sqlen) {
    if (m == 0)
       m = BB.NumRows();
@@ -769,7 +769,7 @@ long LLL_QP_lt(mat_ZZ &BB, double delta,
       for (i = 0; i < min (m, sqlen->length()); i++)
          (*sqlen)[i] = sqlen2[i+1];
    }
-   return m;
+   return sqlen2[1];
 }
 
 
@@ -855,7 +855,7 @@ void ComputeBKZThresh(quad_float *c, long beta)
 }
 
 // ---------------------------------------------------------------------
-long BKZ_QP_lt(mat_ZZ& BB, const quad_float delta, long beta, long prune,
+quad_float BKZ_QP_lt(mat_ZZ& BB, const quad_float delta, long beta, long prune,
          long m, long n, vec_quad_float* sqlen) {
    NTL_TLS_GLOBAL_ACCESS(red_fudge);
    NTL_TLS_GLOBAL_ACCESS(BKZThresh);
@@ -1152,12 +1152,12 @@ long BKZ_QP_lt(mat_ZZ& BB, const quad_float delta, long beta, long prune,
             (*sqlen)[i] = b[i+1];
       }
       // std::cout << " End of BKZ in LLL_FPInt, Matrix B = \n" << B << "\n";
-   return m;
+   return b[1];
 }
 
 // Here, `delta` is passed as a `double`.
 // template<>
-long BKZ_QP_lt(mat_ZZ& BB, double delta, long beta, long prune,
+quad_float BKZ_QP_lt(mat_ZZ& BB, double delta, long beta, long prune,
          long m, long n, vec_quad_float* sqlen) {
     return BKZ_QP_lt(BB, conv<quad_float>(delta), beta, prune, m, n, sqlen);
 }

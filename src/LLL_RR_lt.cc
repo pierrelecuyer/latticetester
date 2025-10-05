@@ -411,7 +411,7 @@ long ll_LLL_RR_lt(mat_ZZ& B, const RR& delta,
 
 
 // template<>
-long LLL_RR_lt(mat_ZZ& B, double delta, long m, long n, vec_RR* sqlen) {
+RR LLL_RR_lt(mat_ZZ& B, double delta, long m, long n, vec_RR* sqlen) {
        if (m == 0) m = B.NumRows();
        if (n == 0) n = B.NumCols();
        long i, j, new_m, quit;
@@ -464,7 +464,7 @@ long LLL_RR_lt(mat_ZZ& B, double delta, long m, long n, vec_RR* sqlen) {
            // if (sqlen->length() < new_m) sqlen->SetLength(new_m);
            for (i = 0; i < min(new_m, sqlen->length()); i++)  (*sqlen)[i] = sqlen2[i];
        }
-       return new_m;
+       return sqlen2[0];
     }
 
 
@@ -524,7 +524,7 @@ void ComputeBKZThresh_RR(RR *c, long beta)
 }
 
 // This is for BKZ with RR.
-long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
+RR BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
         long m, long n, vec_RR* sqlen) {
 
    NTL_TLS_GLOBAL_ACCESS(red_fudge_RR);
@@ -821,12 +821,12 @@ long BKZ_RR_lt(mat_ZZ& BB, const RR& delta, long beta, long prune,
     if (sqlen)
        for (i = 0; i < min(m, sqlen->length()); i++)
             (*sqlen)[i] = b[i];
-    return m;    // Number of rows in basis.
+    return b[0];    // Number of rows in basis.
 }
 
 // Here, `delta` is passed as a `double`.
 // template<>
-long BKZ_RR_lt(mat_ZZ& BB, double delta, long beta, long prune,
+RR BKZ_RR_lt(mat_ZZ& BB, double delta, long beta, long prune,
          long m, long n, vec_RR* sqlen) {
     return BKZ_RR_lt(BB, conv<RR>(delta), beta, prune, m, n, sqlen);
 }

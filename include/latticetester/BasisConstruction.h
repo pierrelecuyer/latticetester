@@ -39,7 +39,6 @@
 //#include "NTL/LLL.h"
 
 #include <latticetester/FlexTypes.h>
-//#include "latticetester/NTLWrap.h"
 #include "latticetester/Util.h"
 #include "latticetester/EnumTypes.h"
 //#include "latticetester/IntLattice.h"
@@ -131,27 +130,28 @@ namespace LatticeTester {
  * then these numbers are taken to be the dimensions of the matrix `gen`.
  * When `sqlen` is not 0, the square lengths of the basis
  * vectors are returned in this array, exactly as in the `LLL_lt.h` module.
- * The function returns the dimension (number of rows) of the newly computed basis,
- * which may differ from the number of rows of the `gen` object.
- * The latter is never resized.
+ * The function returns the square length of the shortest basis vector.
+ * The basis `gen` is never resized.
  *
  * This function *does not* assume that all vectors \f$m e_i\f$ belong to the lattice, so
  * it may return a basis matrix that has fewer rows than columns!
  * To make sure that these vectors belong to the lattice, we can add them
- * explicitly beforehand to the set of generating vectors, or call the next function.
+ * explicitly beforehand to the set of generating vectors, or call the next function,
+ * which does that.
  */
 template<typename Int, typename Real>
-static long LLLConstruction0(IntMat &gen, const double delta = 0.9, long r = 0, long c = 0,
+static Real LLLConstruction0(IntMat &gen, const double delta = 0.9, long r = 0, long c = 0,
 RealVec *sqlen = 0);
 
 /**
- * Similar to `LLLConstruction0`, except that this function adds implicitly the vectors
- * \f$m \mathbf{e}_i\f$ to the generating set, so it always returns a square matrix.
+ * Similar to `LLLConstruction0`, except that this function adds explicitly all the vectors
+ * \f$m \mathbf{e}_i\f$ to the generating set, so there will be `r + c` rows initially and
+ * the function always returns a square matrix.
  * The matrix `gen` is not resized by this function, so it can remain larger
  * than the lattice dimension.
  */
 template<typename Int, typename Real>
-static void LLLBasisConstruction(IntMat &gen, const Int &m, const double delta = 0.9, long r = 0,
+static Real LLLBasisConstruction(IntMat &gen, const Int &m, const double delta = 0.9, long r = 0,
       long c = 0, RealVec *sqlen = 0);
 
 /**
@@ -313,7 +313,7 @@ static void projectionConstruction(IntMat &projBasis, const IntMat &inBasis,
 
 // General case, no implementation.
 template<typename Int, typename Real>
-static long LLLConstruction0(IntMat &gen, const double delta, long r, long c, RealVec *sqlen) {
+static Real LLLConstruction0(IntMat &gen, const double delta, long r, long c, RealVec *sqlen) {
    std::cerr << "LLLConstruction0: general case is not implemented.\n";
    exit(1);
 }
@@ -321,7 +321,7 @@ static long LLLConstruction0(IntMat &gen, const double delta, long r, long c, Re
 // The int64_t implementation.
 // This one works only for `precision == DOUBLE` and Real == double.
 template<>// <long, double>
-long LLLConstruction0(NTL::Mat<long> &gen, const double delta, long r, long c,
+double LLLConstruction0(NTL::Mat<long> &gen, const double delta, long r, long c,
       NTL::Vec<double> *sqlen) {
    return NTL::LLL_FP64(gen, delta, r, c, sqlen);
    // return NTL::LLL_FPInt<long>(gen, delta, r, c, sqlen);
@@ -329,28 +329,28 @@ long LLLConstruction0(NTL::Mat<long> &gen, const double delta, long r, long c,
 
 // The ZZ + double implementation.
 template<>// <NTL::ZZ, double>
-long LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c,
+double LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c,
       NTL::Vec<double> *sqlen) {
    return NTL::LLL_FP_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + xdouble implementation.
 template<>
-long LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c,
+xdouble LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c,
       NTL::Vec<xdouble> *sqlen) {
    return NTL::LLL_XD_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + quad_float implementation.
 template<>
-long LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c,
+quad_float LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c,
       NTL::Vec<quad_float> *sqlen) {
    return NTL::LLL_QP_lt(gen, delta, r, c, sqlen);
 }
 
 // The ZZ + RR implementation.
 template<>
-long LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c,
+RR LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c,
       NTL::Vec<NTL::RR> *sqlen) {
    return NTL::LLL_RR_lt(gen, delta, r, c, sqlen);
 }
@@ -358,26 +358,21 @@ long LLLConstruction0(NTL::Mat<NTL::ZZ> &gen, const double delta, long r, long c
 //===========================================================================
 
 template<typename Int, typename Real>
-void LLLBasisConstruction(IntMat &gen, const Int &m, double delta, long r, long c, RealVec *sqlen) {
-   //std::cout << "LLLBasisConstruction, before LLL:  c = " << c << "\n";
-   int64_t rank = LLLConstruction0<Int, Real>(gen, delta, r, c, sqlen);
-   //std::cout << "LLLBasisConstruction, after LLL:  c = " << c << ", rank = " << rank << "\n";
-   //std::cout << "Basis: \n" << gen << "\n";
+Real LLLBasisConstruction(IntMat &gen, const Int &m, double delta, long r, long c, RealVec *sqlen) {
    if (c == 0) c = gen.NumCols();
-   if (rank == c) return;  // We are done!
-
-   // We now add the m e_i row vectors, and we redo the LLL with that.
+   if (r == 0) r = gen.NumRows();
+   // We add the m e_i row vectors and we perform the LLL with that.
    // No change in the dimensions of gen.
    int64_t i, j;
-   for (i = rank; i < rank + c; i++) {
+   for (i = r; i < r + c; i++) {
       for (j = 0; j < c; j++) {
          if (i == j) gen[i][j] = m;
          else gen[i][j] = 0;
       }
    }
-   std::cout << "Warning for LLLBasisConstruction: we had to add some rows!\n";
-   std::cout << "  c = " << c << ", rank = " << rank << "\n";
-   rank = LLLConstruction0<Int, Real>(gen, delta, rank + c, c, sqlen);
+   // std::cout << "Warning for LLLBasisConstruction: we had to add some rows!\n";
+   // std::cout << "  c = " << c << ", rank = " << rank << "\n";
+   return LLLConstruction0<Int, Real>(gen, delta, r + c, c, sqlen);
 }
 
 //==============================================================================

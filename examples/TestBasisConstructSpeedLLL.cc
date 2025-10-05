@@ -41,14 +41,13 @@ void printTables(int64_t numSizes);
 template<typename Int, typename Real>
 void LLLTest(IntMat &basis, int64_t d, int64_t meth, double delta) {
    int64_t dim = dimensions[d];
-   NTL::Vec<Real> sqlen; // Cannot be global, because it depends on Real.
-   sqlen.SetLength(1);
+   Real m_minSqlen;
    clock_t tmp = clock();
    // We apply LLL to the basis.
    // We could equivalently use `redLLL` from the file `ReducerStatic`.
-   LLLConstruction0(basis, delta, dim, dim, &sqlen);
+   m_minSqlen = LLLConstruction0<Int, Real>(basis, delta, dim, dim);
    timer[meth][d] += clock() - tmp;
-   sumSq[meth][d] += conv<double>(sqlen[0]);
+   sumSq[meth][d] += conv<double>(m_minSqlen);
 }
 
 // Run a speed test for dim = dimensions[d], with given basis matrices.

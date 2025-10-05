@@ -335,7 +335,7 @@ protected:
     * Pointer to a vector used to store the square Euclidean lengths of the basis vectors
     * after an LLL or BKZ pre-reduction via the static methods of `LLL_FP_lt`.
     */
-   NTL::Vec<Real> m_sqlen;
+   Real m_minSqlen;
 
    /*
     * Indicates if the first coordinate will always be included in all the projections
@@ -395,7 +395,6 @@ FigureOfMeritM<Int, Real>::FigureOfMeritM(const NTL::Vec<int64_t> &t, Weights &w
    m_weights = &w;
    setNormalizer(norma);
    m_red = red;
-   m_sqlen.SetLength(1); // We will retrieve only the square length of the shortest.
 }
 
 template<typename Int, typename Real>
@@ -404,7 +403,6 @@ FigureOfMeritM<Int, Real>::FigureOfMeritM(Weights &w, Normalizer &norma,
    m_weights = &w;
    setNormalizer(norma);
    m_red = red;
-   m_sqlen.SetLength(1); // We will retrieve only the square length of the shortest.
 }
 
 //===========================================================================
@@ -460,18 +458,18 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
       std::cout << "Error computeMeritOneProj:  size of coord = " << dim
             << ",  dim of projection = " << proj.getDim() << "\n";
    // assert (dim == proj.getDim());  // The dimensions must agree.  ******
-   if (m_deltaLLL > 0.0) redLLL<Int, Real>(proj.getBasis(), m_deltaLLL, dim, &m_sqlen);
+   if (m_deltaLLL > 0.0) m_minSqlen = redLLL<Int, Real>(proj.getBasis(), m_deltaLLL, dim);
    if (m_deltaBKZ > 0.0)
-      redBKZ<Int, Real>(proj.getBasis(), m_deltaBKZ, m_blocksizeBKZ, 0, dim, &m_sqlen);
+      m_minSqlen = redBKZ<Int, Real>(proj.getBasis(), m_deltaBKZ, m_blocksizeBKZ, 0, dim);
    if (m_redBB) {       // We do the BB.
       // If `proj` is already the internal lattice for `m_red`, the following does nothing.
       // Otherwise it just sets a pointer to `proj`, and enlarges the arrays in m_red if needed.
       // m_red->setIntLattice(proj);
-      if (!m_red->shortestVector(proj)) m_sqlen[0] = 0;
-      else m_sqlen[0] = m_red->getMinLength2();
+      if (!m_red->shortestVector(proj)) m_minSqlen = 0;
+      else m_minSqlen = m_red->getMinLength2();
    }
    double merit;
-   if (proj.getNormType() == L2NORM) NTL::conv(merit, sqrt(m_sqlen[0]) / m_norma->getBound(dim));
+   if (proj.getNormType() == L2NORM) NTL::conv(merit, sqrt(m_minSqlen) / m_norma->getBound(dim));
    else if (m_redBB) NTL::conv(merit, m_red->getMinLength() / m_norma->getBound(dim)); // For L1 norm.
    else {   // L1 norm and no BB
       proj.updateSingleVecNorm(0, dim);
@@ -481,15 +479,14 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
    if (merit < minmerit) {
       m_minMerit = merit;
       m_minMeritProj = coord;
-      NTL::conv(m_minMeritSqlen, m_sqlen[0]);
+      NTL::conv(m_minMeritSqlen, m_minSqlen);
    }
    if (m_verbose > 2) {
       if (dim < 8) std::cout << coord << std::setw(16 - 2 * dim) << " ";
       else std::cout << std::left << std::setw(2) << "{1,...," << dim << "}       ";
       if (7 < dim && dim < 10) std::cout << " ";
-      std::cout << std::setw(12) << conv<double>(m_sqlen[0]) << "  "
-            << std::setw(12) << conv<double>(1.0 / sqrt(m_sqlen[0]))
-      // std::cout << std::setw(12) << m_sqlen[0] << "  " << std::setw(12) << 1.0 / sqrt(m_sqlen[0])
+      std::cout << std::setw(12) << conv<double>(m_minSqlen) << "  "
+            << std::setw(12) << conv<double>(1.0 / sqrt(m_minSqlen))
             << "  " << std::setw(10) << merit << "  " << m_minMerit << "    "
             << (double) (clock() - m_clock) / (CLOCKS_PER_SEC) << "\n";
    }

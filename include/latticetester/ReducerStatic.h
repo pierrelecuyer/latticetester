@@ -77,14 +77,14 @@ namespace LatticeTester {
  * and their description is done in the module `LLL` of NTL.
  */
 template<typename Int, typename Real>
-static void redLLL(IntMat &basis, double delta = 0.99999, long dim = 0, RealVec *sqlen = 0);
+static Real redLLL(IntMat &basis, double delta = 0.99999, long dim = 0, RealVec *sqlen = 0);
 
 /**
  * This static function implements an exact algorithm from NTL to perform the original LLL reduction.
  * This is slower than `redLLLNTL`, but more accurate.
  * It does not take the `dim` and `sqlen` parameters (for now).
  */
-template<typename Int>
+template<typename Int, typename Real>
 static void redLLLExact(IntMat &basis, double delta = 0.99999);
 
 /**
@@ -98,7 +98,7 @@ static void redLLLExact(IntMat &basis, double delta = 0.99999);
  * A `blocksize` of 2 is equivalent to LLL reduction.
  */
 template<typename Int, typename Real>
-static void redBKZ(IntMat &basis, double delta = 0.99999, int64_t blocksize = 10, long prune = 0,
+static Real redBKZ(IntMat &basis, double delta = 0.99999, int64_t blocksize = 10, long prune = 0,
       long dim = 0, RealVec *sqlen = 0);
 
 
@@ -108,39 +108,39 @@ static void redBKZ(IntMat &basis, double delta = 0.99999, int64_t blocksize = 10
 
 // General implementation.
 template<typename Int, typename Real>
-void redLLL(IntMat &basis, double delta, long dim, RealVec *sqlen) {
+Real redLLL(IntMat &basis, double delta, long dim, RealVec *sqlen) {
    myExit("redLLL: General version not implemented.\n");
 }
 
 // A specialization for the case where Int = int64_t and Real = double.
 template<>
-void redLLL(NTL::Mat<int64_t> &basis, double delta, long dim, NTL::Vec<double> *sqlen) {
-   NTL::LLL_FP64(basis, delta, dim, dim, sqlen);
+double redLLL(NTL::Mat<int64_t> &basis, double delta, long dim, NTL::Vec<double> *sqlen) {
+   return NTL::LLL_FP64(basis, delta, dim, dim, sqlen);
 }
 
 // A specialization for the case where Int = ZZ and Real = double.
 template<>
-void redLLL(NTL::Mat<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<double> *sqlen) {
+double redLLL(NTL::Mat<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<double> *sqlen) {
    //NTL::LLL_FPInt(basis, delta, dim, dim, sqlen);
-   NTL::LLL_FP_lt(basis, delta, dim, dim, sqlen);
+   return NTL::LLL_FP_lt(basis, delta, dim, dim, sqlen);
 }
 
 // A specialization for the case where Int = ZZ and Real = xdouble.
 template<>
-void redLLL(NTL::Mat<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<xdouble> *sqlen) {
-   NTL::LLL_XD_lt(basis, delta, dim, dim, sqlen);
+xdouble redLLL(NTL::Mat<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<xdouble> *sqlen) {
+   return NTL::LLL_XD_lt(basis, delta, dim, dim, sqlen);
 }
 
 // A specialization for the case where Int = ZZ and Real = quad_float.
 template<>
-void redLLL(NTL::Mat<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<quad_float> *sqlen) {
-   NTL::LLL_QP_lt(basis, delta, dim, dim, sqlen);
+quad_float redLLL(NTL::Mat<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<quad_float> *sqlen) {
+   return NTL::LLL_QP_lt(basis, delta, dim, dim, sqlen);
 }
 
 // A specialization for the case where Int = ZZ and Real = RR.
 template<>
-void redLLL(NTL::Mat<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<NTL::RR> *sqlen) {
-   NTL::LLL_RR_lt(basis, delta, dim, dim, sqlen);
+NTL::RR redLLL(NTL::Mat<NTL::ZZ> &basis, double delta, long dim, NTL::Vec<NTL::RR> *sqlen) {
+   return NTL::LLL_RR_lt(basis, delta, dim, dim, sqlen);
 }
 
 //=========================================================================
@@ -164,41 +164,41 @@ void redLLLExact(NTL::Mat<NTL::ZZ> &basis, double delta) {
 
 // BKZ, general case.
 template<typename Int, typename Real>
-void redBKZ(IntMat &basis, double delta, long blocksize, long prune, long dim, RealVec *sqlen);
+Real redBKZ(IntMat &basis, double delta, long blocksize, long prune, long dim, RealVec *sqlen);
 
 // Specialization for Int = int64_t.
 template<>
-void redBKZ(NTL::Mat<int64_t> &basis, double delta, long blocksize, long prune, long dim,
+double redBKZ(NTL::Mat<int64_t> &basis, double delta, long blocksize, long prune, long dim,
       NTL::Vec<double> *sqlen) {
-   NTL::BKZ_FP64(basis, delta, blocksize, prune, dim, dim, sqlen);
+   return NTL::BKZ_FP64(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = double.
 template<>
-void redBKZ(NTL::Mat<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
+double redBKZ(NTL::Mat<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
       NTL::Vec<double> *sqlen) {
-   NTL::BKZ_FP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
+   return NTL::BKZ_FP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = xdouble.   `precision` is not used.
 template<>
-void redBKZ(NTL::Mat<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
+xdouble redBKZ(NTL::Mat<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
       NTL::Vec<xdouble> *sqlen) {
-   NTL::BKZ_XD_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
+   return NTL::BKZ_XD_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = quad_float.   `precision` is not used.
 template<>
-void redBKZ(NTL::Mat<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
+quad_float redBKZ(NTL::Mat<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
       NTL::Vec<quad_float> *sqlen) {
-   NTL::BKZ_QP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
+   return NTL::BKZ_QP_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 // Specialization for Int = ZZ and Real = RR.   `precision` is not used.
 template<>
-void redBKZ(NTL::Mat<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
+NTL::RR redBKZ(NTL::Mat<NTL::ZZ> &basis, double delta, long blocksize, long prune, long dim,
       NTL::Vec<NTL::RR> *sqlen) {
-   NTL::BKZ_RR_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
+   return NTL::BKZ_RR_lt(basis, delta, blocksize, prune, dim, dim, sqlen);
 }
 
 }   // namespace LatticeTester

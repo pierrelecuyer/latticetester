@@ -58,8 +58,7 @@ void printTables(long numMeth, long numSizes, long numRep, const long *dimension
  */
 template<typename Int, typename Real>
 void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
-      long d, long dim, long meth, double deltaLLL1, double deltaLLL2, double deltaBKZ, long k, bool BB,
-      NTL::Vec<Real> sqlen) {
+      long d, long dim, long meth, double deltaLLL1, double deltaLLL2, double deltaBKZ, long k, bool BB) {
    if (inDual) {
       korlat.buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
       korlat.dualize();
@@ -67,11 +66,12 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
       korlat.buildBasis(dim);  // Rebuild the primal basis anew.
    }
    //std::cout << "Before pre-reduction, initial basis = \n" << korlat.getBasis() << "\n";
+   Real minSqlen(0.0);
    tmp = clock();
-   if (deltaLLL1 > 0.0) redLLL(korlat.getBasis(), deltaLLL1, dim, &sqlen);
-   if (deltaLLL2 > 0.0) redLLL(korlat.getBasis(), deltaLLL2, dim, &sqlen);
-   if (deltaBKZ > 0.0) redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
-   double len2 = conv<double>(sqlen[0]);   // This is always the squared L2 norm.
+   if (deltaLLL1 > 0.0) minSqlen = redLLL<Int, Real>(korlat.getBasis(), deltaLLL1, dim);
+   if (deltaLLL2 > 0.0) minSqlen = redLLL<Int, Real>(korlat.getBasis(), deltaLLL2, dim);
+   if (deltaBKZ > 0.0) minSqlen = redBKZ<Int, Real>(korlat.getBasis(), deltaBKZ, k, 0, dim);
+   double len2 = conv<double>(minSqlen);   // This is always the squared L2 norm.
    if (BB) {
       // Here we get the square norm of our choice, either L1 or l2.
       if (red.shortestVector(korlat)) {
@@ -91,33 +91,33 @@ void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red
 // The same initial dual basis is rebuilt each time by `performReduction`.
 template<typename Int, typename Real>
 static void compareManyReductions(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red,
-      bool inDual, long d, long dim, NTL::Vec<Real> sqlen) {
+      bool inDual, long d, long dim) {
    // For the first 4 parameter choices, we take BB = false (no BB is done).
-   // performReduction(korlat, red, inDual, d, 0, 0.0, 0.0, 0.0, 1, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 0, 0.5, 0.0, 0.0, 1, false, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 1, 0.99999, 0.0, 0.0, 1, false, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 2, 0.0, 0.0, 0.99999, 10, false, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 3, 0.5, 0.9, 0.99999, 10, false, sqlen);
+   // performReduction(korlat, red, inDual, d, 0, 0.0, 0.0, 0.0, 1, true);
+   performReduction(korlat, red, inDual, d, dim, 0, 0.5, 0.0, 0.0, 1, false);
+   performReduction(korlat, red, inDual, d, dim, 1, 0.99999, 0.0, 0.0, 1, false);
+   performReduction(korlat, red, inDual, d, dim, 2, 0.0, 0.0, 0.99999, 10, false);
+   performReduction(korlat, red, inDual, d, dim, 3, 0.5, 0.9, 0.99999, 10, false);
 
    // For the other choices, we take BB = true.
    // For large m, the next two cases are much too slow and often fail.
    if (korlat.getModulus() <= 1024 * 1024) {
-      performReduction(korlat, red, inDual, d, dim, 4, 0.5, 0.0, 0.0, 1, true, sqlen);
-      performReduction(korlat, red, inDual, d, dim, 5, 0.8, 0.0, 0.0, 1, true, sqlen);
+      performReduction(korlat, red, inDual, d, dim, 4, 0.5, 0.0, 0.0, 1, true);
+      performReduction(korlat, red, inDual, d, dim, 5, 0.8, 0.0, 0.0, 1, true);
    }
-   performReduction(korlat, red, inDual, d, dim, 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 7, 0.0, 0.0, 0.99999, 6, true, sqlen);
+   performReduction(korlat, red, inDual, d, dim, 6, 0.99999, 0.0, 0.0, 1, true);
+   performReduction(korlat, red, inDual, d, dim, 7, 0.0, 0.0, 0.99999, 6, true);
 
-   performReduction(korlat, red, inDual, d, dim, 8, 0.0, 0.0, 0.99999, 8, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 9, 0.0, 0.0, 0.99999, 10, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 10, 0.0, 0.0, 0.99999, 12, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 11, 0.0, 0.0, 0.999, 6, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 12, 0.0, 0.0, 0.999, 8, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 13, 0.0, 0.0, 0.999, 10, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 14, 0.0, 0.0, 0.999, 12, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 15, 0.8, 0.0, 0.99999, 10, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 16, 0.5, 0.9, 0.99999, 10, true, sqlen);
-   performReduction(korlat, red, inDual, d, dim, 17, 0.5, 0.9, 0.99999, 12, true, sqlen);
+   performReduction(korlat, red, inDual, d, dim, 8, 0.0, 0.0, 0.99999, 8, true);
+   performReduction(korlat, red, inDual, d, dim, 9, 0.0, 0.0, 0.99999, 10, true);
+   performReduction(korlat, red, inDual, d, dim, 10, 0.0, 0.0, 0.99999, 12, true);
+   performReduction(korlat, red, inDual, d, dim, 11, 0.0, 0.0, 0.999, 6, true);
+   performReduction(korlat, red, inDual, d, dim, 12, 0.0, 0.0, 0.999, 8, true);
+   performReduction(korlat, red, inDual, d, dim, 13, 0.0, 0.0, 0.999, 10, true);
+   performReduction(korlat, red, inDual, d, dim, 14, 0.0, 0.0, 0.999, 12, true);
+   performReduction(korlat, red, inDual, d, dim, 15, 0.8, 0.0, 0.99999, 10, true);
+   performReduction(korlat, red, inDual, d, dim, 16, 0.5, 0.9, 0.99999, 10, true);
+   performReduction(korlat, red, inDual, d, dim, 17, 0.5, 0.9, 0.99999, 12, true);
 }
 
 // In this testing loop, we generate `numRep` multipliers `a` and for each one
@@ -147,8 +147,6 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
    std::cout << "Safety margin on the BB bounds: epsBounds = " << epsBounds << ".\n\n";
    //  red.setVerbosity(4);
 
-   NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
-   sqlen.SetLength(1);   // We retrieve only the shortest vector square length.
    Int a0(73);
    // Int a0(7);
    Int a(a0);   // For the LCG multiplier, we take successive powers of a0 mod m.
@@ -164,8 +162,8 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
    for (int64_t r = 0; r < numRep; r++) {
       korlat.seta(a);
       for (d = 0; d < numSizes; d++)   // Each matrix size.
-         // performReduction(korlat, red, inDual, d, dimensions[d], 6, 0.99999, 0.0, 0.0, 1, true, sqlen);
-         compareManyReductions<Int, Real>(korlat, red, inDual, d, dimensions[d], sqlen);
+         // performReduction(korlat, red, inDual, d, dimensions[d], 6, 0.99999, 0.0, 0.0, 1, true);
+         compareManyReductions<Int, Real>(korlat, red, inDual, d, dimensions[d]);
       a = a * a0 % m;   // The multiplier we use for this rep.
       }
    printTables(numMeth, numSizes, numRep, dimensions);

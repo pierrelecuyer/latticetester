@@ -450,7 +450,7 @@ long ll_LLL_XD(mat_ZZ& B, mat_ZZ* U, xdouble delta, long deep,
 
 // ----------------------------------------------------------
 
-long LLL_XD_lt(mat_ZZ &BB, double delta,
+xdouble LLL_XD_lt(mat_ZZ &BB, double delta,
           long m, long n, vec_xdouble *sqlen) {
    if (m == 0)
       m = BB.NumRows();
@@ -527,7 +527,7 @@ long LLL_XD_lt(mat_ZZ &BB, double delta,
       for (i = 0; i < min (m, sqlen->length()); i++)
          (*sqlen)[i] = sqlen2[i+1];
    }
-   return m;
+   return sqlen2[1];
 }
 
 NTL_TLS_GLOBAL_DECL(vec_xdouble, BKZConstant)
@@ -609,7 +609,7 @@ void ComputeBKZThresh(xdouble *c, long beta)
 
 // --------------------------------------------------
 
-long BKZ_XD_lt(mat_ZZ& BB, const xdouble delta, long beta, long prune,
+xdouble BKZ_XD_lt(mat_ZZ& BB, const xdouble delta, long beta, long prune,
          long m, long n, vec_xdouble* sqlen) {
    NTL_TLS_GLOBAL_ACCESS(red_fudge);
    NTL_TLS_GLOBAL_ACCESS(BKZThresh);
@@ -897,11 +897,11 @@ long BKZ_XD_lt(mat_ZZ& BB, const xdouble delta, long beta, long prune,
             (*sqlen)[i] = b[i+1];
       }
       // std::cout << " End of BKZ in LLL_FPInt, Matrix B = \n" << B << "\n";
-   return m;
+   return b[1];
 }
 
 // Here, `delta` is passed as a `double`.
-long BKZ_XD_lt(mat_ZZ& BB, double delta, long beta, long prune,
+xdouble BKZ_XD_lt(mat_ZZ& BB, double delta, long beta, long prune,
          long m, long n, vec_xdouble* sqlen) {
     return BKZ_XD_lt(BB, conv<xdouble>(delta), beta, prune, m, n, sqlen);
 }

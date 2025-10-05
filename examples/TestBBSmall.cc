@@ -23,7 +23,7 @@ using namespace LatticeTester;
 template<typename Int, typename Real>
 void findShortest (Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red,
       NormType norm, DecompTypeBB decomp, bool inDual,
-      long dim, double deltaLLL, NTL::Vec<Real> sqlen) {
+      long dim, double deltaLLL) {
    korlat.setNormType(norm);     // Select the norm.
    red.setDecompTypeBB(decomp);  // Select the decomposition type.
    if (inDual) {
@@ -40,9 +40,9 @@ void findShortest (Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red,
    std::cout << "Decomposition: " << toStringDecomp(decomp) << ".\n\n";
    std::cout << "Before pre-reduction, initial basis = \n" << korlat.getBasis() << "\n";
 
-   if (deltaLLL > 0.0) redLLL(korlat.getBasis(), deltaLLL, dim, &sqlen);
-   double len2 = conv<double>(sqlen[0]);   // This is always the squared L2 norm.
-   std::cout << "After LLL reduction, squared L2 norm = " << len2 << ",  basis = \n" << korlat.getBasis() << "\n";
+   Real minSqlen = Real(0.0);
+   if (deltaLLL > 0.0) minSqlen = redLLL<Int, Real>(korlat.getBasis(), deltaLLL, dim);
+   std::cout << "After LLL reduction, squared L2 norm = " << conv<double>(minSqlen) << ",  basis = \n" << korlat.getBasis() << "\n";
    red.shortestVector(korlat);  // BB is applied here.  ***
 
    //std::cout << "After BB, square length of shortest vector: " << red.getMinLength2() << "\n";
@@ -69,17 +69,15 @@ int main() {
    korlat.seta(a);
    ReducerBB<Int, Real> red(korlat);   // Single ReducerBB with internal lattice `korlat`.
    red.setVerbosity(2);
-   NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
-   sqlen.SetLength(1);   // We retrieve only the shortest vector square length.
 
    bool inDual = false;  // Primal basis
-   findShortest<Int, Real>(korlat, red, L2NORM, CHOLESKY, inDual, dim, 0.99, sqlen);
-   findShortest<Int, Real>(korlat, red, L2NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
-   findShortest<Int, Real>(korlat, red, L1NORM, CHOLESKY, inDual, dim, 0.99, sqlen);
-   findShortest<Int, Real>(korlat, red, L1NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
+   findShortest<Int, Real>(korlat, red, L2NORM, CHOLESKY, inDual, dim, 0.99);
+   findShortest<Int, Real>(korlat, red, L2NORM, TRIANGULAR, inDual, dim, 0.99);
+   findShortest<Int, Real>(korlat, red, L1NORM, CHOLESKY, inDual, dim, 0.99);
+   findShortest<Int, Real>(korlat, red, L1NORM, TRIANGULAR, inDual, dim, 0.99);
    inDual = true;   // Dual basis
-   findShortest(korlat, red, L2NORM, CHOLESKY, inDual, dim, 0.99, sqlen);
-   findShortest(korlat, red, L2NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
-   findShortest(korlat, red, L1NORM, CHOLESKY, inDual, dim, 0.99, sqlen);
-   findShortest(korlat, red, L1NORM, TRIANGULAR, inDual, dim, 0.99, sqlen);
+   findShortest(korlat, red, L2NORM, CHOLESKY, inDual, dim, 0.99);
+   findShortest(korlat, red, L2NORM, TRIANGULAR, inDual, dim, 0.99);
+   findShortest(korlat, red, L1NORM, CHOLESKY, inDual, dim, 0.99);
+   findShortest(korlat, red, L1NORM, TRIANGULAR, inDual, dim, 0.99);
 }

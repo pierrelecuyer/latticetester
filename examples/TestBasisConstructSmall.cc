@@ -58,8 +58,10 @@ int main() {
     basisDual.SetDims(dim, dim);
     basisProj.SetDims(dim, dimProj);
     basisDualProj.SetDims(dimProj, dimProj);
-    RealVec sqlen;      // To recover square length of first basis vector after LLL.
-    sqlen.SetLength(1); // We only want to recover the length of the first basis vector.
+    Real minSqlen;
+
+    //RealVec sqlen;      // To recover square length of first basis vector after LLL.
+    //sqlen.SetLength(1); // We only want to recover the length of the first basis vector.
 
     // We construct a Korobov lattice `korlat` in dim dimensions.
     Rank1Lattice<Int, Real> korlat(m, a, dim, dim);
@@ -71,13 +73,13 @@ int main() {
     std::cout << "Square length of first basis vector: " << sqlength << "\n\n";
 
     // We apply LLL to reduce basis1.
-    LLLConstruction0<Int, Real>(basis1, 0.5, 0, 0, &sqlen);
+    minSqlen = LLLConstruction0<Int, Real>(basis1, 0.5, 0, 0);
     std::cout << "Basis after LLL with delta=0.5: \n" << basis1 << "\n";
-    std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
+    std::cout << "Square length of first basis vector: " << minSqlen << "\n\n";
 
-    LLLConstruction0<Int, Real>(basis1, 0.99999, 0, 0, &sqlen);
+    minSqlen = LLLConstruction0<Int, Real>(basis1, 0.99999, 0, 0);
     std::cout << "Basis after LLL with delta=0.99999: \n" << basis1 << "\n";
-    std::cout << "Square length of first basis vector: " << sqlen[0] << "\n\n";
+    std::cout << "Square length of first basis vector: " << minSqlen << "\n\n";
 
     // tests on triangular basis
     lowerTriangularBasis(basis2, basis1, m);
@@ -91,9 +93,9 @@ int main() {
     std::cout << "m-dual of upper-triangular basis: \n" << basisDual << "\n\n";
 
     // We reduce this basisDual with LLL.
-    LLLConstruction0<Int, Real>(basisDual, 0.99999, 0, 0, &sqlen);
+    minSqlen = LLLConstruction0<Int, Real>(basisDual, 0.99999, 0, 0);
     std::cout << "m-dual basis after LLL with delta=0.99999: \n" << basisDual << "\n";
-    std::cout << "Square length of first dual basis vector: " << sqlen[0] << "\n\n";
+    std::cout << "Square length of first dual basis vector: " << minSqlen << "\n\n";
 
     // We now investigate the projection over coordinates {1, 3, 5}.
     Coordinates proj({1, 3, 5});
@@ -107,7 +109,7 @@ int main() {
     projectMatrix(basisProj, basis1, proj, dim);
     std::cout << "basisProj after projectMatrix (the generating vectors): \n" << basisProj << "\n";
     // We construct a basis for this projection using LLL.
-    LLLBasisConstruction<Int, Real>(basisProj, m, 0.5, dim, dimProj);
+    minSqlen = LLLBasisConstruction<Int, Real>(basisProj, m, 0.5, dim, dimProj);
     std::cout << "Basis for this projection, obtained with LLL: \n" << basisProj << "\n";
 
     // Basis construction with upper-triangular method from `basis1`, using `dim` rows.
@@ -125,10 +127,10 @@ int main() {
     mDualUpperTriangular(basisDualProj, basisProj, m, dimProj);
     std::cout << "Triangular basis for m-dual of this projection: \n"
             << basisDualProj << "\n";
-    LLLConstruction0<Int, Real>(basisDualProj, 0.99999, dimProj, dimProj, &sqlen);
+    minSqlen = LLLConstruction0<Int, Real>(basisDualProj, 0.99999, dimProj, dimProj);
     std::cout << "m-dual basis of proj after LLL with delta=0.99999: \n" << basisDualProj
             << "\n";
-    std::cout << "Square length of first m-dual basis vector: " << sqlen[0] << "\n\n";
+    std::cout << "Square length of first m-dual basis vector: " << minSqlen << "\n\n";
 
     // We can also construct the m-dual basis directly in `projLattice2` via  `buildProjectionDual`.
     // Rank1Lattice<Int, Real> projLattice2(m, a, dimProj);
@@ -140,9 +142,9 @@ int main() {
     projectMatrix(basisProj, basisDual, proj, dim);
     std::cout << "We now look at the direct projection of the dual over the coordinates in proj.\n";
     std::cout << "Generating vectors for the projection of the dual: \n" << basisProj << "\n";
-    LLLBasisConstruction<Int, Real>(basisProj, m, 0.99999, dim, dimProj, &sqlen);
+    minSqlen = LLLBasisConstruction<Int, Real>(basisProj, m, 0.99999, dim, dimProj);
     std::cout << "Reduced basis for this projection (first 3 rows), after LLL with delta=0.99999: \n" << basisProj << "\n";
-    std::cout << "Square length of first m-dual basis vector: " << sqlen[0] << "\n\n";
+    std::cout << "Square length of first m-dual basis vector: " << minSqlen << "\n\n";
 
     std::cout << "We see that the dual of the projection differs from the projection of the dual! \n\n";
     return 0;

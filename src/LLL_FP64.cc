@@ -581,7 +581,7 @@ long ll_LLL_FP64 (Mat<int64_t> &B, double delta, double **B1, double **mu,
    return m;
 }
 
-long LLL_FP64(NTL::Mat<long> &B, double delta, long m, long n, NTL::Vec<double> *sqlen) {
+double LLL_FP64(NTL::Mat<long> &B, double delta, long m, long n, NTL::Vec<double> *sqlen) {
    if (m == 0)
       m = B.NumRows();
    if (n == 0)
@@ -651,7 +651,7 @@ long LLL_FP64(NTL::Mat<long> &B, double delta, long m, long n, NTL::Vec<double> 
    // std::cout << "In LLL FP64 after the swaps:  ";
    // std::cout << "sqlen2[0] = " << sqlen2[0] << "\n";
    // std::cout << "Inside LLL, after swaps: sqlen[0] = " << sqlen[0] << "\n";
-   return new_m;
+   return sqlen2[0];
 }
 
 //  BKZ   =====================================================================
@@ -712,7 +712,7 @@ static void ComputeBKZThresh(double *c, long beta) {
 }
 
 
-long BKZ_FP64(NTL::Mat<long> &BB, double delta, long beta, long prune,
+double BKZ_FP64(NTL::Mat<long> &BB, double delta, long beta, long prune,
         long m, long n, Vec<double> *sqlen) {
    if (m == 0)
       m = BB.NumRows();
@@ -1042,7 +1042,7 @@ long BKZ_FP64(NTL::Mat<long> &BB, double delta, long beta, long prune,
          (*sqlen)[i] = b[i];
    }
 // std::cout << " End of BKZ in LLL_FP64, Matrix B = \n" << B << "\n";
-   return m;            // Number of rows in basis.
+   return b[0];            // Square length of shortest vector.
 }
 
 NTL_END_IMPL

@@ -45,18 +45,16 @@ void printResultsNormsDecomp(long numSizes, const long *dimensions, long numRep)
  */
 template<typename Int, typename Real>
 void performReduction(Rank1Lattice<Int, Real> &korlat, ReducerBB<Int, Real> &red, bool inDual,
-      long d, long dim, double deltaBKZ, long k, NTL::Vec<Real> sqlen) {
+      long d, long dim, double deltaBKZ, long k) {
    if (inDual) {
       korlat.buildDualBasis(dim);  // Rebuild the dual basis (only) anew.
       korlat.dualize();
    } else {
       korlat.buildBasis(dim);  // Rebuild the primal basis anew.
    }
-   // std::cout << "performReduction, d = " << d << ",  a = " << korlat.geta() << "\n";
+   double len2;
    tmp = clock();
-   if (deltaBKZ > 0.0) redBKZ(korlat.getBasis(), deltaBKZ, k, 0, dim, &sqlen);
-   double len2 = conv<double>(sqlen[0]);   // This is always the squared L2 norm.
-   // std::cout << "performReduction, after BKZ, square L2 norm of shortest = " << len2 << "\n";
+   if (deltaBKZ > 0.0) len2 = conv<double>(redBKZ<Int, Real>(korlat.getBasis(), deltaBKZ, k, 0, dim));
    // In what follows, we get the square norm of our choice, either L1 or l2.
    if (red.shortestVector(korlat)) {
          len2 = conv<double>(red.getMinLength2());
@@ -86,11 +84,8 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
    // red.maxNodesBB = 100000;   // 10^5 nodes max
    // red.setVerbosity(4);
 
-   NTL::Vec<Real> sqlen; // Cannot be global because it depends on Real.
-   sqlen.SetLength(1);   // We retrieve only the shortest vector square length.
    Int a0(73);
    // Int a0(426593);
-
    Int a(a0);   // For the LCG multiplier, we take successive powers of a0 mod m.
    for (d = 0; d < numSizes; d++) {  // Reset the accumulators.
       timer[d] = 0;
@@ -103,7 +98,7 @@ static void testLoop(Int m, NormType norm, DecompTypeBB decomp, bool inDual,
       korlat.seta(a);
       for (d = 0; d < numSizes; d++)  // Each matrix size.
          if ((decomp != TRIANGULAR) | (d < 2) | (m < 20000))  // Skip triangular for large m and d.
-            performReduction(korlat, red, inDual, d, dimensions[d], 0.999, 10, sqlen);
+            performReduction(korlat, red, inDual, d, dimensions[d], 0.999, 10);
       a = a * a0 % m;   // The multiplier we use for this rep. First one is 73.
       }
    printResultsNormsDecomp(numSizes, dimensions, numRep);
