@@ -196,10 +196,13 @@ public:
    /**
     * The level of verbosity in the terminal output.
     * The default value is 0 (minimal output).
-    * Values from 1 to 4 give increasingly more details.
+    * Values from 1 to 5 give increasingly more details.
+    * When the merit is smaller than `meritLevel` for one projection,
+    * then the shortest vector is also printed for that projection.
     */
-   void setVerbosity(int64_t verbose) {
+   void setVerbosity(int64_t verbose, double meritLevel = 0.0) {
       m_verbose = verbose;
+      m_meritLevel = meritLevel;
    }
 
    /**
@@ -366,7 +369,7 @@ protected:
    /*
     * Variable to store the projection with the smallest FoM
     */
-   Coordinates m_worstproj;
+   //Coordinates m_worstproj;
 
    /*
     * Global timer for this class.
@@ -377,6 +380,12 @@ protected:
     * Indicates how much details of FoM calculations are printed on the screen.
     */
    int64_t m_verbose = 0;
+
+   /*
+    * The function `computeMeritOneProj` prints the shortest vector when the merit
+    * is smaller than this value and `m_verbose > 3`.
+    */
+   double m_meritLevel = 0.0;
 
    /*
     * Indicates how much detailed information is collected.
@@ -489,6 +498,12 @@ double FigureOfMeritM<Int, Real>::computeMeritOneProj(IntLattice<Int, Real> &pro
             << std::setw(12) << conv<double>(1.0 / sqrt(m_minSqlen))
             << "  " << std::setw(10) << merit << "  " << m_minMerit << "    "
             << (double) (clock() - m_clock) / (CLOCKS_PER_SEC) << "\n";
+   }
+   if ((m_verbose > 4) || ((m_verbose > 3) && (merit < m_meritLevel))) {
+      IntVec sv;
+      sv.SetLength(dim);
+      for (int64_t j = 0; j < dim; j++) sv[j] = proj.getBasis()[0][j];
+      std::cout << "  short vec: " << sv  << "\n";
    }
    return merit;
 }

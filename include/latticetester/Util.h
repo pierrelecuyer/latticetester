@@ -133,6 +133,14 @@ void SetSeed(std::uint64_t seed);
  * wrappers for standard C/C++ functions.
  */
 
+
+//=============================================================================
+
+template<typename Int>
+static Int getPow2(int64_t e) {
+   return NTL::power(Int(2), e);
+}
+
 /**
  * Returns \f$\sqrt{x}\f$ for \f$x\ge0\f$, and \f$-1\f$ for \f$x < 0\f$.
  */
