@@ -37,6 +37,9 @@ namespace LatticeTester {
    * These types of objects are created and returned by the classes in the `CoordinateSets` namespace.
    * This class also offers some input and output operators.
    * Important: The coordinates are assumed to start at 1.
+   *
+   * An object `coords` that contains the coordinates {1, 4, 5} can be created via
+   * `Coordinates coords({1, 4, 5});` for example.
    */
   class Coordinates : public std::set<std::size_t> {
     public:

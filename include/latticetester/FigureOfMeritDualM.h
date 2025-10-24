@@ -133,13 +133,11 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSucc(IntLatticeExt<Int, Real> 
        int64_t lowDim, int64_t highDim, double minmerit) {
    this->m_minMerit = minmerit;
    if (lowDim > highDim) return minmerit;  // No succ projection to look at.
-   this->m_clock = clock();
-   if (this->m_verbose > 2) {
-      std::cout << "coordinates      sqlen          1/len        merit       minmerit    cumul sec \n";
-   }
+   if (this->m_verbose > 2) this->printHeadFOM(lat.getNormType());
    Coordinates coord;
    for (int64_t j = 1; j <= lowDim; j++)
       coord.insert(j);
+   this->m_clock = clock();
    lat.buildDualBasis(lowDim);
    lat.dualize();
    this->computeMeritOneProj(lat, coord, this->m_minMerit);
@@ -172,12 +170,10 @@ double FigureOfMeritDualM<Int, Real>::computeMeritSuccRebuild(
    this->m_minMerit = minmerit;
    if (lowDim > highDim) return this->m_minMerit;  // No succ projection to look at, t[0] too small.
    Coordinates coord;
-   this->m_clock = clock();
-   if (this->m_verbose > 2) {
-      std::cout << "coordinates      sqlen          1/len        merit       minmerit    cumul sec \n";
-   }
+   if (this->m_verbose > 2) this->printHeadFOM(lat.getNormType());
    for (int64_t j = 1; j <= lowDim; j++)
       coord.insert(j);
+   this->m_clock = clock();
    lat.buildDualBasis(lowDim);
    lat.dualize();
    this->computeMeritOneProj(lat, coord, this->m_minMerit);
@@ -209,10 +205,8 @@ double FigureOfMeritDualM<Int, Real>::computeMeritNonSucc(
    // std::cout << "Start of computeMeritNonSucc in mdual \n";
    this->m_minMerit = minmerit;
 	Coordinates coord;
-   if (this->m_verbose > 2) {
-      std::cout << "coordinates      sqlen          1/len        merit       minmerit    cumul sec \n";
-      this->m_clock = clock();
-   }
+   if (this->m_verbose > 2) this->printHeadFOM(lat.getNormType());
+   this->m_clock = clock();
 	for (auto it = this->m_coordRange->begin(); it != this->m_coordRange->end();
 			it++) {
 		coord = *it;
