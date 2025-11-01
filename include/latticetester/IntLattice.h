@@ -457,9 +457,12 @@ public:
    /**
     * Builds a basis for the projection of the present lattice over the set of coordinates
     * determined by `coordSet`. This becomes the basis in `projLattice`.
-    * By default, it uses an upper-triangular construction, but it can be overridden in subclasses.
-    * It is assumed that a basis for the present lattice is already available and contains
-    * all the coordinates in `coordSet`.
+    * This default implementation uses the upper-triangular construction from `BasisConstruction`
+    * after selecting the appropriate columns from the current basis, which is assumed to be
+    * available and to contain all the coordinates in `coordSet`.
+    * But this can be overridden in subclasses and the projection is often built directly
+    * from secondary information, without looking at the current basis, which may not be
+    * constructed.
     */
    virtual void buildProjection(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet);
 
@@ -468,7 +471,8 @@ public:
     * This default implementation first builds an upper-triangular basis for the primal.
     * then computes a lower-triangular basis for the $m$-dual of the projection,
     * both in `projLattice`. The dimensions are updated.
-    * In subclasses, the m-dual basis can sometimes be computed directly without the primal.
+    * In subclasses, the m-dual basis can sometimes be computed directly without the primal
+    * and without even having a current basis constructed.
     */
    virtual void buildProjectionDual(IntLattice<Int, Real> &projLattice, const Coordinates &coordSet);
 
@@ -846,8 +850,8 @@ void IntLattice<Int, Real>::buildProjectionLLL(IntLattice<Int, Real> &projLattic
 template<typename Int, typename Real>
 void IntLattice<Int, Real>::buildProjection(IntLattice<Int, Real> &projLattice,
       const Coordinates &coordSet) {
-   // We assume here that this and lattice have the same m.
-   projLattice.setDim(coordSet.size());  // Number of coordinates in the projection.
+   // We assume here that this and projLattice have the same m.
+   projLattice.setDim(coordSet.size());  // dim is number of coordinates in the projection.
    projectionConstructionUpperTri<Int>(projLattice.m_basis, this->m_basis, coordSet, this->m_modulo,
          this->m_dim);
 }

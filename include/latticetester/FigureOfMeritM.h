@@ -608,9 +608,10 @@ double FigureOfMeritM<Int, Real>::computeMeritNonSucc(IntLatticeExt<Int, Real> &
    m_clock = clock();
    for (auto it = m_coordRange->begin(); it != m_coordRange->end(); it++) {
       coord = *it;
-      // We must make sure that we have all the required coordinates in the basis lat.
-      while (*coord.end() > uint64_t(lat.getDim()))
-         lat.incDimBasis();
+      // Make sure that we have all the required coordinates in the basis lat ?
+      // No, because in most cases in `LatMRG`, `proj` is built without using the basis.
+      // while (*coord.end() > uint64_t(lat.getDim()))
+      //    lat.incDimBasis();
       lat.buildProjection(proj, coord);
       // After this `buildProjection`, the dimensions of proj and coord must agree.
       computeMeritOneProj(proj, coord, m_minMerit);

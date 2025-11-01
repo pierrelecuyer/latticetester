@@ -256,13 +256,13 @@ static void mDualBasis(IntMat &basisDual, const IntMat &basis, const Int &m);
  * halts with an error message.
  */
 template<typename Int>
-static void projectMatrix(IntMat &out, const IntMat &in, const Coordinates &proj, long r = 0);
+static void projectMatrix(IntMat &out, const IntMat &in, const Coordinates &coordSet, long r = 0);
 
 /**
- * Constructs a basis for the projection `proj` of the lattice with basis `inBasis`,
+ * Constructs a basis for the projection onto `coordSet` of the lattice with basis `inBasis`,
  * using `LLLBasisConstruction`, and returns it in `projBasis`.
  * This returned basis is not triangular in general.
- * Its dimension will be the number of coordinates in `proj`.
+ * Its dimension will be the number of coordinates in `coordSet`.
  * The matrix `projBasis` must have enough columns to hold it and at least as many
  * rows as the number of rows that we use from `inBasis`.
  * When `r > 0`, only the first `r` rows of the matrix `inBasis` are used,
@@ -274,7 +274,7 @@ static void projectMatrix(IntMat &out, const IntMat &in, const Coordinates &proj
  */
 template<typename Int, typename Real>
 static void projectionConstructionLLL(IntMat &projBasis, const IntMat &inBasis,
-      const Coordinates &proj, const Int &m, const double delta = 0.9, long r = 0, RealVec *sqlen =
+      const Coordinates &coordSet, const Int &m, const double delta = 0.9, long r = 0, RealVec *sqlen =
             0);
 
 /**
@@ -293,11 +293,11 @@ static void projectionConstructionLLL(IntMat &projBasis, const IntMat &inBasis,
  */
 template<typename Int>
 static void projectionConstructionUpperTri(IntMat &projBasis, const IntMat &inBasis,
-IntMat &genTemp, const Coordinates &proj, const Int &m, long r = 0);
+IntMat &genTemp, const Coordinates &coordSet, const Int &m, long r = 0);
 
 template<typename Int>
 static void projectionConstructionUpperTri(IntMat &projBasis, const IntMat &inBasis,
-      const Coordinates &proj, const Int &m, long r = 0);
+      const Coordinates &coordSet, const Int &m, long r = 0);
 
 /**
  * In this version, the construction method is passed as a parameter. The default is LLL.
@@ -305,7 +305,7 @@ static void projectionConstructionUpperTri(IntMat &projBasis, const IntMat &inBa
  */
 template<typename Int>
 static void projectionConstruction(IntMat &projBasis, const IntMat &inBasis,
-      const Coordinates &proj, const Int &m, const ProjConstructType projType = LLLPROJ,
+      const Coordinates &coordSet, const Int &m, const ProjConstructType projType = LLLPROJ,
       const double delta = 0.9);
 
 //============================================================================
@@ -776,15 +776,15 @@ void mDualBasis(NTL::Mat<NTL::ZZ> &basisDual, const NTL::Mat<NTL::ZZ> &basis, co
 
 //=================================================================================
 template<typename Int>
-void projectMatrix(IntMat &out, const IntMat &in, const Coordinates &proj, long r) {
+void projectMatrix(IntMat &out, const IntMat &in, const Coordinates &coordSet, long r) {
    if (in == out) {
       std::cout << "\n***** Error: in and out must be different IntMat objects " << std::endl;
       exit(1);
    }
    if (!r) r = in.NumRows();   // In case r=0.
-   // We assume without testing that `out` is large enough for proj.size().
+   // We assume without testing that `out` is large enough for coordSet.size().
    long j = 0;
-   for (auto it = proj.begin(); it != proj.end(); it++, j++) {
+   for (auto it = coordSet.begin(); it != coordSet.end(); it++, j++) {
       for (long i = 0; i < r; i++)
          out[i][j] = in[i][*it - 1];
    }
@@ -792,38 +792,38 @@ void projectMatrix(IntMat &out, const IntMat &in, const Coordinates &proj, long 
 
 //===================================================
 template<typename Int, typename Real>
-void projectionConstructionLLL(IntMat &projBasis, const IntMat &inBasis, const Coordinates &proj,
+void projectionConstructionLLL(IntMat &projBasis, const IntMat &inBasis, const Coordinates &coordSet,
       const Int &m, const double delta, long r, RealVec *sqlen) {
-   projectMatrix(projBasis, inBasis, proj, r);
-   LLLBasisConstruction(projBasis, m, delta, r, proj.size(), sqlen);
+   projectMatrix(projBasis, inBasis, coordSet, r);
+   LLLBasisConstruction(projBasis, m, delta, r, coordSet.size(), sqlen);
 }
 
 //===================================================
 template<typename Int>
 void projectionConstructionUpperTri(IntMat &projBasis, const IntMat &inBasis, IntMat &genTemp,
-      const Coordinates &proj, const Int &m, long r) {
-   projectMatrix(genTemp, inBasis, proj, r);
-   upperTriangularBasis(projBasis, genTemp, m, r, proj.size());
+      const Coordinates &coordSet, const Int &m, long r) {
+   projectMatrix(genTemp, inBasis, coordSet, r);
+   upperTriangularBasis(projBasis, genTemp, m, r, coordSet.size());
 }
 
 template<typename Int>
 void projectionConstructionUpperTri(IntMat &projBasis, const IntMat &inBasis,
-      const Coordinates &proj, const Int &m, long r) {
-   long dim = proj.size();      // Dimension of projection
+      const Coordinates &coordSet, const Int &m, long r) {
+   long dim = coordSet.size();      // Dimension of projection
    if (!r) r = inBasis.NumRows();
    IntMat genTemp;
    genTemp.SetDims(r, dim); // Here an internal object is created and resized!
-   projectMatrix(genTemp, inBasis, proj, r);
+   projectMatrix(genTemp, inBasis, coordSet, r);
    upperTriangularBasis(projBasis, genTemp, m, r, dim);
 }
 
 //===================================================
 
 template<typename Int>
-void projectionConstruction(IntMat &projBasis, const IntMat &inBasis, const Coordinates &proj,
+void projectionConstruction(IntMat &projBasis, const IntMat &inBasis, const Coordinates &coordSet,
       const Int &m, const ProjConstructType projType, const double delta) {
-   if (projType == LLLPROJ) projectionConstructionLLL(projBasis, inBasis, proj, m, 0, delta);
-   if (projType == UPPERTRIPROJ) projectionConstructionUpperTri(projBasis, inBasis, proj, m);
+   if (projType == LLLPROJ) projectionConstructionLLL(projBasis, inBasis, coordSet, m, 0, delta);
+   if (projType == UPPERTRIPROJ) projectionConstructionUpperTri(projBasis, inBasis, coordSet, m);
 }
 
 } // end namespace LatticeTester
